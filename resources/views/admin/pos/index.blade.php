@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOZOR || POS</title>
+    <!-- bootstarp link -->
+    <link rel="stylesheet" href="{{asset('admin/pos/assets/css/bootstrap.min.css')}}">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="{{asset('admin/pos/assets/css/all.min.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/pos/assets/css/fontawesome.min.css')}}">
+    <!-- css file link -->
+    <link rel="stylesheet" href="{{asset('admin/pos/assets/css/global.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/pos/assets/css/main.css')}}">
+    <link rel="stylesheet" href="{{asset('admin/pos/assets/css/responsive.css')}}">
+</head>
+
+<body class="main_body">
+<!-- pos header -->
+<header class="pos_header">
+    <!-- container -->
+    <div class="container-fluid">
+        <!-- row -->
+        <div class="row gy-2 align-items-center">
+            <!-- header left -->
+            <div class="col-sm-6">
+                <div class="header_right d-flex gap-2 align-items-center">
+                    <p id="time" class="text-white"></p>
+                    <script>
+                        function updateTime() {
+                            var currentDate = new Date();
+                            var dateString = currentDate.toLocaleString();
+                            document.getElementById('time').innerHTML = dateString;
+                        }
+                        setInterval(updateTime, 1000);
+                        updateTime();
+                    </script>
+                </div>
+            </div>
+            <!-- header right -->
+            <div class="col-sm-6">
+                <!-- all button -->
+                <div class="header_btnwrapper">
+                    <div class="d-flex align-items-stretch justify-content-end gap-2 header___left">
+                        <!-- add expense -->
+                        <button type="button" title="Add Expense" class="btn_main header_btn bg-purple"
+                                data-bs-toggle="modal" data-bs-target="#add_expense">
+                            <span><i class="fa fas fa-minus-circle"></i> Add Expense</span>
+                        </button>
+                        <!-- add expence modal -->
+                        <div class="modal fade" id="add_expense">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- modal header -->
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Add Expense</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <!-- modal body -->
+                                    <div class="modal-body">
+                                        <!-- expenese -->
+                                        <div class="expense_row">
+                                            <div class="row gy-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Business
+                                                            Location:</label>
+                                                        <!-- select location -->
+                                                        <select name="" id="" class="form-select rounded-0">
+                                                            <option value="" hidden selected>Please Select
+                                                            </option>
+                                                            <option value="">Tateeghar Branch</option>
+                                                            <option value="">Tateeghar Branch</option>
+                                                            <option value="">Tateeghar Branch</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Expense
+                                                            Category:</label>
+                                                        <!-- select category -->
+                                                        <select name="" id="" class="form-select rounded-0">
+                                                            <option value="" hidden selected>Please Select
+                                                            </option>
+                                                            <option value="">Hasiful Islam</option>
+                                                            <option value="">Rashedul</option>
+                                                            <option value="">Jeasmine Soap</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Reference No:</label>
+                                                        <!-- Reference no -->
+                                                        <input type="text" class="form-control rounded-0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Date:</label>
+                                                        <!-- date -->
+                                                        <input type="date" class="form-control rounded-0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Expense for:</label>
+                                                        <!-- Expense -->
+                                                        <select name="" id="" class="form-select rounded-0">
+                                                            <option value="" hidden selected>Please Select
+                                                            </option>
+                                                            <option value="">None</option>
+                                                            <option value="">Sky Mart</option>
+                                                            <option value="">Test</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Applicable Tax:</label>
+                                                        <!-- tax -->
+                                                        <select name="" id="" class="form-select rounded-0">
+                                                            <option value="" hidden selected>Please Select
+                                                            </option>
+                                                            <option value="">None</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Total amount:</label>
+                                                        <!-- total amount -->
+                                                        <input type="number" class="form-control rounded-0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Expense note:</label>
+                                                        <!-- note -->
+                                                        <textarea name="" id=""
+                                                                  class="form-control rounded-0"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- payment -->
+                                        <div class="payment_row mt-4">
+                                            <div class="row gy-3">
+                                                <div class="col-md-6">
+                                                    <label for="" class="form-label">Amount:</label>
+                                                    <div class="input-group">
+                                                        <button class="input-group-text rounded-0">
+                                                            <i class="fa-solid fa-money-bill"></i>
+                                                        </button>
+                                                        <!-- amount -->
+                                                        <input type="number" class="form-control rounded-0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Paid on:</label>
+                                                        <input type="date" class="form-control rounded-0">
+                                                    </div>
+                                                </div>
+                                                <!-- payment method -->
+                                                <div class="col-md-6">
+                                                    <label for="" class="form-label">Payment Method:</label>
+                                                    <select name="" id="paymentMethod"
+                                                            class="paymentMethod form-select rounded-0">
+                                                        <option value="" selected hidden>Select Payment</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="Card">Card</option>
+                                                        <option value="Cheque">Cheque</option>
+                                                        <option value="Bank Transfer">Bank Transfer</option>
+                                                        <option value="Other">Other</option>
+                                                        <option value="Customer Payment 1">Customer Payment 1
+                                                        </option>
+                                                        <option value="Customer Payment 2">Customer Payment 2
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <!-- card payment row -->
+                                                <div class="cardpayment_row">
+                                                    <div class="row gy-3">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Card
+                                                                    Number:</label>
+                                                                <!-- Reference no -->
+                                                                <input type="text" class="form-control rounded-0"
+                                                                       placeholder="Card Number">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Card holder
+                                                                    name:</label>
+                                                                <!-- Reference no -->
+                                                                <input type="text" class="form-control rounded-0"
+                                                                       placeholder="Card holder name">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Card
+                                                                    Transaction No:</label>
+                                                                <!-- Reference no -->
+                                                                <input type="text" class="form-control rounded-0"
+                                                                       placeholder="Card Transaction No">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Card
+                                                                    Type:</label>
+                                                                <!-- Reference no -->
+                                                                <select name="" id="" class="form-select rounded-0">
+                                                                    <option value="" selected hidden>Select Card
+                                                                    </option>
+                                                                    <option value="">Credit Card</option>
+                                                                    <option value="">Debit Card</option>
+                                                                    <option value="">Visa</option>
+                                                                    <option value="">Master Card</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Month</label>
+                                                                <!-- Reference no -->
+                                                                <input type="text" class="form-control rounded-0"
+                                                                       placeholder="Month">
+                                                            </div>
+                                                        </div>
+                                                        <!-- payment note -->
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Year:</label>
+                                                                <input type="text" class="form-control rounded-0"
+                                                                       placeholder="Year">
+                                                            </div>
+                                                        </div>
+                                                        <!-- payment note -->
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Security
+                                                                    Code:</label>
+                                                                <input type="text" class="form-control rounded-0"
+                                                                       placeholder="Security Code">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- checque payment row -->
+                                                <div class="cheque_payment_row">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Cheque
+                                                                    No.</label>
+                                                                <input type="text" class="form-control rounded-0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- checque payment row -->
+                                                <div class="bank_payment_row">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Bank Account
+                                                                    No.</label>
+                                                                <input type="text" class="form-control rounded-0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- cutomer payment row -->
+                                                <div class="cutomer_payment_row">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="" class="form-label">Transaction
+                                                                    No.</label>
+                                                                <input type="text" class="form-control rounded-0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- payment note -->
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Payment note:</label>
+                                                        <textarea class="form-control rounded-0" rows="" id=""
+                                                                  name="" cols="50"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- hr -->
+                                        <hr class="my-3">
+                                        <div class="expense_payment_content text-end">
+                                            <strong>Payment due:</strong>
+                                            <span id="expense_payment_due">0.00</span>
+                                        </div>
+                                    </div>
+                                    <!-- modal footer -->
+                                    <div class="modal-footer">
+                                        <button type="submit"
+                                                class="btn_main footer_innerbtn misty-color">Save</button>
+                                        <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- suspend button -->
+                        <button type="button" data-bs-target="#suspend_modal" data-bs-toggle="modal"
+                                title="View Suspended Details" class="btn_main header_btn bg-yellow">
+                            <span><i class="fa fa-pause-circle fa-lg"></i></span>
+                        </button>
+                        <!-- suspend modal -->
+                        <div class="modal fade" id="suspend_modal">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <!-- modal header -->
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Suspended Sales</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <!-- modal body -->
+                                    <div class="modal-body">
+                                        <div class="suspended_row">
+                                            <div class="row gy-3">
+                                                <div class="col-md-6">
+                                                    <!-- suspend item-->
+                                                    <div class="suspend_noteItem">
+                                                        <!-- content -->
+                                                        <div class="suspend_note_content">
+                                                            <!-- title -->
+                                                            <h4 class="suspend_note_title"> Not Sale This
+                                                                product</h4>
+                                                            <!-- user category -->
+                                                            <p class="suspend_user_category"> Walk-In Customer
+                                                            </p>
+                                                            <p class="suspend_total_item">Total Items:
+                                                                <span>4</span>
+                                                            </p>
+                                                            <p class="suspend_total_amount">Total:
+                                                                <span>31055</span>৳
+                                                            </p>
+                                                            <p class="suspend_userid">0066</p>
+                                                        </div>
+                                                        <!-- footer -->
+                                                        <div class="suspend_note_footer">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-between">
+                                                                <p class="suspend_date">12-08-2023</p>
+                                                                <!-- action -->
+                                                                <div class="suspend_note_action">
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn misty-color">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-pen-to-square"></i></span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn bg-navy">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-trash"></i></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <!-- suspend item-->
+                                                    <div class="suspend_noteItem">
+                                                        <!-- content -->
+                                                        <div class="suspend_note_content">
+                                                            <!-- title -->
+                                                            <h4 class="suspend_note_title"> Not Sale This
+                                                                product</h4>
+                                                            <!-- user category -->
+                                                            <p class="suspend_user_category"> Walk-In Customer
+                                                            </p>
+                                                            <p class="suspend_total_item">Total Items:
+                                                                <span>4</span>
+                                                            </p>
+                                                            <p class="suspend_total_amount">Total:
+                                                                <span>31055</span>৳
+                                                            </p>
+                                                            <p class="suspend_userid">0066</p>
+                                                        </div>
+                                                        <!-- footer -->
+                                                        <div class="suspend_note_footer">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-between">
+                                                                <p class="suspend_date">12-08-2023</p>
+                                                                <!-- action -->
+                                                                <div class="suspend_note_action">
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn misty-color">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-pen-to-square"></i></span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn bg-navy">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-trash"></i></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <!-- suspend item-->
+                                                    <div class="suspend_noteItem">
+                                                        <!-- content -->
+                                                        <div class="suspend_note_content">
+                                                            <!-- title -->
+                                                            <h4 class="suspend_note_title"> Not Sale This
+                                                                product</h4>
+                                                            <!-- user category -->
+                                                            <p class="suspend_user_category"> Walk-In Customer
+                                                            </p>
+                                                            <p class="suspend_total_item">Total Items:
+                                                                <span>4</span>
+                                                            </p>
+                                                            <p class="suspend_total_amount">Total:
+                                                                <span>31055</span>৳
+                                                            </p>
+                                                            <p class="suspend_userid">0066</p>
+                                                        </div>
+                                                        <!-- footer -->
+                                                        <div class="suspend_note_footer">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-between">
+                                                                <p class="suspend_date">12-08-2023</p>
+                                                                <!-- action -->
+                                                                <div class="suspend_note_action">
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn misty-color">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-pen-to-square"></i></span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn bg-navy">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-trash"></i></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <!-- suspend item-->
+                                                    <div class="suspend_noteItem">
+                                                        <!-- content -->
+                                                        <div class="suspend_note_content">
+                                                            <!-- title -->
+                                                            <h4 class="suspend_note_title"> Not Sale This
+                                                                product</h4>
+                                                            <!-- user category -->
+                                                            <p class="suspend_user_category"> Walk-In Customer
+                                                            </p>
+                                                            <p class="suspend_total_item">Total Items:
+                                                                <span>4</span>
+                                                            </p>
+                                                            <p class="suspend_total_amount">Total:
+                                                                <span>31055</span>৳
+                                                            </p>
+                                                            <p class="suspend_userid">0066</p>
+                                                        </div>
+                                                        <!-- footer -->
+                                                        <div class="suspend_note_footer">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-between">
+                                                                <p class="suspend_date">12-08-2023</p>
+                                                                <!-- action -->
+                                                                <div class="suspend_note_action">
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn misty-color">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-pen-to-square"></i></span>
+                                                                    </button>
+                                                                    <button
+                                                                        class="btn_main footer_innerbtn bg-navy">
+                                                                            <span><i
+                                                                                    class="fa-solid fa-trash"></i></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- modal footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--  fullsecreen button -->
+                        <button type="button" title="Click Fullsecreen" class="btn_main header_btn bg-primary"
+                                id="fullsecreen_btn">
+                            <span><i class="fa-solid fa-expand"></i></span>
+                        </button>
+
+                        <!-- calculator -->
+                        <div class="position-relative">
+                            <!--  calculator button -->
+                            <button type="button" title="Calculator" class="btn_main header_btn bg-info"
+                                    id="calculator_btn">
+                                <span><i class="fa-solid fa-calculator"></i></span>
+                            </button>
+                            <!-- calculator -->
+                            <div class="calculator" id="calculator">
+                                <div class="display">
+                                    <span id="current-calc"></span>
+                                    <span id="result">0</span>
+                                </div>
+                                <div class="cal_row">
+                                    <span data-key="Backspace" id="other">&#8592;</span>
+                                    <span data-key="?" id="other">&plusmn;</span>
+                                    <span data-key="%" id="operator">&percnt;</span>
+                                    <span data-key="/" id="operator">&divide;</span>
+                                </div>
+                                <div class="cal_row">
+                                    <span data-key="7" id="num">7</span>
+                                    <span data-key="8" id="num">8</span>
+                                    <span data-key="9" id="num">9</span>
+                                    <span data-key="*" id="operator">&times;</span>
+                                </div>
+                                <div class="cal_row">
+                                    <span data-key="4" id="num">4</span>
+                                    <span data-key="5" id="num">5</span>
+                                    <span data-key="6" id="num">6</span>
+                                    <span data-key="-" id="operator">&minus;</span>
+                                </div>
+                                <div class="cal_row">
+                                    <span data-key="1" id="num">1</span>
+                                    <span data-key="2" id="num">2</span>
+                                    <span data-key="3" id="num">3</span>
+                                    <span data-key="+" id="operator">&plus;</span>
+                                </div>
+                                <div class="cal_row">
+                                    <span data-key="Delete" id="del">CE</span>
+                                    <span data-key="0" id="num">0</span>
+                                    <span data-key="." id="other">.</span>
+                                    <span data-key="Enter" id="equ">&equals;</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--  register details -->
+                        <button type="button" title="Register Details" class="btn_main header_btn btn-success"
+                                data-bs-target="#register_details" data-bs-toggle="modal">
+                            <span><i class="fa-solid fa-briefcase"></i></span>
+                        </button>
+                        <!-- register modal -->
+                        <div class="modal fade" id="register_details">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <!-- modal header -->
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Register Details ( 9th Aug, 2023 10:29 AM - 12th
+                                            Aug, 2023 03:26 PM )</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <!-- modal body -->
+                                    <div class="modal-body">
+                                        <div class="col-sm-12">
+                                            <table class="table register_modaltable table-bordered table-striped">
+                                                <tbody>
+                                                <tr>
+                                                    <th>Payment Method</th>
+                                                    <th>Sell</th>
+                                                    <th>Expense</th>
+                                                </tr>
+                                                <tr>
+                                                    <td> Cash in hand: </td>
+                                                    <td>
+                                                        <span class="display_currency">300.00 ৳</span>
+                                                    </td>
+                                                    <td>--</td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Cash Payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">61,683.75 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Cheque Payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Card Payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">1,883.75 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Bank Transfer: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Advance payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 1: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 2: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 3: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 4: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 5: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 6: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 7: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Other Payments: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            <hr class="my-3">
+                                            <table class="table tableregsiter_sale table-bordered table-striped">
+                                                <tbody>
+                                                <tr>
+                                                    <td> Total Sales: </td>
+                                                    <td>
+                                                        <span class="display_currency">63,567.50 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="danger">
+                                                    <th>Total Refund</th>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="success">
+                                                    <th>Total Payment</th>
+                                                    <td>
+                                                        <span class="display_currency">61,983.75 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="success">
+                                                    <th> Credit Sales: </th>
+                                                    <td>
+                                                        <b><span class="display_currency">31,055.00
+                                                                        ৳</span></b>
+                                                    </td>
+                                                </tr>
+                                                <tr class="success">
+                                                    <th> Total Sales: </th>
+                                                    <td>
+                                                        <b><span class="display_currency">94,622.50
+                                                                        ৳</span></b>
+                                                    </td>
+                                                </tr>
+                                                <tr class="danger">
+                                                    <th> Total Expense: </th>
+                                                    <td>
+                                                        <b><span class="display_currency">0.00 ৳</span></b>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            <hr class="my-3">
+                                            <div class="col-md-12">
+                                                <h3 class="register_soldtable_title">Details of products sold</h3>
+                                                <table class="table register_soldtable table-bordered">
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Brands</th>
+                                                        <th>Quantity</th>
+                                                        <th>Total amount</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>1.</td>
+                                                        <td></td>
+                                                        <td> 23.0000</td>
+                                                        <td>
+                                                            <span class="display_currency">94,622.50 ৳</span>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Final details -->
+                                                    <tr class="success">
+                                                        <th>#</th>
+                                                        <th></th>
+                                                        <th>23</th>
+                                                        <th>
+                                                            Grand Total:
+                                                            <span class="display_currency"
+                                                                  data-currency_symbol="true">94,622.50 ৳</span>
+                                                        </th>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <hr class="my-3">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="register_ruleauth">
+                                                        <ul>
+                                                            <li>
+                                                                <span class="register_ruleauth_title">User :</span>
+                                                                <span>Sky Mart</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="register_ruleauth_title">Email :</span>
+                                                                <span>admin@gmail.com</span>
+                                                            </li>
+                                                            <li>
+                                                                    <span class="register_ruleauth_title">Business
+                                                                        Location :</span>
+                                                                <span>SKY MART</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- modal footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" onclick="window.print()"
+                                                class="btn_main footer_innerbtn misty-color">Print</button>
+                                        <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- close register -->
+                        <button type="button" title="Close Register" data-bs-target="#close_register"
+                                data-bs-toggle="modal" class="btn_main header_btn misty-color">
+                            <span><i class="fa-solid fa-xmark"></i></span>
+                        </button>
+
+                        <!-- close register modal -->
+                        <div class="modal fade" id="close_register">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <!-- modal header -->
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Current Register ( 9th Aug, 2023 10:29 AM - 12th
+                                            Aug, 2023 05:07 PM)</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <!-- modal body -->
+                                    <div class="modal-body">
+                                        <div class="col-sm-12">
+                                            <table class="table register_modaltable table-bordered table-striped">
+                                                <tbody>
+                                                <tr>
+                                                    <th>Payment Method</th>
+                                                    <th>Sell</th>
+                                                    <th>Expense</th>
+                                                </tr>
+                                                <tr>
+                                                    <td> Cash in hand: </td>
+                                                    <td>
+                                                        <span class="display_currency">300.00 ৳</span>
+                                                    </td>
+                                                    <td>--</td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Cash Payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">61,683.75 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Cheque Payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Card Payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">1,883.75 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Bank Transfer: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Advance payment: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 1: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 2: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 3: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 4: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 5: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 6: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Custom Payment 7: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Other Payments: </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            <hr class="my-3">
+                                            <table class="table tableregsiter_sale table-bordered table-striped">
+                                                <tbody>
+                                                <tr>
+                                                    <td> Total Sales: </td>
+                                                    <td>
+                                                        <span class="display_currency">63,567.50 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="danger">
+                                                    <th>Total Refund</th>
+                                                    <td>
+                                                        <span class="display_currency">0.00 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="success">
+                                                    <th>Total Payment</th>
+                                                    <td>
+                                                        <span class="display_currency">61,983.75 ৳</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="success">
+                                                    <th> Credit Sales: </th>
+                                                    <td>
+                                                        <b><span class="display_currency">31,055.00
+                                                                        ৳</span></b>
+                                                    </td>
+                                                </tr>
+                                                <tr class="success">
+                                                    <th> Total Sales: </th>
+                                                    <td>
+                                                        <b><span class="display_currency">94,622.50
+                                                                        ৳</span></b>
+                                                    </td>
+                                                </tr>
+                                                <tr class="danger">
+                                                    <th> Total Expense: </th>
+                                                    <td>
+                                                        <b><span class="display_currency">0.00 ৳</span></b>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            <hr class="my-3">
+                                            <div class="col-md-12">
+                                                <h3 class="register_soldtable_title">Details of products sold</h3>
+                                                <table class="table register_soldtable table-bordered">
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Brands</th>
+                                                        <th>Quantity</th>
+                                                        <th>Total amount</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>1.</td>
+                                                        <td></td>
+                                                        <td> 23.0000</td>
+                                                        <td>
+                                                            <span class="display_currency">94,622.50 ৳</span>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Final details -->
+                                                    <tr class="success">
+                                                        <th>#</th>
+                                                        <th></th>
+                                                        <th>23</th>
+                                                        <th>
+                                                            Grand Total:
+                                                            <span class="display_currency"
+                                                                  data-currency_symbol="true">94,622.50 ৳</span>
+                                                        </th>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <hr class="my-3">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Total Cash:</label>
+                                                        <!-- Expense -->
+                                                        <input type="text" class="form-control rounded-0"
+                                                               value="61,983.75">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Total Card Slips:</label>
+                                                        <!-- Expense -->
+                                                        <input type="text" class="form-control rounded-0" value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Total cheques:</label>
+                                                        <!-- Expense -->
+                                                        <input type="text" class="form-control rounded-0" value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-label">Closing Note:</label>
+                                                        <textarea class="form-control rounded-0" rows="" id=""
+                                                                  name="" cols="50"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="my-3">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="register_ruleauth">
+                                                        <ul>
+                                                            <li>
+                                                                <span class="register_ruleauth_title">User :</span>
+                                                                <span>Sky Mart</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="register_ruleauth_title">Email :</span>
+                                                                <span>admin@gmail.com</span>
+                                                            </li>
+                                                            <li>
+                                                                    <span class="register_ruleauth_title">Business
+                                                                        Location :</span>
+                                                                <span>SKY MART</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- modal footer -->
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn_main footer_innerbtn misty-color">Cancel</button>
+                                        <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                data-bs-dismiss="modal">Close Register</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- back button -->
+                        <button type="button" title="Go Back" class="btn_main header_btn opacity-color"
+                                id="back__btn">
+                            <span><i class="fa-solid fa-left"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- pos header end -->
+
+<!-- content main -->
+<div class="content_main py-4">
+    <!-- container -->
+    <div class="container-fluid">
+        <div class="row flex-row-reverse">
+            <!-- cart column -->
+            <div class="col-lg-6 col-xl-5 col-xxl-5">
+                <!-- cart box -->
+                <div class="cart__box">
+                    <!-- card box header -->
+                    <div class="card_box_header mb-3">
+                        <div class="row gx-2">
+                            <div class="col-md-5 col-lg-6 col-xl-5 col-12 col-sm-6">
+                                <!-- select customer -->
+                                <div class="input-group">
+                                    <span class="input-group-text rounded-0"><i class="fa-solid fa-user"></i></span>
+                                    <!-- select -->
+                                    <select name="" id="" class="form-select">
+                                        <option value="">Walk-In Customer</option>
+                                        <option value="">Customer One</option>
+                                        <option value="">Customer Two</option>
+                                        <option value="">Customer Three</option>
+                                        <option value="">Customer Four</option>
+                                    </select>
+                                    <!-- add user btn -->
+                                    <button class="input-group-text rounded-0 bg-navy add_btn"
+                                            data-bs-target="#addcustomer_modal" data-bs-toggle="modal">
+                                        <i class="fa-solid fa-circle-plus"></i>
+                                    </button>
+                                    <!-- add user modal -->
+                                    <div class="modal fade" id="addcustomer_modal">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!-- modal header -->
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title">Add a new contact</h2>
+                                                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <!-- modal body -->
+                                                <div class="modal-body">
+                                                    <div class="addcontact_row">
+                                                        <div class="row gy-3">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Contact
+                                                                        ID:</label>
+                                                                    <!-- select location -->
+                                                                    <input type="text"
+                                                                           class="rounded-0 form-control"
+                                                                           placeholder="Contact ID">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Customer
+                                                                        Group:</label>
+                                                                    <!-- select category -->
+                                                                    <select name="" id=""
+                                                                            class="form-select rounded-0">
+                                                                        <option value="" hidden="" selected="">
+                                                                            Please Select
+                                                                        </option>
+                                                                        <option value="">None</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">First
+                                                                        Name:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="text"
+                                                                           class="form-control rounded-0"
+                                                                           placeholder="First Name">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Last
+                                                                        Name:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="text"
+                                                                           class="form-control rounded-0"
+                                                                           placeholder="Last Name">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Mobile:</label>
+                                                                    <!-- date -->
+                                                                    <input type="tel" class="form-control rounded-0"
+                                                                           placeholder="Mobile Number">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Email:</label>
+                                                                    <!-- date -->
+                                                                    <input type="tel" class="form-control rounded-0"
+                                                                           placeholder="Mobile Number">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- modal footer -->
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                            class="btn_main footer_innerbtn misty-color">Save</button>
+                                                    <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7 col-lg-6 col-xl-7 col-12 col-sm-6">
+                                <!-- Search Proeduct -->
+                                <div class="input-group">
+                                    <button class="input-group-text rounded-0 add_btn" data-bs-toggle="modal"
+                                            data-bs-target="#search_add">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                    <!-- search modal -->
+                                    <div class="modal fade" id="search_add">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!-- modal header -->
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title">Search products by</h2>
+                                                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <!-- modal body -->
+                                                <div class="modal-body">
+                                                    <div class="search_modal_row">
+                                                        <div class="row gy-3">
+                                                            <div class="col-md-6">
+                                                                <div class="search_checked">
+                                                                    <!-- inner check -->
+                                                                    <label class="check_inner">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <span>Product Name</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="search_checked">
+                                                                    <!-- inner check -->
+                                                                    <label class="check_inner">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <span>SKU</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="search_checked">
+                                                                    <!-- inner check -->
+                                                                    <label class="check_inner">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <span>Custom Field1</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="search_checked">
+                                                                    <!-- inner check -->
+                                                                    <label class="check_inner">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <span>Custom Field2</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="search_checked">
+                                                                    <!-- inner check -->
+                                                                    <label class="check_inner">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <span>Custom Field3</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="search_checked">
+                                                                    <!-- inner check -->
+                                                                    <label class="check_inner">
+                                                                        <input type="checkbox">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <span> Custom Field4</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- modal footer -->
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                            class="btn_main footer_innerbtn misty-color">Save</button>
+                                                    <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- search input -->
+                                    <input class="form-control" type="text"
+                                           placeholder="Enter Product Name / SKU / Product bar Code">
+                                    <button class="input-group-text rounded-0 bg-navy add_btn"
+                                            data-bs-target="#add_product" data-bs-toggle="modal">
+                                        <i class="fa-solid fa-circle-plus"></i>
+                                    </button>
+                                    <!-- add new product -->
+                                    <div class="modal fade" id="add_product">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <!-- modal header -->
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title">Add new product</h2>
+                                                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <!-- modal body -->
+                                                <div class="modal-body">
+                                                    <form action="" class="addproduct_modalrow">
+                                                        <div class="row gy-3">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Product
+                                                                        Name:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="text"
+                                                                           class="form-control rounded-0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">SKU:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="text"
+                                                                           class="form-control rounded-0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Barcode
+                                                                        Type:</label>
+                                                                    <!-- select location -->
+                                                                    <select name="" id=""
+                                                                            class="form-select rounded-0">
+                                                                        <option value="" hidden="" selected="">
+                                                                            Please Select
+                                                                        </option>
+                                                                        <option value="">A</option>
+                                                                        <option value="">B</option>
+                                                                        <option value="">C</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Unit:</label>
+                                                                    <!-- select location -->
+                                                                    <select name="" id=""
+                                                                            class="form-select rounded-0">
+                                                                        <option value="" hidden="" selected="">
+                                                                            Please Select
+                                                                        </option>
+                                                                        <option value="">Pieces</option>
+                                                                        <option value="">Box</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Brand:</label>
+                                                                    <!-- select location -->
+                                                                    <select name="" id=""
+                                                                            class="form-select rounded-0">
+                                                                        <option value="" hidden="" selected="">
+                                                                            Please Select
+                                                                        </option>
+                                                                        <option value="">China</option>
+                                                                        <option value="">Itali</option>
+                                                                        <option value="">USA</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for=""
+                                                                           class="form-label">Category:</label>
+                                                                    <!-- select location -->
+                                                                    <select name="" id=""
+                                                                            class="form-select rounded-0">
+                                                                        <option value="" hidden="" selected="">
+                                                                            Please Select
+                                                                        </option>
+                                                                        <option value="">Silk</option>
+                                                                        <option value="">Reshmi</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for=""
+                                                                           class="form-label">Quantity:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="number"
+                                                                           class="form-control rounded-0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Selling
+                                                                        Price:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="number"
+                                                                           class="form-control rounded-0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Product
+                                                                        Image:</label>
+                                                                    <!-- Reference no -->
+                                                                    <input type="file"
+                                                                           class="form-control rounded-0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="" class="form-label">Product
+                                                                        Descreption:</label>
+                                                                    <!-- Reference no -->
+                                                                    <textarea name="" id="" rows="5"
+                                                                              class="form-control rounded-0"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <!-- modal footer -->
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                            class="btn_main footer_innerbtn misty-color">Save</button>
+                                                    <button type="button" class="btn_main footer_innerbtn bg-navy"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- product table content -->
+                    <div class="product__table_content">
+                        <!-- product table -->
+                        <div class="product__table">
+                            <!-- table -->
+                            <table class="table table-condensed table-bordered table-responsive">
+                                <!-- table header -->
+                                <thead>
+                                <tr>
+                                    <th class="text-start">Product</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Subtotal</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                                </thead>
+                                <!-- table body -->
+                                <tbody>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <!-- select type -->
+                                        <div class="input-group mt-2">
+                                            <!-- select -->
+                                            <select name="" id="" class="form-select rounded-0">
+                                                <option value="">Pieces</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <!-- select type -->
+                                        <div class="input-group mt-2">
+                                            <!-- select -->
+                                            <select name="" id="" class="form-select rounded-0">
+                                                <option value="">Pieces</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <!-- select type -->
+                                        <div class="input-group mt-2">
+                                            <!-- select -->
+                                            <select name="" id="" class="form-select rounded-0">
+                                                <option value="">Pieces</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- table footer -->
+                        <div class="product_cart_footer">
+                            <table class="table table-responsive table-condensed">
+                                <tbody>
+                                <tr>
+                                    <td><b>Items:</b>
+                                        <span id="total_quantity">0</span>
+                                    </td>
+                                    <td>
+                                        <b>Total:</b>
+                                        <span id="price_total">00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex gap-1 flex-column">
+                                            <strong>Order Tax(+):</strong>
+                                            <input type="text" id="order_tax"
+                                                   class="rounded-0 vatInput form-control d-block">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            <strong>Discount(-):</strong>
+                                            <input type="text" id="total_discount"
+                                                   class="rounded-0 vatInput form-control d-block">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1 flex-column">
+                                            <strong>Shipping(+):</strong>
+                                            <input type="text" id="shipping_charges"
+                                                   class="rounded-0 vatInput form-control d-block">
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- product column -->
+            <div class="col-lg-6 col-xl-7 col-xxl-7">
+                <!-- pos product -->
+                <div class="pos__productcontent">
+
+                    <div class="product__header__filter">
+                        <div class="single__filter">
+                            <form action="" method="get">
+                                <select name="" class="form-select">
+                                    <option value="">Category</option>
+                                    <option value="">Category1</option>
+                                    <option value="">Category2</option>
+                                    <option value="">Category3</option>
+                                    <option value="">Category4</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="single__filter">
+                            <form action="" method="get">
+                                <select name="" class="form-select">
+                                    <option value="">Category</option>
+                                    <option value="">Category1</option>
+                                    <option value="">Category2</option>
+                                    <option value="">Category3</option>
+                                    <option value="">Category4</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="single__filter">
+                            <form action="" method="get">
+                                <input type="search" class="form-control" placeholder="search product">
+                                <i class="fa fa-search"></i>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- pos product -->
+                    <div class="pos__product_wrapper">
+                        <!-- item -->
+                        <div class="product__box" title="Tateeghar Jamdani Sharee">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box stock__out">
+                            <span>Stock Out</span>
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee Tateeghar Jamdani Sharee Tateeghar
+                                Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (3).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src={{asset('admin/pos')}}/"assets/image/product/Image3 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (3).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (3).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (3).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (1).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (2).png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
+                        </div>
+                        <!-- item -->
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content main end-->
+
+<!-- footer modal list -->
+
+<!-- suspend modal -->
+<div class="modal fade" id="suspend_modalnote">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- modal header -->
+            <div class="modal-header">
+                <h2 class="modal-title">Suspend Sale</h2>
+                <button class="btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- modal body -->
+            <div class="modal-body">
+                <div class="suspend_notebody">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="" class="form-label">Suspend Note:</label>
+                                <textarea class="form-control rounded-0" rows="" id="" name="" cols="50"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal footer -->
+            <div class="modal-footer">
+                <button type="submit" class="btn_main footer_innerbtn misty-color">Save</button>
+                <button type="button" class="btn_main footer_innerbtn bg-navy"
+                        data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- card modal -->
+<div class="modal fade" id="card_payment">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- modal header -->
+            <div class="modal-header">
+                <h2 class="modal-title">Suspend Sale</h2>
+                <button class="btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- modal body -->
+            <div class="modal-body">
+                <div class="cardpayment_body">
+                    <div class="row gy-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="" class="form-label">Card Number:</label>
+                                <!-- Reference no -->
+                                <input type="text" class="form-control rounded-0" placeholder="Card Number">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="" class="form-label">Card holder name:</label>
+                                <!-- Reference no -->
+                                <input type="text" class="form-control rounded-0" placeholder="Card holder name">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="" class="form-label">Card Transaction No.</label>
+                                <!-- Reference no -->
+                                <input type="text" class="form-control rounded-0"
+                                       placeholder="Card Transaction No.">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="form-label">Card Type</label>
+                                <!-- card type no -->
+                                <select name="" id="" class="rounded-0 form-select">
+                                    <option value="">Visa</option>
+                                    <option value="">Master Card</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="form-label">Month</label>
+                                <!-- Reference no -->
+                                <input type="text" class="form-control rounded-0" placeholder="Month">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="form-label">Year</label>
+                                <!-- Reference no -->
+                                <input type="text" class="form-control rounded-0" placeholder="Year">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="" class="form-label">Security Code</label>
+                                <!-- Reference no -->
+                                <input type="text" class="form-control rounded-0" placeholder="Security Code">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- modal footer -->
+            <div class="modal-footer">
+                <button type="submit" class="btn_main footer_innerbtn misty-color">Save</button>
+                <button type="button" class="btn_main footer_innerbtn bg-navy"
+                        data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- multiple payment -->
+<div class="modal fade" id="multiple_payment">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- modal header -->
+            <div class="modal-header">
+                <h2 class="modal-title">Payment</h2>
+                <button class="btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- payment -->
+                        <div class="payment_row mt-4">
+                            <div class="row gy-3">
+                                <div class="col-md-6">
+                                    <label for="" class="form-label">Amount:</label>
+                                    <div class="input-group">
+                                        <button class="input-group-text rounded-0">
+                                            <i class="fa-solid fa-money-bill"></i>
+                                        </button>
+                                        <!-- amount -->
+                                        <input type="number" class="form-control rounded-0">
+                                    </div>
+                                </div>
+                                <!-- payment method -->
+                                <div class="col-md-6">
+                                    <label for="" class="form-label">Payment Method:</label>
+                                    <select name="" id="paymentMethod" class="paymentMethod form-select rounded-0">
+                                        <option value="" selected hidden>Select Payment</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Card">Card</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Other">Other</option>
+                                        <option value="Customer Payment 1">Customer Payment 1
+                                        </option>
+                                        <option value="Customer Payment 2">Customer Payment 2
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- card payment row -->
+                                <div class="cardpayment_row">
+                                    <div class="row gy-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Card
+                                                    Number:</label>
+                                                <!-- Reference no -->
+                                                <input type="text" class="form-control rounded-0"
+                                                       placeholder="Card Number">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Card holder
+                                                    name:</label>
+                                                <!-- Reference no -->
+                                                <input type="text" class="form-control rounded-0"
+                                                       placeholder="Card holder name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Card
+                                                    Transaction No:</label>
+                                                <!-- Reference no -->
+                                                <input type="text" class="form-control rounded-0"
+                                                       placeholder="Card Transaction No">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Card
+                                                    Type:</label>
+                                                <!-- Reference no -->
+                                                <select name="" id="" class="form-select rounded-0">
+                                                    <option value="" selected hidden>Select Card
+                                                    </option>
+                                                    <option value="">Credit Card</option>
+                                                    <option value="">Debit Card</option>
+                                                    <option value="">Visa</option>
+                                                    <option value="">Master Card</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Month</label>
+                                                <!-- Reference no -->
+                                                <input type="text" class="form-control rounded-0"
+                                                       placeholder="Month">
+                                            </div>
+                                        </div>
+                                        <!-- payment note -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Year:</label>
+                                                <input type="text" class="form-control rounded-0"
+                                                       placeholder="Year">
+                                            </div>
+                                        </div>
+                                        <!-- payment note -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Security
+                                                    Code:</label>
+                                                <input type="text" class="form-control rounded-0"
+                                                       placeholder="Security Code">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- checque payment row -->
+                                <div class="cheque_payment_row">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Cheque
+                                                    No.</label>
+                                                <input type="text" class="form-control rounded-0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- checque payment row -->
+                                <div class="bank_payment_row">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Bank Account
+                                                    No.</label>
+                                                <input type="text" class="form-control rounded-0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- cutomer payment row -->
+                                <div class="cutomer_payment_row">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="" class="form-label">Transaction
+                                                    No.</label>
+                                                <input type="text" class="form-control rounded-0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- payment note -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="" class="form-label">Payment note:</label>
+                                        <textarea class="form-control rounded-0" rows="" id="" name=""
+                                                  cols="50"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- add payment row -->
+                                <div class="add_payment_row mb-3">
+                                    <button class="btn_main bg-navy w-100 p-2">Add Payment Row</button>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="" class="form-label">Sell note:</label>
+                                            <textarea class="form-control rounded-0" rows="" id="" name=""
+                                                      cols="50"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="" class="form-label">Staff note:</label>
+                                            <textarea class="form-control rounded-0" rows="" id="" name=""
+                                                      cols="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="box box-solid bg-orange">
+                            <div class="paybox_body row">
+                                <div class="col-12">
+                                    <strong>
+                                        Total Items:
+                                    </strong>
+                                    <br>
+                                    <span class="lead text-bold total_quantity">1.00</span>
+                                </div>
+                                <div class="col-12">
+                                    <hr>
+                                    <strong>
+                                        Total Payable:
+                                    </strong>
+                                    <br>
+                                    <span class="lead text-bold total_payable_span">1,521.25 ৳</span>
+                                </div>
+                                <div class="col-12">
+                                    <hr>
+                                    <strong>
+                                        Total Paying:
+                                    </strong>
+                                    <br>
+                                    <span class="lead text-bold total_paying">1,521.25 ৳</span>
+                                </div>
+                                <div class="col-12">
+                                    <hr>
+                                    <strong>
+                                        Change Return:
+                                    </strong>
+                                    <br>
+                                    <span class="lead text-bold change_return_span">0.00 ৳</span>
+                                </div>
+                                <div class="col-12">
+                                    <hr>
+                                    <strong>
+                                        Balance:
+                                    </strong>
+                                    <br>
+                                    <span class="lead text-bold balance_due">0.00 ৳</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal footer -->
+            <div class="modal-footer">
+                <button type="submit" class="btn_main footer_innerbtn misty-color">Save</button>
+                <button type="button" class="btn_main footer_innerbtn bg-navy"
+                        data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- pos footer -->
+<footer class="pos_footer">
+    <!-- container -->
+    <div class="container-fluid">
+        <!-- wrapper -->
+        <div class="pos_footer_wrapper">
+            <!-- pos footer button -->
+            <div class="pos_footer_btn d-flex align-items-center gap-2 flex-wrap">
+                <!-- draft btn -->
+                <button class="btn_main bg-info footer_innerbtn">
+                    <span><i class="fa-solid fa-notes"></i></span> Draft </button>
+                <!-- Quotation btn -->
+                <button class="btn_main bg-purple footer_innerbtn">
+                    <span><i class="fa-solid fa-edit"></i></span> Quotation </button>
+                <!-- suspend btn -->
+                <button class="btn_main misty-color footer_innerbtn" data-bs-target="#suspend_modalnote"
+                        data-bs-toggle="modal">
+                    <span><i class="fas fa-pause"></i></span> Suspend
+                </button>
+                <!-- Credit sale btn -->
+                <button class="btn_main bg-yellow footer_innerbtn">
+                    <span><i class="fa-solid fa-check"></i></span> Credit Sale </button>
+                <!-- card btn -->
+                <button class="btn_main bg-navy footer_innerbtn" data-bs-target="#card_payment"
+                        data-bs-toggle="modal">
+                    <span><i class="fa-solid fa-credit-card"></i></span> Card </button>
+                <!-- multiple payment -->
+                <button class="btn_main btn-success footer_innerbtn" data-bs-target="#multiple_payment"
+                        data-bs-toggle="modal">
+                    <span><i class="fas fa-money-check-alt"></i></span> Multiple Payment </button>
+                <!-- cash payment -->
+                <button class="btn_main bg-primary footer_innerbtn">
+                    <span><i class="fas fa-money-check-alt"></i></span> Cash </button>
+                <!-- total payable -->
+                <div class="total_payable">
+                    <span>Total Payable:</span>
+                    <strong id="total_payment">000</strong>
+                </div>
+                <!-- cencel -->
+                <button class="btn_main misty-color footer_innerbtn">
+                    <span><i class="fa-solid fa-xmark"></i></span> Cencel </button>
+            </div>
+            <!-- recent transection -->
+            <button class="btn_main bg-navy footer_innerbtn">
+                <span><i class="fas fa-clock"></i></span> Recent Transactions </button>
+        </div>
+    </div>
+</footer>
+<!-- pos footer end -->
+<!-- jquery link -->
+<script src="{{asset('admin/pos/assets/js/jquery.min.js')}}"></script>
+<!-- bootstrap js -->
+<script src="{{asset('admin/pos/assets/js/bootstrap.bundle.min.js')}}"></script>
+<!-- main js -->
+<script src="{{asset('admin/pos/assets/js/calculator.js')}}"></script>
+<script src="{{asset('admin/pos/assets/js/app.js')}}"></script>
+<script>
+</script>
+</body>
+
+</html>
