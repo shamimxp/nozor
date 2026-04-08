@@ -54,6 +54,25 @@
             @endif
             <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('admin.pos')}}" target="_blank"><i data-feather="mail"></i><span class="menu-title text-truncate" data-i18n="Sale">POS</span></a>
             </li>
+            <li class=" nav-item @if(Route::is('admin.category*') || Route::is('admin.sub_category*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="grid"></i><span class="menu-title text-truncate" data-i18n="Category Setup">Category Setup</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.category*')?'active':'' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.category.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Categories">Categories</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.sub-category*')?'active':'' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.sub-category.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Sub Categories">Sub Categories</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class=" nav-item @if(Route::is('admin.product-attribute*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Product Setup</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.product-attribute*')?'active':'' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Attribute</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="app-chat.html"><i data-feather="message-square"></i><span class="menu-title text-truncate" data-i18n="Chat">Chat</span></a>
             </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="app-todo.html"><i data-feather="check-square"></i><span class="menu-title text-truncate" data-i18n="Todo">Todo</span></a>

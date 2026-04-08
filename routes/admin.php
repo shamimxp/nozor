@@ -71,4 +71,16 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
     //Roles module
     Route::resource('/roles', RoleController::class);
+
+    //Category module
+    Route::resource('category', \App\Http\Controllers\Admin\CategoryController::class, ['as' => 'admin']);
+    Route::post('/category/status', [\App\Http\Controllers\Admin\CategoryController::class, 'getStatus'])->name('admin.category.status');
+
+    //SubCategory module
+    Route::resource('sub-category', \App\Http\Controllers\Admin\SubCategoryController::class, ['as' => 'admin']);
+    Route::post('/sub-category/status', [\App\Http\Controllers\Admin\SubCategoryController::class, 'getStatus'])->name('admin.sub_category.status');
+
+    //Product Attribute module
+    Route::resource('product-attribute', \App\Http\Controllers\Admin\ProductAttributeController::class, ['as' => 'admin']);
+    Route::post('/product-attribute/status', [\App\Http\Controllers\Admin\ProductAttributeController::class, 'getStatus'])->name('admin.product_attribute.status');
 });
