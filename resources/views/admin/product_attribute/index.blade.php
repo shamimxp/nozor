@@ -151,19 +151,41 @@
 
         $('body').on('click', '.deleteAttribute', function () {
             var id = $(this).data("id");
-            if(confirm("Are You sure want to delete?")){
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ url('admin/product-attribute') }}"+'/'+id,
-                    success: function (data) {
-                        table.draw();
-                        toastr.success(data.success);
-                    },
-                    error: function (data) {
-                        console.log('Error:', data);
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url('admin/product-attribute') }}"+'/'+id,
+                        success: function (data) {
+                            table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.success,
+                                customClass: {
+                                    confirmButton: 'btn btn-success'
+                                }
+                            });
+                        },
+                        error: function (data) {
+                            console.log('Error:', data);
+                        }
+                    });
+                }
+            });
         });
 
         $('body').on('change', '.changeStatus', function() {
@@ -174,7 +196,16 @@
                 url: "{{ route('admin.product_attribute.status') }}",
                 data: { 'id': id, 'status': status },
                 success: function(data) {
-                    toastr.success(data.success);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: data.success,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
                 }
             });
         });

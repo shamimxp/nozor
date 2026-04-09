@@ -17,6 +17,10 @@ class CategoryController extends Controller
             $categories = Category::latest()->get();
             return DataTables::of($categories)
                 ->addIndexColumn()
+                ->addColumn('image', function ($row) {
+                    $url = $row->image ? asset(config('imagepath.category') . $row->image) : asset('images/no-image.png');
+                    return '<img src="' . $url . '" width="50" class="img-thumbnail" alt="">';
+                })
                 ->addColumn('status', function ($row) {
                     $status = $row->status == 1 ? 'checked' : '';
                     return '<div class="custom-control custom-switch custom-switch-primary">
@@ -32,7 +36,7 @@ class CategoryController extends Controller
                     $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteCategory"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['image', 'status', 'action'])
                 ->make(true);
         }
         return view('admin.category.index');
@@ -42,13 +46,20 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:categories,name',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
-        Category::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'status' => 1,
-        ]);
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+        $category->status = 1;
+
+        if ($request->hasFile('image')) {
+            $filename = $category->uploadOne($request->image, 300, 300, config('imagepath.category'));
+            $category->image = $filename;
+        }
+
+        $category->save();
 
         return response()->json(['success' => 'Category saved successfully.']);
     }
@@ -56,6 +67,11 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::find($id);
+        if ($category->image) {
+            $category->image_url = asset(config('imagepath.category') . $category->image);
+        } else {
+            $category->image_url = asset('images/no-image.png');
+        }
         return response()->json($category);
     }
 
@@ -63,19 +79,33 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:categories,name,' . $id,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
-        Category::where('id', $id)->update([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-        ]);
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+
+        if ($request->hasFile('image')) {
+            if ($category->image) {
+                $category->deleteOne(config('imagepath.category'), $category->image);
+            }
+            $filename = $category->uploadOne($request->image, 300, 300, config('imagepath.category'));
+            $category->image = $filename;
+        }
+
+        $category->save();
 
         return response()->json(['success' => 'Category updated successfully.']);
     }
 
     public function destroy($id)
     {
-        Category::find($id)->delete();
+        $category = Category::find($id);
+        if ($category->image) {
+            $category->deleteOne(config('imagepath.category'), $category->image);
+        }
+        $category->delete();
         return response()->json(['success' => 'Category deleted successfully.']);
     }
 

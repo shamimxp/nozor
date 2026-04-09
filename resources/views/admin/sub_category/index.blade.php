@@ -26,6 +26,14 @@
                         <input type="text" name="name" id="name" class="form-control" placeholder="Sub Category Name" required>
                         <span class="text-danger error-text name_error"></span>
                     </div>
+                    <div class="form-group">
+                        <label for="image">Image</label>
+                        <input type="file" name="image" id="imageInput" class="form-control" accept="image/*">
+                        <span class="text-danger error-text image_error"></span>
+                        <div class="mt-1">
+                            <img id="imagePreview" src="{{ asset('images/no-image.png') }}" width="100" class="img-thumbnail" alt="">
+                        </div>
+                    </div>
                     <div class="mt-2">
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                         <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
@@ -44,9 +52,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Image</th>
                             <th>Category</th>
                             <th>Name</th>
-                            <th>Slug</th>
+                            <!-- <th>Slug</th> -->
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -74,9 +83,10 @@
             ajax: "{{ route('admin.sub-category.index') }}",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                {data: 'image', name: 'image', orderable: false, searchable: false},
                 {data: 'category', name: 'category'},
                 {data: 'name', name: 'name'},
-                {data: 'slug', name: 'slug'},
+                // {data: 'slug', name: 'slug'},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
@@ -90,29 +100,42 @@
             }
         });
 
+        // Image preview
+        $('#imageInput').on('change', function(){
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                $('#imagePreview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        });
+
         $('#subCategoryForm').on('submit', function (e) {
             e.preventDefault();
             $('#saveBtn').text('Sending...').attr('disabled', true);
             $('.error-text').text('');
 
+            let id = $('#sub_category_id').val();
             let url = "{{ route('admin.sub-category.store') }}";
-            let method = "POST";
-            if($('#sub_category_id').val()){
-                url = "{{ url('admin/sub-category') }}" + "/" + $('#sub_category_id').val();
-                method = "PUT";
+            let formData = new FormData(this);
+
+            if(id){
+                url = "{{ url('admin/sub-category') }}" + "/" + id;
+                formData.append('_method', 'PUT');
             }
 
             $.ajax({
-                data: $(this).serialize(),
                 url: url,
-                type: method,
-                dataType: 'json',
+                type: 'POST', // Use POST for both store and update when using FormData
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (data) {
                     $('#subCategoryForm').trigger("reset");
                     $('#sub_category_id').val('');
                     $('#formTitle').text('Add Sub Category');
                     $('#saveBtn').text('Save').attr('disabled', false);
                     $('#cancelBtn').addClass('d-none');
+                    $('#imagePreview').attr('src', "{{ asset('images/no-image.png') }}");
                     table.draw();
                     toastr.success(data.success);
                 },
@@ -137,6 +160,7 @@
                 $('#sub_category_id').val(data.id);
                 $('#category_id_select').val(data.category_id);
                 $('#name').val(data.name);
+                $('#imagePreview').attr('src', data.image_url);
             })
         });
 
@@ -147,23 +171,46 @@
             $('#saveBtn').text('Save');
             $(this).addClass('d-none');
             $('.error-text').text('');
+            $('#imagePreview').attr('src', "{{ asset('images/no-image.png') }}");
         });
 
         $('body').on('click', '.deleteSubCategory', function () {
             var id = $(this).data("id");
-            if(confirm("Are You sure want to delete?")){
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ url('admin/sub-category') }}"+'/'+id,
-                    success: function (data) {
-                        table.draw();
-                        toastr.success(data.success);
-                    },
-                    error: function (data) {
-                        console.log('Error:', data);
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url('admin/sub-category') }}"+'/'+id,
+                        success: function (data) {
+                            table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.success,
+                                customClass: {
+                                    confirmButton: 'btn btn-success'
+                                }
+                            });
+                        },
+                        error: function (data) {
+                            console.log('Error:', data);
+                        }
+                    });
+                }
+            });
         });
 
         $('body').on('change', '.changeStatus', function() {
@@ -174,7 +221,16 @@
                 url: "{{ route('admin.sub_category.status') }}",
                 data: { 'id': id, 'status': status },
                 success: function(data) {
-                    toastr.success(data.success);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: data.success,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
                 }
             });
         });

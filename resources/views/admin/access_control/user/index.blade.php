@@ -46,7 +46,7 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $('#dataTable').dataTable({
+            var table = $('#dataTable').DataTable({
                 serverSide: true,
                 processing: true,
                 responsive: true,
@@ -59,6 +59,30 @@
                     {data: "roles", searchable: false, orderable: false},
                     {data: "action", searchable: false, orderable: false},
                 ],
+            });
+
+            $(document).on('click', '.delete-user-btn', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var name = $(this).data('name');
+                Swal.fire({
+                    title: 'Delete user?',
+                    text: 'Are you sure you want to delete "' + name + '"? This will move the user to the trash.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    customClass: {
+                        confirmButton: 'btn btn-danger',
+                        cancelButton: 'btn btn-outline-primary ml-1'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         })
     </script>
