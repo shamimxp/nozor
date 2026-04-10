@@ -37,7 +37,10 @@ class ProductController extends Controller
                     return $cat . $sub;
                 })
                 ->addColumn('price', function ($row) {
-                    return '৳' . $row->selling_price;
+                    return '৳' . $row->selling_price . ' <a href="javascript:void(0)" class="btn btn-sm btn-outline-success p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="plus"></i></a>';
+                })
+                ->addColumn('stock', function ($row) {
+                    return $row->stock . ' <a href="javascript:void(0)" class="btn btn-sm btn-outline-success p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="plus"></i></a>';
                 })
                 ->addColumn('featured', function ($row) {
                     $featured = $row->is_featured == 1 ? 'checked' : '';
@@ -65,7 +68,7 @@ class ProductController extends Controller
                     $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['product', 'featured', 'status', 'action'])
+                ->rawColumns(['product', 'price', 'stock', 'featured', 'status', 'action'])
                 ->make(true);
         }
         return view('admin.product.index');
@@ -255,5 +258,17 @@ class ProductController extends Controller
     {
         $subcategories = SubCategory::where('category_id', $category_id)->where('status', 1)->get();
         return response()->json($subcategories);
+    }
+
+    public function updatePriceStock(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        if($request->type == 'stock'){
+            $product->stock = $request->value;
+        }else{
+            $product->selling_price = $request->value;
+        }
+        $product->save();
+        return response()->json(['success' => 'Product updated successfully.']);
     }
 }
