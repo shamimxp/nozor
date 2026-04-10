@@ -37,10 +37,10 @@ class ProductController extends Controller
                     return $cat . $sub;
                 })
                 ->addColumn('price', function ($row) {
-                    return '৳' . $row->selling_price . ' <a href="javascript:void(0)" class="btn btn-sm btn-outline-success p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="plus"></i></a>';
+                    return '৳' . $row->selling_price . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="edit"></i></a>';
                 })
                 ->addColumn('stock', function ($row) {
-                    return $row->stock . ' <a href="javascript:void(0)" class="btn btn-sm btn-outline-success p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="plus"></i></a>';
+                    return $row->stock . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="edit"></i></a>';
                 })
                 ->addColumn('featured', function ($row) {
                     $featured = $row->is_featured == 1 ? 'checked' : '';
@@ -54,7 +54,7 @@ class ProductController extends Controller
                 })
                 ->addColumn('status', function ($row) {
                     $status = $row->status == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-primary">
+                    return '<div class="custom-control custom-switch custom-switch-success">
                                 <input type="checkbox" class="custom-control-input changeStatus" data-id="' . $row->id . '" id="status_' . $row->id . '" ' . $status . '>
                                 <label class="custom-control-label" for="status_' . $row->id . '">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
