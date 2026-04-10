@@ -59,7 +59,8 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 1)->get();
         $attributes = ProductAttribute::where('status', 1)->get();
-        return view('admin.product.create', compact('categories', 'attributes'));
+        $units = \App\Models\Unit::where('status', 1)->get();
+        return view('admin.product.create', compact('categories', 'attributes', 'units'));
     }
 
     public function store(Request $request)
@@ -78,7 +79,7 @@ class ProductController extends Controller
         $product->slug = Str::slug($request->name);
         $product->category_id = $request->category_id;
         $product->sub_category_id = $request->sub_category_id;
-        $product->unit = $request->unit;
+        $product->unit_id = $request->unit_id;
         $product->short_description = $request->short_description;
         $product->max_order_qty = $request->max_order_qty ?? 0;
         $product->is_featured = $request->is_featured ? 1 : 0;
@@ -129,7 +130,8 @@ class ProductController extends Controller
         $categories = Category::where('status', 1)->get();
         $subcategories = SubCategory::where('category_id', $product->category_id)->get();
         $attributes = ProductAttribute::where('status', 1)->get();
-        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes'));
+        $units = \App\Models\Unit::where('status', 1)->get();
+        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes', 'units'));
     }
 
     public function update(Request $request, $id)
@@ -148,7 +150,7 @@ class ProductController extends Controller
         $product->slug = Str::slug($request->name);
         $product->category_id = $request->category_id;
         $product->sub_category_id = $request->sub_category_id;
-        $product->unit = $request->unit;
+        $product->unit_id = $request->unit_id;
         $product->short_description = $request->short_description;
         $product->max_order_qty = $request->max_order_qty ?? 0;
         $product->is_featured = $request->is_featured ? 1 : 0;

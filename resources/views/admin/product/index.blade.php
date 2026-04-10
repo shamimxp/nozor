@@ -5,8 +5,8 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header border-bottom p-1">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Product List</h4>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h4 class="card-title mb-0">Product List</h4>
                     <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
                 </div>
             </div>

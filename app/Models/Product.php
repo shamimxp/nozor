@@ -11,7 +11,7 @@ class Product extends Model
     use HasFactory, UploadAble;
 
     protected $fillable = [
-        'name', 'slug', 'category_id', 'sub_category_id', 'unit', 
+        'name', 'slug', 'category_id', 'sub_category_id', 'unit_id', 
         'short_description', 'max_order_qty', 'is_featured', 
         'status', 'selling_price', 'cost_price', 'featured_image', 
         'stock', 'discount_type', 'discount_amount'
@@ -25,6 +25,11 @@ class Product extends Model
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 
     public function gallery()

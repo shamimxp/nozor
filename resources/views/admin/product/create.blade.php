@@ -41,8 +41,13 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="unit">Unit</label>
-                                <input type="text" name="unit" id="unit" class="form-control" placeholder="Ex: kg, pc">
+                                <label for="unit_id">Unit</label>
+                                <select name="unit_id" id="unit_id" class="form-control select2">
+                                    <option value="">Select Unit</option>
+                                    @foreach($units as $unit)
+                                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">

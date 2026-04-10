@@ -88,4 +88,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('product', \App\Http\Controllers\Admin\ProductController::class, ['as' => 'admin']);
     Route::post('/product/status', [\App\Http\Controllers\Admin\ProductController::class, 'getStatus'])->name('admin.product.status');
     Route::get('/get-subcategory/{category_id}', [\App\Http\Controllers\Admin\ProductController::class, 'getSubCategory'])->name('admin.product.get_subcategory');
+
+    //Unit module
+    Route::resource('unit', \App\Http\Controllers\Admin\UnitController::class, ['as' => 'admin']);
+    Route::post('/unit/status', [\App\Http\Controllers\Admin\UnitController::class, 'getStatus'])->name('admin.unit.status');
 });
