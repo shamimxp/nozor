@@ -61,14 +61,14 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="selling_price">Selling Price <span class="text-danger">*</span></label>
+                                <label for="selling_price">Selling Price (৳) <span class="text-danger">*</span></label>
                                 <input type="number" step="0.01" name="selling_price" id="selling_price" class="form-control" value="{{ $product->selling_price }}" required>
                                 <span class="text-danger error-text selling_price_error"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="cost_price">Cost Price <span class="text-danger">*</span></label>
+                                <label for="cost_price">Cost Price (৳) <span class="text-danger">*</span></label>
                                 <input type="number" step="0.01" name="cost_price" id="cost_price" class="form-control" value="{{ $product->cost_price }}" required>
                                 <span class="text-danger error-text cost_price_error"></span>
                             </div>

@@ -24,15 +24,30 @@ class ProductController extends Controller
             $products = Product::with(['category', 'subCategory'])->latest()->get();
             return DataTables::of($products)
                 ->addIndexColumn()
-                ->addColumn('image', function ($row) {
+                ->addColumn('product', function ($row) {
                     $url = $row->featured_image ? asset(config('imagepath.product') . $row->featured_image) : asset('images/no-image.png');
-                    return '<img src="' . $url . '" width="50" class="img-thumbnail" alt="">';
+                    return '<div class="d-flex align-items-center">
+                                <img src="' . $url . '" width="40" class="img-thumbnail mr-1" alt="">
+                                <a href="'.route('admin.product.show', $row->id).'" class="text-body font-weight-bold">' . $row->name . '</a>
+                            </div>';
                 })
                 ->addColumn('category', function ($row) {
-                    return $row->category ? $row->category->name : 'N/A';
+                    $cat = $row->category ? $row->category->name : 'N/A';
+                    $sub = $row->subCategory ? ' > ' . $row->subCategory->name : '';
+                    return $cat . $sub;
                 })
                 ->addColumn('price', function ($row) {
-                    return 'S: ' . $row->selling_price . '<br>C: ' . $row->cost_price;
+                    return '৳' . $row->selling_price;
+                })
+                ->addColumn('featured', function ($row) {
+                    $featured = $row->is_featured == 1 ? 'checked' : '';
+                    return '<div class="custom-control custom-switch custom-switch-success">
+                                <input type="checkbox" class="custom-control-input changeFeatured" data-id="' . $row->id . '" id="featured_' . $row->id . '" ' . $featured . '>
+                                <label class="custom-control-label" for="featured_' . $row->id . '">
+                                    <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                    <span class="switch-icon-right"><i data-feather="x"></i></span>
+                                </label>
+                            </div>';
                 })
                 ->addColumn('status', function ($row) {
                     $status = $row->status == 1 ? 'checked' : '';
@@ -45,11 +60,12 @@ class ProductController extends Controller
                             </div>';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-primary btn-sm"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct"><i data-feather="trash"></i></a>';
+                    $btn = '<a href="' . route('admin.product.show', $row->id) . '" class="btn btn-info btn-sm mr-1"><i data-feather="eye"></i></a>';
+                    $btn .= '<a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-primary btn-sm mr-1"><i data-feather="edit"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['image', 'price', 'status', 'action'])
+                ->rawColumns(['product', 'featured', 'status', 'action'])
                 ->make(true);
         }
         return view('admin.product.index');
@@ -132,6 +148,12 @@ class ProductController extends Controller
         $attributes = ProductAttribute::where('status', 1)->get();
         $units = \App\Models\Unit::where('status', 1)->get();
         return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes', 'units'));
+    }
+
+    public function show($id)
+    {
+        $product = Product::with(['category', 'subCategory', 'unit', 'gallery', 'attributes.attribute'])->findOrFail($id);
+        return view('admin.product.show', compact('product'));
     }
 
     public function update(Request $request, $id)
@@ -219,6 +241,14 @@ class ProductController extends Controller
         $product->status = $request->status;
         $product->save();
         return response()->json(['success' => 'Status changed successfully.']);
+    }
+
+    public function getFeaturedStatus(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        $product->is_featured = $request->status;
+        $product->save();
+        return response()->json(['success' => 'Featured status changed successfully.']);
     }
 
     public function getSubCategory($category_id)

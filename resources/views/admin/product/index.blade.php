@@ -15,11 +15,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Image</th>
-                            <th>Name</th>
+                            <th>Product Name</th>
                             <th>Category</th>
                             <th>Price</th>
-                            <th>Stock</th>
+                            <th>Featured</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -47,11 +46,10 @@
             ajax: "{{ route('admin.product.index') }}",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                {data: 'image', name: 'image', orderable: false, searchable: false},
-                {data: 'name', name: 'name'},
+                {data: 'product', name: 'product'},
                 {data: 'category', name: 'category'},
                 {data: 'price', name: 'price'},
-                {data: 'stock', name: 'stock'},
+                {data: 'featured', name: 'featured', orderable: false, searchable: false},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
@@ -103,6 +101,19 @@
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.product.status') }}",
+                data: { 'id': id, 'status': status },
+                success: function(data) {
+                    toastr.success(data.success);
+                }
+            });
+        });
+
+        $('body').on('change', '.changeFeatured', function() {
+            var id = $(this).data('id');
+            var status = $(this).prop('checked') == true ? 1 : 0;
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.product.featured-status') }}",
                 data: { 'id': id, 'status': status },
                 success: function(data) {
                     toastr.success(data.success);
