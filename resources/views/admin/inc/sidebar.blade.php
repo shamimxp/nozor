@@ -71,6 +71,9 @@
                     <li class="{{ Route::is('admin.product-attribute*')?'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Attribute</span></a>
                     </li>
+                    <li class="{{ Route::is('admin.product*') && !Route::is('admin.product-attribute*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product List</span></a>
+                    </li>
                 </ul>
             </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="app-chat.html"><i data-feather="message-square"></i><span class="menu-title text-truncate" data-i18n="Chat">Chat</span></a>

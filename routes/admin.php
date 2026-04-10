@@ -83,4 +83,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Product Attribute module
     Route::resource('product-attribute', \App\Http\Controllers\Admin\ProductAttributeController::class, ['as' => 'admin']);
     Route::post('/product-attribute/status', [\App\Http\Controllers\Admin\ProductAttributeController::class, 'getStatus'])->name('admin.product_attribute.status');
+
+    //Product module
+    Route::resource('product', \App\Http\Controllers\Admin\ProductController::class, ['as' => 'admin']);
+    Route::post('/product/status', [\App\Http\Controllers\Admin\ProductController::class, 'getStatus'])->name('admin.product.status');
+    Route::get('/get-subcategory/{category_id}', [\App\Http\Controllers\Admin\ProductController::class, 'getSubCategory'])->name('admin.product.get_subcategory');
 });
