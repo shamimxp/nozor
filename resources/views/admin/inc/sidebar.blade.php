@@ -71,8 +71,11 @@
                     <li class="{{ Route::is('admin.product-attribute*')?'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Attribute</span></a>
                     </li>
-                    <li class="{{ Route::is('admin.product*') && !Route::is('admin.product-attribute*') ? 'active' : '' }}">
+                    <li class="{{ Route::is('admin.product.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.product.out-of-stock') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.product.out-of-stock')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Out of Stock</span></a>
                     </li>
                     <li class="{{ Route::is('admin.unit*') ? 'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.unit.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Units</span></a>

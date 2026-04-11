@@ -22,56 +22,70 @@ class ProductController extends Controller
     {
         if ($request->ajax()) {
             $products = Product::with(['category', 'subCategory'])->latest()->get();
-            return DataTables::of($products)
-                ->addIndexColumn()
-                ->addColumn('product', function ($row) {
-                    $url = $row->featured_image ? asset(config('imagepath.product') . $row->featured_image) : asset('images/no-image.png');
-                    return '<div class="d-flex align-items-center">
-                                <img src="' . $url . '" width="40" class="img-thumbnail mr-1" alt="">
-                                <a href="'.route('admin.product.show', $row->id).'" class="text-body font-weight-bold">' . $row->name . '</a>
-                            </div>';
-                })
-                ->addColumn('category', function ($row) {
-                    $cat = $row->category ? $row->category->name : 'N/A';
-                    $sub = $row->subCategory ? ' > ' . $row->subCategory->name : '';
-                    return $cat . $sub;
-                })
-                ->addColumn('price', function ($row) {
-                    return '৳' . $row->selling_price . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="edit"></i></a>';
-                })
-                ->addColumn('stock', function ($row) {
-                    return $row->stock . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="edit"></i></a>';
-                })
-                ->addColumn('featured', function ($row) {
-                    $featured = $row->is_featured == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-success">
-                                <input type="checkbox" class="custom-control-input changeFeatured" data-id="' . $row->id . '" id="featured_' . $row->id . '" ' . $featured . '>
-                                <label class="custom-control-label" for="featured_' . $row->id . '">
-                                    <span class="switch-icon-left"><i data-feather="check"></i></span>
-                                    <span class="switch-icon-right"><i data-feather="x"></i></span>
-                                </label>
-                            </div>';
-                })
-                ->addColumn('status', function ($row) {
-                    $status = $row->status == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-success">
-                                <input type="checkbox" class="custom-control-input changeStatus" data-id="' . $row->id . '" id="status_' . $row->id . '" ' . $status . '>
-                                <label class="custom-control-label" for="status_' . $row->id . '">
-                                    <span class="switch-icon-left"><i data-feather="check"></i></span>
-                                    <span class="switch-icon-right"><i data-feather="x"></i></span>
-                                </label>
-                            </div>';
-                })
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('admin.product.show', $row->id) . '" class="btn btn-info btn-sm mr-1"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-primary btn-sm mr-1"><i data-feather="edit"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct"><i data-feather="trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['product', 'price', 'stock', 'featured', 'status', 'action'])
-                ->make(true);
+            return $this->productDataTable($products);
         }
         return view('admin.product.index');
+    }
+
+    public function outOfStock(Request $request)
+    {
+        if ($request->ajax()) {
+            $products = Product::with(['category', 'subCategory'])->where('stock', '<=', 0)->latest()->get();
+            return $this->productDataTable($products);
+        }
+        return view('admin.product.out_of_stock');
+    }
+
+    private function productDataTable($products)
+    {
+        return DataTables::of($products)
+            ->addIndexColumn()
+            ->addColumn('product', function ($row) {
+                $url = $row->featured_image ? asset(config('imagepath.product') . $row->featured_image) : asset('images/no-image.png');
+                return '<div class="d-flex align-items-center">
+                            <img src="' . $url . '" width="40" class="img-thumbnail mr-1" alt="">
+                            <a href="'.route('admin.product.show', $row->id).'" class="text-body font-weight-bold">' . $row->name . '</a>
+                        </div>';
+            })
+            ->addColumn('category', function ($row) {
+                $cat = $row->category ? $row->category->name : 'N/A';
+                $sub = $row->subCategory ? ' > ' . $row->subCategory->name : '';
+                return $cat . $sub;
+            })
+            ->addColumn('price', function ($row) {
+                return '৳' . $row->selling_price . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="edit"></i></a>';
+            })
+            ->addColumn('stock', function ($row) {
+                return $row->stock . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="edit"></i></a>';
+            })
+            ->addColumn('featured', function ($row) {
+                $featured = $row->is_featured == 1 ? 'checked' : '';
+                return '<div class="custom-control custom-switch custom-switch-success">
+                            <input type="checkbox" class="custom-control-input changeFeatured" data-id="' . $row->id . '" id="featured_' . $row->id . '" ' . $featured . '>
+                            <label class="custom-control-label" for="featured_' . $row->id . '">
+                                <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                <span class="switch-icon-right"><i data-feather="x"></i></span>
+                            </label>
+                        </div>';
+            })
+            ->addColumn('status', function ($row) {
+                $status = $row->status == 1 ? 'checked' : '';
+                return '<div class="custom-control custom-switch custom-switch-success">
+                            <input type="checkbox" class="custom-control-input changeStatus" data-id="' . $row->id . '" id="status_' . $row->id . '" ' . $status . '>
+                            <label class="custom-control-label" for="status_' . $row->id . '">
+                                <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                <span class="switch-icon-right"><i data-feather="x"></i></span>
+                            </label>
+                        </div>';
+            })
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="' . route('admin.product.show', $row->id) . '" class="btn btn-info btn-sm mr-1"><i data-feather="eye"></i></a>';
+                $btn .= '<a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-primary btn-sm mr-1"><i data-feather="edit"></i></a>';
+                $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct"><i data-feather="trash"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['product', 'price', 'stock', 'featured', 'status', 'action'])
+            ->make(true);
     }
 
     public function create()

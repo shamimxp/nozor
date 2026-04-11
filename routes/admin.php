@@ -85,6 +85,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/product-attribute/status', [\App\Http\Controllers\Admin\ProductAttributeController::class, 'getStatus'])->name('admin.product_attribute.status');
 
     //Product module
+    Route::get('/product/out-of-stock', [\App\Http\Controllers\Admin\ProductController::class, 'outOfStock'])->name('admin.product.out-of-stock');
     Route::resource('product', \App\Http\Controllers\Admin\ProductController::class, ['as' => 'admin']);
     Route::post('/product/status', [\App\Http\Controllers\Admin\ProductController::class, 'getStatus'])->name('admin.product.status');
     Route::post('/product/featured-status', [\App\Http\Controllers\Admin\ProductController::class, 'getFeaturedStatus'])->name('admin.product.featured-status');
