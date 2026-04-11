@@ -15,6 +15,59 @@
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/global.css')}}">
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/main.css')}}">
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/responsive.css')}}">
+    <style>
+        /* Click effect for product box */
+        .product__box {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .product__box:not(.stock__out):active {
+            transform: scale(0.95);
+            background-color: #f0f0f0;
+        }
+
+        /* Hover effect */
+        .product__box:not(.stock__out):hover {
+            border-color: #001f3f;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Out of stock effect */
+        .product__box.stock__out {
+            filter: grayscale(1);
+            cursor: not-allowed;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .product__box.stock__out .product_thumb {
+            filter: blur(2px);
+        }
+
+        .product__box.stock__out .product_title {
+            color: #888;
+        }
+
+        .product__box.stock__out span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(220, 53, 69, 0.9);
+            color: #fff;
+            padding: 4px 12px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            z-index: 5;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+    </style>
 </head>
 
 <body class="main_body">
@@ -1865,20 +1918,13 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- table footer -->
-                        <div class="product_cart_footer">
-                            <table class="table table-responsive table-condensed">
-                                <tbody>
-                                <tr>
-                                    <td><b>Items:</b>
-                                        <span id="total_quantity">0</span>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
                         <!-- Final Summary Section -->
-                        <div class="pos-final-summary mt-3 p-3 border-top">
+                        <div class="pos-final-summary p-3 border-top">
+                            <div class="mb-2">
+                                <span class="fw-bold">Items:</span>
+                                <span id="total_quantity" class="fw-bold">0</span>
+                            </div>
+                            <hr class="my-2">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary">Sub total :</span>
                                 <span class="text-secondary fw-bold">৳ <span id="summary_subtotal">20,001.00</span></span>
@@ -1912,9 +1958,11 @@
 
                             <div class="payment-selection mb-3">
                                 <p class="fw-bold mb-2">Payment Method</p>
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-dark btn-sm px-4 py-2 rounded-0">Cash</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm px-4 py-2 rounded-0">Card</button>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button type="button" class="btn btn-dark btn-sm px-3 py-2 rounded-0">Cash</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0">Bank</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0">Nagad</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0">Bkash</button>
                                 </div>
                             </div>
 
@@ -2281,6 +2329,174 @@
                             <!-- title -->
                             <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
                         </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
+                        <div class="product__box">
+                            <!-- thumb -->
+                            <div class="product_thumb">
+                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
+                            </div>
+                            <!-- title -->
+                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2438,14 +2654,12 @@
                                     <select name="" id="paymentMethod" class="paymentMethod form-select rounded-0">
                                         <option value="" selected hidden>Select Payment</option>
                                         <option value="Cash">Cash</option>
+                                        <option value="Bank">Bank</option>
+                                        <option value="Nagad">Nagad</option>
+                                        <option value="Bkash">Bkash</option>
                                         <option value="Card">Card</option>
                                         <option value="Cheque">Cheque</option>
-                                        <option value="Bank Transfer">Bank Transfer</option>
                                         <option value="Other">Other</option>
-                                        <option value="Customer Payment 1">Customer Payment 1
-                                        </option>
-                                        <option value="Customer Payment 2">Customer Payment 2
-                                        </option>
                                     </select>
                                 </div>
                                 <!-- card payment row -->
