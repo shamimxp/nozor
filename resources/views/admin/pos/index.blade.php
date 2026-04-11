@@ -1137,7 +1137,7 @@
     <div class="container-fluid">
         <div class="row flex-row-reverse">
             <!-- cart column -->
-            <div class="col-lg-6 col-xl-5 col-xxl-5">
+            <div class="col-lg-4 col-xl-4 col-xxl-4">
                 <!-- cart box -->
                 <div class="cart__box">
                     <!-- card box header -->
@@ -1535,11 +1535,83 @@
                                                     class="fa-solid fa-plus"></i></button>
                                         </div>
                                         <!-- select type -->
-                                        <div class="input-group mt-2">
-                                            <!-- select -->
-                                            <select name="" id="" class="form-select rounded-0">
-                                                <option value="">Pieces</option>
-                                            </select>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
                                         </div>
                                     </td>
                                     <td style="width:25%">
@@ -1581,11 +1653,83 @@
                                                     class="fa-solid fa-plus"></i></button>
                                         </div>
                                         <!-- select type -->
-                                        <div class="input-group mt-2">
-                                            <!-- select -->
-                                            <select name="" id="" class="form-select rounded-0">
-                                                <option value="">Pieces</option>
-                                            </select>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
                                         </div>
                                     </td>
                                     <td style="width:25%">
@@ -1627,11 +1771,83 @@
                                                     class="fa-solid fa-plus"></i></button>
                                         </div>
                                         <!-- select type -->
-                                        <div class="input-group mt-2">
-                                            <!-- select -->
-                                            <select name="" id="" class="form-select rounded-0">
-                                                <option value="">Pieces</option>
-                                            </select>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
+                                                    class="fa fa-info-circle"></i></span>
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
                                         </div>
                                     </td>
                                     <td style="width:25%">
@@ -1657,42 +1873,71 @@
                                     <td><b>Items:</b>
                                         <span id="total_quantity">0</span>
                                     </td>
-                                    <td>
-                                        <b>Total:</b>
-                                        <span id="price_total">00</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex gap-1 flex-column">
-                                            <strong>Order Tax(+):</strong>
-                                            <input type="text" id="order_tax"
-                                                   class="rounded-0 vatInput form-control d-block">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex flex-column gap-1">
-                                            <strong>Discount(-):</strong>
-                                            <input type="text" id="total_discount"
-                                                   class="rounded-0 vatInput form-control d-block">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-1 flex-column">
-                                            <strong>Shipping(+):</strong>
-                                            <input type="text" id="shipping_charges"
-                                                   class="rounded-0 vatInput form-control d-block">
-                                        </div>
-                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <!-- Final Summary Section -->
+                        <div class="pos-final-summary mt-3 p-3 border-top">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary">Sub total :</span>
+                                <span class="text-secondary fw-bold">৳ <span id="summary_subtotal">20,001.00</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary">Product Discount:</span>
+                                <span class="text-secondary fw-bold">- ৳ <span id="summary_product_discount">400.02</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary">Extra Discount:</span>
+                                <div class="d-flex align-items-center">
+                                    <a href="javascript:void(0)" class="text-secondary me-2" data-bs-toggle="modal" data-bs-target="#discount_modal"><i class="fas fa-edit small text-muted"></i></a>
+                                    <span class="text-secondary fw-bold">- ৳ <span id="summary_extra_discount">0.00</span></span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary">Tax :</span>
+                                <span class="text-secondary fw-bold">৳ <span id="summary_tax">0.00</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary">Delivery Charge :</span>
+                                <span class="text-secondary fw-bold">৳ <span id="summary_shipping">0.00</span></span>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="fw-bolder mb-0">Total :</h4>
+                                <h4 class="fw-bolder mb-0">৳ <span id="summary_total">19,600.98</span></h4>
+                            </div>
+
+                            <div class="payment-selection mb-3">
+                                <p class="fw-bold mb-2">Payment Method</p>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-dark btn-sm px-4 py-2 rounded-0">Cash</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-4 py-2 rounded-0">Card</button>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary">Paid Amount :</span>
+                                <input type="text" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="19600.98">
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="text-secondary">Change Amount :</span>
+                                <span class="text-secondary fw-bold" id="summary_change_amount">0.00</span>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-3 mb-2">
+                                <button type="button" class="btn btn-outline-danger w-50 py-2 rounded-0">Cancel Order</button>
+                                <button type="button" class="btn btn-navy w-50 py-2 text-white rounded-0" style="background-color: #001f3f;">Place Order</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- product column -->
-            <div class="col-lg-6 col-xl-7 col-xxl-7">
+            <div class="col-lg-8 col-xl-9 col-xxl-8">
                 <!-- pos product -->
                 <div class="pos__productcontent">
 
@@ -2450,6 +2695,44 @@
     </div>
 </footer>
 <!-- pos footer end -->
+<!-- Discount Modal -->
+<div class="modal fade" id="discount_modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <!-- modal header -->
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Update Discount</h5>
+                <button class="btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="" class="form-label text-secondary small">Discount</label>
+                            <input type="number" id="modal_discount_amount" class="form-control" value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="" class="form-label text-secondary small">Type</label>
+                            <select id="modal_discount_type" class="form-select">
+                                <option value="amount">Amount (৳)</option>
+                                <option value="percentage">Percentage (%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal footer -->
+            <div class="modal-footer border-0 justify-content-end gap-2">
+                <button type="button" id="reset_discount" class="btn btn-light px-4 py-2 rounded">Reset</button>
+                <button type="button" id="submit_discount" class="btn btn-navy px-4 py-2 text-white rounded" style="background-color: #001f3f;">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- jquery link -->
 <script src="{{asset('admin/pos/assets/js/jquery.min.js')}}"></script>
 <!-- bootstrap js -->

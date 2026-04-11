@@ -164,7 +164,7 @@
 
 .product_cart_footer {
     background: rgb(249 249 249);
-    padding: 10px;
+    /*padding: 10px;*/
     border-top: 2px solid #f5365c;
     border-radius: 4px;
 }
