@@ -95,4 +95,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Unit module
     Route::resource('unit', \App\Http\Controllers\Admin\UnitController::class, ['as' => 'admin']);
     Route::post('/unit/status', [\App\Http\Controllers\Admin\UnitController::class, 'getStatus'])->name('admin.unit.status');
+
+    //Customer module
+    Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class, ['as' => 'admin']);
 });
