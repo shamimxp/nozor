@@ -1565,11 +1565,10 @@
                                 <tr class="cart__product">
                                     <td style="width: 35%;">
                                         <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
                                         </h4>
                                         <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
                                                 class="product_price_amount">500</span> ৳</p>
                                     </td>
                                     <td style="width: 30%;">
@@ -1605,11 +1604,10 @@
                                 <tr class="cart__product">
                                     <td style="width: 35%;">
                                         <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
                                         </h4>
                                         <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
                                                 class="product_price_amount">500</span> ৳</p>
                                     </td>
                                     <td style="width: 30%;">
@@ -1644,11 +1642,10 @@
                                 <tr class="cart__product">
                                     <td style="width: 35%;">
                                         <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
                                         </h4>
                                         <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
                                                 class="product_price_amount">500</span> ৳</p>
                                     </td>
                                     <td style="width: 30%;">
@@ -1683,129 +1680,10 @@
                                 <tr class="cart__product">
                                     <td style="width: 35%;">
                                         <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
                                         </h4>
                                         <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                        <!-- select type -->
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
                                                 class="product_price_amount">500</span> ৳</p>
                                     </td>
                                     <td style="width: 30%;">
@@ -1841,11 +1719,10 @@
                                 <tr class="cart__product">
                                     <td style="width: 35%;">
                                         <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
                                         </h4>
                                         <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
                                                 class="product_price_amount">500</span> ৳</p>
                                     </td>
                                     <td style="width: 30%;">
@@ -1880,12 +1757,125 @@
                                 <tr class="cart__product">
                                     <td style="width: 35%;">
                                         <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee <span><i
-                                                    class="fa fa-info-circle"></i></span>
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
                                         </h4>
                                         <!-- product cart price -->
-                                        <p class="product_cart_price"> <span
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
                                                 class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <!-- select type -->
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
+                                                class="product_price_amount">500</span> ৳</p>
+                                    </td>
+                                    <td style="width: 30%;">
+                                        <!-- product quantity -->
+                                        <div class="input-group">
+                                            <!-- decress btn -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
+                                                    class="fa-solid fa-minus"></i></button>
+                                            <!-- quantity input -->
+                                            <input class="form-control text-center quantity_input" type="text"
+                                                   value="0">
+                                            <!-- incress -->
+                                            <button
+                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
+                                                    class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <!-- item subtotal -->
+                                        <p class="product_item_subtotal text-center">
+                                            <span class="subtotal__amount">0</span> ৳
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%;" class="text-center">
+                                        <button class="cart_actionBtn btn_main misty-color">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- product item -->
+                                <tr class="cart__product">
+                                    <td style="width: 35%;">
+                                        <!-- product title -->
+                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
+                                        </h4>
+                                        <!-- product cart price -->
+                                        <p class="product_cart_price"> <span> <i class="fa fa-info-circle"></i></span> <span class="product_price_amount">500</span> ৳</p>
                                     </td>
                                     <td style="width: 30%;">
                                         <!-- product quantity -->
