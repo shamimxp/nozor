@@ -1584,352 +1584,10 @@
                                     <th class="text-center">Action</th>
                                 </tr>
                                 </thead>
-                                <!-- table body -->
-                                <tbody>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                        <!-- select type -->
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                        <!-- select type -->
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                        <!-- select type -->
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"><span> <i class="fa fa-info-circle"></i></span>  <span
-                                                class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- product item -->
-                                <tr class="cart__product">
-                                    <td style="width: 35%;">
-                                        <!-- product title -->
-                                        <h4 class="cart__product_title"> Tateeghar Jamdani Sharee
-                                        </h4>
-                                        <!-- product cart price -->
-                                        <p class="product_cart_price"> <span> <i class="fa fa-info-circle"></i></span> <span class="product_price_amount">500</span> ৳</p>
-                                    </td>
-                                    <td style="width: 30%;">
-                                        <!-- product quantity -->
-                                        <div class="input-group">
-                                            <!-- decress btn -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn decress_quantity"><i
-                                                    class="fa-solid fa-minus"></i></button>
-                                            <!-- quantity input -->
-                                            <input class="form-control text-center quantity_input" type="text"
-                                                   value="0">
-                                            <!-- incress -->
-                                            <button
-                                                class="input-group-text rounded-0 bg-navy add_btn incress_quantity"><i
-                                                    class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td style="width:25%">
-                                        <!-- item subtotal -->
-                                        <p class="product_item_subtotal text-center">
-                                            <span class="subtotal__amount">0</span> ৳
-                                        </p>
-                                    </td>
-                                    <td style="width: 10%;" class="text-center">
-                                        <button class="cart_actionBtn btn_main misty-color">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <tbody id="cart_table_body">
+                                    <tr>
+                                        <td colspan="4" class="text-center p-4 text-muted">No items in cart</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1942,16 +1600,18 @@
                             <hr class="my-2">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary">Sub total :</span>
-                                <span class="text-secondary fw-bold">৳ <span id="summary_subtotal">20,001.00</span></span>
+                                <span class="text-secondary fw-bold">৳ <span id="summary_subtotal">0.00</span></span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary">Product Discount:</span>
-                                <span class="text-secondary fw-bold">- ৳ <span id="summary_product_discount">400.02</span></span>
+                                <span class="text-secondary fw-bold">- ৳ <span id="summary_product_discount">0.00</span></span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary">Extra Discount:</span>
-                                <div class="d-flex align-items-center">
-                                    <a href="javascript:void(0)" class="text-secondary me-2" data-bs-toggle="modal" data-bs-target="#discount_modal"><i class="fas fa-edit small text-muted"></i></a>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-sm p-0 border-0" data-bs-toggle="modal" data-bs-target="#discount_modal">
+                                        <i class="fa-solid fa-edit text-dark small"></i>
+                                    </button>
                                     <span class="text-secondary fw-bold">- ৳ <span id="summary_extra_discount">0.00</span></span>
                                 </div>
                             </div>
@@ -1959,41 +1619,39 @@
                                 <span class="text-secondary">Tax :</span>
                                 <span class="text-secondary fw-bold">৳ <span id="summary_tax">0.00</span></span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-secondary">Delivery Charge :</span>
-                                <span class="text-secondary fw-bold">৳ <span id="summary_shipping">0.00</span></span>
+                                <span class="text-secondary fw-bold">৳ <span id="summary_delivery_charge">0.00</span></span>
+                            </div>
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
+                                <h3 class="fw-bold m-0">Total :</h3>
+                                <h3 class="fw-bold m-0 text-navy">৳ <span id="summary_total">0.00</span></h3>
                             </div>
 
-                            <hr class="my-3">
-
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="fw-bolder mb-0">Total :</h4>
-                                <h4 class="fw-bolder mb-0">৳ <span id="summary_total">19,600.98</span></h4>
-                            </div>
-
-                            <div class="payment-selection mb-3">
-                                <p class="fw-bold mb-2">Payment Method</p>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <button type="button" class="btn btn-dark btn-sm px-3 py-2 rounded-0">Cash</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0">Bank</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0">Nagad</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0">Bkash</button>
+                            <div class="payment-methods-section mb-3">
+                                <p class="small text-secondary fw-bold mb-2">Payment Method</p>
+                                <div class="d-flex gap-2 payment_methods_wrapper">
+                                    <button type="button" class="btn btn-navy btn-sm px-3 py-2 rounded-0 active payment-method-btn" data-method="Cash">Cash</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0 payment-method-btn" data-method="Bank">Bank</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0 payment-method-btn" data-method="Nagad">Nagad</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-0 payment-method-btn" data-method="Bkash">Bkash</button>
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-secondary">Paid Amount :</span>
-                                <input type="text" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="19600.98">
+                                <input type="number" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="0">
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <span class="text-secondary">Change Amount :</span>
-                                <span class="text-secondary fw-bold" id="summary_change_amount">0.00</span>
+                                <span class="text-secondary fw-bold">৳ <span id="summary_change_amount">0.00</span></span>
                             </div>
 
                             <div class="d-flex gap-2 mt-3 mb-2">
-                                <button type="button" class="btn btn-outline-danger w-50 py-2 rounded-0">Cancel Order</button>
-                                <button type="button" class="btn btn-navy w-50 py-2 text-white rounded-0" style="background-color: #001f3f;">Place Order</button>
+                                <button type="button" id="cancel_order" class="btn btn-outline-danger w-50 py-2 rounded-0">Cancel Order</button>
+                                <button type="button" id="place_order" class="btn btn-navy w-50 py-2 text-white rounded-0" style="background-color: #001f3f;">Place Order</button>
                             </div>
                         </div>
                     </div>
@@ -2592,21 +2250,196 @@ $(document).ready(function() {
         }, 500);
     });
 
-    // Infinite Scroll
-    const productWrapper = document.getElementById('pos_product_list');
-    if (productWrapper) {
-        productWrapper.addEventListener('scroll', function() {
-            if (productWrapper.scrollTop + productWrapper.clientHeight >= productWrapper.scrollHeight - 20) {
-                loadProducts(true);
+    // Cart Logic
+    let cart = {};
+    let extraDiscount = {
+        amount: 0,
+        type: 'amount'
+    };
+    let selectedPaymentMethod = 'Cash';
+
+    // Add to cart
+    $(document).on('click', '.product__box:not(.stock__out)', function() {
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        const price = parseFloat($(this).data('price'));
+        const stock = parseInt($(this).data('stock'));
+
+        if (cart[id]) {
+            if (cart[id].quantity < stock) {
+                cart[id].quantity++;
+            } else {
+                alert('No more stock available!');
             }
-        });
+        } else {
+            cart[id] = {
+                id: id,
+                name: name,
+                price: price,
+                quantity: 1,
+                stock: stock
+            };
+        }
+        updateCart();
+    });
+
+    function updateCart() {
+        let html = '';
+        let totalItems = 0;
+        let subtotal = 0;
+
+        for (let id in cart) {
+            const item = cart[id];
+            const itemSubtotal = item.price * item.quantity;
+            subtotal += itemSubtotal;
+            totalItems += item.quantity;
+
+            html += `
+                <tr class="cart__product" data-id="${item.id}">
+                    <td style="width: 35%;">
+                        <h4 class="cart__product_title">${item.name}</h4>
+                        <p class="product_cart_price">
+                            <span><i class="fa fa-info-circle"></i></span>
+                            <span class="product_price_amount">${item.price.toFixed(2)}</span> ৳
+                        </p>
+                    </td>
+                    <td style="width: 30%;">
+                        <div class="input-group">
+                            <button class="input-group-text rounded-0 bg-navy add_btn decress_quantity" data-id="${item.id}">
+                                <i class="fa-solid fa-minus text-white"></i>
+                            </button>
+                            <input class="form-control text-center quantity_input" type="text" value="${item.quantity}" readonly>
+                            <button class="input-group-text rounded-0 bg-navy add_btn incress_quantity" data-id="${item.id}">
+                                <i class="fa-solid fa-plus text-white"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td style="width:25%">
+                        <p class="product_item_subtotal text-center">
+                            <span class="subtotal__amount">${itemSubtotal.toFixed(2)}</span> ৳
+                        </p>
+                    </td>
+                    <td style="width: 10%;" class="text-center">
+                        <button class="cart_actionBtn btn_main misty-color remove_item" data-id="${item.id}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        $('#cart_table_body').html(html || '<tr><td colspan="4" class="text-center p-4 text-muted">No items in cart</td></tr>');
+        $('#total_quantity').text(totalItems);
+        calculateSummary(subtotal);
     }
 
-    // Stock Out Blocking
-    $(document).on('click', '.product__box.stock__out', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        alert('This product is out of stock!');
+    function calculateSummary(subtotal) {
+        let productDiscount = 0; // Assume 0 for now unless there's specific logic
+        let tax = 0;
+        let deliveryCharge = 0;
+
+        let totalExtraDiscount = 0;
+        if (extraDiscount.type === 'amount') {
+            totalExtraDiscount = extraDiscount.amount;
+        } else {
+            totalExtraDiscount = (subtotal * extraDiscount.amount) / 100;
+        }
+
+        let total = subtotal - productDiscount - totalExtraDiscount + tax + deliveryCharge;
+        if (total < 0) total = 0;
+
+        $('#summary_subtotal').text(subtotal.toLocaleString(undefined, {minimumFractionDigits: 2}));
+        $('#summary_product_discount').text(productDiscount.toFixed(2));
+        $('#summary_extra_discount').text(totalExtraDiscount.toFixed(2));
+        $('#summary_tax').text(tax.toFixed(2));
+        $('#summary_delivery_charge').text(deliveryCharge.toFixed(2));
+        $('#summary_total').text(total.toLocaleString(undefined, {minimumFractionDigits: 2}));
+        
+        // Update payment info
+        updateChangeAmount(total);
+    }
+
+    // Quantity actions
+    $(document).on('click', '.incress_quantity', function() {
+        const id = $(this).data('id');
+        if (cart[id].quantity < cart[id].stock) {
+            cart[id].quantity++;
+            updateCart();
+        } else {
+            alert('No more stock available!');
+        }
+    });
+
+    $(document).on('click', '.decress_quantity', function() {
+        const id = $(this).data('id');
+        if (cart[id].quantity > 1) {
+            cart[id].quantity--;
+            updateCart();
+        }
+    });
+
+    $(document).on('click', '.remove_item', function() {
+        const id = $(this).data('id');
+        delete cart[id];
+        updateCart();
+    });
+
+    // Discount Modal 
+    $('#submit_discount').on('click', function() {
+        extraDiscount.amount = parseFloat($('#modal_discount_amount').val()) || 0;
+        extraDiscount.type = $('#modal_discount_type').val();
+        $('#discount_modal').modal('hide');
+        updateCart();
+    });
+
+    $('#reset_discount').on('click', function() {
+        $('#modal_discount_amount').val(0);
+        $('#modal_discount_type').val('amount');
+        extraDiscount.amount = 0;
+        extraDiscount.type = 'amount';
+        $('#discount_modal').modal('hide');
+        updateCart();
+    });
+
+    // Payment Method
+    $(document).on('click', '.payment-method-btn', function() {
+        $('.payment-method-btn').removeClass('active btn-navy').addClass('btn-outline-secondary').css('background-color', '');
+        $(this).removeClass('btn-outline-secondary').addClass('active btn-navy').css('background-color', '#001f3f');
+        selectedPaymentMethod = $(this).data('method');
+    });
+
+    // Change Calculation
+    $('#summary_paid_amount').on('input', function() {
+        const totalText = $('#summary_total').text().replace(/,/g, '');
+        const total = parseFloat(totalText) || 0;
+        updateChangeAmount(total);
+    });
+
+    function updateChangeAmount(total) {
+        const paid = parseFloat($('#summary_paid_amount').val()) || 0;
+        const change = paid - total;
+        $('#summary_change_amount').text(change >= 0 ? change.toFixed(2) : '0.00');
+    }
+
+    // Cancel Order
+    $('#cancel_order').on('click', function() {
+        if (confirm('Are you sure you want to clear the cart?')) {
+            cart = {};
+            extraDiscount = { amount: 0, type: 'amount' };
+            $('#summary_paid_amount').val(0);
+            updateCart();
+        }
+    });
+
+    // Place Order Placeholder
+    $('#place_order').on('click', function() {
+        if (Object.keys(cart).length === 0) {
+            alert('Cart is empty!');
+            return;
+        }
+        alert('Order placed successfully! (Backend integration pending)');
+        cart = {};
+        updateCart();
     });
 });
 </script>

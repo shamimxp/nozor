@@ -205,7 +205,7 @@ class AdminController extends Controller
         $products = $query->latest()->offset($offset)->limit($limit)->get();
         
         if ($products->isEmpty() && $offset == 0) {
-            $html = '<div class="no-product-found text-center w-100 mt-5">
+            $html = '<div class="no-product-found w-100 text-center" style="width: 100%; flex: 0 0 100%; padding: 50px 0;">
                         <img src="' . asset('images/no-product-found.png') . '" alt="No Product Found" style="width: 150px; display: block; margin: 0 auto;">
                         <h4 class="mt-3 text-muted">No Product Found</h4>
                      </div>';
