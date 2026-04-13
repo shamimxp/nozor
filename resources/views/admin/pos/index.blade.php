@@ -15,32 +15,37 @@
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/global.css')}}">
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/main.css')}}">
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/responsive.css')}}">
+    <!-- Select2 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
-        /* Click effect for product box */
+        /* Product box — base overrides (layout in main.css) */
         .product__box {
-            transition: all 0.2s ease;
+            transition: all 0.22s ease;
             cursor: pointer;
             position: relative;
-            border: 1px solid transparent;
         }
 
-        .product__box:not(.stock__out):active {
-            transform: scale(0.95);
-            background-color: #f0f0f0;
-        }
-
-        /* Hover effect */
+        /* Hover: lift + border highlight + image zoom */
         .product__box:not(.stock__out):hover {
             border-color: #001f3f;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 18px rgba(0, 31, 63, 0.14);
+            transform: translateY(-3px);
         }
 
-        /* Out of stock effect */
+
+
+        /* Active: press-down */
+        .product__box:not(.stock__out):active {
+            transform: scale(0.96);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            background-color: #f5f7fa;
+        }
+
+        /* Out of stock */
         .product__box.stock__out {
-            filter: grayscale(1);
+            /* filter: grayscale(1); */
             cursor: not-allowed;
-            opacity: 0.8;
-            pointer-events: none;
+            opacity: 0.78;
         }
 
         .product__box.stock__out .product_thumb {
@@ -48,24 +53,44 @@
         }
 
         .product__box.stock__out .product_title {
-            color: #888;
+            color: #aaa;
         }
 
         .product__box.stock__out span {
             position: absolute;
-            top: 50%;
+            top: 40px;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            background: rgba(220, 53, 69, 0.9);
+            transform: translateX(-50%) rotate(-12deg);
+            background: rgba(220, 53, 69, 0.92);
             color: #fff;
-            padding: 4px 12px;
-            font-weight: bold;
-            font-size: 14px;
+            padding: 3px 10px;
+            font-weight: 700;
+            font-size: 11px;
             text-transform: uppercase;
             z-index: 5;
             border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
             white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .pos__product_wrapper {
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
+            padding-bottom: 20px;
+        }
+
+        /* Select2 POS Styling */
+        .select2-container .select2-selection--single {
+            height: 38px !important;
+            border-radius: 0 !important;
+            border: 1px solid #dee2e6 !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px !important;
         }
     </style>
 </head>
@@ -1978,515 +2003,36 @@
             <div class="col-lg-8 col-xl-9 col-xxl-8">
                 <!-- pos product -->
                 <div class="pos__productcontent">
-
                     <div class="product__header__filter">
                         <div class="single__filter">
-                            <form action="" method="get">
-                                <select name="" class="form-select">
-                                    <option value="">Category</option>
-                                    <option value="">Category1</option>
-                                    <option value="">Category2</option>
-                                    <option value="">Category3</option>
-                                    <option value="">Category4</option>
-                                </select>
-                            </form>
+                            <select name="category_id" id="category_filter" class="form-select select2">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="single__filter">
-                            <form action="" method="get">
-                                <select name="" class="form-select">
-                                    <option value="">Category</option>
-                                    <option value="">Category1</option>
-                                    <option value="">Category2</option>
-                                    <option value="">Category3</option>
-                                    <option value="">Category4</option>
-                                </select>
-                            </form>
+                            <select name="sub_category_id" id="sub_category_filter" class="form-select select2">
+                                <option value="">All Sub-Categories</option>
+                            </select>
                         </div>
                         <div class="single__filter">
-                            <form action="" method="get">
-                                <input type="search" class="form-control" placeholder="search product">
-                                <i class="fa fa-search"></i>
-                            </form>
+                            <div class="position-relative w-100">
+                                <input type="search" id="product_search" class="form-control" placeholder="Search product...">
+                                <i class="fa fa-search position-absolute" style="right: 10px; top: 7px; pointer-events: none;"></i>
+                            </div>
                         </div>
                     </div>
                     <!-- pos product -->
-                    <div class="pos__product_wrapper">
-                        <!-- item -->
-                        <div class="product__box" title="Tateeghar Jamdani Sharee">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee Tateeghar Jamdani Sharee</h>
+                    <div class="pos__product_wrapper mt-2" id="pos_product_list">
+                        <!-- Products will be loaded here via AJAX -->
+                    </div>
+                    <div id="load_more_loader" class="text-center my-3 d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                        <!-- item -->
-                        <div class="product__box stock__out">
-                            <span>Stock Out</span>
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee Tateeghar Jamdani Sharee Tateeghar
-                                Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (3).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src={{asset('admin/pos')}}/"assets/image/product/Image3 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (3).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (3).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image2.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image3 (3).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image4.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (1).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image1 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5 (2).png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h>
-                        </div>
-                        <!-- item -->
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
-                        <div class="product__box">
-                            <!-- thumb -->
-                            <div class="product_thumb">
-                                <img src="{{asset('admin/pos')}}/assets/image/product/Image5.png" alt="">
-                            </div>
-                            <!-- title -->
-                            <h4 class="product_title">Tateeghar Jamdani Sharee</h4>
-                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -2941,10 +2487,128 @@
 <script src="{{asset('admin/pos/assets/js/jquery.min.js')}}"></script>
 <!-- bootstrap js -->
 <script src="{{asset('admin/pos/assets/js/bootstrap.bundle.min.js')}}"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- main js -->
 <script src="{{asset('admin/pos/assets/js/calculator.js')}}"></script>
 <script src="{{asset('admin/pos/assets/js/app.js')}}"></script>
 <script>
+$(document).ready(function() {
+    // Initialize Select2
+    $('.select2').select2({
+        width: '100%'
+    });
+
+    let offset = 0;
+    const limit = 10;
+    let isLoading = false;
+    let hasMore = true;
+    let totalProductsLoaded = 0;
+    const maxProducts = 55;
+
+    function loadProducts(append = false) {
+        if (isLoading || (!hasMore && append)) return;
+        if (append && totalProductsLoaded >= maxProducts) return;
+
+        isLoading = true;
+        $('#load_more_loader').removeClass('d-none');
+
+        const category_id = $('#category_filter').val();
+        const sub_category_id = $('#sub_category_filter').val();
+        const search = $('#product_search').val();
+
+        $.ajax({
+            url: "{{ route('admin.pos.getProducts') }}",
+            type: "GET",
+            data: {
+                category_id: category_id,
+                sub_category_id: sub_category_id,
+                search: search,
+                offset: append ? offset : 0
+            },
+            success: function(response) {
+                if (append) {
+                    $('#pos_product_list').append(response.html);
+                    offset += response.count;
+                    totalProductsLoaded += response.count;
+                } else {
+                    $('#pos_product_list').html(response.html);
+                    offset = response.count;
+                    totalProductsLoaded = response.count;
+                }
+
+                hasMore = response.count === limit;
+                
+                if (totalProductsLoaded >= maxProducts) {
+                    hasMore = false;
+                }
+
+                isLoading = false;
+                $('#load_more_loader').addClass('d-none');
+            },
+            error: function() {
+                isLoading = false;
+                $('#load_more_loader').addClass('d-none');
+            }
+        });
+    }
+
+    // Initial load
+    loadProducts();
+
+    // Filters
+    $('#category_filter').on('change', function() {
+        const category_id = $(this).val();
+        
+        // Load subcategories
+        if (category_id) {
+            $.ajax({
+                url: "{{ route('admin.pos.getSubcategories', ['id' => ':id']) }}".replace(':id', category_id),
+                type: "GET",
+                success: function(subcategories) {
+                    let options = '<option value="">All Sub-Categories</option>';
+                    subcategories.forEach(sub => {
+                        options += `<option value="${sub.id}">${sub.name}</option>`;
+                    });
+                    $('#sub_category_filter').html(options).trigger('change.select2');
+                }
+            });
+        } else {
+            $('#sub_category_filter').html('<option value="">All Sub-Categories</option>').trigger('change.select2');
+        }
+        
+        loadProducts();
+    });
+
+    $('#sub_category_filter').on('change', function() {
+        loadProducts();
+    });
+
+    let searchTimer;
+    $('#product_search').on('input', function() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            loadProducts();
+        }, 500);
+    });
+
+    // Infinite Scroll
+    const productWrapper = document.getElementById('pos_product_list');
+    if (productWrapper) {
+        productWrapper.addEventListener('scroll', function() {
+            if (productWrapper.scrollTop + productWrapper.clientHeight >= productWrapper.scrollHeight - 20) {
+                loadProducts(true);
+            }
+        });
+    }
+
+    // Stock Out Blocking
+    $(document).on('click', '.product__box.stock__out', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        alert('This product is out of stock!');
+    });
+});
 </script>
 </body>
 

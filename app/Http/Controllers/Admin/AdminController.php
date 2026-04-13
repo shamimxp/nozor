@@ -177,8 +177,75 @@ class AdminController extends Controller
         }
     }
 
-    public function pos(){
-        return view('admin.pos.index');
+    public function pos()
+    {
+        $categories = \App\Models\Category::where('status', 1)->get();
+        return view('admin.pos.index', compact('categories'));
+    }
+
+    public function getPosProducts(Request $request)
+    {
+        $query = \App\Models\Product::where('status', 1);
+
+        if ($request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->sub_category_id) {
+            $query->where('sub_category_id', $request->sub_category_id);
+        }
+
+        if ($request->search) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        $limit = 10;
+        $offset = $request->offset ?? 0;
+        
+        $products = $query->latest()->offset($offset)->limit($limit)->get();
+        
+        if ($products->isEmpty() && $offset == 0) {
+            $html = '<div class="no-product-found text-center w-100 mt-5">
+                        <img src="' . asset('images/no-product-found.png') . '" alt="No Product Found" style="width: 150px; display: block; margin: 0 auto;">
+                        <h4 class="mt-3 text-muted">No Product Found</h4>
+                     </div>';
+            return response()->json([
+                'html' => $html,
+                'count' => 0,
+                'total' => 0
+            ]);
+        }
+
+        $html = '';
+        foreach ($products as $product) {
+            $stockOut = $product->stock <= 0 ? 'stock__out' : '';
+            $stockText = $product->stock <= 0 ? '<span>Stock Out</span>' : '';
+            $imageUrl = $product->featured_image ? asset(config('imagepath.product') . '/' . $product->featured_image) : asset('images/no-image.png');
+
+            $html .= '<div class="product__box ' . $stockOut . '" title="' . $product->name . '" 
+                        data-id="' . $product->id . '" 
+                        data-name="' . $product->name . '" 
+                        data-price="' . $product->selling_price . '"
+                        data-stock="' . $product->stock . '">
+                        ' . $stockText . '
+                        <div class="product_thumb">
+                            <img src="' . $imageUrl . '" alt="' . $product->name . '">
+                        </div>
+                        <h4 class="product_title">' . $product->name . '</h4>
+                      </div>';
+        }
+        
+        return response()->json([
+            'html' => $html,
+            'count' => $products->count(),
+            'total' => $query->count()
+        ]);
+    }
+
+    public function getPosSubcategories($category_id)
+    {
+        $subcategories = \App\Models\SubCategory::where('category_id', $category_id)->where('status', 1)->get();
+        return response()->json($subcategories);
     }
 
 
