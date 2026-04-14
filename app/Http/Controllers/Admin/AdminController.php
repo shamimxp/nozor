@@ -226,7 +226,9 @@ class AdminController extends Controller
                         data-id="' . $product->id . '" 
                         data-name="' . $product->name . '" 
                         data-price="' . $product->selling_price . '"
-                        data-stock="' . $product->stock . '">
+                        data-stock="' . $product->stock . '"
+                        data-discount-type="' . $product->discount_type . '"
+                        data-discount-amount="' . $product->discount_amount . '">
                         ' . $stockText . '
                         <div class="product_thumb">
                             <img src="' . $imageUrl . '" alt="' . $product->name . '">

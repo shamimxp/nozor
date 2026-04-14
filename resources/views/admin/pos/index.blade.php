@@ -92,6 +92,10 @@
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
         }
+        .btn-navy {
+            background-color: #001f3f !important;
+            color: white !important;
+        }
     </style>
 </head>
 
@@ -1626,7 +1630,7 @@
                             <hr class="my-2">
                             <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
                                 <h3 class="fw-bold m-0">Total :</h3>
-                                <h3 class="fw-bold m-0 text-navy">৳ <span id="summary_total">0.00</span></h3>
+                                <h3 class="fw-bold m-0 text-navy">৳ <span id="summary_total" class="total-amount">0.00</span></h3>
                             </div>
 
                             <div class="payment-methods-section mb-3">
@@ -1641,13 +1645,18 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-secondary">Paid Amount :</span>
-                                <input type="number" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="0">
+                                <input type="text" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="0">
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <span class="text-secondary">Change Amount :</span>
-                                <span class="text-secondary fw-bold">৳ <span id="summary_change_amount">0.00</span></span>
-                            </div>
+                             <div class="d-flex justify-content-between align-items-center mb-3">
+                                 <span class="text-secondary">Due Amount :</span>
+                                 <span class="text-secondary fw-bold">৳ <span id="summary_due_amount">0.00</span></span>
+                             </div>
+
+                             <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+                                 <span class="text-secondary">Change Amount :</span>
+                                 <span class="text-secondary fw-bold">৳ <span id="summary_change_amount">0.00</span></span>
+                             </div> -->
 
                             <div class="d-flex gap-2 mt-3 mb-2">
                                 <button type="button" id="cancel_order" class="btn btn-outline-danger w-50 py-2 rounded-0">Cancel Order</button>
@@ -2257,6 +2266,7 @@ $(document).ready(function() {
         type: 'amount'
     };
     let selectedPaymentMethod = 'Cash';
+    let cartTotal = 0; // Global variable to store total for calculations
 
     // Add to cart
     $(document).on('click', '.product__box:not(.stock__out)', function() {
@@ -2264,6 +2274,8 @@ $(document).ready(function() {
         const name = $(this).data('name');
         const price = parseFloat($(this).data('price'));
         const stock = parseInt($(this).data('stock'));
+        const discountType = $(this).data('discount-type');
+        const discountAmount = parseFloat($(this).data('discount-amount')) || 0;
 
         if (cart[id]) {
             if (cart[id].quantity < stock) {
@@ -2277,7 +2289,9 @@ $(document).ready(function() {
                 name: name,
                 price: price,
                 quantity: 1,
-                stock: stock
+                stock: stock,
+                discountType: discountType,
+                discountAmount: discountAmount
             };
         }
         updateCart();
@@ -2287,11 +2301,22 @@ $(document).ready(function() {
         let html = '';
         let totalItems = 0;
         let subtotal = 0;
+        let totalProductDiscount = 0;
 
         for (let id in cart) {
             const item = cart[id];
-            const itemSubtotal = item.price * item.quantity;
-            subtotal += itemSubtotal;
+            const itemOriginalTotal = item.price * item.quantity;
+            
+            // Calculate item discount
+            let itemDiscount = 0;
+            if (item.discountType === 'percentage') {
+                itemDiscount = (itemOriginalTotal * item.discountAmount) / 100;
+            } else {
+                itemDiscount = item.discountAmount * item.quantity;
+            }
+            
+            subtotal += itemOriginalTotal;
+            totalProductDiscount += itemDiscount;
             totalItems += item.quantity;
 
             html += `
@@ -2299,8 +2324,8 @@ $(document).ready(function() {
                     <td style="width: 35%;">
                         <h4 class="cart__product_title">${item.name}</h4>
                         <p class="product_cart_price">
-                            <span><i class="fa fa-info-circle"></i></span>
                             <span class="product_price_amount">${item.price.toFixed(2)}</span> ৳
+                            ${item.discountAmount > 0 ? `<small class="text-success ms-1">(-${item.discountType === 'percentage' ? item.discountAmount+'%' : '৳'+item.discountAmount})</small>` : ''}
                         </p>
                     </td>
                     <td style="width: 30%;">
@@ -2316,7 +2341,7 @@ $(document).ready(function() {
                     </td>
                     <td style="width:25%">
                         <p class="product_item_subtotal text-center">
-                            <span class="subtotal__amount">${itemSubtotal.toFixed(2)}</span> ৳
+                            <span class="subtotal__amount">${itemOriginalTotal.toFixed(2)}</span> ৳
                         </p>
                     </td>
                     <td style="width: 10%;" class="text-center">
@@ -2330,34 +2355,89 @@ $(document).ready(function() {
 
         $('#cart_table_body').html(html || '<tr><td colspan="4" class="text-center p-4 text-muted">No items in cart</td></tr>');
         $('#total_quantity').text(totalItems);
-        calculateSummary(subtotal);
+        calculateSummary(subtotal, totalProductDiscount);
     }
 
-    function calculateSummary(subtotal) {
-        let productDiscount = 0; // Assume 0 for now unless there's specific logic
+    function calculateSummary(subtotal, productDiscount) {
         let tax = 0;
         let deliveryCharge = 0;
 
         let totalExtraDiscount = 0;
-        if (extraDiscount.type === 'amount') {
-            totalExtraDiscount = extraDiscount.amount;
+        const discountableAmount = subtotal - productDiscount;
+
+        if (extraDiscount.type === 'percentage') {
+            totalExtraDiscount = (discountableAmount * extraDiscount.amount) / 100;
         } else {
-            totalExtraDiscount = (subtotal * extraDiscount.amount) / 100;
+            totalExtraDiscount = extraDiscount.amount;
         }
 
-        let total = subtotal - productDiscount - totalExtraDiscount + tax + deliveryCharge;
+        let total = discountableAmount - totalExtraDiscount + tax + deliveryCharge;
         if (total < 0) total = 0;
+        
+        cartTotal = total; // Store total in global variable
 
         $('#summary_subtotal').text(subtotal.toLocaleString(undefined, {minimumFractionDigits: 2}));
-        $('#summary_product_discount').text(productDiscount.toFixed(2));
-        $('#summary_extra_discount').text(totalExtraDiscount.toFixed(2));
+        $('#summary_product_discount').text(productDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
+        $('#summary_extra_discount').text(totalExtraDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_tax').text(tax.toFixed(2));
         $('#summary_delivery_charge').text(deliveryCharge.toFixed(2));
         $('#summary_total').text(total.toLocaleString(undefined, {minimumFractionDigits: 2}));
         
-        // Update payment info
-        updateChangeAmount(total);
+        // Ensure change is updated whenever total changes
+        updateDynamicChange();
     }
+
+    // // Change Calculation
+    // $('#summary_paid_amount').on('keyup', function() {
+    //     updateDynamicChange();
+    // });
+
+    // function updateDynamicChange() {
+    //     const total = cartTotal; // Use the raw numeric total
+    //     const paid = parseFloat($('#summary_paid_amount').val()) || 0;
+        
+    //     // Change is calculated if paid > total
+    //     const change = paid - total;
+    //     $('#summary_change_amount').text(change >= 0 ? change.toFixed(2) : '0.00');
+
+    //     // Due is calculated if total > paid
+    //     const due = total - paid;
+    //     $('#summary_due_amount').text(due >= 0 ? due.toFixed(2) : '0.00');
+    // }
+
+
+$('#summary_paid_amount').on('input', function () {
+    updateDynamicChange();
+});
+
+function updateDynamicChange() {
+
+    // ✅ Get total from UI (IMPORTANT)
+    let totalText = $('.total-amount').text(); // change selector if needed
+
+    // ✅ Remove ৳, comma, spaces
+    let total = totalText.replace(/[^\d.]/g, '');
+    total = parseFloat(total) || 0;
+
+    // ✅ Paid amount
+    let paid = parseFloat($('#summary_paid_amount').val()) || 0;
+
+    // ✅ Debug (VERY IMPORTANT)
+    console.log('TOTAL:', total);
+    console.log('PAID:', paid);
+
+    let change = 0;
+    let due = 0;
+
+    if (paid >= total) {
+        change = paid - total;
+    } else {
+        due = total - paid;
+    }
+
+    $('#summary_change_amount').text(change.toFixed(2));
+    $('#summary_due_amount').text(due.toFixed(2));
+}
 
     // Quantity actions
     $(document).on('click', '.incress_quantity', function() {
@@ -2403,23 +2483,12 @@ $(document).ready(function() {
 
     // Payment Method
     $(document).on('click', '.payment-method-btn', function() {
-        $('.payment-method-btn').removeClass('active btn-navy').addClass('btn-outline-secondary').css('background-color', '');
-        $(this).removeClass('btn-outline-secondary').addClass('active btn-navy').css('background-color', '#001f3f');
+        $('.payment-method-btn').removeClass('active btn-navy').addClass('btn-outline-secondary').css({'background-color': '', 'color': ''});
+        $(this).removeClass('btn-outline-secondary').addClass('active btn-navy').css({'background-color': '#001f3f', 'color': 'white'});
         selectedPaymentMethod = $(this).data('method');
     });
 
-    // Change Calculation
-    $('#summary_paid_amount').on('input', function() {
-        const totalText = $('#summary_total').text().replace(/,/g, '');
-        const total = parseFloat(totalText) || 0;
-        updateChangeAmount(total);
-    });
 
-    function updateChangeAmount(total) {
-        const paid = parseFloat($('#summary_paid_amount').val()) || 0;
-        const change = paid - total;
-        $('#summary_change_amount').text(change >= 0 ? change.toFixed(2) : '0.00');
-    }
 
     // Cancel Order
     $('#cancel_order').on('click', function() {
