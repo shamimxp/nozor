@@ -2206,7 +2206,7 @@ $(document).ready(function() {
                 }
 
                 hasMore = response.count === limit;
-                
+
                 if (totalProductsLoaded >= maxProducts) {
                     hasMore = false;
                 }
@@ -2227,7 +2227,7 @@ $(document).ready(function() {
     // Filters
     $('#category_filter').on('change', function() {
         const category_id = $(this).val();
-        
+
         // Load subcategories
         if (category_id) {
             $.ajax({
@@ -2244,7 +2244,7 @@ $(document).ready(function() {
         } else {
             $('#sub_category_filter').html('<option value="">All Sub-Categories</option>').trigger('change.select2');
         }
-        
+
         loadProducts();
     });
 
@@ -2267,7 +2267,6 @@ $(document).ready(function() {
         type: 'amount'
     };
     let selectedPaymentMethod = 'Cash';
-    let cartTotal = 0; // Global variable to store total for calculations
 
     // Add to cart
     $(document).on('click', '.product__box:not(.stock__out)', function() {
@@ -2307,7 +2306,7 @@ $(document).ready(function() {
         for (let id in cart) {
             const item = cart[id];
             const itemOriginalTotal = item.price * item.quantity;
-            
+
             // Calculate item discount
             let itemDiscount = 0;
             if (item.discountType === 'percentage') {
@@ -2315,7 +2314,7 @@ $(document).ready(function() {
             } else {
                 itemDiscount = item.discountAmount * item.quantity;
             }
-            
+
             subtotal += itemOriginalTotal;
             totalProductDiscount += itemDiscount;
             totalItems += item.quantity;
@@ -2374,16 +2373,16 @@ $(document).ready(function() {
 
         let total = discountableAmount - totalExtraDiscount + tax + deliveryCharge;
         if (total < 0) total = 0;
-        
-        cartTotal = total; // Store total in global variable
+
 
         $('#summary_subtotal').text(subtotal.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_product_discount').text(productDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_extra_discount').text(totalExtraDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_tax').text(tax.toFixed(2));
         $('#summary_delivery_charge').text(deliveryCharge.toFixed(2));
-        $('#summary_total').text(total.toLocaleString(undefined, {minimumFractionDigits: 2}));
-        
+        $('#summary_total').text(total.toFixed(2));
+        $('#summary_total_input').val(total);
+
         // Ensure change is updated whenever total changes
         updateDynamicChange();
     }
@@ -2396,7 +2395,7 @@ $(document).ready(function() {
     // function updateDynamicChange() {
     //     const total = cartTotal; // Use the raw numeric total
     //     const paid = parseFloat($('#summary_paid_amount').val()) || 0;
-        
+
     //     // Change is calculated if paid > total
     //     const change = paid - total;
     //     $('#summary_change_amount').text(change >= 0 ? change.toFixed(2) : '0.00');
@@ -2406,36 +2405,54 @@ $(document).ready(function() {
     //     $('#summary_due_amount').text(due >= 0 ? due.toFixed(2) : '0.00');
     // }
 
-
+// Corrected Event Listener for Paid Amount input
 $('#summary_paid_amount').on('input', function () {
     updateDynamicChange();
 });
 
+// Corrected Calculation Function with proper DOM targeting
 function updateDynamicChange() {
-    let total = cartTotal; 
+    // Get the raw total from the hidden input (set in calculateSummary)
+    let total = parseFloat($('#summary_total_input').val()) || 0;
+    // Get the paid amount from the input field, default to 0 if empty or invalid
     let paid = parseFloat($('#summary_paid_amount').val()) || 0;
+
+    // Format numbers to 2 decimal places for consistent calculation
+    total = parseFloat(total.toFixed(2));
+    paid = parseFloat(paid.toFixed(2));
 
     let change = 0;
     let due = 0;
 
+    // Core logic: If paid amount is greater than or equal to the total
     if (paid >= total) {
         change = paid - total;
-    } else {
+        due = 0;
+    } 
+    // If paid amount is less than the total
+    else {
+        change = 0;
         due = total - paid;
     }
 
-    $('#summary_change_amount').text(change.toLocaleString(undefined, {minimumFractionDigits: 2}));
-    $('#summary_due_amount').text(due.toLocaleString(undefined, {minimumFractionDigits: 2}));
+    // Update the HTML elements with the calculated values
+    $('#summary_change_amount').text(change.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    $('#summary_due_amount').text(due.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
 
-    // Optional: add color indicators
+    // --- Visual Feedback (Color Coding) ---
+    // Remove existing color classes from both elements
+    $('#summary_change_amount').removeClass('text-success fw-bold');
+    $('#summary_due_amount').removeClass('text-danger fw-bold');
+    
+    // Add back default text-secondary class
+    $('#summary_change_amount').addClass('text-secondary');
+    $('#summary_due_amount').addClass('text-secondary');
+
+    // Apply special styling based on the result
     if (due > 0) {
-        $('#summary_due_amount').closest('.d-flex').find('span').addClass('text-danger fw-bold').removeClass('text-secondary');
-        $('#summary_change_amount').closest('.d-flex').find('span').removeClass('text-success fw-bold').addClass('text-secondary');
+        $('#summary_due_amount').removeClass('text-secondary').addClass('text-danger fw-bold');
     } else if (change > 0) {
-        $('#summary_change_amount').closest('.d-flex').find('span').addClass('text-success fw-bold').removeClass('text-secondary');
-        $('#summary_due_amount').closest('.d-flex').find('span').removeClass('text-danger fw-bold').addClass('text-secondary');
-    } else {
-        $('.d-flex span').removeClass('text-danger text-success fw-bold').addClass('text-secondary');
+        $('#summary_change_amount').removeClass('text-secondary').addClass('text-success fw-bold');
     }
 }
 
@@ -2464,7 +2481,7 @@ function updateDynamicChange() {
         updateCart();
     });
 
-    // Discount Modal 
+    // Discount Modal
     $('#submit_discount').on('click', function() {
         extraDiscount.amount = parseFloat($('#modal_discount_amount').val()) || 0;
         extraDiscount.type = $('#modal_discount_type').val();
