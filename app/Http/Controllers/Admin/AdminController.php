@@ -180,7 +180,8 @@ class AdminController extends Controller
     public function pos()
     {
         $categories = \App\Models\Category::where('status', 1)->get();
-        return view('admin.pos.index', compact('categories'));
+        $customers = \App\Models\Customer::orderBy('name', 'asc')->get(['id', 'name', 'phone']);
+        return view('admin.pos.index', compact('categories', 'customers'));
     }
 
     public function getPosProducts(Request $request)

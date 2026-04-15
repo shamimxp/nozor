@@ -11,6 +11,11 @@ use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('run-migrate', function () {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    return \Illuminate\Support\Facades\Artisan::output();
+});
+
 //Route::group(['middleware' => ['guest:admin'],'prefix'=>'admin','as'=>'admin.'],function(){
 //    Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -98,4 +103,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
     //Customer module
     Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class, ['as' => 'admin']);
+
+    //Vendor module
+    Route::resource('vendor', \App\Http\Controllers\Admin\VendorController::class, ['as' => 'admin']);
 });

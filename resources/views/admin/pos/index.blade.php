@@ -1230,12 +1230,11 @@
                                 <div class="input-group">
                                     <span class="input-group-text rounded-0"><i class="fa-solid fa-user"></i></span>
                                     <!-- select -->
-                                    <select name="" id="" class="form-select">
+                                    <select name="customer_id" id="customer_id" class="form-select select2-customer">
                                         <option value="">Walk-In Customer</option>
-                                        <option value="">Customer One</option>
-                                        <option value="">Customer Two</option>
-                                        <option value="">Customer Three</option>
-                                        <option value="">Customer Four</option>
+                                        @foreach($customers as $customer)
+                                            <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->phone }})</option>
+                                        @endforeach
                                     </select>
                                     <!-- add user btn -->
                                     <button class="input-group-text rounded-0 bg-navy add_btn"
@@ -2163,7 +2162,7 @@
 <script>
 $(document).ready(function() {
     // Initialize Select2
-    $('.select2').select2({
+    $('.select2, .select2-customer').select2({
         width: '100%'
     });
 
