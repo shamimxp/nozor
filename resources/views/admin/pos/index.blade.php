@@ -1645,7 +1645,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-secondary">Paid Amount :</span>
-                                <input type="text" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="0">
+                                <input type="number" class="form-control form-control-sm text-end w-50 bg-light border-0 py-2" id="summary_paid_amount" value="0">
                             </div>
 
                              <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1653,10 +1653,10 @@
                                  <span class="text-secondary fw-bold">৳ <span id="summary_due_amount">0.00</span></span>
                              </div>
 
-                             <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+                             <div class="d-flex justify-content-between align-items-center mb-4">
                                  <span class="text-secondary">Change Amount :</span>
                                  <span class="text-secondary fw-bold">৳ <span id="summary_change_amount">0.00</span></span>
-                             </div> -->
+                             </div>
 
                             <div class="d-flex gap-2 mt-3 mb-2">
                                 <button type="button" id="cancel_order" class="btn btn-outline-danger w-50 py-2 rounded-0">Cancel Order</button>
@@ -2411,20 +2411,8 @@ $('#summary_paid_amount').on('input', function () {
 });
 
 function updateDynamicChange() {
-
-    // ✅ Get total from UI (IMPORTANT)
-    let totalText = $('.total-amount').text(); // change selector if needed
-
-    // ✅ Remove ৳, comma, spaces
-    let total = totalText.replace(/[^\d.]/g, '');
-    total = parseFloat(total) || 0;
-
-    // ✅ Paid amount
+    let total = cartTotal; 
     let paid = parseFloat($('#summary_paid_amount').val()) || 0;
-
-    // ✅ Debug (VERY IMPORTANT)
-    console.log('TOTAL:', total);
-    console.log('PAID:', paid);
 
     let change = 0;
     let due = 0;
@@ -2435,8 +2423,19 @@ function updateDynamicChange() {
         due = total - paid;
     }
 
-    $('#summary_change_amount').text(change.toFixed(2));
-    $('#summary_due_amount').text(due.toFixed(2));
+    $('#summary_change_amount').text(change.toLocaleString(undefined, {minimumFractionDigits: 2}));
+    $('#summary_due_amount').text(due.toLocaleString(undefined, {minimumFractionDigits: 2}));
+
+    // Optional: add color indicators
+    if (due > 0) {
+        $('#summary_due_amount').closest('.d-flex').find('span').addClass('text-danger fw-bold').removeClass('text-secondary');
+        $('#summary_change_amount').closest('.d-flex').find('span').removeClass('text-success fw-bold').addClass('text-secondary');
+    } else if (change > 0) {
+        $('#summary_change_amount').closest('.d-flex').find('span').addClass('text-success fw-bold').removeClass('text-secondary');
+        $('#summary_due_amount').closest('.d-flex').find('span').removeClass('text-danger fw-bold').addClass('text-secondary');
+    } else {
+        $('.d-flex span').removeClass('text-danger text-success fw-bold').addClass('text-secondary');
+    }
 }
 
     // Quantity actions
