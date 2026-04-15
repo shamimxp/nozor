@@ -112,4 +112,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
     //Fabric Price module
     Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
+
+    //Custom Order module
+    Route::post('/custom-order/assign-vendor', [\App\Http\Controllers\Admin\CustomOrderController::class, 'assignVendor'])->name('admin.custom-order.assign-vendor');
+    Route::get('/custom-order-fabric-prices', [\App\Http\Controllers\Admin\CustomOrderController::class, 'getFabricPrices'])->name('admin.custom-order.fabric-prices');
+    Route::resource('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, ['as' => 'admin']);
 });

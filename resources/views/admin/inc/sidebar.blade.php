@@ -106,6 +106,17 @@
                     <span class="menu-title text-truncate">Fabric Price Setup</span>
                 </a>
             </li>
+            <li class=" nav-item @if(Route::is('admin.custom-order*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="package"></i><span class="menu-title text-truncate">Custom Orders</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.custom-order.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.custom-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.custom-order.create') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.custom-order.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Order</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="app-chat.html"><i data-feather="message-square"></i><span class="menu-title text-truncate" data-i18n="Chat">Chat</span></a>
             </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="app-todo.html"><i data-feather="check-square"></i><span class="menu-title text-truncate" data-i18n="Todo">Todo</span></a>
