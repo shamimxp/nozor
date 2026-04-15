@@ -106,4 +106,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
     //Vendor module
     Route::resource('vendor', \App\Http\Controllers\Admin\VendorController::class, ['as' => 'admin']);
+
+    //Fabric module
+    Route::resource('fabric', \App\Http\Controllers\Admin\FabricController::class, ['as' => 'admin']);
 });
