@@ -1631,6 +1631,7 @@
                             <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
                                 <h3 class="fw-bold m-0">Total :</h3>
                                 <h3 class="fw-bold m-0 text-navy">৳ <span id="summary_total" class="total-amount">0.00</span></h3>
+                                <input type="hidden" id="summary_total_input" value="0">
                             </div>
 
                             <div class="payment-methods-section mb-3">
