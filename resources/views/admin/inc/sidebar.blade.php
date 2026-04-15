@@ -94,10 +94,16 @@
                     <span class="menu-title text-truncate">Vendor List</span>
                 </a>
             </li>
-            <li class="{{ Route::is('admin.fabric*')?'active':'' }} nav-item">
+            <li class="{{ Route::is('admin.fabric.index') || Route::is('admin.fabric.create') || Route::is('admin.fabric.edit') ? 'active' : '' }} nav-item">
                 <a class="d-flex align-items-center" href="{{route('admin.fabric.index')}}">
                     <i data-feather="scissors"></i>
                     <span class="menu-title text-truncate">Fabric List</span>
+                </a>
+            </li>
+            <li class="{{ Route::is('admin.fabric-price*')?'active':'' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.fabric-price.index')}}">
+                    <i data-feather="tag"></i>
+                    <span class="menu-title text-truncate">Fabric Price Setup</span>
                 </a>
             </li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="app-chat.html"><i data-feather="message-square"></i><span class="menu-title text-truncate" data-i18n="Chat">Chat</span></a>

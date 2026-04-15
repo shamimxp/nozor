@@ -109,4 +109,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
     //Fabric module
     Route::resource('fabric', \App\Http\Controllers\Admin\FabricController::class, ['as' => 'admin']);
+
+    //Fabric Price module
+    Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
 });
