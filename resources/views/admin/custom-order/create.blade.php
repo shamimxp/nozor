@@ -24,7 +24,7 @@
     <div class="row align-items-center">
         <div class="col">
             <h2 class="font-weight-bolder mb-0">Create Custom Order</h2>
-            <p class="text-muted">Unique Ref: <span class="text-primary font-weight-bold">{{ $orderNumber }}</span></p>
+            <p class="">Unique Ref: <span class="text-primary font-weight-bold">{{ $orderNumber }}</span></p>
         </div>
         <div class="col-auto">
             <a href="{{ route('admin.custom-order.index') }}" class="btn btn-outline-secondary">
@@ -67,7 +67,7 @@
                         </div>
                         <div class="col-md-6 mt-1">
                             <label class="font-weight-bold small">ORDER STATUS</label>
-                            <select name="status" id="orderStatus" class="form-control font-weight-bold text-primary">
+                            <select name="status" id="orderStatus" class="form-control font-weight-bold text-primary select2">
                                 <option value="pending">Pending</option>
                                 <option value="purchase_order">Purchase Order (Vendor Req)</option>
                                 <option value="order_confirm">Order Confirm</option>
@@ -77,21 +77,21 @@
                         </div>
                         <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">ITEM TYPE <span class="text-danger">*</span></label>
-                            <select name="type" id="filterType" class="form-control" required>
+                            <select name="type" id="filterType" class="form-control select2" required>
                                 <option value="polo">Polo</option>
                                 <option value="t-shirt">T-Shirt</option>
                             </select>
                         </div>
                         <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">SLEEVE <span class="text-danger">*</span></label>
-                            <select name="sleeve" id="filterSleeve" class="form-control" required>
+                            <select name="sleeve" id="filterSleeve" class="form-control select2" required>
                                 <option value="half">Half Sleeve</option>
                                 <option value="full">Full Sleeve</option>
                             </select>
                         </div>
                         <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">PICKUP TYPE</label>
-                            <select name="order_type" class="form-control">
+                            <select name="order_type" class="form-control select2">
                                 <option value="take_away">Ready for Takeaway</option>
                                 <option value="home_delivery">Home Delivery</option>
                             </select>
@@ -102,12 +102,12 @@
 
             {{-- 2. Dates --}}
             <div class="card card-premium mt-n1">
-                <div class="card-header py-75"><span class="small font-weight-bold text-muted"><i data-feather="calendar" class="mr-25"></i> Tracking Dates (Optional)</span></div>
+                <div class="card-header py-75"><span class="section-title"><i data-feather="calendar" class="mr-25"></i> Tracking Dates (Optional)</span></div>
                 <div class="card-body py-1">
                     <div class="row">
-                        <div class="col-md-4"><label class="small text-muted">Planned Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm"></div>
-                        <div class="col-md-4"><label class="small text-muted">Actual Delivered</label><input type="date" name="delivered_date" class="form-control form-control-sm"></div>
-                        <div class="col-md-4"><label class="small text-muted">Actually Collected</label><input type="date" name="collected_date" class="form-control form-control-sm"></div>
+                        <div class="col-md-4"><label class="small">Planned Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm"></div>
+                        <div class="col-md-4"><label class="small ">Actual Delivered</label><input type="date" name="delivered_date" class="form-control form-control-sm"></div>
+                        <div class="col-md-4"><label class="small ">Actually Collected</label><input type="date" name="collected_date" class="form-control form-control-sm"></div>
                     </div>
                 </div>
             </div>
@@ -120,14 +120,14 @@
                 <div class="card-body">
                     <div class="bg-light p-1 rounded-lg border row mx-0 mb-2">
                         <div class="col-md-7 px-50">
-                            <label class="small font-weight-bold text-muted">Fabric Type</label>
+                            <label class="small font-weight-bold ">Fabric Type</label>
                             <select id="fabricPriceSelect" class="form-control select2">
                                 <option value="">Select fabric...</option>
                                 @foreach($fabricPrices as $fp)
-                                    <option value="{{ $fp->id }}" 
-                                            data-fabric="{{ $fp->fabric->name ?? '-' }}" 
-                                            data-type="{{ $fp->type }}" 
-                                            data-sleeve="{{ $fp->sleeve }}" 
+                                    <option value="{{ $fp->id }}"
+                                            data-fabric="{{ $fp->fabric->name ?? '-' }}"
+                                            data-type="{{ $fp->type }}"
+                                            data-sleeve="{{ $fp->sleeve }}"
                                             data-price="{{ $fp->price }}">
                                         {{ $fp->fabric->name ?? '-' }} ({{ ucfirst($fp->type) }} - {{ ucfirst($fp->sleeve) }}) - ৳{{ $fp->price }}
                                     </option>
@@ -135,7 +135,7 @@
                             </select>
                         </div>
                         <div class="col-md-2 px-50">
-                            <label class="small font-weight-bold text-muted">Qty</label>
+                            <label class="small font-weight-bold ">Qty</label>
                             <input type="number" id="fabricQtyInput" class="form-control" value="1" min="1">
                         </div>
                         <div class="col-md-3 px-50 d-flex align-items-end">
@@ -169,7 +169,7 @@
                 <div class="card-body">
                     <input type="file" id="imagePickerHidden" class="d-none" multiple accept="image/*">
                     <div id="imagePreviewContainer" class="row">
-                        <div class="col-12 text-center py-2 text-muted">No images attached.</div>
+                        <div class="col-12 text-center py-2 ">No images attached.</div>
                     </div>
                 </div>
             </div>
@@ -180,11 +180,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="font-weight-bold small text-muted text-uppercase">Customer Note</label>
+                            <label class="font-weight-bold small  text-uppercase">Customer Note</label>
                             <textarea name="customer_note" class="form-control" rows="3" placeholder="Enter customer requirements..."></textarea>
                         </div>
                         <div class="col-md-6">
-                            <label class="font-weight-bold small text-muted text-uppercase">Vendor Instruction</label>
+                            <label class="font-weight-bold small  text-uppercase">Vendor Instruction</label>
                             <textarea name="vendor_note" class="form-control" rows="3" placeholder="Internal notes for vendor..."></textarea>
                         </div>
                     </div>
@@ -208,16 +208,16 @@
                             <span class="h4 mb-0 text-primary font-weight-bolder" id="summaryGrandTotal">৳0.00</span>
                         </div>
                         <div class="mt-2">
-                            <label class="small text-muted font-weight-bold">PAID AMOUNT</label>
+                            <label class="small  font-weight-bold">PAID AMOUNT</label>
                             <input type="number" name="paid" id="paidAmount" class="form-control font-weight-bold text-success" value="0">
-                            <div class="summary-item border-0 pt-0">
+                            <div class="summary-item border-0 pt-1">
                                 <span class="text-danger font-weight-bold">Amount Due</span>
                                 <span class="h5 mb-0 text-danger font-weight-bolder" id="summaryDue">৳0.00</span>
                             </div>
                         </div>
                         <hr>
                         <div class="form-group mb-2">
-                            <label class="font-weight-bold small text-muted">VENDOR <span id="vendorRequired" class="text-danger d-none">*</span></label>
+                            <label class="font-weight-bold small ">VENDOR <span id="vendorRequired" class="text-danger d-none">*</span></label>
                             <select name="vendor_id" id="vendorSelect" class="form-control select2">
                                 <option value="">-- Choose Vendor --</option>
                                 @foreach($vendors as $v)
@@ -282,7 +282,7 @@ $(function () {
     function renderImages() {
         var c = $('#imagePreviewContainer').html('');
         syncFiles();
-        if (!selectedFiles.length) c.append('<div class="col-12 text-center py-2 text-muted">No images attached.</div>');
+        if (!selectedFiles.length) c.append('<div class="col-12 text-center py-2 ">No images attached.</div>');
         else selectedFiles.forEach((it, i) => {
             c.append('<div class="col-md-3 mb-1"><div class="card border p-25 text-center"><img src="'+it.url+'" style="width:100%; height:120px; object-fit:cover;" class="rounded mb-50"><button type="button" class="btn btn-sm btn-outline-danger w-100 removeImg" data-idx="'+i+'">Remove</button></div></div>');
         });

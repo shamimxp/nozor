@@ -24,7 +24,7 @@
     <div class="row align-items-center">
         <div class="col">
             <h2 class="font-weight-bolder mb-0">Edit Custom Order</h2>
-            <p class="text-muted">Ref: <span class="text-primary font-weight-bold">{{ $order->order_number }}</span> • Style: {{ $order->style_number }}</p>
+            <p class="">Ref: <span class="text-primary font-weight-bold">{{ $order->order_number }}</span> • Style: {{ $order->style_number }}</p>
         </div>
         <div class="col-auto">
             <a href="{{ route('admin.custom-order.index') }}" class="btn btn-outline-secondary">
@@ -103,12 +103,12 @@
 
             {{-- 2. Tracking --}}
             <div class="card card-premium mt-n1">
-                <div class="card-header py-75"><span class="small font-weight-bold text-muted"><i data-feather="calendar" class="mr-25"></i> Handover Tracking</span></div>
+                <div class="card-header py-75"><span class="small font-weight-bold "><i data-feather="calendar" class="mr-25"></i> Handover Tracking</span></div>
                 <div class="card-body py-1">
                     <div class="row">
-                        <div class="col-md-4"><label class="small text-muted">Planned Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm" value="{{ $order->delivery_date ? $order->delivery_date->format('Y-m-d') : '' }}"></div>
-                        <div class="col-md-4"><label class="small text-muted">Actual Delivered</label><input type="date" name="delivered_date" class="form-control form-control-sm" value="{{ $order->delivered_date ? $order->delivered_date->format('Y-m-d') : '' }}"></div>
-                        <div class="col-md-4"><label class="small text-muted">Actually Collected</label><input type="date" name="collected_date" class="form-control form-control-sm" value="{{ $order->collected_date ? $order->collected_date->format('Y-m-d') : '' }}"></div>
+                        <div class="col-md-4"><label class="small ">Planned Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm" value="{{ $order->delivery_date ? $order->delivery_date->format('Y-m-d') : '' }}"></div>
+                        <div class="col-md-4"><label class="small ">Actual Delivered</label><input type="date" name="delivered_date" class="form-control form-control-sm" value="{{ $order->delivered_date ? $order->delivered_date->format('Y-m-d') : '' }}"></div>
+                        <div class="col-md-4"><label class="small ">Actually Collected</label><input type="date" name="collected_date" class="form-control form-control-sm" value="{{ $order->collected_date ? $order->collected_date->format('Y-m-d') : '' }}"></div>
                     </div>
                 </div>
             </div>
@@ -119,7 +119,7 @@
                 <div class="card-body">
                     <div class="bg-light p-1 rounded-lg border row mx-0 mb-2">
                         <div class="col-md-7 px-50">
-                            <label class="small font-weight-bold text-muted">Add New Fabric</label>
+                            <label class="small font-weight-bold ">Add New Fabric</label>
                             <select id="fabricPriceSelect" class="form-control select2">
                                 <option value="">Select fabric...</option>
                                 @foreach($fabricPrices as $fp)
@@ -134,7 +134,7 @@
                             </select>
                         </div>
                         <div class="col-md-2 px-50">
-                            <label class="small font-weight-bold text-muted">Qty</label>
+                            <label class="small font-weight-bold ">Qty</label>
                             <input type="number" id="fabricQtyInput" class="form-control" value="1" min="1">
                         </div>
                         <div class="col-md-3 px-50 d-flex align-items-end">
@@ -167,7 +167,7 @@
                 </div>
                 <div class="card-body">
                     @if($order->images->count())
-                    <h6 class="text-muted small font-weight-bold mb-1">EXISTING IMAGES</h6>
+                    <h6 class=" small font-weight-bold mb-1">EXISTING IMAGES</h6>
                     <div class="row mb-2">
                         @foreach($order->images as $img)
                         <div class="col-md-3 mb-1" id="existImg{{ $img->id }}">
@@ -191,11 +191,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="font-weight-bold small text-muted text-uppercase">Customer Note</label>
+                            <label class="font-weight-bold small  text-uppercase">Customer Note</label>
                             <textarea name="customer_note" class="form-control" rows="3" placeholder="Enter customer requirements...">{!! $order->customer_note !!}</textarea>
                         </div>
                         <div class="col-md-6">
-                            <label class="font-weight-bold small text-muted text-uppercase">Vendor Instruction</label>
+                            <label class="font-weight-bold small  text-uppercase">Vendor Instruction</label>
                             <textarea name="vendor_note" class="form-control" rows="3" placeholder="Internal notes for vendor...">{!! $order->vendor_note !!}</textarea>
                         </div>
                     </div>
@@ -219,16 +219,16 @@
                             <span class="h4 mb-0 text-primary font-weight-bolder" id="summaryGrandTotal">৳0.00</span>
                         </div>
                         <div class="mt-2">
-                            <label class="small text-muted font-weight-bold">COLLECTED AMNT</label>
+                            <label class="small  font-weight-bold">COLLECTED AMNT</label>
                             <input type="number" name="paid" id="paidAmount" class="form-control font-weight-bold text-success" value="{{ $order->paid }}">
-                            <div class="summary-item border-0 pt-0">
+                            <div class="summary-item border-0 pt-1">
                                 <span class="text-danger font-weight-bold">Net Due</span>
                                 <span class="h5 mb-0 text-danger font-weight-bolder" id="summaryDue">৳0.00</span>
                             </div>
                         </div>
                         <hr>
                         <div class="form-group mb-2">
-                            <label class="font-weight-bold small text-muted">VENDOR <span id="vendorRequired" class="{{ $order->status == 'purchase_order' ? '' : 'd-none' }} text-danger">*</span></label>
+                            <label class="font-weight-bold small ">VENDOR <span id="vendorRequired" class="{{ $order->status == 'purchase_order' ? '' : 'd-none' }} text-danger">*</span></label>
                             <select name="vendor_id" id="vendorSelect" class="form-control select2">
                                 <option value="">-- No Vendor Assigned --</option>
                                 @foreach($vendors as $v)
