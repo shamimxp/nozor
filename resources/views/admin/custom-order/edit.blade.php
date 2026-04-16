@@ -290,15 +290,29 @@ $(function () {
         var id = $(this).data('id'); $('#existImg' + id).fadeOut();
         $('#removeImagesContainer').append('<input type="hidden" name="remove_images[]" value="'+id+'">');
     });
+
     $('#addImageBtn').on('click', () => $('#imagePickerHidden').trigger('click'));
+
     $('#imagePickerHidden').on('change', function() {
-        Array.from(this.files).forEach(f => {
-            let r = new FileReader();
-            r.onload = e => { selectedFiles.push({ file: f, url: e.target.result }); renderNewImages(); };
-            r.readAsDataURL(f);
+        const files = Array.from(this.files);
+        if (!files.length) return;
+
+        const promises = files.map(file => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve({ file: file, url: e.target.result });
+                reader.readAsDataURL(file);
+            });
         });
+
+        Promise.all(promises).then(results => {
+            selectedFiles.push(...results);
+            renderNewImages();
+        });
+
         $(this).val('');
     });
+
     function renderNewImages() {
         var c = $('#newImagePreviewContainer').html(''); syncFiles();
         if (selectedFiles.length) {
@@ -308,6 +322,7 @@ $(function () {
             });
         }
     }
+
     function syncFiles() {
         $('#imageRealInput').remove();
         if (selectedFiles.length) {
@@ -316,6 +331,7 @@ $(function () {
             inp[0].files = dt.files; $('#customOrderForm').append(inp);
         }
     }
+
     $('body').on('click', '.removeNewImg', function() { selectedFiles.splice($(this).data('idx'), 1); renderNewImages(); });
 
     // Cart Logic
