@@ -79,6 +79,7 @@ class CustomOrderController extends Controller
                 })
                 ->addColumn('action', function ($r) {
                     $btn = '';
+                    $btn .= '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25"><i data-feather="eye"></i></a>';
                     if ($r->status != 'delivered') {
                         $btn .= '<a href="' . route('admin.custom-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25"><i data-feather="edit"></i></a>';
                     } else {
@@ -214,6 +215,12 @@ class CustomOrderController extends Controller
             toastr()->error('Error: ' . $e->getMessage());
             return back()->withInput();
         }
+    }
+
+    public function show($id)
+    {
+        $order = CustomOrder::with(['items', 'images', 'customer', 'vendor'])->findOrFail($id);
+        return view('admin.custom-order.show', compact('order'));
     }
 
     public function edit($id)
