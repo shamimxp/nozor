@@ -20,7 +20,7 @@
                             <th>Items Summary</th>
                             <th>Totals</th>
                             <th>Assign Vendor</th>
-                            <th>Status (Quick Update)</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>

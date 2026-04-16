@@ -184,6 +184,23 @@
                     <div id="removeImagesContainer"></div>
                 </div>
             </div>
+
+            {{-- 5. Notes Section --}}
+            <div class="card card-premium">
+                <div class="card-header"><span class="section-title"><i data-feather="file-text"></i> Special Instructions</span></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="font-weight-bold small text-muted text-uppercase">Customer Note</label>
+                            <textarea name="customer_note" class="form-control" rows="3" placeholder="Enter customer requirements...">{!! $order->customer_note !!}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="font-weight-bold small text-muted text-uppercase">Vendor Instruction</label>
+                            <textarea name="vendor_note" class="form-control" rows="3" placeholder="Internal notes for vendor...">{!! $order->vendor_note !!}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-4">
