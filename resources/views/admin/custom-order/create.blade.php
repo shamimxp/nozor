@@ -105,9 +105,9 @@
                 <div class="card-header py-75"><span class="section-title"><i data-feather="calendar" class="mr-25"></i> Tracking Dates (Optional)</span></div>
                 <div class="card-body py-1">
                     <div class="row">
-                        <div class="col-md-4"><label class="small">Planned Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm"></div>
-                        <div class="col-md-4"><label class="small ">Actual Delivered</label><input type="date" name="delivered_date" class="form-control form-control-sm"></div>
-                        <div class="col-md-4"><label class="small ">Actually Collected</label><input type="date" name="collected_date" class="form-control form-control-sm"></div>
+                        <div class="col-md-4"><label class="small">Vendor Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm"></div>
+                        <div class="col-md-4"><label class="small ">Customer Delivery</label><input type="date" name="delivered_date" class="form-control form-control-sm"></div>
+                        <div class="col-md-4"><label class="small ">Collected Date</label><input type="date" name="collected_date" class="form-control form-control-sm"></div>
                     </div>
                 </div>
             </div>
