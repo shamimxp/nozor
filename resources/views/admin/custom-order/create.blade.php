@@ -56,7 +56,7 @@
                             <label class="font-weight-bold small">ORDER DATE <span class="text-danger">*</span></label>
                             <input type="date" name="order_date" class="form-control" value="{{ date('Y-m-d') }}" required>
                         </div>
-                        <div class="col-md-6 mt-1">
+                        <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">CUSTOMER <span class="text-danger">*</span></label>
                             <select name="customer_id" class="form-control select2" required>
                                 <option value="">-- Select Customer --</option>
@@ -65,15 +65,18 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6 mt-1">
+                        <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">ORDER STATUS</label>
                             <select name="status" id="orderStatus" class="form-control font-weight-bold text-primary select2">
                                 <option value="pending">Pending</option>
-                                <option value="purchase_order">Purchase Order (Vendor Req)</option>
-                                <option value="order_confirm">Order Confirm</option>
-                                <option value="received">Received</option>
+                                <option value="order_confirm">Confirm</option>
+                                <option value="cancelled">Cancelled</option>
                                 <option value="delivered">Delivered</option>
                             </select>
+                        </div>
+                        <div class="col-md-4 mt-1">
+                            <label class="font-weight-bold small">Delivery Date <span class="text-danger">*</span></label>
+                            <input type="date" name="delivery_date" class="form-control" value="" required>
                         </div>
                         <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">ITEM TYPE <span class="text-danger">*</span></label>
@@ -96,18 +99,6 @@
                                 <option value="home_delivery">Home Delivery</option>
                             </select>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- 2. Dates --}}
-            <div class="card card-premium mt-n1">
-                <div class="card-header py-75"><span class="section-title"><i data-feather="calendar" class="mr-25"></i> Tracking Dates (Optional)</span></div>
-                <div class="card-body py-1">
-                    <div class="row">
-                        <div class="col-md-4"><label class="small">Vendor Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm"></div>
-                        <div class="col-md-4"><label class="small ">Customer Delivery</label><input type="date" name="delivered_date" class="form-control form-control-sm"></div>
-                        <div class="col-md-4"><label class="small ">Collected Date</label><input type="date" name="collected_date" class="form-control form-control-sm"></div>
                     </div>
                 </div>
             </div>
@@ -179,14 +170,14 @@
                 <div class="card-header"><span class="section-title"><i data-feather="file-text"></i> Special Instructions</span></div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="font-weight-bold small  text-uppercase">Customer Note</label>
                             <textarea name="customer_note" class="form-control" rows="3" placeholder="Enter customer requirements..."></textarea>
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <label class="font-weight-bold small  text-uppercase">Vendor Instruction</label>
                             <textarea name="vendor_note" class="form-control" rows="3" placeholder="Internal notes for vendor..."></textarea>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -248,7 +239,7 @@ $(function () {
             var oType = $(this).data('type'), oSleeve = $(this).data('sleeve');
             if (!$(this).val()) return;
             if (oType == type && oSleeve == sleeve) $(this).show().prop('disabled', false);
-            else $(this).hide().prop('disabled', true);
+            else $(this).hide().prop('disabled', false);
         });
         $('#fabricPriceSelect').val('').trigger('change');
     }
