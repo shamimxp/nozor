@@ -9,6 +9,7 @@ use App\Models\CustomOrderImage;
 use App\Models\CustomOrderItem;
 use App\Models\Fabric;
 use App\Models\FabricPrice;
+use App\Models\Purchase;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ class CustomOrderController extends Controller
         $vendors = Vendor::orderBy('name')->get();
 
         if ($request->ajax()) {
+            $existingPurchaseOrderIds = Purchase::pluck('custom_order_id')->filter()->toArray();
             $orders = CustomOrder::with(['customer', 'vendor'])->latest()->get();
             return DataTables::of($orders)
                 ->addIndexColumn()
@@ -76,13 +78,15 @@ class CustomOrderController extends Controller
                     return '<select class="form-control form-control-sm updateStatusSelect" data-order-id="' . $r->id . '" style="min-width:130px" ' . $disabled . '>' . $options . '</select>';
 
                 })
-                ->addColumn('action', function ($r) {
+                ->addColumn('action', function ($r) use ($existingPurchaseOrderIds) {
                     $btn = '';
                     $btn .= '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25"><i data-feather="eye"></i></a>';
-                    if ($r->status != 'delivered') {
+                    if (!in_array($r->status, ['delivered', 'cancelled'])) {
                         $btn .= '<a href="' . route('admin.custom-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25"><i data-feather="edit"></i></a>';
                     }
-                    $btn .= '<a href="' . route('admin.purchase.create', ['custom_order_id' => $r->id]) . '" class="btn btn-warning btn-sm mr-25" title="Create Purchase"><i data-feather="shopping-cart"></i></a>';
+                    if (!in_array($r->id, $existingPurchaseOrderIds)) {
+                        $btn .= '<a href="' . route('admin.purchase.create', ['custom_order_id' => $r->id]) . '" class="btn btn-warning btn-sm mr-25" title="Create Purchase"><i data-feather="shopping-cart"></i></a>';
+                    }
                     $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder"><i data-feather="trash"></i></a>';
                     return $btn;
                 })

@@ -22,6 +22,7 @@ class PurchaseController extends Controller
                 ->addIndexColumn()
                 ->addColumn('purchase_info', function($r) {
                     return '<strong>ID:</strong> ' . $r->purchase_number . '<br>' .
+                           '<strong>Order:</strong> ' . $r->customOrder->order_number . '<br>' .
                            '<strong>Style:</strong> ' . $r->style_number;
                 })
                 ->addColumn('vendor_info', function($r) {
@@ -64,10 +65,24 @@ class PurchaseController extends Controller
         if ($customOrderId) {
             $customOrder = CustomOrder::with('items.fabricPrice.fabric')->findOrFail($customOrderId);
         }
+
+        // Get custom_order_ids that already have a purchase order
+        $existingPurchaseOrderIds = Purchase::pluck('custom_order_id')->filter()->toArray();
+
+        // Exclude already-purchased custom orders, but keep the currently selected one
+        $customOrders = CustomOrder::whereNotIn('status', ['delivered', 'cancelled'])
+            ->where(function ($q) use ($existingPurchaseOrderIds, $customOrder) {
+                $q->whereNotIn('id', $existingPurchaseOrderIds);
+                if ($customOrder) {
+                    $q->orWhere('id', $customOrder->id);
+                }
+            })
+            ->latest()->get();
+
         $vendors = Vendor::orderBy('name')->get();
         $purchaseNumber = Purchase::generatePurchaseNumber();
-        
-        return view('admin.purchase.create', compact('customOrder', 'vendors', 'purchaseNumber'));
+
+        return view('admin.purchase.create', compact('customOrder', 'customOrders', 'vendors', 'purchaseNumber'));
     }
 
     public function store(Request $request)
@@ -190,7 +205,7 @@ class PurchaseController extends Controller
                 $total_purchased = Purchase::where('vendor_id', $vendor->id)->sum('grand_total');
                 $total_paid = VendorPayment::where('vendor_id', $vendor->id)->sum('amount');
                 $total_due = $total_purchased - $total_paid;
-                
+
                 $data[] = [
                     'id' => $vendor->id,
                     'name' => $vendor->name,
@@ -315,7 +330,7 @@ class PurchaseController extends Controller
             return back()->withInput();
         }
     }
-    
+
     public function destroy($id)
     {
         try {

@@ -16,9 +16,6 @@
                                 <label for="custom_order_id">Select Custom Order (Link by Style No)</label>
                                 <select name="custom_order_id" id="custom_order_id" class="form-control select2" required>
                                     <option value="">-- Select Custom Order --</option>
-                                    @php
-                                        $customOrders = \App\Models\CustomOrder::whereNotIn('status', ['delivered', 'cancelled'])->latest()->get();
-                                    @endphp
                                     @foreach($customOrders as $co)
                                         <option value="{{ $co->id }}" {{ (isset($customOrder) && $customOrder->id == $co->id) ? 'selected' : '' }}>
                                             {{ $co->style_number }} - {{ $co->order_number }}
