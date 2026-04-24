@@ -135,7 +135,7 @@
             <li class="nav-item {{ Route::is('admin.due-collection*') ? 'active' : '' }}">
                 <a class="d-flex align-items-center" href="{{route('admin.due-collection.index')}}">
                     <i data-feather="dollar-sign"></i>
-                    <span class="menu-title text-truncate">Due Collection</span>
+                    <span class="menu-title text-truncate">Collection</span>
                 </a>
             </li>
         </ul>
