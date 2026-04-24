@@ -79,8 +79,7 @@ class PosOrderController extends Controller
                     return $r->customer ? '<strong>' . $r->customer->name . '</strong><br><small>' . $r->customer->phone . '</small>' : '<span class="text-muted">Walk-in</span>';
                 })
                 ->addColumn('financials', function($r) {
-                    return 
-                           '<strong class="text-danger">Due: ৳' . number_format($r->due_amount, 2) . '</strong>';
+                    return '<strong class="text-danger">Due: ৳' . number_format($r->due_amount, 2) . '</strong>';
                 })
                 ->addColumn('action', function($r) {
                     return '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info">View</a>';
