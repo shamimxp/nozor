@@ -57,7 +57,7 @@
                             <label class="font-weight-bold small">ORDER DATE</label>
                             <input type="date" name="order_date" class="form-control" value="{{ $order->order_date->format('Y-m-d') }}" required>
                         </div>
-                        <div class="col-md-6 mt-1">
+                        <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">CUSTOMER</label>
                             <select name="customer_id" class="form-control select2" required>
                                 @foreach($customers as $c)
@@ -65,16 +65,18 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6 mt-1">
+                        <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">ORDER STATUS</label>
                             <select name="status" id="orderStatus" class="form-control font-weight-bold text-primary">
                                 <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="purchase_order" {{ $order->status == 'purchase_order' ? 'selected' : '' }}>Purchase Order (Vendor Req)</option>
                                 <option value="order_confirm" {{ $order->status == 'order_confirm' ? 'selected' : '' }}>Order Confirm</option>
-                                <option value="received" {{ $order->status == 'received' ? 'selected' : '' }}>Received</option>
                                 <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
                                 <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                             </select>
+                        </div>
+                        <div class="col-md-4 mt-1">
+                            <label class="font-weight-bold small">Delivery Date <span class="text-danger">*</span></label>
+                            <input type="date" name="delivery_date" class="form-control" value="{{ $order->delivery_date ? $order->delivery_date->format('Y-m-d') : '' }}" required>
                         </div>
                         <div class="col-md-4 mt-1">
                             <label class="font-weight-bold small">ITEM TYPE</label>
@@ -97,18 +99,6 @@
                                 <option value="home_delivery" {{ $order->order_type == 'home_delivery' ? 'selected' : '' }}>Home Delivery</option>
                             </select>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- 2. Tracking --}}
-            <div class="card card-premium mt-n1">
-                <div class="card-header py-75"><span class="small font-weight-bold "><i data-feather="calendar" class="mr-25"></i> Handover Tracking</span></div>
-                <div class="card-body py-1">
-                    <div class="row">
-                        <div class="col-md-4"><label class="small ">Vendor Delivery</label><input type="date" name="delivery_date" class="form-control form-control-sm" value="{{ $order->delivery_date ? $order->delivery_date->format('Y-m-d') : '' }}"></div>
-                        <div class="col-md-4"><label class="small ">Customer Delivery</label><input type="date" name="delivered_date" class="form-control form-control-sm" value="{{ $order->delivered_date ? $order->delivered_date->format('Y-m-d') : '' }}"></div>
-                        <div class="col-md-4"><label class="small "> Collected Date</label><input type="date" name="collected_date" class="form-control form-control-sm" value="{{ $order->collected_date ? $order->collected_date->format('Y-m-d') : '' }}"></div>
                     </div>
                 </div>
             </div>
@@ -190,13 +180,9 @@
                 <div class="card-header"><span class="section-title"><i data-feather="file-text"></i> Special Instructions</span></div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="font-weight-bold small  text-uppercase">Customer Note</label>
                             <textarea name="customer_note" class="form-control" rows="3" placeholder="Enter customer requirements...">{!! $order->customer_note !!}</textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="font-weight-bold small  text-uppercase">Vendor Instruction</label>
-                            <textarea name="vendor_note" class="form-control" rows="3" placeholder="Internal notes for vendor...">{!! $order->vendor_note !!}</textarea>
                         </div>
                     </div>
                 </div>
@@ -220,7 +206,7 @@
                         </div>
                         <div class="mt-2">
                             <label class="small  font-weight-bold">COLLECTED AMNT</label>
-                            <input type="number" name="paid" id="paidAmount" class="form-control font-weight-bold text-success" value="{{ $order->paid }}">
+                            <input type="number" name="paid" id="paidAmount" class="form-control font-weight-bold text-success text-right" value="{{ $order->paid }}">
                             <div class="summary-item border-0 pt-1">
                                 <span class="text-danger font-weight-bold">Net Due</span>
                                 <span class="h5 mb-0 text-danger font-weight-bolder" id="summaryDue">৳0.00</span>

@@ -200,7 +200,7 @@
                         </div>
                         <div class="mt-2">
                             <label class="small  font-weight-bold">PAID AMOUNT</label>
-                            <input type="number" name="paid" id="paidAmount" class="form-control font-weight-bold text-success" value="0">
+                            <input type="number" name="paid" id="paidAmount" class="form-control font-weight-bold text-success text-right" value="0">
                             <div class="summary-item border-0 pt-1">
                                 <span class="text-danger font-weight-bold">Amount Due</span>
                                 <span class="h5 mb-0 text-danger font-weight-bolder" id="summaryDue">৳0.00</span>

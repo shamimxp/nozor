@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomOrderController extends Controller
 {
@@ -58,14 +59,11 @@ class CustomOrderController extends Controller
                 ->addColumn('status_badge', function ($r) {
                     $statuses = [
                         'pending'        => 'Pending',
-                        'purchase_order' => 'Purchase Order',
                         'order_confirm'  => 'Order Confirm',
-                        'received'       => 'Received',
                         'delivered'      => 'Delivered',
                         'cancelled'      => 'Cancelled',
                     ];
 
-                    // IF already delivered, disable the dropdown
                     $disabled = ($r->status == 'delivered') ? 'disabled' : '';
 
                     $options = '';
@@ -74,8 +72,9 @@ class CustomOrderController extends Controller
                         $options .= '<option value="' . $val . '" ' . $sel . '>' . $label . '</option>';
                     }
 
-                    $class = 'status-select-' . $r->status; // Can style specifically if needed
+                    $class = 'status-select-' . $r->status;
                     return '<select class="form-control form-control-sm updateStatusSelect" data-order-id="' . $r->id . '" style="min-width:130px" ' . $disabled . '>' . $options . '</select>';
+
                 })
                 ->addColumn('action', function ($r) {
                     $btn = '';
@@ -403,5 +402,12 @@ class CustomOrderController extends Controller
         if ($request->type) $query->where('type', $request->type);
         if ($request->sleeve) $query->where('sleeve', $request->sleeve);
         return response()->json($query->get());
+    }
+
+    public function exportPdf($id)
+    {
+        $order = CustomOrder::with(['items', 'customer'])->findOrFail($id);
+        $pdf = Pdf::loadView('admin.custom-order.pdf', compact('order'));
+        return $pdf->download('Invoice-' . $order->order_number . '.pdf');
     }
 }

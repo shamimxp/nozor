@@ -114,6 +114,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
 
     //Custom Order module
+    Route::get('/custom-order/export-pdf/{id}', [\App\Http\Controllers\Admin\CustomOrderController::class, 'exportPdf'])->name('admin.custom-order.export-pdf');
     Route::post('/custom-order/assign-vendor', [\App\Http\Controllers\Admin\CustomOrderController::class, 'assignVendor'])->name('admin.custom-order.assign-vendor');
     Route::post('/custom-order/update-status', [\App\Http\Controllers\Admin\CustomOrderController::class, 'updateStatus'])->name('admin.custom-order.update-status');
     Route::get('/custom-order-fabric-prices', [\App\Http\Controllers\Admin\CustomOrderController::class, 'getFabricPrices'])->name('admin.custom-order.fabric-prices');
