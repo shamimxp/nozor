@@ -188,7 +188,13 @@ class PurchaseController extends Controller
                     return '<span class="badge badge-light-' . $class . ' text-uppercase">' . $r->status . '</span>';
                 })
                 ->addColumn('action', function($r) {
-                    return '<a href="' . route('admin.purchase.show', $r->id) . '" class="btn btn-sm btn-info">View</a>';
+                    $btn = '<a href="' . route('admin.purchase.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
+                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn ml-25" 
+                                data-id="'.$r->id.'" 
+                                data-vendor-name="'.$r->vendor->name.'" 
+                                data-purchase-number="'.$r->purchase_number.'" 
+                                data-due="'.$r->due_amount.'">Pay</button>';
+                    return $btn;
                 })
                 ->rawColumns(['purchase_info', 'vendor_name', 'financials', 'status', 'action'])
                 ->make(true);
