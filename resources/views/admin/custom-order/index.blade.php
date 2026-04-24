@@ -19,7 +19,7 @@
                             <th>Customer</th>
                             <th>Items Summary</th>
                             <th>Totals</th>
-                            <th>Assign Vendor</th>
+{{--                            <th>Assign Vendor</th>--}}
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -51,7 +51,7 @@
                 {data: 'customer_name', name: 'customer.name'},
                 {data: 'items_summary', name: 'type'},
                 {data: 'totals', name: 'grand_total'},
-                {data: 'assign_vendor', name: 'vendor_id', orderable: false, searchable: false},
+                // {data: 'assign_vendor', name: 'vendor_id', orderable: false, searchable: false},
                 {data: 'status_badge', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],

@@ -213,15 +213,15 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="form-group mb-2">
-                            <label class="font-weight-bold small ">VENDOR <span id="vendorRequired" class="{{ $order->status == 'purchase_order' ? '' : 'd-none' }} text-danger">*</span></label>
-                            <select name="vendor_id" id="vendorSelect" class="form-control select2">
-                                <option value="">-- No Vendor Assigned --</option>
-                                @foreach($vendors as $v)
-                                    <option value="{{ $v->id }}" {{ $order->vendor_id == $v->id ? 'selected' : '' }}>{{ $v->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+{{--                        <div class="form-group mb-2">--}}
+{{--                            <label class="font-weight-bold small ">VENDOR <span id="vendorRequired" class="{{ $order->status == 'purchase_order' ? '' : 'd-none' }} text-danger">*</span></label>--}}
+{{--                            <select name="vendor_id" id="vendorSelect" class="form-control select2">--}}
+{{--                                <option value="">-- No Vendor Assigned --</option>--}}
+{{--                                @foreach($vendors as $v)--}}
+{{--                                    <option value="{{ $v->id }}" {{ $order->vendor_id == $v->id ? 'selected' : '' }}>{{ $v->name }}</option>--}}
+{{--                                @endforeach--}}
+{{--                            </select>--}}
+{{--                        </div>--}}
                         <button type="submit" class="btn btn-premium-save btn-block">UPDATE ORDER</button>
                     </div>
                 </div>

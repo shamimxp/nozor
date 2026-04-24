@@ -207,15 +207,15 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="form-group mb-2">
-                            <label class="font-weight-bold small ">VENDOR <span id="vendorRequired" class="text-danger d-none">*</span></label>
-                            <select name="vendor_id" id="vendorSelect" class="form-control select2">
-                                <option value="">-- Choose Vendor --</option>
-                                @foreach($vendors as $v)
-                                    <option value="{{ $v->id }}">{{ $v->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+{{--                        <div class="form-group mb-2">--}}
+{{--                            <label class="font-weight-bold small ">VENDOR <span id="vendorRequired" class="text-danger d-none">*</span></label>--}}
+{{--                            <select name="vendor_id" id="vendorSelect" class="form-control select2">--}}
+{{--                                <option value="">-- Choose Vendor --</option>--}}
+{{--                                @foreach($vendors as $v)--}}
+{{--                                    <option value="{{ $v->id }}">{{ $v->name }}</option>--}}
+{{--                                @endforeach--}}
+{{--                            </select>--}}
+{{--                        </div>--}}
                         <button type="submit" class="btn btn-premium-save btn-block">SAVE ORDER</button>
                     </div>
                 </div>
