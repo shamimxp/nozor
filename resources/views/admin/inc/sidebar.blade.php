@@ -52,8 +52,8 @@
                     </ul>
                 </li>
             @endif
-            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('admin.pos')}}" target="_blank"><i data-feather="mail"></i><span class="menu-title text-truncate" data-i18n="Sale">POS</span></a>
-            </li>
+{{--            <li class=" nav-item"><a class="d-flex align-items-center" href="{{route('admin.pos')}}" target="_blank"><i data-feather="mail"></i><span class="menu-title text-truncate" data-i18n="Sale">POS</span></a>--}}
+{{--            </li>--}}
             <li class=" nav-item @if(Route::is('admin.category*') || Route::is('admin.sub_category*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="grid"></i><span class="menu-title text-truncate" data-i18n="Category Setup">Category Setup</span></a>
                 <ul class="menu-content">
@@ -114,6 +114,20 @@
                     </li>
                     <li class="{{ Route::is('admin.custom-order.create') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.custom-order.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Order</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class=" nav-item @if(Route::is('admin.pos-order*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="shopping-bag"></i><span class="menu-title text-truncate">POS Orders</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.pos') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.pos')}}" target="_blank"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Order</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.pos-order.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.pos-order.analysis') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.analysis')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order Analysis</span></a>
                     </li>
                 </ul>
             </li>

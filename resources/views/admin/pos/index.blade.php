@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>NOZOR || POS</title>
     <!-- bootstarp link -->
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/bootstrap.min.css')}}">
@@ -17,6 +18,10 @@
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/responsive.css')}}">
     <!-- Select2 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Toastr CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         /* Product box — base overrides (layout in main.css) */
         .product__box {
@@ -1219,7 +1224,7 @@
     <div class="container-fluid">
         <div class="row flex-row-reverse">
             <!-- cart column -->
-            <div class="col-lg-4 col-xl-4 col-xxl-4">
+            <div class="col-lg-4 col-xl-4 col-xxl-5">
                 <!-- cart box -->
                 <div class="cart__box">
                     <!-- card box header -->
@@ -1228,7 +1233,7 @@
                             <div class="col-md-5 col-lg-6 col-xl-5 col-12 col-sm-6">
                                 <!-- select customer -->
                                 <div class="input-group">
-                                    <span class="input-group-text rounded-0"><i class="fa-solid fa-user"></i></span>
+{{--                                    <span class="input-group-text rounded-0"><i class="fa-solid fa-user"></i></span>--}}
                                     <!-- select -->
                                     <select name="customer_id" id="customer_id" class="form-select select2-customer">
                                         <option value="">Walk-In Customer</option>
@@ -1667,7 +1672,7 @@
                 </div>
             </div>
             <!-- product column -->
-            <div class="col-lg-8 col-xl-9 col-xxl-8">
+            <div class="col-lg-8 col-xl-9 col-xxl-7">
                 <!-- pos product -->
                 <div class="pos__productcontent">
                     <div class="product__header__filter">
@@ -1991,14 +1996,14 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="" class="form-label">Sell note:</label>
-                                            <textarea class="form-control rounded-0" rows="" id="" name=""
+                                            <textarea class="form-control rounded-0" rows="" id="sell_note" name="sell_note"
                                                       cols="50"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="" class="form-label">Staff note:</label>
-                                            <textarea class="form-control rounded-0" rows="" id="" name=""
+                                            <textarea class="form-control rounded-0" rows="" id="staff_note" name="staff_note"
                                                       cols="50"></textarea>
                                         </div>
                                     </div>
@@ -2094,7 +2099,7 @@
                         data-bs-toggle="modal">
                     <span><i class="fas fa-money-check-alt"></i></span> Multiple Payment </button>
                 <!-- cash payment -->
-                <button class="btn_main bg-primary footer_innerbtn">
+                <button type="button" id="cash_payment_btn" class="btn_main bg-primary footer_innerbtn">
                     <span><i class="fas fa-money-check-alt"></i></span> Cash </button>
                 <!-- total payable -->
                 <div class="total_payable">
@@ -2156,11 +2161,23 @@
 <script src="{{asset('admin/pos/assets/js/bootstrap.bundle.min.js')}}"></script>
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- main js -->
 <script src="{{asset('admin/pos/assets/js/calculator.js')}}"></script>
 <script src="{{asset('admin/pos/assets/js/app.js')}}"></script>
 <script>
 $(document).ready(function() {
+    // Toastr Configuration
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "timeOut": "3000"
+    };
+
     // Initialize Select2
     $('.select2, .select2-customer').select2({
         width: '100%'
@@ -2280,7 +2297,7 @@ $(document).ready(function() {
             if (cart[id].quantity < stock) {
                 cart[id].quantity++;
             } else {
-                alert('No more stock available!');
+                toastr.warning('No more stock available!');
             }
         } else {
             cart[id] = {
@@ -2381,6 +2398,7 @@ $(document).ready(function() {
         $('#summary_delivery_charge').text(deliveryCharge.toFixed(2));
         $('#summary_total').text(total.toFixed(2));
         $('#summary_total_input').val(total);
+        $('#total_payment').text(total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
 
         // Ensure change is updated whenever total changes
         updateDynamicChange();
@@ -2427,7 +2445,7 @@ function updateDynamicChange() {
     if (paid >= total) {
         change = paid - total;
         due = 0;
-    } 
+    }
     // If paid amount is less than the total
     else {
         change = 0;
@@ -2442,7 +2460,7 @@ function updateDynamicChange() {
     // Remove existing color classes from both elements
     $('#summary_change_amount').removeClass('text-success fw-bold');
     $('#summary_due_amount').removeClass('text-danger fw-bold');
-    
+
     // Add back default text-secondary class
     $('#summary_change_amount').addClass('text-secondary');
     $('#summary_due_amount').addClass('text-secondary');
@@ -2462,7 +2480,7 @@ function updateDynamicChange() {
             cart[id].quantity++;
             updateCart();
         } else {
-            alert('No more stock available!');
+            toastr.warning('No more stock available!');
         }
     });
 
@@ -2508,23 +2526,125 @@ function updateDynamicChange() {
 
     // Cancel Order
     $('#cancel_order').on('click', function() {
-        if (confirm('Are you sure you want to clear the cart?')) {
-            cart = {};
-            extraDiscount = { amount: 0, type: 'amount' };
-            $('#summary_paid_amount').val(0);
-            updateCart();
-        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will clear all items from the cart!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#001f3f',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, clear it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cart = {};
+                extraDiscount = { amount: 0, type: 'amount' };
+                $('#summary_paid_amount').val(0);
+                updateCart();
+                toastr.info('Cart cleared');
+            }
+        });
     });
 
-    // Place Order Placeholder
+    // Place Order
     $('#place_order').on('click', function() {
-        if (Object.keys(cart).length === 0) {
-            alert('Cart is empty!');
+        const items = Object.values(cart);
+        if (items.length === 0) {
+            toastr.error('Cart is empty!');
             return;
         }
-        alert('Order placed successfully! (Backend integration pending)');
-        cart = {};
-        updateCart();
+
+        const customerId = $('#customer_id').val();
+        const discountType = extraDiscount.type;
+        const discountValue = extraDiscount.amount;
+        const subtotal = parseFloat($('#summary_subtotal').text().replace(/,/g, '')) || 0;
+        const totalDiscount = (parseFloat($('#summary_product_discount').text().replace(/,/g, '')) || 0) + (parseFloat($('#summary_extra_discount').text().replace(/,/g, '')) || 0);
+        const payableAmount = parseFloat($('#summary_total').text().replace(/,/g, '')) || 0;
+        const paidAmount = parseFloat($('#summary_paid_amount').val()) || 0;
+        const dueAmount = parseFloat($('#summary_due_amount').text().replace(/,/g, '')) || 0;
+        const note = $('#sell_note').val();
+        const staffNote = $('#staff_note').val();
+        const paymentMethod = selectedPaymentMethod;
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Total Payable: ৳" + payableAmount.toLocaleString(),
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#001f3f',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, place order!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                $.ajax({
+                    url: "{{ route('admin.pos-order.store') }}",
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        customer_id: customerId,
+                        items: items,
+                        total_amount: subtotal,
+                        discount_amount: totalDiscount,
+                        payable_amount: payableAmount,
+                        paid_amount: paidAmount,
+                        due_amount: dueAmount,
+                        payment_method: paymentMethod,
+                        note: note,
+                        staff_note: staffNote
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                confirmButtonColor: '#001f3f'
+                            });
+                            // Reset POS
+                            cart = {};
+                            extraDiscount = { amount: 0, type: 'amount' };
+                            $('#summary_paid_amount').val(0);
+                            $('#customer_id').val('').trigger('change');
+                            updateCart();
+                            loadProducts(); // Reload products to update stock visuals
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        const errors = xhr.responseJSON ? xhr.responseJSON.errors : null;
+                        if (errors) {
+                            let msg = '';
+                            for (let key in errors) {
+                                msg += errors[key][0] + '<br>';
+                            }
+                            toastr.error(msg, 'Validation Error');
+                        } else {
+                            toastr.error(xhr.responseJSON ? xhr.responseJSON.message : 'Something went wrong. Please try again.');
+                        }
+                    },
+                    complete: function() {
+                        $('#place_order').prop('disabled', false).text('Place Order');
+                    }
+                });
+            }
+        });
+    });
+    // Quick Cash Payment
+    $('#cash_payment_btn').on('click', function() {
+        if (Object.keys(cart).length === 0) {
+            toastr.error('Cart is empty!');
+            return;
+        }
+        const total = parseFloat($('#summary_total_input').val()) || 0;
+        $('#summary_paid_amount').val(total);
+        updateDynamicChange();
+        selectedPaymentMethod = 'Cash';
+        $('.payment-method-btn').removeClass('active btn-navy').addClass('btn-outline-secondary').css({'background-color': '', 'color': ''});
+        $('.payment-method-btn[data-method="Cash"]').removeClass('btn-outline-secondary').addClass('active btn-navy').css({'background-color': '#001f3f', 'color': 'white'});
+        
+        $('#place_order').trigger('click');
     });
 });
 </script>
