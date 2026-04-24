@@ -113,16 +113,25 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Fabric Price module
     Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
 
+    //Purchase module
+    Route::get('/purchase/vendor-history', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistory'])->name('admin.purchase.vendor-history');
+    Route::get('/purchase/due-list', [\App\Http\Controllers\Admin\PurchaseController::class, 'dueList'])->name('admin.purchase.due-list');
+    Route::get('/purchase/vendor-payments/{id}', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorPaymentDetails'])->name('admin.purchase.vendor-payment-details');
+    Route::post('/purchase/add-payment', [\App\Http\Controllers\Admin\PurchaseController::class, 'addPayment'])->name('admin.purchase.add-payment');
+    Route::resource('purchase', \App\Http\Controllers\Admin\PurchaseController::class, ['as' => 'admin']);
+
     //Custom Order module
     Route::get('/custom-order/export-pdf/{id}', [\App\Http\Controllers\Admin\CustomOrderController::class, 'exportPdf'])->name('admin.custom-order.export-pdf');
     Route::post('/custom-order/assign-vendor', [\App\Http\Controllers\Admin\CustomOrderController::class, 'assignVendor'])->name('admin.custom-order.assign-vendor');
     Route::post('/custom-order/update-status', [\App\Http\Controllers\Admin\CustomOrderController::class, 'updateStatus'])->name('admin.custom-order.update-status');
     Route::get('/custom-order-fabric-prices', [\App\Http\Controllers\Admin\CustomOrderController::class, 'getFabricPrices'])->name('admin.custom-order.fabric-prices');
+    Route::get('/custom-order/due-list', [\App\Http\Controllers\Admin\CustomOrderController::class, 'dueList'])->name('admin.custom-order.due-list');
     Route::resource('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, ['as' => 'admin']);
 
     //POS Order module
     Route::get('/pos-order/analysis', [\App\Http\Controllers\Admin\PosOrderController::class, 'analysis'])->name('admin.pos-order.analysis');
     Route::get('/pos-order/export-pdf/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportPdf'])->name('admin.pos-order.export-pdf');
     Route::post('/pos-order/cancel/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'cancel'])->name('admin.pos-order.cancel');
+    Route::get('/pos-order/due-list', [\App\Http\Controllers\Admin\PosOrderController::class, 'dueList'])->name('admin.pos-order.due-list');
     Route::resource('pos-order', \App\Http\Controllers\Admin\PosOrderController::class, ['as' => 'admin']);
 });

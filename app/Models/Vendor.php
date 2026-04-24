@@ -26,4 +26,14 @@ class Vendor extends Model
         'email',
         'opening_balance',
     ];
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(VendorPayment::class);
+    }
 }

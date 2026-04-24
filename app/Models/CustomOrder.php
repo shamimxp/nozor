@@ -76,4 +76,9 @@ class CustomOrder extends Model
     {
         return $this->hasMany(CustomOrderImage::class);
     }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }

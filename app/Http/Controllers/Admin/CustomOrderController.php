@@ -81,9 +81,8 @@ class CustomOrderController extends Controller
                     $btn .= '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25"><i data-feather="eye"></i></a>';
                     if ($r->status != 'delivered') {
                         $btn .= '<a href="' . route('admin.custom-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25"><i data-feather="edit"></i></a>';
-                    } else {
-                        $btn .= '<span class="badge badge-light-success text-uppercase mr-25" title="Locked">Locked</span>';
                     }
+                    $btn .= '<a href="' . route('admin.purchase.create', ['custom_order_id' => $r->id]) . '" class="btn btn-warning btn-sm mr-25" title="Create Purchase"><i data-feather="shopping-cart"></i></a>';
                     $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
@@ -91,6 +90,39 @@ class CustomOrderController extends Controller
                 ->make(true);
         }
         return view('admin.custom-order.index', compact('vendors'));
+    }
+
+    /**
+     * Custom Order Due List
+     */
+    public function dueList(Request $request)
+    {
+        if ($request->ajax()) {
+            $orders = CustomOrder::with('customer')->where('due', '>', 0)->latest()->get();
+            return DataTables::of($orders)
+                ->addIndexColumn()
+                ->addColumn('order_info', function($r) {
+                    return '<strong>' . $r->order_number . '</strong><br>' .
+                           '<small>Style: ' . $r->style_number . '</small><br>';
+                })
+                ->addColumn('customer_name', function($r) {
+                    return $r->customer ? '<strong>' . $r->customer->name . '</strong><br><small>' . $r->customer->phone . '</small>' : '-';
+                })
+                ->addColumn('financials', function($r) {
+                    return 
+                           '<strong class="text-danger">Due: ৳' . number_format($r->due, 2) . '</strong>';
+                })
+                ->addColumn('status_badge', function($r) {
+                    $class = ['pending' => 'warning', 'order_confirm' => 'info', 'delivered' => 'success', 'cancelled' => 'danger'][$r->status] ?? 'secondary';
+                    return '<span class="badge badge-light-' . $class . ' text-uppercase">' . str_replace('_', ' ', $r->status) . '</span>';
+                })
+                ->addColumn('action', function($r) {
+                    return '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-sm btn-info">View</a>';
+                })
+                ->rawColumns(['order_info', 'customer_name', 'financials', 'status_badge', 'action'])
+                ->make(true);
+        }
+        return view('admin.custom-order.due_list');
     }
 
     /**

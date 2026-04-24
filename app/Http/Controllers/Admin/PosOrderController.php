@@ -65,6 +65,32 @@ class PosOrderController extends Controller
         return view('admin.pos-order.index');
     }
 
+    public function dueList(Request $request)
+    {
+        if ($request->ajax()) {
+            $orders = PosOrder::with('customer')->where('due_amount', '>', 0)->where('order_status', '!=', 'cancelled')->latest()->get();
+            return DataTables::of($orders)
+                ->addIndexColumn()
+                ->addColumn('order_info', function($r) {
+                    return '<strong>' . $r->order_number . '</strong><br>' .
+                           '<small>' . date('d M, Y', strtotime($r->order_date)) . '</small>';
+                })
+                ->addColumn('customer_info', function($r) {
+                    return $r->customer ? '<strong>' . $r->customer->name . '</strong><br><small>' . $r->customer->phone . '</small>' : '<span class="text-muted">Walk-in</span>';
+                })
+                ->addColumn('financials', function($r) {
+                    return 
+                           '<strong class="text-danger">Due: ৳' . number_format($r->due_amount, 2) . '</strong>';
+                })
+                ->addColumn('action', function($r) {
+                    return '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info">View</a>';
+                })
+                ->rawColumns(['order_info', 'customer_info', 'financials', 'action'])
+                ->make(true);
+        }
+        return view('admin.pos-order.due_list');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
