@@ -82,7 +82,17 @@ class PosOrderController extends Controller
                     return '<strong class="text-danger">Due: ৳' . number_format($r->due_amount, 2) . '</strong>';
                 })
                 ->addColumn('action', function($r) {
-                    return '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info">View</a>';
+                    $customerId = $r->customer_id ?? '';
+                    $customerName = $r->customer->name ?? 'Walk-in';
+                    $btn = '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
+                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn ml-25"
+                                data-id="'.$r->id.'"
+                                data-customer-id="'.$customerId.'"
+                                data-customer-name="'.$customerName.'"
+                                data-order-number="'.$r->order_number.'"
+                                data-due="'.$r->due_amount.'"
+                                data-type="POSOrder">Pay</button>';
+                    return $btn;
                 })
                 ->rawColumns(['order_info', 'customer_info', 'financials', 'action'])
                 ->make(true);

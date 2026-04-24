@@ -81,4 +81,9 @@ class CustomOrder extends Model
     {
         return $this->hasMany(Purchase::class);
     }
+
+    public function payments()
+    {
+        return $this->morphMany(CustomerPayment::class, 'payable');
+    }
 }

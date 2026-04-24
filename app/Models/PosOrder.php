@@ -39,4 +39,8 @@ class PosOrder extends Model
         $number = intval(str_replace('ORD-', '', $latest->order_number));
         return 'ORD-' . ($number + 1);
     }
+    public function payments()
+    {
+        return $this->morphMany(CustomerPayment::class, 'payable');
+    }
 }

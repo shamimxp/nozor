@@ -134,4 +134,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/pos-order/cancel/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'cancel'])->name('admin.pos-order.cancel');
     Route::get('/pos-order/due-list', [\App\Http\Controllers\Admin\PosOrderController::class, 'dueList'])->name('admin.pos-order.due-list');
     Route::resource('pos-order', \App\Http\Controllers\Admin\PosOrderController::class, ['as' => 'admin']);
+
+    // Due Collection / Customer Payment module
+    Route::get('/due-collection', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'index'])->name('admin.due-collection.index');
+    Route::post('/due-collection/store', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'store'])->name('admin.due-collection.store');
+    Route::get('/due-collection/customer-history/{id}', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'customerHistory'])->name('admin.due-collection.customer-history');
 });

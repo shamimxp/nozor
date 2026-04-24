@@ -114,7 +114,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="mb-3 nav-item @if(Route::is('admin.pos-order*')) open @endif">
+            <li class="nav-item @if(Route::is('admin.pos-order*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="shopping-bag"></i><span class="menu-title text-truncate">POS Orders</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.pos') ? 'active' : '' }}">
@@ -130,6 +130,13 @@
                         <a class="d-flex align-items-center" href="{{route('admin.pos-order.due-list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Due List</span></a>
                     </li>
                 </ul>
+            </li>
+            <li class="navigation-header"><span>Account & Finance</span><i data-feather="more-horizontal"></i></li>
+            <li class="nav-item {{ Route::is('admin.due-collection*') ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{route('admin.due-collection.index')}}">
+                    <i data-feather="dollar-sign"></i>
+                    <span class="menu-title text-truncate">Due Collection</span>
+                </a>
             </li>
         </ul>
     </div>

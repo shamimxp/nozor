@@ -121,7 +121,15 @@ class CustomOrderController extends Controller
                     return '<span class="badge badge-light-' . $class . ' text-uppercase">' . str_replace('_', ' ', $r->status) . '</span>';
                 })
                 ->addColumn('action', function($r) {
-                    return '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-sm btn-info">View</a>';
+                    $btn = '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
+                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn" 
+                                data-id="'.$r->id.'" 
+                                data-customer-id="'.$r->customer_id.'" 
+                                data-customer-name="'.($r->customer->name ?? '').'"
+                                data-order-number="'.$r->order_number.'"
+                                data-due="'.$r->due.'"
+                                data-type="customOrder">Pay</button>';
+                    return $btn;
                 })
                 ->rawColumns(['order_info', 'customer_name', 'financials', 'status_badge', 'action'])
                 ->make(true);

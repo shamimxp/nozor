@@ -1,50 +1,3 @@
-@extends('layouts.admin')
-@section('title', 'POS Order Due List')
-@section('content')
-<div class="content-wrapper">
-    <div class="content-header row">
-        <div class="content-header-left col-md-9 col-12 mb-2">
-            <div class="row breadcrumbs-top">
-                <div class="col-12">
-                    <h2 class="content-header-title float-left mb-0">POS Order Due List</h2>
-                    <div class="breadcrumb-wrapper">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">POS Order Due List</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header border-bottom p-1">
-                        <h4 class="card-title mb-0">POS Orders with Pending Due</h4>
-                    </div>
-                    <div class="card-body table-responsive pt-2">
-                        <table id="posDueTable" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Order Info</th>
-                                    <th>Customer</th>
-                                    <th>Financial Summary</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Payment Modal -->
 <div class="modal fade text-left" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -72,14 +25,18 @@
                     <div class="form-group">
                         <label>Due Amount:</label>
                         <div class="input-group">
-                            <div class="input-group-prepend"><span class="input-group-text">৳</span></div>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">৳</span>
+                            </div>
                             <input type="text" class="form-control" id="modal_due_amount" readonly>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Payment Amount: <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <div class="input-group-prepend"><span class="input-group-text">৳</span></div>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">৳</span>
+                            </div>
                             <input type="number" step="0.01" name="amount" class="form-control" id="modal_payment_amount" required>
                         </div>
                     </div>
@@ -104,41 +61,22 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="paymentSubmitBtn">Save Payment</button>
+                    <button type="submit" class="btn btn-primary">Save Payment</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-@endsection
 
 @push('scripts')
 <script>
-    $(function () {
-        $('#posDueTable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('admin.pos-order.due-list') }}",
-            columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                {data: 'order_info', name: 'order_number'},
-                {data: 'customer_info', name: 'customer.name'},
-                {data: 'financials', name: 'due_amount'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-            ],
-            drawCallback: function() {
-                if (typeof feather !== 'undefined') feather.replace({ width: 14, height: 14 });
-            }
-        });
-    });
-
     $(document).on('click', '.payBtn', function() {
-        var id = $(this).data('id');
-        var customerId = $(this).data('customer-id');
-        var customerName = $(this).data('customer-name');
-        var orderNumber = $(this).data('order-number');
-        var due = $(this).data('due');
-        var type = $(this).data('type');
+        let id = $(this).data('id');
+        let customerId = $(this).data('customer-id');
+        let customerName = $(this).data('customer-name');
+        let orderNumber = $(this).data('order-number');
+        let due = $(this).data('due');
+        let type = $(this).data('type');
 
         $('#modal_payable_id').val(id);
         $('#modal_payable_type').val(type);
@@ -147,14 +85,14 @@
         $('#modal_order_number').val(orderNumber);
         $('#modal_due_amount').val(due);
         $('#modal_payment_amount').val(due).attr('max', due);
-
+        
         $('#paymentModal').modal('show');
     });
 
     $('#paymentForm').on('submit', function(e) {
         e.preventDefault();
-        var formData = $(this).serialize();
-        var submitBtn = $('#paymentSubmitBtn');
+        let formData = $(this).serialize();
+        let submitBtn = $(this).find('button[type="submit"]');
         submitBtn.prop('disabled', true).text('Processing...');
 
         $.ajax({
@@ -165,15 +103,21 @@
                 if (response.success) {
                     toastr.success(response.message);
                     $('#paymentModal').modal('hide');
-                    $('#posDueTable').DataTable().ajax.reload();
+                    // Reload the table if it exists
+                    if ($.fn.DataTable.isDataTable('#customDueTable')) {
+                        $('#customDueTable').DataTable().ajax.reload();
+                    }
+                    if ($.fn.DataTable.isDataTable('#posDueTable')) {
+                        $('#posDueTable').DataTable().ajax.reload();
+                    }
                 } else {
                     toastr.error(response.message);
                 }
                 submitBtn.prop('disabled', false).text('Save Payment');
             },
             error: function(xhr) {
-                var msg = 'Something went wrong';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
+                let msg = 'Something went wrong';
+                if (xhr.status === 422) {
                     msg = xhr.responseJSON.message;
                 }
                 toastr.error(msg);
