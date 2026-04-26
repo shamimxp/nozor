@@ -10,6 +10,51 @@
                     <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
                 </div>
             </div>
+            <div class="card-body border-bottom p-1">
+                <form id="filterForm">
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <div class="form-group mb-0">
+                                <label>Product Name</label>
+                                <input type="text" id="filter_name" class="form-control" placeholder="Search by name...">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-0">
+                                <label>Category</label>
+                                <select id="filter_category" class="form-control">
+                                    <option value="">All Categories</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-0">
+                                <label>Sub Category</label>
+                                <select id="filter_sub_category" class="form-control">
+                                    <option value="">All Sub Categories</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-0">
+                                <label>Status</label>
+                                <select id="filter_status" class="form-control">
+                                    <option value="">All Status</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" id="filterBtn" class="btn btn-primary">Filter</button>
+                            <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="card-body table-responsive pt-2">
                 <table id="productTable" class="table table-bordered table-striped">
                     <thead>
@@ -72,7 +117,15 @@
         var table = $('#productTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.product.index') }}",
+            ajax: {
+                url: "{{ route('admin.product.index') }}",
+                data: function (d) {
+                    d.name = $('#filter_name').val();
+                    d.category_id = $('#filter_category').val();
+                    d.sub_category_id = $('#filter_sub_category').val();
+                    d.status = $('#filter_status').val();
+                }
+            },
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'product', name: 'product'},
@@ -90,6 +143,36 @@
                         height: 14
                     });
                 }
+            }
+        });
+
+        $('#filterBtn').click(function() {
+            table.draw();
+        });
+
+        $('#resetBtn').click(function() {
+            $('#filterForm')[0].reset();
+            $('#filter_sub_category').html('<option value="">All Sub Categories</option>');
+            table.draw();
+        });
+
+        // Dependent Dropdown
+        $('#filter_category').change(function() {
+            var category_id = $(this).val();
+            if (category_id) {
+                $.ajax({
+                    url: "{{ url('/admin/get-subcategory') }}/" + category_id,
+                    type: "GET",
+                    success: function(data) {
+                        $('#filter_sub_category').empty();
+                        $('#filter_sub_category').append('<option value="">All Sub Categories</option>');
+                        $.each(data, function(key, value) {
+                            $('#filter_sub_category').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#filter_sub_category').html('<option value="">All Sub Categories</option>');
             }
         });
 

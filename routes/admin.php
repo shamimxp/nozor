@@ -144,6 +144,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/report/pos-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'posOrderReport'])->name('admin.report.pos-order-report');
     Route::get('/report/custom-profit-loss', [\App\Http\Controllers\Admin\ReportController::class, 'customProfitLossReport'])->name('admin.report.custom-profit-loss');
     Route::get('/report/pos-profit-loss', [\App\Http\Controllers\Admin\ReportController::class, 'posProfitLossReport'])->name('admin.report.pos-profit-loss');
+    Route::get('/report/product-stock', [\App\Http\Controllers\Admin\ReportController::class, 'productStockReport'])->name('admin.report.product-stock');
+    Route::get('/report/export-product-stock-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportProductStockExcel'])->name('admin.report.export-product-stock-excel');
+    Route::get('/report/export-product-stock-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportProductStockPdf'])->name('admin.report.export-product-stock-pdf');
     Route::get('/report/export-custom-profit-loss-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomProfitLossExcel'])->name('admin.report.export-custom-profit-loss-excel');
     Route::get('/report/export-custom-profit-loss-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomProfitLossPdf'])->name('admin.report.export-custom-profit-loss-pdf');
     Route::get('/report/export-pos-profit-loss-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosProfitLossExcel'])->name('admin.report.export-pos-profit-loss-excel');

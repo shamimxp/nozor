@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomOrder;
 use App\Models\PosOrder;
 use App\Models\Purchase;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -431,5 +434,112 @@ class ReportController extends Controller
 
         $pdf = Pdf::loadView('admin.report.pdf.pos_order_sales_pdf', compact('orders'));
         return $pdf->download('pos_sales_report_' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Product Stock Report
+     */
+    public function productStockReport(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = Product::with(['category', 'subCategory'])->latest();
+
+            if ($request->name) {
+                $query->where('name', 'LIKE', '%' . $request->name . '%');
+            }
+            if ($request->category_id) {
+                $query->where('category_id', $request->category_id);
+            }
+            if ($request->sub_category_id) {
+                $query->where('sub_category_id', $request->sub_category_id);
+            }
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('category_name', fn($r) => $r->category->name ?? '-')
+                ->addColumn('sub_category_name', fn($r) => $r->subCategory->name ?? '-')
+                ->addColumn('stock_status', function($r) {
+                    if ($r->stock <= 0) {
+                        return '<span class="badge badge-light-danger">Out of Stock</span>';
+                    } elseif ($r->stock <= 10) {
+                        return '<span class="badge badge-light-warning">Low Stock</span>';
+                    }
+                    return '<span class="badge badge-light-success">In Stock</span>';
+                })
+                ->rawColumns(['stock_status'])
+                ->make(true);
+        }
+        $categories = Category::where('status', 1)->get();
+        return view('admin.report.product_stock', compact('categories'));
+    }
+
+    /**
+     * Export Product Stock to Excel
+     */
+    public function exportProductStockExcel(Request $request)
+    {
+        $fileName = 'product_stock_' . date('Y-m-d') . '.csv';
+        $query = Product::with(['category', 'subCategory'])->latest();
+        
+        if ($request->name) {
+            $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+        if ($request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->sub_category_id) {
+            $query->where('sub_category_id', $request->sub_category_id);
+        }
+        
+        $products = $query->get();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('Product Name', 'Category', 'Sub Category', 'Buy Price', 'Sale Price', 'Current Stock');
+
+        $callback = function() use($products, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach ($products as $product) {
+                fputcsv($file, array(
+                    $product->name,
+                    $product->category->name ?? 'N/A',
+                    $product->subCategory->name ?? 'N/A',
+                    $product->cost_price,
+                    $product->selling_price,
+                    $product->stock
+                ));
+            }
+            fclose($file);
+        };
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Product Stock to PDF
+     */
+    public function exportProductStockPdf(Request $request)
+    {
+        $query = Product::with(['category', 'subCategory'])->latest();
+        
+        if ($request->name) {
+            $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+        if ($request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->sub_category_id) {
+            $query->where('sub_category_id', $request->sub_category_id);
+        }
+        
+        $products = $query->get();
+        $pdf = Pdf::loadView('admin.report.pdf.product_stock_pdf', compact('products'));
+        return $pdf->download('product_stock_' . date('Y-m-d') . '.pdf');
     }
 }

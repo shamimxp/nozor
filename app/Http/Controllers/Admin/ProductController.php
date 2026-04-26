@@ -21,10 +21,25 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::with(['category', 'subCategory'])->latest()->get();
-            return $this->productDataTable($products);
+            $query = Product::with(['category', 'subCategory'])->latest();
+
+            if ($request->name) {
+                $query->where('name', 'LIKE', '%' . $request->name . '%');
+            }
+            if ($request->category_id) {
+                $query->where('category_id', $request->category_id);
+            }
+            if ($request->sub_category_id) {
+                $query->where('sub_category_id', $request->sub_category_id);
+            }
+            if ($request->status != '') {
+                $query->where('status', $request->status);
+            }
+
+            return $this->productDataTable($query);
         }
-        return view('admin.product.index');
+        $categories = Category::where('status', 1)->get();
+        return view('admin.product.index', compact('categories'));
     }
 
     public function outOfStock(Request $request)

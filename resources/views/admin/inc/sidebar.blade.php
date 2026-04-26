@@ -98,7 +98,7 @@
                 </ul>
             </li>
             <li class=" nav-item @if(Route::is('admin.purchase*')) open @endif">
-                <a class="d-flex align-items-center" href="#"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">Purchases</span></a>
+                <a class="d-flex align-items-center" href="#"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">Custom Purchases</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.purchase.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.purchase.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Purchase List</span></a>
@@ -152,6 +152,9 @@
                     </li>
                     <li class="{{ Route::is('admin.report.pos-profit-loss') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.report.pos-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">POS Profit/Loss</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.report.product-stock') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.product-stock')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Stock Report</span></a>
                     </li>
                 </ul>
             </li>
