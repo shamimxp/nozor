@@ -138,6 +138,23 @@
                     <span class="menu-title text-truncate">Collection</span>
                 </a>
             </li>
+            <li class="nav-item @if(Route::is('admin.report*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="file-text"></i><span class="menu-title text-truncate">Reports</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.report.custom-order-report') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.custom-order-report')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Custom Order Sales</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.report.pos-order-report') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.pos-order-report')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">POS Order Sales</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.report.custom-profit-loss') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.custom-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Custom Profit/Loss</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.report.pos-profit-loss') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.pos-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">POS Profit/Loss</span></a>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </div>
 </div>

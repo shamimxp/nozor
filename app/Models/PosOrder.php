@@ -15,6 +15,10 @@ class PosOrder extends Model
         'payment_status', 'order_status', 'note', 'staff_note', 'created_by', 'order_date'
     ];
 
+    protected $casts = [
+        'order_date' => 'date',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);

@@ -139,4 +139,17 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/due-collection', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'index'])->name('admin.due-collection.index');
     Route::post('/due-collection/store', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'store'])->name('admin.due-collection.store');
     Route::get('/due-collection/customer-history/{id}', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'customerHistory'])->name('admin.due-collection.customer-history');
+    // Report module
+    Route::get('/report/custom-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'customOrderReport'])->name('admin.report.custom-order-report');
+    Route::get('/report/pos-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'posOrderReport'])->name('admin.report.pos-order-report');
+    Route::get('/report/custom-profit-loss', [\App\Http\Controllers\Admin\ReportController::class, 'customProfitLossReport'])->name('admin.report.custom-profit-loss');
+    Route::get('/report/pos-profit-loss', [\App\Http\Controllers\Admin\ReportController::class, 'posProfitLossReport'])->name('admin.report.pos-profit-loss');
+    Route::get('/report/export-custom-profit-loss-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomProfitLossExcel'])->name('admin.report.export-custom-profit-loss-excel');
+    Route::get('/report/export-custom-profit-loss-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomProfitLossPdf'])->name('admin.report.export-custom-profit-loss-pdf');
+    Route::get('/report/export-pos-profit-loss-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosProfitLossExcel'])->name('admin.report.export-pos-profit-loss-excel');
+    Route::get('/report/export-pos-profit-loss-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosProfitLossPdf'])->name('admin.report.export-pos-profit-loss-pdf');
+    Route::get('/report/export-custom-sales-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomSalesExcel'])->name('admin.report.export-custom-sales-excel');
+    Route::get('/report/export-custom-sales-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomSalesPdf'])->name('admin.report.export-custom-sales-pdf');
+    Route::get('/report/export-pos-sales-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosSalesExcel'])->name('admin.report.export-pos-sales-excel');
+    Route::get('/report/export-pos-sales-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosSalesPdf'])->name('admin.report.export-pos-sales-pdf');
 });
