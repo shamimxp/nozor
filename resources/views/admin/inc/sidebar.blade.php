@@ -114,6 +114,28 @@
                     </li>
                 </ul>
             </li>
+            <li class=" nav-item @if(Route::is('admin.inventory-purchase*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="truck"></i><span class="menu-title text-truncate">Product Purchases</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.inventory-purchase.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Purchase List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.inventory-purchase.create') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Purchase</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class=" nav-item @if(Route::is('admin.stock-adjustment*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="sliders"></i><span class="menu-title text-truncate">Stock Adjustment</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.stock-adjustment.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.stock-adjustment.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Adjustment List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.stock-adjustment.create') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.stock-adjustment.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Adjustment</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item @if(Route::is('admin.pos-order*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="shopping-bag"></i><span class="menu-title text-truncate">POS Orders</span></a>
                 <ul class="menu-content">

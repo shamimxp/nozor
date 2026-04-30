@@ -139,6 +139,17 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/due-collection', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'index'])->name('admin.due-collection.index');
     Route::post('/due-collection/store', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'store'])->name('admin.due-collection.store');
     Route::get('/due-collection/customer-history/{id}', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'customerHistory'])->name('admin.due-collection.customer-history');
+    //Inventory Purchase module
+    Route::get('/inventory-purchase/receive/{id}', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'receive'])->name('admin.inventory-purchase.receive');
+    Route::post('/inventory-purchase/receive/{id}', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'receiveStore'])->name('admin.inventory-purchase.receive.store');
+    Route::post('/inventory-purchase/{id}/payment', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'addPayment'])->name('admin.inventory-purchase.payment.store');
+    Route::get('/inventory-purchase/{id}/payment-history', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'paymentHistory'])->name('admin.inventory-purchase.payment-history');
+    Route::resource('inventory-purchase', \App\Http\Controllers\Admin\InventoryPurchaseController::class, ['as' => 'admin']);
+
+    //Stock Adjustment module
+    Route::post('/stock-adjustment/{id}/receive', [\App\Http\Controllers\Admin\StockAdjustmentController::class, 'receive'])->name('admin.stock-adjustment.receive');
+    Route::resource('stock-adjustment', \App\Http\Controllers\Admin\StockAdjustmentController::class, ['as' => 'admin']);
+
     // Report module
     Route::get('/report/custom-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'customOrderReport'])->name('admin.report.custom-order-report');
     Route::get('/report/pos-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'posOrderReport'])->name('admin.report.pos-order-report');

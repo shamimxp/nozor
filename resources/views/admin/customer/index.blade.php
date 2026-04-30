@@ -2,60 +2,15 @@
 @section('title', 'Customers')
 @section('content')
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-12">
         <div class="card">
             <div class="card-header border-bottom p-1">
-                <h4 class="card-title" id="formTitle">Add Customer</h4>
-            </div>
-            <div class="card-body pt-2">
-                <form id="customerForm">
-                    @csrf
-                    <input type="hidden" name="customer_id" id="customer_id">
-                    <div class="form-group mb-1">
-                        <label for="name">Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Customer Name" required>
-                        <span class="text-danger error-text name_error"></span>
-                    </div>
-                    <div class="form-group mb-1">
-                        <label for="phone">Phone <span class="text-danger">*</span></label>
-                        <input type="text" name="phone" id="phone" class="form-control" placeholder="Phone Number" required>
-                        <span class="text-danger error-text phone_error"></span>
-                    </div>
-                    <div class="form-group mb-1">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Email Address">
-                        <span class="text-danger error-text email_error"></span>
-                    </div>
-                    
-                    <div id="addressWrapper">
-                        <div class="form-group mb-1 address-item">
-                            <label>Address <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input type="text" name="address[]" class="form-control address-input" placeholder="Address" required>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-primary" type="button" id="addAddress"><i data-feather="plus"></i></button>
-                                </div>
-                            </div>
-                            <span class="text-danger error-text address_0_error"></span>
-                        </div>
-                    </div>
-
-                    <div class="mt-2 text-info">
-                        <small>Note: Default password will be 12345678</small>
-                    </div>
-
-                    <div class="mt-2">
-                        <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
-                        <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header border-bottom p-1">
-                <h4 class="card-title">Customer List</h4>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h4 class="card-title mb-0">Customer List</h4>
+                    <button type="button" class="btn btn-primary" id="showAddCustomerBtn">
+                        <i data-feather="plus"></i> Add Customer
+                    </button>
+                </div>
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="customerTable" class="table table-bordered table-striped">
@@ -71,6 +26,57 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 d-none" id="customerFormSection">
+        <div class="card">
+            <div class="card-header border-bottom p-1">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div>
+                        <h4 class="card-title mb-25" id="formTitle">Add Customer</h4>
+                        <small class="text-muted">Default password will be 12345678.</small>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary" id="closeFormBtn">Close</button>
+                </div>
+            </div>
+            <div class="card-body pt-2">
+                <form id="customerForm">
+                    @csrf
+                    <input type="hidden" name="customer_id" id="customer_id">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="name">Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Customer Name" required>
+                                <span class="text-danger error-text name_error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="phone">Phone <span class="text-danger">*</span></label>
+                                <input type="text" name="phone" id="phone" class="form-control" placeholder="Phone Number" required>
+                                <span class="text-danger error-text phone_error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Email Address">
+                                <span class="text-danger error-text email_error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="addressWrapper"></div>
+
+                    <div class="mt-2 text-right">
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save Customer</button>
+                        <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -100,31 +106,26 @@
             ],
             drawCallback: function() {
                 if (feather) {
-                    feather.replace({
-                        width: 14,
-                        height: 14
-                    });
+                    feather.replace({ width: 14, height: 14 });
                 }
             }
         });
 
-        // Add Address Field
-        $(document).on('click', '#addAddress', function(){
-            var html = `
-                <div class="form-group mb-1 address-item">
-                    <div class="input-group">
-                        <input type="text" name="address[]" class="form-control address-input" placeholder="Address" required>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-danger removeAddress" type="button"><i data-feather="minus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            $('#addressWrapper').append(html);
-            feather.replace({ width: 14, height: 14 });
+        resetAddressFields();
+
+        $('#showAddCustomerBtn').on('click', function() {
+            resetCustomerForm();
+            openCustomerForm('add');
         });
 
-        // Remove Address Field
+        $('#closeFormBtn, #cancelBtn').on('click', function() {
+            closeCustomerForm();
+        });
+
+        $(document).on('click', '#addAddress', function(){
+            addAddressField('');
+        });
+
         $(document).on('click', '.removeAddress', function(){
             $(this).closest('.address-item').remove();
         });
@@ -134,11 +135,11 @@
             $('#saveBtn').text('Sending...').attr('disabled', true);
             $('.error-text').text('');
 
-            let id = $('#customer_id').val();
-            let url = "{{ route('admin.customer.store') }}";
-            let formData = new FormData(this);
+            var id = $('#customer_id').val();
+            var url = "{{ route('admin.customer.store') }}";
+            var formData = new FormData(this);
 
-            if(id){
+            if (id) {
                 url = "{{ url('admin/customer') }}" + "/" + id;
                 formData.append('_method', 'PUT');
             }
@@ -150,127 +151,153 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    $('#customerForm').trigger("reset");
-                    $('#customer_id').val('');
-                    $('#formTitle').text('Add Customer');
-                    $('#saveBtn').text('Save').attr('disabled', false);
-                    $('#cancelBtn').addClass('d-none');
-                    $('.removeAddress').closest('.address-item').remove();
-                    table.draw();
                     toastr.success(data.success);
+                    table.draw(false);
+                    closeCustomerForm();
                 },
                 error: function (data) {
-                    $('#saveBtn').text('Save').attr('disabled', false);
-                    if(data.status === 422){
-                        let errors = data.responseJSON.errors;
-                        $.each(errors, function(prefix, val){
-                            let field = prefix.replace(/\./g, '_');
-                            $('span.'+field+'_error').text(val[0]);
+                    $('#saveBtn').text($('#customer_id').val() ? 'Update Customer' : 'Save Customer').attr('disabled', false);
+                    if (data.status === 422) {
+                        $.each(data.responseJSON.errors, function(prefix, val){
+                            var field = prefix.replace(/\./g, '_');
+                            $('span.' + field + '_error').text(val[0]);
                         });
                         toastr.error('Validation error. Please check fields.');
-                    } else {
-                        toastr.error(data.responseJSON.error || 'Something went wrong.');
+                        return;
                     }
+
+                    toastr.error((data.responseJSON && data.responseJSON.error) || 'Something went wrong.');
                 }
             });
         });
 
         $('body').on('click', '.editCustomer', function () {
             var id = $(this).data('id');
-            $.get("{{ url('admin/customer') }}" +'/' + id + '/edit', function (data) {
-                $('#formTitle').text('Edit Customer');
-                $('#saveBtn').text('Update');
-                $('#cancelBtn').removeClass('d-none');
+
+            $.get("{{ url('admin/customer') }}" + '/' + id + '/edit', function (data) {
+                resetCustomerForm();
+                openCustomerForm('edit');
+
                 $('#customer_id').val(data.id);
                 $('#name').val(data.name);
                 $('#phone').val(data.phone);
                 $('#email').val(data.email);
-                
-                // Clear and refill addresses
-                $('#addressWrapper').html('');
-                data.addresses.forEach((addr, index) => {
-                    let btn = index === 0 ? 
-                        `<button class="btn btn-outline-primary" type="button" id="addAddress"><i data-feather="plus"></i></button>` : 
-                        `<button class="btn btn-outline-danger removeAddress" type="button"><i data-feather="minus"></i></button>`;
-                    
-                    let html = `
-                        <div class="form-group mb-1 address-item">
-                            <label>${index === 0 ? 'Address <span class="text-danger">*</span>' : ''}</label>
-                            <div class="input-group">
-                                <input type="text" name="address[]" class="form-control address-input" value="${addr.address}" placeholder="Address" required>
-                                <div class="input-group-append">
-                                    ${btn}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    $('#addressWrapper').append(html);
-                });
-                feather.replace({ width: 14, height: 14 });
-            })
-        });
 
-        $('#cancelBtn').on('click', function(){
-            $('#customerForm').trigger("reset");
-            $('#customer_id').val('');
-            $('#formTitle').text('Add Customer');
-            $('#saveBtn').text('Save');
-            $(this).addClass('d-none');
-            $('.error-text').text('');
-            
-            // Reset addresses
-            $('#addressWrapper').html(`
-                <div class="form-group mb-1 address-item">
-                    <label>Address <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="text" name="address[]" class="form-control address-input" placeholder="Address" required>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary" type="button" id="addAddress"><i data-feather="plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `);
-            feather.replace({ width: 14, height: 14 });
+                $('#addressWrapper').html('');
+                if (data.addresses && data.addresses.length) {
+                    data.addresses.forEach(function(addr, index) {
+                        addAddressField(addr.address || '', index === 0);
+                    });
+                } else {
+                    resetAddressFields();
+                }
+
+                refreshIcons();
+            });
         });
 
         $('body').on('click', '.deleteCustomer', function () {
-            var id = $(this).data("id");
+            var id = $(this).data('id');
+
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Deleting a customer will also delete their login account!",
+                title: 'Delete this customer?',
+                text: 'This will also delete the customer login account.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel',
                 customClass: {
-                    confirmButton: 'btn btn-primary',
-                    cancelButton: 'btn btn-outline-danger ml-1'
+                    confirmButton: 'btn btn-danger',
+                    cancelButton: 'btn btn-outline-secondary ml-1'
                 },
                 buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: "{{ url('admin/customer') }}"+'/'+id,
-                        success: function (data) {
-                            table.draw();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted!',
-                                text: data.success,
-                                customClass: {
-                                    confirmButton: 'btn btn-success'
-                                }
-                            });
-                        },
-                        error: function (data) {
-                            toastr.error('Error deleting record.');
-                        }
-                    });
+            }).then(function(result) {
+                if (!result.isConfirmed) {
+                    return;
                 }
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: "{{ url('admin/customer') }}" + '/' + id,
+                    success: function (data) {
+                        table.draw(false);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted',
+                            text: data.success,
+                            customClass: {
+                                confirmButton: 'btn btn-success'
+                            },
+                            buttonsStyling: false
+                        });
+                    },
+                    error: function (data) {
+                        toastr.error((data.responseJSON && data.responseJSON.error) || 'Error deleting customer.');
+                    }
+                });
             });
         });
+
+        function openCustomerForm(mode) {
+            $('#customerFormSection').removeClass('d-none');
+            $('#formTitle').text(mode === 'edit' ? 'Edit Customer' : 'Add Customer');
+            $('#saveBtn')
+                .text(mode === 'edit' ? 'Update Customer' : 'Save Customer')
+                .attr('disabled', false);
+
+            $('html, body').animate({
+                scrollTop: $('#customerFormSection').offset().top - 80
+            }, 250);
+            refreshIcons();
+        }
+
+        function closeCustomerForm() {
+            resetCustomerForm();
+            $('#customerFormSection').addClass('d-none');
+        }
+
+        function resetCustomerForm() {
+            $('#customerForm').trigger('reset');
+            $('#customer_id').val('');
+            $('.error-text').text('');
+            $('#saveBtn').text('Save Customer').attr('disabled', false);
+            resetAddressFields();
+        }
+
+        function resetAddressFields() {
+            $('#addressWrapper').html('');
+            addAddressField('', true);
+        }
+
+        function addAddressField(value, isFirst) {
+            var button = isFirst ?
+                '<button class="btn btn-outline-primary" type="button" id="addAddress"><i data-feather="plus"></i></button>' :
+                '<button class="btn btn-outline-danger removeAddress" type="button"><i data-feather="minus"></i></button>';
+
+            var label = isFirst ? '<label>Address <span class="text-danger">*</span></label>' : '';
+            var html = '' +
+                '<div class="form-group mb-1 address-item">' +
+                    label +
+                    '<div class="input-group">' +
+                        '<input type="text" name="address[]" class="form-control address-input" value="' + escapeHtml(value) + '" placeholder="Address" required>' +
+                        '<div class="input-group-append">' + button + '</div>' +
+                    '</div>' +
+                    (isFirst ? '<span class="text-danger error-text address_0_error"></span>' : '') +
+                '</div>';
+
+            $('#addressWrapper').append(html);
+            refreshIcons();
+        }
+
+        function refreshIcons() {
+            if (feather) {
+                feather.replace({ width: 14, height: 14 });
+            }
+        }
+
+        function escapeHtml(value) {
+            return $('<div>').text(value || '').html();
+        }
     });
 </script>
 @endpush
