@@ -2,34 +2,6 @@
 @section('title', 'Customers')
 @section('content')
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header border-bottom p-1">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <h4 class="card-title mb-0">Customer List</h4>
-                    <button type="button" class="btn btn-primary" id="showAddCustomerBtn">
-                        <i data-feather="plus"></i> Add Customer
-                    </button>
-                </div>
-            </div>
-            <div class="card-body table-responsive pt-2">
-                <table id="customerTable" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Addresses</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
     <div class="col-12 d-none" id="customerFormSection">
         <div class="card">
             <div class="card-header border-bottom p-1">
@@ -80,6 +52,34 @@
             </div>
         </div>
     </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header border-bottom p-1">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h4 class="card-title mb-0">Customer List</h4>
+                    <button type="button" class="btn btn-primary" id="showAddCustomerBtn">
+                        <i data-feather="plus"></i> Add Customer
+                    </button>
+                </div>
+            </div>
+            <div class="card-body table-responsive pt-2">
+                <table id="customerTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Addresses</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 
