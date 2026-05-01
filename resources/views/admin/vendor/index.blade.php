@@ -2,10 +2,14 @@
 @section('title', 'Vendors')
 @section('content')
 <div class="row">
-    <div class="col-md-12">
+    {{-- Add/Edit Vendor Form Section (hidden by default) --}}
+    <div class="col-12 d-none" id="vendorFormSection">
         <div class="card">
             <div class="card-header border-bottom p-1">
-                <h4 class="card-title" id="formTitle">Add Vendor</h4>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h4 class="card-title mb-0" id="formTitle">Add Vendor</h4>
+                    <button type="button" class="btn btn-outline-secondary" id="closeFormBtn">Close</button>
+                </div>
             </div>
             <div class="card-body pt-2">
                 <form id="vendorForm">
@@ -49,18 +53,25 @@
                         </div>
                     </div>
 
-                    <div class="mt-2">
-                        <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
-                        <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
+                    <div class="mt-2 text-right">
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save Vendor</button>
+                        <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="col-md-12">
+
+    {{-- Vendor List --}}
+    <div class="col-12">
         <div class="card">
             <div class="card-header border-bottom p-1">
-                <h4 class="card-title">Vendor List</h4>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h4 class="card-title mb-0">Vendor List</h4>
+                    <button type="button" class="btn btn-primary" id="showAddVendorBtn">
+                        <i data-feather="plus"></i> Add Vendor
+                    </button>
+                </div>
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="vendorTable" class="table table-bordered table-striped">
@@ -107,14 +118,22 @@
             ],
             drawCallback: function() {
                 if (feather) {
-                    feather.replace({
-                        width: 14,
-                        height: 14
-                    });
+                    feather.replace({ width: 14, height: 14 });
                 }
             }
         });
 
+        // --- Show/Hide Form ---
+        $('#showAddVendorBtn').on('click', function () {
+            resetVendorForm();
+            openVendorForm('add');
+        });
+
+        $('#closeFormBtn, #cancelBtn').on('click', function () {
+            closeVendorForm();
+        });
+
+        // --- Form Submit ---
         $('#vendorForm').on('submit', function (e) {
             e.preventDefault();
             $('#saveBtn').text('Sending...').attr('disabled', true);
@@ -124,7 +143,7 @@
             let url = "{{ route('admin.vendor.store') }}";
             let formData = new FormData(this);
 
-            if(id){
+            if (id) {
                 url = "{{ url('admin/vendor') }}" + "/" + id;
                 formData.append('_method', 'PUT');
             }
@@ -136,57 +155,42 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    $('#vendorForm').trigger("reset");
-                    $('#vendor_id').val('');
-                    $('#formTitle').text('Add Vendor');
-                    $('#saveBtn').text('Save').attr('disabled', false);
-                    $('#cancelBtn').addClass('d-none');
-                    table.draw();
                     toastr.success(data.success);
+                    table.draw(false);
+                    closeVendorForm();
                 },
                 error: function (data) {
-                    $('#saveBtn').text('Save').attr('disabled', false);
-                    if(data.status === 422){
+                    $('#saveBtn').text($('#vendor_id').val() ? 'Update Vendor' : 'Save Vendor').attr('disabled', false);
+                    if (data.status === 422) {
                         let errors = data.responseJSON.errors;
-                        $.each(errors, function(prefix, val){
-                            $('span.'+prefix+'_error').text(val[0]);
+                        $.each(errors, function (prefix, val) {
+                            $('span.' + prefix + '_error').text(val[0]);
                         });
                         toastr.error('Validation error. Please check fields.');
                     } else {
-                        toastr.error(data.responseJSON.error || 'Something went wrong.');
+                        toastr.error((data.responseJSON && data.responseJSON.error) || 'Something went wrong.');
                     }
                 }
             });
         });
 
+        // --- Edit Vendor ---
         $('body').on('click', '.editVendor', function () {
             var id = $(this).data('id');
-            $.get("{{ url('admin/vendor') }}" +'/' + id + '/edit', function (data) {
-                $('#formTitle').text('Edit Vendor');
-                $('#saveBtn').text('Update');
-                $('#cancelBtn').removeClass('d-none');
+            $.get("{{ url('admin/vendor') }}" + '/' + id + '/edit', function (data) {
+                resetVendorForm();
+                openVendorForm('edit');
+
                 $('#vendor_id').val(data.id);
                 $('#name').val(data.name);
                 $('#company_name').val(data.company_name);
                 $('#phone').val(data.phone);
                 $('#email').val(data.email);
                 $('#opening_balance').val(data.opening_balance);
-                
-                if (feather) {
-                    feather.replace({ width: 14, height: 14 });
-                }
-            })
+            });
         });
 
-        $('#cancelBtn').on('click', function(){
-            $('#vendorForm').trigger("reset");
-            $('#vendor_id').val('');
-            $('#formTitle').text('Add Vendor');
-            $('#saveBtn').text('Save');
-            $(this).addClass('d-none');
-            $('.error-text').text('');
-        });
-
+        // --- Delete Vendor ---
         $('body').on('click', '.deleteVendor', function () {
             var id = $(this).data("id");
             Swal.fire({
@@ -206,9 +210,9 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "DELETE",
-                        url: "{{ url('admin/vendor') }}"+'/'+id,
+                        url: "{{ url('admin/vendor') }}" + '/' + id,
                         success: function (data) {
-                            table.draw();
+                            table.draw(false);
                             toastr.success(data.success);
                         },
                         error: function (data) {
@@ -218,6 +222,36 @@
                 }
             });
         });
+
+        // --- Helper Functions ---
+        function openVendorForm(mode) {
+            $('#vendorFormSection').removeClass('d-none');
+            $('#formTitle').text(mode === 'edit' ? 'Edit Vendor' : 'Add Vendor');
+            $('#saveBtn')
+                .text(mode === 'edit' ? 'Update Vendor' : 'Save Vendor')
+                .attr('disabled', false);
+
+            $('html, body').animate({
+                scrollTop: $('#vendorFormSection').offset().top - 80
+            }, 250);
+
+            if (feather) {
+                feather.replace({ width: 14, height: 14 });
+            }
+        }
+
+        function closeVendorForm() {
+            resetVendorForm();
+            $('#vendorFormSection').addClass('d-none');
+        }
+
+        function resetVendorForm() {
+            $('#vendorForm').trigger('reset');
+            $('#vendor_id').val('');
+            $('.error-text').text('');
+            $('#opening_balance').val('0');
+            $('#saveBtn').text('Save Vendor').attr('disabled', false);
+        }
     });
 </script>
 @endpush
