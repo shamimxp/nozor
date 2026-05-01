@@ -11,13 +11,33 @@ use App\Models\VendorPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $purchases = Purchase::with(['vendor', 'customOrder'])->latest()->get();
+            $query = Purchase::with(['vendor', 'customOrder'])->latest();
+
+            if ($request->purchase_number) {
+                $query->where('purchase_number', 'LIKE', '%' . $request->purchase_number . '%');
+            }
+            if ($request->order_number) {
+                $query->whereHas('customOrder', function ($q) use ($request) {
+                    $q->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+                });
+            }
+            if ($request->vendor_phone) {
+                $query->whereHas('vendor', function ($q) use ($request) {
+                    $q->where('phone', 'LIKE', '%' . $request->vendor_phone . '%');
+                });
+            }
+            if ($request->status) {
+                $query->where('status', $request->status);
+            }
+
+            $purchases = $query->get();
             return DataTables::of($purchases)
                 ->addIndexColumn()
                 ->addColumn('purchase_info', function($r) {
@@ -346,5 +366,96 @@ class PurchaseController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Something went wrong.']);
         }
+    }
+
+    /**
+     * Export Purchase List to CSV/Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        $fileName = 'purchases_' . date('Y-m-d') . '.csv';
+        $query = Purchase::with(['vendor', 'customOrder'])->latest();
+
+        if ($request->purchase_number) {
+            $query->where('purchase_number', 'LIKE', '%' . $request->purchase_number . '%');
+        }
+        if ($request->order_number) {
+            $query->whereHas('customOrder', fn($q) => $q->where('order_number', 'LIKE', '%' . $request->order_number . '%'));
+        }
+        if ($request->vendor_phone) {
+            $query->whereHas('vendor', fn($q) => $q->where('phone', 'LIKE', '%' . $request->vendor_phone . '%'));
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $purchases = $query->get();
+
+        $headers = [
+            'Content-type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $fileName,
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $columns = ['Purchase No', 'Order No', 'Style No', 'Received Date', 'Vendor', 'Vendor Phone', 'Sub Total', 'Carrying Charge', 'Grand Total', 'Paid', 'Due', 'Status'];
+
+        $callback = function () use ($purchases, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach ($purchases as $p) {
+                fputcsv($file, [
+                    $p->purchase_number,
+                    $p->customOrder->order_number ?? 'N/A',
+                    $p->style_number,
+                    $p->received_date ? $p->received_date->format('Y-m-d') : '',
+                    $p->vendor->name ?? 'N/A',
+                    $p->vendor->phone ?? 'N/A',
+                    $p->sub_total,
+                    $p->carrying_charge,
+                    $p->grand_total,
+                    $p->paid_amount,
+                    $p->due_amount,
+                    strtoupper($p->status),
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Purchase List to PDF
+     */
+    public function exportListPdf(Request $request)
+    {
+        $query = Purchase::with(['vendor', 'customOrder'])->latest();
+
+        if ($request->purchase_number) {
+            $query->where('purchase_number', 'LIKE', '%' . $request->purchase_number . '%');
+        }
+        if ($request->order_number) {
+            $query->whereHas('customOrder', fn($q) => $q->where('order_number', 'LIKE', '%' . $request->order_number . '%'));
+        }
+        if ($request->vendor_phone) {
+            $query->whereHas('vendor', fn($q) => $q->where('phone', 'LIKE', '%' . $request->vendor_phone . '%'));
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $purchases = $query->get();
+        $filters = [
+            'purchase_number' => $request->purchase_number,
+            'order_number'    => $request->order_number,
+            'vendor_phone'    => $request->vendor_phone,
+            'status'          => $request->status,
+        ];
+
+        $pdf = Pdf::loadView('admin.purchase.list_pdf', compact('purchases', 'filters'))
+            ->setPaper('a4', 'landscape');
+        return $pdf->download('purchases_' . date('Y-m-d') . '.pdf');
     }
 }

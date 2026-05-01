@@ -118,10 +118,14 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/purchase/due-list', [\App\Http\Controllers\Admin\PurchaseController::class, 'dueList'])->name('admin.purchase.due-list');
     Route::get('/purchase/vendor-payments/{id}', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorPaymentDetails'])->name('admin.purchase.vendor-payment-details');
     Route::post('/purchase/add-payment', [\App\Http\Controllers\Admin\PurchaseController::class, 'addPayment'])->name('admin.purchase.add-payment');
+    Route::get('/purchase/export-excel', [\App\Http\Controllers\Admin\PurchaseController::class, 'exportExcel'])->name('admin.purchase.export-excel');
+    Route::get('/purchase/export-list-pdf', [\App\Http\Controllers\Admin\PurchaseController::class, 'exportListPdf'])->name('admin.purchase.export-list-pdf');
     Route::resource('purchase', \App\Http\Controllers\Admin\PurchaseController::class, ['as' => 'admin']);
 
     //Custom Order module
     Route::get('/custom-order/export-pdf/{id}', [\App\Http\Controllers\Admin\CustomOrderController::class, 'exportPdf'])->name('admin.custom-order.export-pdf');
+    Route::get('/custom-order/export-excel', [\App\Http\Controllers\Admin\CustomOrderController::class, 'exportExcel'])->name('admin.custom-order.export-excel');
+    Route::get('/custom-order/export-list-pdf', [\App\Http\Controllers\Admin\CustomOrderController::class, 'exportListPdf'])->name('admin.custom-order.export-list-pdf');
     Route::post('/custom-order/assign-vendor', [\App\Http\Controllers\Admin\CustomOrderController::class, 'assignVendor'])->name('admin.custom-order.assign-vendor');
     Route::post('/custom-order/update-status', [\App\Http\Controllers\Admin\CustomOrderController::class, 'updateStatus'])->name('admin.custom-order.update-status');
     Route::get('/custom-order-fabric-prices', [\App\Http\Controllers\Admin\CustomOrderController::class, 'getFabricPrices'])->name('admin.custom-order.fabric-prices');

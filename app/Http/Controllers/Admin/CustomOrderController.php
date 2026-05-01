@@ -28,7 +28,19 @@ class CustomOrderController extends Controller
 
         if ($request->ajax()) {
             $existingPurchaseOrderIds = Purchase::pluck('custom_order_id')->filter()->toArray();
-            $orders = CustomOrder::with(['customer', 'vendor'])->latest()->get();
+            $query = CustomOrder::with(['customer', 'vendor'])->latest();
+
+            if ($request->order_number) {
+                $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+            }
+            if ($request->start_date && $request->end_date) {
+                $query->whereBetween('order_date', [$request->start_date, $request->end_date]);
+            }
+            if ($request->status) {
+                $query->where('status', $request->status);
+            }
+
+            $orders = $query->get();
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('order_info', function($r) {
@@ -453,5 +465,92 @@ class CustomOrderController extends Controller
         $order = CustomOrder::with(['items', 'customer'])->findOrFail($id);
         $pdf = Pdf::loadView('admin.custom-order.pdf', compact('order'));
         return $pdf->download('Invoice-' . $order->order_number . '.pdf');
+    }
+
+    /**
+     * Export Custom Order List to CSV/Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        $fileName = 'custom_orders_' . date('Y-m-d') . '.csv';
+        $query = CustomOrder::with('customer')->latest();
+
+        if ($request->order_number) {
+            $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+        }
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('order_date', [$request->start_date, $request->end_date]);
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->get();
+
+        $headers = [
+            'Content-type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $fileName,
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $columns = ['Order No', 'Style No', 'Order Date', 'Customer', 'Phone', 'Type', 'Sleeve', 'Qty', 'Sub Total', 'Carrying Charge', 'Grand Total', 'Paid', 'Due', 'Status'];
+
+        $callback = function () use ($orders, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    $order->order_number,
+                    $order->style_number,
+                    $order->order_date->format('Y-m-d'),
+                    $order->customer->name ?? 'N/A',
+                    $order->customer->phone ?? 'N/A',
+                    strtoupper($order->type),
+                    strtoupper($order->sleeve),
+                    $order->total_quantity,
+                    $order->sub_total,
+                    $order->carrying_charge,
+                    $order->grand_total,
+                    $order->paid,
+                    $order->due,
+                    strtoupper(str_replace('_', ' ', $order->status)),
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Custom Order List to PDF
+     */
+    public function exportListPdf(Request $request)
+    {
+        $query = CustomOrder::with('customer')->latest();
+
+        if ($request->order_number) {
+            $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+        }
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('order_date', [$request->start_date, $request->end_date]);
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->get();
+        $filters = [
+            'order_number' => $request->order_number,
+            'start_date'   => $request->start_date,
+            'end_date'     => $request->end_date,
+            'status'       => $request->status,
+        ];
+
+        $pdf = Pdf::loadView('admin.custom-order.list_pdf', compact('orders', 'filters'))
+            ->setPaper('a4', 'landscape');
+        return $pdf->download('custom_orders_' . date('Y-m-d') . '.pdf');
     }
 }
