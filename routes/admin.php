@@ -145,6 +145,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/due-collection/store', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'store'])->name('admin.due-collection.store');
     Route::get('/due-collection/customer-history/{id}', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'customerHistory'])->name('admin.due-collection.customer-history');
     //Inventory Purchase module
+    Route::get('/inventory-purchase/vendor-history-pdf', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'vendorHistoryPdf'])->name('admin.inventory-purchase.vendor-history-pdf');
+    Route::get('/inventory-purchase/vendor-history', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'vendorHistory'])->name('admin.inventory-purchase.vendor-history');
     Route::get('/inventory-purchase/receive/{id}', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'receive'])->name('admin.inventory-purchase.receive');
     Route::post('/inventory-purchase/receive/{id}', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'receiveStore'])->name('admin.inventory-purchase.receive.store');
     Route::post('/inventory-purchase/{id}/payment', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'addPayment'])->name('admin.inventory-purchase.payment.store');

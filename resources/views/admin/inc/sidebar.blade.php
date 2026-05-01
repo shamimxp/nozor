@@ -123,6 +123,9 @@
                     <li class="{{ Route::is('admin.inventory-purchase.create') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Purchase</span></a>
                     </li>
+                    <li class="{{ Route::is('admin.inventory-purchase.vendor-history') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.vendor-history')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Vendor History</span></a>
+                    </li>
                 </ul>
             </li>
             <li class=" nav-item @if(Route::is('admin.stock-adjustment*')) open @endif">
