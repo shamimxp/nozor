@@ -7,10 +7,45 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">POS Order List</h4>
-                    @if(Route::has('admin.pos'))
-                    <a href="{{ route('admin.pos') }}" target="_blank" class="btn btn-primary">Go to POS</a>
-                    @endif
+                    <div>
+                        <a href="{{ route('admin.pos-order.export-list-excel') }}" class="btn btn-success" id="exportExcelBtn"><i data-feather="file-text"></i> Excel</a>
+                        <a href="{{ route('admin.pos-order.export-list-pdf') }}" class="btn btn-danger" id="exportPdfBtn"><i data-feather="file"></i> PDF</a>
+                        @if(Route::has('admin.pos'))
+                        <a href="{{ route('admin.pos') }}" target="_blank" class="btn btn-primary ml-1">Go to POS</a>
+                        @endif
+                    </div>
                 </div>
+            </div>
+            <div class="card-body border-bottom pt-2 pb-2">
+                <form id="filterForm">
+                    <div class="row align-items-end">
+                        <div class="col-md-2">
+                            <label>Order Number</label>
+                            <input type="text" name="order_number" id="order_number" class="form-control" placeholder="Search Order No">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Start Date</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label>End Date</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label>Status</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="">All</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex">
+                            <button type="button" id="filterBtn" class="btn btn-primary w-50 mr-1"><i data-feather="filter"></i></button>
+                            <button type="button" id="resetBtn" class="btn btn-outline-secondary w-50"><i data-feather="refresh-cw"></i></button>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="posOrderTable" class="table table-bordered table-striped">
@@ -44,7 +79,15 @@
         var table = $('#posOrderTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.pos-order.index') }}",
+            ajax: {
+                url: "{{ route('admin.pos-order.index') }}",
+                data: function(d) {
+                    d.order_number = $('#order_number').val();
+                    d.start_date = $('#start_date').val();
+                    d.end_date = $('#end_date').val();
+                    d.status = $('#status').val();
+                }
+            },
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'order_info', name: 'order_number'},
@@ -62,6 +105,40 @@
                 }
             }
         });
+
+        $('#filterBtn').on('click', function() {
+            table.draw();
+            updateExportLinks();
+        });
+
+        $('#resetBtn').on('click', function() {
+            $('#order_number').val('');
+            $('#start_date').val('');
+            $('#end_date').val('');
+            $('#status').val('');
+            table.draw();
+            updateExportLinks();
+        });
+
+        function updateExportLinks() {
+            let orderNum = $('#order_number').val() || '';
+            let start = $('#start_date').val() || '';
+            let end = $('#end_date').val() || '';
+            let stat = $('#status').val() || '';
+
+            let queryParams = $.param({
+                order_number: orderNum,
+                start_date: start,
+                end_date: end,
+                status: stat
+            });
+
+            $('#exportExcelBtn').attr('href', "{{ route('admin.pos-order.export-list-excel') }}?" + queryParams);
+            $('#exportPdfBtn').attr('href', "{{ route('admin.pos-order.export-list-pdf') }}?" + queryParams);
+        }
+
+        // Call once on load
+        updateExportLinks();
 
         // Cancel Order
         $('body').on('click', '.cancelOrder', function () {

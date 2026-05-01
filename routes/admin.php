@@ -134,6 +134,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, ['as' => 'admin']);
 
     //POS Order module
+    Route::get('/pos-order/export-list-excel', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListExcel'])->name('admin.pos-order.export-list-excel');
+    Route::get('/pos-order/export-list-pdf', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListPdf'])->name('admin.pos-order.export-list-pdf');
     Route::get('/pos-order/analysis', [\App\Http\Controllers\Admin\PosOrderController::class, 'analysis'])->name('admin.pos-order.analysis');
     Route::get('/pos-order/export-pdf/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportPdf'])->name('admin.pos-order.export-pdf');
     Route::post('/pos-order/cancel/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'cancel'])->name('admin.pos-order.cancel');

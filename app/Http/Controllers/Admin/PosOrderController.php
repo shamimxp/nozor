@@ -20,7 +20,19 @@ class PosOrderController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $orders = PosOrder::with('customer')->latest()->get();
+            $query = PosOrder::with('customer')->latest();
+
+            if ($request->order_number) {
+                $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+            }
+            if ($request->start_date && $request->end_date) {
+                $query->whereBetween(DB::raw('DATE(order_date)'), [$request->start_date, $request->end_date]);
+            }
+            if ($request->status) {
+                $query->where('order_status', $request->status);
+            }
+
+            $orders = $query->get();
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('order_info', function($r) {
@@ -258,5 +270,79 @@ class PosOrderController extends Controller
         $order = PosOrder::with(['customer', 'items.product', 'creator'])->findOrFail($id);
         $pdf = Pdf::loadView('admin.pos-order.pdf', compact('order'));
         return $pdf->download('POS-Invoice-' . $order->order_number . '.pdf');
+    }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = PosOrder::with('customer')->latest();
+
+        if ($request->order_number) {
+            $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+        }
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween(DB::raw('DATE(order_date)'), [$request->start_date, $request->end_date]);
+        }
+        if ($request->status) {
+            $query->where('order_status', $request->status);
+        }
+
+        $orders = $query->get();
+
+        $pdf = Pdf::loadView('admin.pos-order.list_pdf', compact('orders'))
+            ->setPaper('a4', 'landscape');
+        return $pdf->download('pos_orders_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function exportListExcel(Request $request)
+    {
+        $fileName = 'pos_orders_' . date('Y-m-d') . '.csv';
+        $query = PosOrder::with('customer')->latest();
+
+        if ($request->order_number) {
+            $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+        }
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween(DB::raw('DATE(order_date)'), [$request->start_date, $request->end_date]);
+        }
+        if ($request->status) {
+            $query->where('order_status', $request->status);
+        }
+
+        $orders = $query->get();
+
+        $headers = [
+            'Content-type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=' . $fileName,
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $columns = [
+            'Order No', 'Date', 'Customer Name', 'Customer Phone', 
+            'Total Amount', 'Discount', 'Payable Amount', 'Paid Amount', 'Due Amount', 'Status'
+        ];
+
+        $callback = function () use ($orders, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach ($orders as $o) {
+                fputcsv($file, [
+                    $o->order_number,
+                    \Carbon\Carbon::parse($o->order_date)->format('Y-m-d'),
+                    $o->customer->name ?? 'Walk-in',
+                    $o->customer->phone ?? 'N/A',
+                    $o->total_amount,
+                    $o->discount_amount,
+                    $o->payable_amount,
+                    $o->paid_amount,
+                    $o->due_amount,
+                    strtoupper($o->order_status),
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
