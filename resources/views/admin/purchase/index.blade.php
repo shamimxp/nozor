@@ -33,6 +33,12 @@
                             <input type="text" id="filter_vendor_phone" class="form-control form-control-sm" placeholder="Phone number...">
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <label for="filter_daterange">Date Range (Received)</label>
+                            <input type="text" id="filter_daterange" class="form-control form-control-sm" placeholder="Select date range..." autocomplete="off" readonly>
+                        </div>
+                    </div>
                     <div class="col-md-2">
                         <div class="form-group mb-1">
                             <label for="filter_status">Status</label>
@@ -101,13 +107,48 @@
 </div>
 @endsection
 
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+@endpush
+
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
     $(function () {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+        // ---- Date Range Picker ----
+        var startDate = null, endDate = null;
+
+        $('#filter_daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: 'YYYY-MM-DD'
+            },
+            ranges: {
+                'Today':       [moment(), moment()],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'This Month':  [moment().startOf('month'), moment().endOf('month')],
+                'Last Month':  [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            }
+        });
+
+        $('#filter_daterange').on('apply.daterangepicker', function(ev, picker) {
+            startDate = picker.startDate.format('YYYY-MM-DD');
+            endDate   = picker.endDate.format('YYYY-MM-DD');
+            $(this).val(picker.startDate.format('MMM D, YYYY') + ' - ' + picker.endDate.format('MMM D, YYYY'));
+        });
+
+        $('#filter_daterange').on('cancel.daterangepicker', function() {
+            startDate = null;
+            endDate   = null;
+            $(this).val('');
         });
 
         // ---- Toggle Filter Card ----
@@ -132,6 +173,8 @@
                     d.purchase_number = $('#filter_purchase_number').val();
                     d.order_number    = $('#filter_order_number').val();
                     d.vendor_phone    = $('#filter_vendor_phone').val();
+                    d.start_date      = startDate;
+                    d.end_date        = endDate;
                     d.status          = $('#filter_status').val();
                 }
             },
@@ -159,7 +202,10 @@
             $('#filter_purchase_number').val('');
             $('#filter_order_number').val('');
             $('#filter_vendor_phone').val('');
+            $('#filter_daterange').val('');
             $('#filter_status').val('');
+            startDate = null;
+            endDate   = null;
             table.draw();
         });
 
@@ -175,10 +221,12 @@
             var oNum   = $('#filter_order_number').val();
             var phone  = $('#filter_vendor_phone').val();
             var status = $('#filter_status').val();
-            if (pNum)   params.append('purchase_number', pNum);
-            if (oNum)   params.append('order_number', oNum);
-            if (phone)  params.append('vendor_phone', phone);
-            if (status) params.append('status', status);
+            if (pNum)       params.append('purchase_number', pNum);
+            if (oNum)       params.append('order_number', oNum);
+            if (phone)      params.append('vendor_phone', phone);
+            if (startDate)  params.append('start_date', startDate);
+            if (endDate)    params.append('end_date', endDate);
+            if (status)     params.append('status', status);
             return params.toString();
         }
 

@@ -114,6 +114,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
 
     //Purchase module
+    Route::get('/purchase/vendor-history-pdf', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistoryPdf'])->name('admin.purchase.vendor-history-pdf');
     Route::get('/purchase/vendor-history', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistory'])->name('admin.purchase.vendor-history');
     Route::get('/purchase/due-list', [\App\Http\Controllers\Admin\PurchaseController::class, 'dueList'])->name('admin.purchase.due-list');
     Route::get('/purchase/vendor-payments/{id}', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorPaymentDetails'])->name('admin.purchase.vendor-payment-details');

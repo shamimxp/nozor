@@ -4,8 +4,11 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header border-bottom p-1">
+            <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Vendor History & Due Summary</h4>
+                <a href="{{ route('admin.purchase.vendor-history-pdf') }}" class="btn btn-primary btn-sm">
+                    <i data-feather="file-text"></i> Export PDF
+                </a>
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="vendorHistoryTable" class="table table-bordered table-striped">

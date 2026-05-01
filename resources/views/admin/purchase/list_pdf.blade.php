@@ -56,6 +56,13 @@
         {{ $filters['vendor_phone'] ?: 'All' }}
     </span>
     <span>
+        @if(!empty($filters['start_date']) && !empty($filters['end_date']))
+            Period: {{ \Carbon\Carbon::parse($filters['start_date'])->format('d M Y') }} &ndash; {{ \Carbon\Carbon::parse($filters['end_date'])->format('d M Y') }}
+        @else
+            Period: All Time
+        @endif
+    </span>
+    <span>
         Status:
         {{ $filters['status'] ? strtoupper($filters['status']) : 'All' }}
     </span>

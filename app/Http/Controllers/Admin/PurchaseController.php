@@ -33,6 +33,9 @@ class PurchaseController extends Controller
                     $q->where('phone', 'LIKE', '%' . $request->vendor_phone . '%');
                 });
             }
+            if ($request->start_date && $request->end_date) {
+                $query->whereBetween('received_date', [$request->start_date, $request->end_date]);
+            }
             if ($request->status) {
                 $query->where('status', $request->status);
             }
@@ -247,6 +250,30 @@ class PurchaseController extends Controller
         return view('admin.purchase.vendor_history');
     }
 
+    public function vendorHistoryPdf(Request $request)
+    {
+        $vendors = Vendor::all();
+        $data = [];
+        foreach ($vendors as $vendor) {
+            $total_purchased = Purchase::where('vendor_id', $vendor->id)->sum('grand_total');
+            $total_paid = VendorPayment::where('vendor_id', $vendor->id)->sum('amount');
+            $total_due = $total_purchased - $total_paid;
+
+            $data[] = [
+                'id' => $vendor->id,
+                'name' => $vendor->name,
+                'company' => $vendor->company_name,
+                'phone' => $vendor->phone,
+                'total_purchased' => $total_purchased,
+                'total_paid' => $total_paid,
+                'total_due' => $total_due,
+            ];
+        }
+
+        $pdf = Pdf::loadView('admin.purchase.vendor_history_pdf', compact('data'))
+            ->setPaper('a4', 'portrait');
+        return $pdf->download('vendor_history_' . date('Y-m-d') . '.pdf');
+    }
     public function vendorPaymentDetails($id)
     {
         $vendor = Vendor::findOrFail($id);
@@ -385,6 +412,9 @@ class PurchaseController extends Controller
         if ($request->vendor_phone) {
             $query->whereHas('vendor', fn($q) => $q->where('phone', 'LIKE', '%' . $request->vendor_phone . '%'));
         }
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('received_date', [$request->start_date, $request->end_date]);
+        }
         if ($request->status) {
             $query->where('status', $request->status);
         }
@@ -442,6 +472,9 @@ class PurchaseController extends Controller
         if ($request->vendor_phone) {
             $query->whereHas('vendor', fn($q) => $q->where('phone', 'LIKE', '%' . $request->vendor_phone . '%'));
         }
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('received_date', [$request->start_date, $request->end_date]);
+        }
         if ($request->status) {
             $query->where('status', $request->status);
         }
@@ -451,6 +484,8 @@ class PurchaseController extends Controller
             'purchase_number' => $request->purchase_number,
             'order_number'    => $request->order_number,
             'vendor_phone'    => $request->vendor_phone,
+            'start_date'      => $request->start_date,
+            'end_date'        => $request->end_date,
             'status'          => $request->status,
         ];
 
