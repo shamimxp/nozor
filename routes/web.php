@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('welcome');
+    return view('frontend.index');
 });
 Route::get('/pos/sale', [\App\Http\Controllers\Admin\AdminController::class, 'pos'])->middleware('auth:admin')->name('admin.pos');
 Route::get('/pos/get-products', [\App\Http\Controllers\Admin\AdminController::class, 'getPosProducts'])->middleware('auth:admin')->name('admin.pos.getProducts');
