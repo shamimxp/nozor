@@ -19,6 +19,11 @@ Route::get('/', function () {
 //    return view('welcome');
     return view('frontend.index');
 });
+
+Route::get('wishlist',[\App\Http\Controllers\FrontendController::class,'wishlist'])->name('wishlist');
+
+
+
 Route::get('/pos/sale', [\App\Http\Controllers\Admin\AdminController::class, 'pos'])->middleware('auth:admin')->name('admin.pos');
 Route::get('/pos/get-products', [\App\Http\Controllers\Admin\AdminController::class, 'getPosProducts'])->middleware('auth:admin')->name('admin.pos.getProducts');
 Route::get('/pos/get-subcategories/{id}', [\App\Http\Controllers\Admin\AdminController::class, 'getPosSubcategories'])->middleware('auth:admin')->name('admin.pos.getSubcategories');
