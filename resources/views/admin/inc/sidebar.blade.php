@@ -187,6 +187,8 @@
                     </li>
                 </ul>
             </li>
+            <li class="navigation-header"><span>Web Setting</span><i data-feather="more-horizontal"></i></li>
+
         </ul>
     </div>
 </div>

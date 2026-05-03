@@ -126,11 +126,11 @@
                                 <a href="{{route('wishlist')}}"><span class="lable">Wishlist</span></a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="{{route('cart')}}">
                                     <img alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-cart.svg" />
                                     <span class="pro-count blue">2</span>
                                 </a>
-                                <a href="shop-cart.html"><span class="lable">Cart</span></a>
+                                <a href="{{route('cart')}}"><span class="lable">Cart</span></a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                     <ul>
                                         <li>
@@ -163,8 +163,8 @@
                                             <h4>Total <span>$4000.00</span></h4>
                                         </div>
                                         <div class="shopping-cart-button">
-                                            <a href="shop-cart.html" class="outline">View cart</a>
-                                            <a href="shop-checkout.html">Checkout</a>
+                                            <a href="{{route('cart')}}" class="outline">View cart</a>
+                                            <a href="{{route('checkout')}}">Checkout</a>
                                         </div>
                                     </div>
                                 </div>
@@ -281,15 +281,15 @@
                                 <li>
                                     <a class="active" href="{{Url('/')}}">Home </a>
                                 </li>
-                                <li class="hot-deals"><img style="color:#f15822 !important;" src="{{asset('web')}}/assets/imgs/theme/icons/hot.svg" alt="hot deals" /><a href="shop-grid-right.html">Deals</a></li>
+                                <li class="hot-deals"><img style="color:#f15822 !important;" src="{{asset('web')}}/assets/imgs/theme/icons/hot.svg" alt="hot deals" /><a href="{{route('deal')}}">Deals</a></li>
                                 <li>
-                                    <a href="page-about.html">About</a>
+                                    <a href="{{route('about')}}">About</a>
                                 </li>
                                 <li>
-                                    <a href="shop-grid-right.html">Shop</a>
+                                    <a href="{{route('shop')}}">Shop</a>
                                 </li>
                                 <li>
-                                    <a href="page-contact.html">Contact</a>
+                                    <a href="{{route('contact')}}">Contact</a>
                                 </li>
                             </ul>
                         </nav>
