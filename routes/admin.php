@@ -175,4 +175,12 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/report/export-custom-sales-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomSalesPdf'])->name('admin.report.export-custom-sales-pdf');
     Route::get('/report/export-pos-sales-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosSalesExcel'])->name('admin.report.export-pos-sales-excel');
     Route::get('/report/export-pos-sales-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosSalesPdf'])->name('admin.report.export-pos-sales-pdf');
+
+    // Banner module
+    Route::resource('banner', \App\Http\Controllers\Admin\BannerController::class, ['as' => 'admin']);
+    Route::post('/banner/status', [\App\Http\Controllers\Admin\BannerController::class, 'getStatus'])->name('admin.banner.status');
+
+    // Web Settings module
+    Route::get('/web-setting', [\App\Http\Controllers\Admin\WebSettingController::class, 'index'])->name('admin.web-setting.index');
+    Route::post('/web-setting/update', [\App\Http\Controllers\Admin\WebSettingController::class, 'update'])->name('admin.web-setting.update');
 });

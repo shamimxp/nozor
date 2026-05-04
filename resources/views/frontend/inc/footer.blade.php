@@ -100,18 +100,18 @@ Stay home & get your daily <br />
                     <div class="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0 wow animate__animated animate__fadeInUp" data-wow-delay="0">
                         <div class="logo mb-30">
                             <a href="{{Url('/')}}" class="mb-15"><img src="{{asset('images/nozor_clean.png')}}" alt="logo" /></a>
-                            <p class="font-lg text-heading">Awesome grocery store website template</p>
+                            <p class="font-lg text-heading">{{$settings->slogan ?? '-'}}</p>
                         </div>
                         <ul class="contact-infor">
-                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>Address: </strong> <span>5171 W Campbell Ave undefined Kent, Utah 53127 United States</span></li>
-                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-contact.svg" alt="" /><strong>Call Us:</strong><span>(+91) - 540-025-124553</span></li>
-                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-email-2.svg" alt="" /><strong>Email:</strong><span>sale@Nest.com</span></li>
-                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-clock.svg" alt="" /><strong>Hours:</strong><span>10:00 - 18:00, Mon - Sat</span></li>
+                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>Address: </strong> <span>{{$settings->address ?? ' '}}</span></li>
+                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-contact.svg" alt="" /><strong>Call Us:</strong><span></span>{{$settings->contact_number_1 ?? ' '}}, {{$settings->contact_number_2 ?? ' '}}</li>
+                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-email-2.svg" alt="" /><strong>Email:</strong><span>{{$settings->email ?? ' '}}</span></li>
+                            <li><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-clock.svg" alt="" /><strong>Hours:</strong><span>{{$settings->office_hour ?? ' '}}</span></li>
                         </ul>
                     </div>
                 </div>
-                <div class="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".1s>
-                        <h4 class=" widget-title">Company</h4>
+                <div class="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
+                <h4 class="widget-title">Company</h4>
                 <ul class="footer-list mb-sm-5 mb-md-0">
                     <li><a href="#">About Us</a></li>
                     <li><a href="#">Delivery Information</a></li>
@@ -132,18 +132,6 @@ Stay home & get your daily <br />
                     <li><a href="#">Help Ticket</a></li>
                     <li><a href="#">Shipping Details</a></li>
                     <li><a href="#">Compare products</a></li>
-                </ul>
-            </div>
-            <div class="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
-                <h4 class="widget-title">Corporate</h4>
-                <ul class="footer-list mb-sm-5 mb-md-0">
-                    <li><a href="#">Become a Vendor</a></li>
-                    <li><a href="#">Affiliate Program</a></li>
-                    <li><a href="#">Farm Business</a></li>
-                    <li><a href="#">Farm Careers</a></li>
-                    <li><a href="#">Our Suppliers</a></li>
-                    <li><a href="#">Accessibility</a></li>
-                    <li><a href="#">Promotions</a></li>
                 </ul>
             </div>
             <div class="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
@@ -169,23 +157,24 @@ Stay home & get your daily <br />
                 <img class="" src="{{asset('web')}}/assets/imgs/theme/payment-method.png" alt="" />
             </div>
         </div>
+        </div>
     </section>
     <div class="container pb-30 wow animate__animated animate__fadeInUp" data-wow-delay="0">
         <div class="row align-items-center">
-            <div class="col-12 mb-30">{{asset('web')}}/
+            <div class="col-12 mb-30">
                 <div class="footer-bottom"></div>
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6">
-                <p class="font-sm mb-0">&copy; 2022, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template <br />All rights reserved</p>
+                <p class="font-sm mb-0">&copy; 2026, <strong class="text-brand">NOZOR</strong> - Fashion<br />All rights reserved</p>
             </div>
             <div class="col-xl-4 col-lg-6 text-center d-none d-xl-block">
                 <div class="hotline d-lg-inline-flex mr-30">
                     <img src="{{asset('web')}}/assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-                    <p>1900 - 6666<span>Working 8:00 - 22:00</span></p>
+                    <p>{{$settings->contact_number_1}}<span>Working {{$settings->office_hour ?? ''}} </span></p>
                 </div>
                 <div class="hotline d-lg-inline-flex">
                     <img src="{{asset('web')}}/assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-                    <p>1900 - 8888<span>24/7 Support Center</span></p>
+                    <p>{{$settings->contact_number_2}}<span>24/7 Support Center</span></p>
                 </div>
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6 text-end d-none d-md-block">

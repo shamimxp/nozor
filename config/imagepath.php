@@ -6,4 +6,5 @@ return [
     'sub_category' => 'images/sub_category',
     'product' => 'images/product',
     'custom_order' => 'images/custom_orders',
+    'banner' => 'images/banners',
 ];

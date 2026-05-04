@@ -188,7 +188,18 @@
                 </ul>
             </li>
             <li class="navigation-header"><span>Web Setting</span><i data-feather="more-horizontal"></i></li>
-
+            <li class="{{ Route::is('admin.web-setting.index') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.web-setting.index')}}">
+                    <i data-feather="settings"></i>
+                    <span class="menu-title text-truncate">Web Setting</span>
+                </a>
+            </li>
+            <li class="{{ Route::is('admin.banner.index') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.banner.index')}}">
+                    <i data-feather="image"></i>
+                    <span class="menu-title text-truncate">Banner</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

@@ -217,62 +217,78 @@
                         </a>
                         <div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
                             <div class="d-flex categori-dropdown-inner">
+
                                 <ul>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-1.svg" alt="" />Milks and Dairies</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-2.svg" alt="" />Clothing & beauty</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-3.svg" alt="" />Pet Foods & Toy</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-4.svg" alt="" />Baking material</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-5.svg" alt="" />Fresh Fruit</a>
-                                    </li>
+                                    @foreach($categories->take(5) as $category)
+                                        <li>
+                                            <a href="{{ route('category.products', $category->slug) }}">
+                                                <img src="{{ !empty($category->image)
+                                                        ? asset(config('imagepath.category') . $category->image)
+                                                        : asset('images/no-image.png') }}"
+                                                     alt="{{ $category->name }}">
+                                                {{ $category->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
                                 </ul>
+
                                 <ul class="end">
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-6.svg" alt="" />Wines & Drinks</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-7.svg" alt="" />Fresh Seafood</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-8.svg" alt="" />Fast food</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-9.svg" alt="" />Vegetables</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/category-10.svg" alt="" />Bread and Juice</a>
-                                    </li>
+                                    @foreach($categories->skip(5)->take(5) as $category)
+                                        <li>
+                                            <a href="{{ route('category.products', $category->slug) }}">
+                                                <img src="{{ !empty($category->image)
+                                                        ? asset(config('imagepath.category') . $category->image)
+                                                        : asset('images/no-image.png') }}"
+                                                     alt="{{ $category->name }}">
+                                                {{ $category->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
                                 </ul>
+
                             </div>
-                            <div class="more_slide_open" style="display: none">
-                                <div class="d-flex categori-dropdown-inner">
-                                    <ul>
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/icon-1.svg" alt="" />Milks and Dairies</a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/icon-2.svg" alt="" />Clothing & beauty</a>
-                                        </li>
-                                    </ul>
-                                    <ul class="end">
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/icon-3.svg" alt="" />Wines & Drinks</a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{asset('web')}}/assets/imgs/theme/icons/icon-4.svg" alt="" />Fresh Seafood</a>
-                                        </li>
-                                    </ul>
+
+                            {{-- More categories --}}
+                            @if($categories->count() > 10)
+                                <div class="more_slide_open" style="display: none">
+                                    <div class="d-flex categori-dropdown-inner">
+
+                                        <ul>
+                                            @foreach($categories->skip(10)->take(5) as $category)
+                                                <li>
+                                                    <a href="{{ route('category.products', $category->slug) }}">
+                                                        <img src="{{ !empty($category->image)
+                                                        ? asset(config('imagepath.category') . $category->image)
+                                                        : asset('images/no-image.png') }}"
+                                                             alt="{{ $category->name }}">
+                                                        {{ $category->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+
+                                        <ul class="end">
+                                            @foreach($categories->skip(15) as $category)
+                                                <li>
+                                                    <a href="{{ route('category.products', $category->slug) }}">
+                                                        <img src="{{ !empty($category->image)
+                                                        ? asset(config('imagepath.category') . $category->image)
+                                                        : asset('images/no-image.png') }}"
+                                                             alt="{{ $category->name }}">
+                                                        {{ $category->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+
+                                    </div>
                                 </div>
+                            @endif
+
+                            <div class="more_categories">
+                                <span class="icon"></span>
+                                <span class="heading-sm-1">Show more...</span>
                             </div>
-                            <div class="more_categories"><span class="icon"></span> <span class="heading-sm-1">Show more...</span></div>
                         </div>
                     </div>
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
@@ -297,7 +313,7 @@
                 </div>
                 <div class="hotline d-none d-lg-flex">
                     <img src="{{asset('web')}}/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline" />
-                    <p>01631-069182<span>24/7 Support Center</span></p>
+                    <p>{{$settings->contact_number_1}}<span>24/7 Support Center</span></p>
                 </div>
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">

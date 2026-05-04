@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-//    return view('welcome');
-    return view('frontend.index');
-});
+//Route::get('/', function () {
+////    return view('welcome');
+//    return view('frontend.index');
+//});
 
+Route::get('/',[\App\Http\Controllers\FrontendController::class,'index'])->name('index');
 Route::get('wishlist',[\App\Http\Controllers\FrontendController::class,'wishlist'])->name('wishlist');
 Route::get('cart',[\App\Http\Controllers\FrontendController::class,'cart'])->name('cart');
 Route::get('checkout',[\App\Http\Controllers\FrontendController::class,'checkout'])->name('checkout');
@@ -27,6 +28,7 @@ Route::get('contact',[\App\Http\Controllers\FrontendController::class,'contact']
 Route::get('about',[\App\Http\Controllers\FrontendController::class,'about'])->name('about');
 Route::get('shop',[\App\Http\Controllers\FrontendController::class,'shop'])->name('shop');
 Route::get('today-deal',[\App\Http\Controllers\FrontendController::class,'deal'])->name('deal');
+Route::get('category-product/{slug}',[\App\Http\Controllers\FrontendController::class,'shop'])->name('category.products');
 
 
 

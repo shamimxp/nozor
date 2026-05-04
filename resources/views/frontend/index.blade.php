@@ -4,25 +4,19 @@
         <div class="container">
             <div class="home-slide-cover mt-30">
                 <div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1">
-                    <div class="single-hero-slider single-animation-wrap" style="background-image: url({{asset('web')}}/assets/imgs/slider/slider-1.png)">
-                        <div class="slider-content">
-                            <h1 class="display-2 mb-40">
-                                Don’t miss amazing<br />
-                                grocery deals
-                            </h1>
-                            <p class="mb-65">Sign up for the daily newsletter</p>
-
+                    @foreach($banners as $banner)
+                            <div class="single-hero-slider single-animation-wrap"
+                                 style="background-image: url('{{ $banner->image
+                             ? asset(config('imagepath.banner') . $banner->image)
+                             : asset('images/no-image.png') }}')">
+{{--                            <div class="slider-content">--}}
+{{--                                <h1 class="display-2 mb-40">--}}
+{{--                                   {{$banner->title}}<br />--}}
+{{--                                </h1>--}}
+{{--                                <p class="mb-65">{{$banner->sub_title}}</p>--}}
+{{--                            </div>--}}
                         </div>
-                    </div>
-                    <div class="single-hero-slider single-animation-wrap" style="background-image: url({{asset('web')}}/assets/imgs/slider/slider-2.png)">
-                        <div class="slider-content">
-                            <h1 class="display-2 mb-40">
-                                Fresh Vegetables<br />
-                                Big discount
-                            </h1>
-                            <p class="mb-65">Save up to 50% off on your first order</p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
                 <div class="slider-arrow hero-slider-1-arrow"></div>
             </div>
@@ -39,83 +33,17 @@
             </div>
             <div class="carausel-10-columns-cover position-relative">
                 <div class="carausel-10-columns" id="carausel-10-columns">
+                   @foreach($categories as $category)
                     <div class="card-2 bg-9 wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                         <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-13.png" alt="" /></a>
+                            <a href="{{route('category.products',$category->slug)}}"><img src="{{ $category->image
+                             ? asset(config('imagepath.category') . $category->image)
+                             : asset('images/no-image.png') }}" alt="" /></a>
                         </figure>
-                        <h6><a href="shop-grid-right.html">Cake & Milk</a></h6>
-                        <span>26 items</span>
+                        <h6><a href="{{route('category.products',$category->slug)}}">{{$category->name}}</a></h6>
+                        <span>{{$category->products_count}} items</span>
                     </div>
-                    <div class="card-2 bg-10 wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-12.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Oganic Kiwi</a></h6>
-                        <span>28 items</span>
-                    </div>
-                    <div class="card-2 bg-11 wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-11.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Peach</a></h6>
-                        <span>14 items</span>
-                    </div>
-                    <div class="card-2 bg-12 wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-9.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Red Apple</a></h6>
-                        <span>54 items</span>
-                    </div>
-                    <div class="card-2 bg-13 wow animate__animated animate__fadeInUp" data-wow-delay=".5s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-3.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Snack</a></h6>
-                        <span>56 items</span>
-                    </div>
-                    <div class="card-2 bg-14 wow animate__animated animate__fadeInUp" data-wow-delay=".6s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-1.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Vegetables</a></h6>
-                        <span>72 items</span>
-                    </div>
-                    <div class="card-2 bg-15 wow animate__animated animate__fadeInUp" data-wow-delay=".7s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-2.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Strawberry</a></h6>
-                        <span>36 items</span>
-                    </div>
-                    <div class="card-2 bg-12 wow animate__animated animate__fadeInUp" data-wow-delay=".8s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-4.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Black plum</a></h6>
-                        <span>123 items</span>
-                    </div>
-                    <div class="card-2 bg-10 wow animate__animated animate__fadeInUp" data-wow-delay=".9s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-5.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Custard apple</a></h6>
-                        <span>34 items</span>
-                    </div>
-                    <div class="card-2 bg-12 wow animate__animated animate__fadeInUp" data-wow-delay="1s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-14.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Coffe & Tea</a></h6>
-                        <span>89 items</span>
-                    </div>
-                    <div class="card-2 bg-11 wow animate__animated animate__fadeInUp" data-wow-delay="0s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="shop-grid-right.html"><img src="{{asset('web')}}/assets/imgs/shop/cat-15.png" alt="" /></a>
-                        </figure>
-                        <h6><a href="shop-grid-right.html">Headphone</a></h6>
-                        <span>87 items</span>
-                    </div>
+                   @endforeach
                 </div>
             </div>
         </div>
@@ -126,34 +54,34 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay="0">
-                        <img src="{{asset('web')}}/assets/imgs/banner/banner-1.png" alt="" />
+                        <img  style="width: 461px;height: 270px"  src="{{asset('web')}}/assets/imgs/banner/1.jpg" alt="" />
                         <div class="banner-text">
                             <h4>
                                 Everyday Fresh & <br />Clean with Our<br />
                                 Products
                             </h4>
-                            <a href="shop-grid-right.html" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
-                        <img src="{{asset('web')}}/assets/imgs/banner/banner-2.png" alt="" />
+                        <img style="width: 461px;height: 270px" src="{{asset('web')}}/assets/imgs/banner/2.jpg" alt="" />
                         <div class="banner-text">
                             <h4>
-                                Make your Breakfast<br />
-                                Healthy and Easy
+                                Make your Fashion<br />
+                                Choice and Easy
                             </h4>
-                            <a href="shop-grid-right.html" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 d-md-none d-lg-flex">
                     <div class="banner-img mb-sm-0 wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                        <img src="{{asset('web')}}/assets/imgs/banner/banner-3.png" alt="" />
+                        <img style="width: 461px;height: 270px" src="{{asset('web')}}/assets/imgs/banner/1.jpg" alt="" />
                         <div class="banner-text">
-                            <h4>The best Organic <br />Products Online</h4>
-                            <a href="shop-grid-right.html" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <h4>The best trusted <br />Products Online</h4>
+                            <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
