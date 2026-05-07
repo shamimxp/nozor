@@ -47,7 +47,8 @@ class FrontendController extends Controller
         return view('frontend.page.dealpage');
     }
     public function details($id){
-        return view('frontend.page.dealpage');
+        $product = Product::with('gallery','category')->findOrFail(decrypt($id));
+        return view('frontend.page.product_details',compact('product'));
     }
 
 //    public function quickView($id)
