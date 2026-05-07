@@ -289,126 +289,80 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="row related-products">
+                                        @foreach($relatedProducts as $relProduct)
                                         <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                            <div class="product-cart-wrap hover-up">
+                                            <div class="product-cart-wrap mb-30 hover-up">
                                                 <div class="product-img-action-wrap">
                                                     <div class="product-img product-img-zoom">
-                                                        <a href="shop-product-right.html" tabindex="0">
-                                                            <img class="default-img" src="assets/imgs/shop/product-2-1.jpg" alt="" />
-                                                            <img class="hover-img" src="assets/imgs/shop/product-2-2.jpg" alt="" />
+                                                        <a href="{{route('product.details',encrypt($relProduct->id))}}" tabindex="0">
+                                                            <img class="default-img" src="{{ $relProduct->featured_image ? asset(config('imagepath.product') . $relProduct->featured_image) : asset('images/no-image.png') }}" alt="{{$relProduct->name ?? '-'}}" />
+                                                            <img class="hover-img" src="{{ $relProduct->featured_image ? asset(config('imagepath.product') . $relProduct->featured_image) : asset('images/no-image.png') }}" alt="{{$relProduct->name ?? '-'}}" />
                                                         </a>
                                                     </div>
                                                     <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-search"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                                        <a href="javascript:void(0)"
+                                                           class="action-btn quick-view-btn"
+                                                           data-product="{{ encrypt($relProduct->id) }}">
+                                                            <i class="fi-rs-eye"></i>
+                                                        </a>
+                                                        <a aria-label="Add To Wishlist" class="action-btn" href="#" tabindex="0"><i class="fi-rs-heart"></i></a>
                                                     </div>
+                                                    @php
+                                                        $currency = $settings->currency_symbol ?? 'TK';
+                                                        $discountLabel = null;
+                                                        if ($relProduct->discount_type == 'amount' && !empty($relProduct->discount_amount)) {
+                                                            $discountLabel = '- ' . $currency . ' ' . number_format($relProduct->discount_amount, 2);
+                                                        } elseif ($relProduct->discount_type == 'percent' && !empty($relProduct->discount_amount)) {
+                                                            $discountLabel = '- ' . number_format($relProduct->discount_amount, 0) . '%';
+                                                        }
+                                                    @endphp
+                                                    @if($discountLabel)
                                                     <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="hot">Hot</span>
+                                                        <span class="sale">{{$discountLabel}}</span>
                                                     </div>
+                                                    @endif
                                                 </div>
                                                 <div class="product-content-wrap">
-                                                    <h2><a href="shop-product-right.html" tabindex="0">Ulstra Bass Headphone</a></h2>
-                                                    <div class="rating-result" title="90%">
-                                                        <span> </span>
+                                                    <div class="product-category">
+                                                        <a href="{{ isset($relProduct->category) ? route('category.products', $relProduct->category->slug) : '#' }}">{{ $relProduct->category->name ?? '-' }}</a>
                                                     </div>
-                                                    <div class="product-price">
-                                                        <span>$238.85 </span>
-                                                        <span class="old-price">$245.8</span>
+                                                    <h2><a href="{{route('product.details',encrypt($relProduct->id))}}" class="product-title-shamim" tabindex="0">{{$relProduct->name}}</a></h2>
+                                                    <div class="product-rate-cover">
+                                                        <div class="product-rate d-inline-block">
+                                                            <div class="product-rating" style="width: 90%"></div>
+                                                        </div>
+                                                        <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-small text-muted">By <a href="{{ route('shop') }}">Nozor</a></span>
+                                                    </div>
+                                                    @php
+                                                        $relPrice = $relProduct->selling_price ?? 0;
+                                                        if ($relProduct->discount_type == 'amount') {
+                                                            $relFinalPrice = $relPrice - ($relProduct->discount_amount ?? 0);
+                                                        } elseif ($relProduct->discount_type == 'percent') {
+                                                            $relFinalPrice = $relPrice - ($relPrice * ($relProduct->discount_amount ?? 0) / 100);
+                                                        } else {
+                                                            $relFinalPrice = $relPrice;
+                                                        }
+                                                    @endphp
+                                                    <div class="product-card-bottom">
+                                                        <div class="product-price">
+                                                            <span>{{$currency}} {{ number_format($relFinalPrice, 2) }}</span>
+                                                            @if($relFinalPrice < $relPrice)
+                                                            <span class="old-price">{{$currency}} {{ number_format($relPrice, 2) }}</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="add-cart">
+                                                            <a class="add" href="#"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                            <div class="product-cart-wrap hover-up">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="shop-product-right.html" tabindex="0">
-                                                            <img class="default-img" src="assets/imgs/shop/product-3-1.jpg" alt="" />
-                                                            <img class="hover-img" src="assets/imgs/shop/product-4-2.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-search"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                                    </div>
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="sale">-12%</span>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <h2><a href="shop-product-right.html" tabindex="0">Smart Bluetooth Speaker</a></h2>
-                                                    <div class="rating-result" title="90%">
-                                                        <span> </span>
-                                                    </div>
-                                                    <div class="product-price">
-                                                        <span>$138.85 </span>
-                                                        <span class="old-price">$145.8</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                            <div class="product-cart-wrap hover-up">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="shop-product-right.html" tabindex="0">
-                                                            <img class="default-img" src="assets/imgs/shop/product-4-1.jpg" alt="" />
-                                                            <img class="hover-img" src="assets/imgs/shop/product-4-2.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-search"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                                    </div>
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="new">New</span>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <h2><a href="shop-product-right.html" tabindex="0">HomeSpeak 12UEA Goole</a></h2>
-                                                    <div class="rating-result" title="90%">
-                                                        <span> </span>
-                                                    </div>
-                                                    <div class="product-price">
-                                                        <span>$738.85 </span>
-                                                        <span class="old-price">$1245.8</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-4 col-12 col-sm-6 d-lg-block d-none">
-                                            <div class="product-cart-wrap hover-up mb-0">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="shop-product-right.html" tabindex="0">
-                                                            <img class="default-img" src="assets/imgs/shop/product-5-1.jpg" alt="" />
-                                                            <img class="hover-img" src="assets/imgs/shop/product-3-2.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-search"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                                    </div>
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="hot">Hot</span>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <h2><a href="shop-product-right.html" tabindex="0">Dadua Camera 4K 2022EF</a></h2>
-                                                    <div class="rating-result" title="90%">
-                                                        <span> </span>
-                                                    </div>
-                                                    <div class="product-price">
-                                                        <span>$89.8 </span>
-                                                        <span class="old-price">$98.8</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endforeach
+
+
                                     </div>
                                 </div>
                             </div>
@@ -469,42 +423,33 @@
                         <!-- Product sidebar Widget -->
                         <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10">
                             <h5 class="section-title style-1 mb-30">New products</h5>
+                            @foreach($newProducts as $newProd)
                             <div class="single-post clearfix">
                                 <div class="image">
-                                    <img src="assets/imgs/shop/thumbnail-3.jpg" alt="#" />
+                                    <img src="{{ $newProd->featured_image ? asset(config('imagepath.product') . $newProd->featured_image) : asset('images/no-image.png') }}" alt="{{$newProd->name ?? '-'}}" />
                                 </div>
                                 <div class="content pt-10">
-                                    <h5><a href="shop-product-detail.html">Chen Cardigan</a></h5>
-                                    <p class="price mb-0 mt-5">$99.50</p>
+                                    <h5><a href="{{route('product.details',encrypt($newProd->id))}}" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">{{$newProd->name}}</a></h5>
+                                    @php
+                                        $newPrice = $newProd->selling_price ?? 0;
+                                        if ($newProd->discount_type == 'amount') {
+                                            $newFinalPrice = $newPrice - ($newProd->discount_amount ?? 0);
+                                        } elseif ($newProd->discount_type == 'percent') {
+                                            $newFinalPrice = $newPrice - ($newPrice * ($newProd->discount_amount ?? 0) / 100);
+                                        } else {
+                                            $newFinalPrice = $newPrice;
+                                        }
+                                        $currency = $settings->currency_symbol ?? 'TK';
+                                    @endphp
+                                    <p class="price mb-0 mt-5">{{$currency}} {{ number_format($newFinalPrice, 2) }}</p>
                                     <div class="product-rate">
                                         <div class="product-rating" style="width: 90%"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets/imgs/shop/thumbnail-4.jpg" alt="#" />
-                                </div>
-                                <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
-                                    <p class="price mb-0 mt-5">$89.50</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width: 80%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets/imgs/shop/thumbnail-5.jpg" alt="#" />
-                                </div>
-                                <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
-                                    <p class="price mb-0 mt-5">$25</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width: 60%"></div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforeach
+
+
                         </div>
                         <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
                             <img src="assets/imgs/banner/banner-11.png" alt="" />

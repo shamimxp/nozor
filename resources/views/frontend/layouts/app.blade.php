@@ -156,33 +156,41 @@
             success: function(response) {
                 $('#quick-view-content').html(response);
 
-                // Re-initialize Slick sliders after content is injected
+                // Re-initialize Slick sliders — scoped ONLY to the modal content
                 setTimeout(function() {
-                    if ($('.product-image-slider').length) {
-                        if ($('.product-image-slider').hasClass('slick-initialized')) {
-                            $('.product-image-slider').slick('unslick');
+                    var $modal        = $('#quick-view-content');
+                    var $mainSlider   = $modal.find('.product-image-slider');
+                    var $thumbSlider  = $modal.find('.slider-nav-thumbnails');
+
+                    if ($mainSlider.length) {
+                        // Destroy only if already initialized (safety guard)
+                        if ($mainSlider.hasClass('slick-initialized')) {
+                            $mainSlider.slick('unslick');
                         }
-                        if ($('.slider-nav-thumbnails').hasClass('slick-initialized')) {
-                            $('.slider-nav-thumbnails').slick('unslick');
+                        if ($thumbSlider.hasClass('slick-initialized')) {
+                            $thumbSlider.slick('unslick');
                         }
 
-                        $('.product-image-slider').slick({
+                        $mainSlider.slick({
                             slidesToShow: 1,
                             slidesToScroll: 1,
                             arrows: false,
                             fade: true,
-                            asNavFor: '.slider-nav-thumbnails'
+                            asNavFor: $thumbSlider[0]   // pass DOM node to avoid global selector conflict
                         });
-                        $('.slider-nav-thumbnails').slick({
-                            slidesToShow: 5,
-                            slidesToScroll: 1,
-                            asNavFor: '.product-image-slider',
-                            dots: false,
-                            arrows: false,
-                            focusOnSelect: true
-                        });
+
+                        if ($thumbSlider.length) {
+                            $thumbSlider.slick({
+                                slidesToShow: 5,
+                                slidesToScroll: 1,
+                                asNavFor: $mainSlider[0],
+                                dots: false,
+                                arrows: false,
+                                focusOnSelect: true
+                            });
+                        }
                     }
-                }, 150);
+                }, 300);
             },
 
             error: function(xhr, status, error) {
@@ -190,6 +198,23 @@
                 $('#quick-view-content').html('<div class="alert alert-danger m-3">Failed to load product. Please try again.</div>');
             }
         });
+    });
+
+    // ── Quantity stepper for dynamically loaded content (Quick View modal) ──
+    $(document).on('click', '.qty-up', function(e) {
+        e.preventDefault();
+        var $input = $(this).closest('.detail-qty').find('.qty-val');
+        var val = parseInt($input.val()) || 1;
+        $input.val(val + 1);
+    });
+
+    $(document).on('click', '.qty-down', function(e) {
+        e.preventDefault();
+        var $input = $(this).closest('.detail-qty').find('.qty-val');
+        var val = parseInt($input.val()) || 1;
+        if (val > 1) {
+            $input.val(val - 1);
+        }
     });
 </script>
 

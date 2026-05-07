@@ -48,7 +48,27 @@ class FrontendController extends Controller
     }
     public function details($id){
         $product = Product::with('gallery','category')->findOrFail(decrypt($id));
-        return view('frontend.page.product_details',compact('product'));
+        
+        $relatedProducts = Product::where('status', 1)
+            ->where('category_id', $product->category_id);
+            
+        if ($product->sub_category_id) {
+            $relatedProducts->where('sub_category_id', $product->sub_category_id);
+        }
+        
+        $relatedProducts = $relatedProducts->where('id', '!=', $product->id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+            
+        $newProducts = Product::where('status', 1)
+             ->where('id', '!=', $product->id)
+            ->latest()
+            ->take(6)
+            ->get()
+            ->shuffle();
+
+        return view('frontend.page.product_details',compact('product', 'relatedProducts', 'newProducts'));
     }
 
 //    public function quickView($id)
