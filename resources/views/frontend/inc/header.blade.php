@@ -91,26 +91,6 @@
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-                            <div class="search-location">
-                                <form action="#">
-                                    <select class="select-active">
-                                        <option>Your Location</option>
-                                        <option>Alabama</option>
-                                        <option>Alaska</option>
-                                        <option>Arizona</option>
-                                        <option>Delaware</option>
-                                        <option>Florida</option>
-                                        <option>Georgia</option>
-                                        <option>Hawaii</option>
-                                        <option>Indiana</option>
-                                        <option>Maryland</option>
-                                        <option>Nevada</option>
-                                        <option>New Jersey</option>
-                                        <option>New Mexico</option>
-                                        <option>New York</option>
-                                    </select>
-                                </form>
-                            </div>
 {{--                            <div class="header-action-icon-2">--}}
 {{--                                <a href="shop-compare.html">--}}
 {{--                                    <img class="svgInject" alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-compare.svg" />--}}
@@ -120,7 +100,7 @@
 {{--                            </div>--}}
                             <div class="header-action-icon-2">
                                 <a href="{{route('wishlist')}}">
-                                    <img class="svgInject" alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-heart.svg" />
+                                    <img class="svgInject" alt="wishlist" src="{{asset('web')}}/assets/imgs/theme/icons/icon-heart.svg" />
                                     <span class="pro-count blue">6</span>
                                 </a>
                                 <a href="{{route('wishlist')}}"><span class="lable">Wishlist</span></a>

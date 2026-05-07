@@ -36,9 +36,11 @@
                    @foreach($categories as $category)
                     <div class="card-2 bg-9 wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                         <figure class="img-hover-scale overflow-hidden">
-                            <a href="{{route('category.products',$category->slug)}}"><img src="{{ $category->image
+                            <a href="{{route('category.products',$category->slug)}}">
+                                <img src="{{ $category->image
                              ? asset(config('imagepath.category') . $category->image)
-                             : asset('images/no-image.png') }}" alt="" /></a>
+                             : asset('images/no-image.png') }}" alt="" />
+                            </a>
                         </figure>
                         <h6><a href="{{route('category.products',$category->slug)}}">{{$category->name}}</a></h6>
                         <span>{{$category->products_count}} items</span>
@@ -103,29 +105,52 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                     <div class="row product-grid-4">
+                        @foreach($products as $product)
                         <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
                             <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
-                                <div class="product-img-action-wrap">
-                                    <div class="product-img product-img-zoom">
-                                        <a href="shop-product-right.html">
-                                            <img class="default-img" src="{{asset('web')}}/assets/imgs/shop/product-1-1.jpg" alt="" />
-                                            <img class="hover-img" src="{{asset('web')}}/assets/imgs/shop/product-1-2.jpg" alt="" />
-                                        </a>
+                                    <div class="product-img-action-wrap">
+                                        <div class="product-img product-img-zoom">
+                                            <a href="{{route('product.details',encrypt($product->id))}}">
+                                                <img class="default-img" src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{$product->name ?? '-'}}" />
+                                                <img class="hover-img" src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{$product->name ?? '-'}}" />
+                                            </a>
+                                        </div>
+                                        <div class="product-action-1">
+                                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+                                            {{-- <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>--}}
+{{--                                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>--}}
+{{--                                            <a aria-label="Quick view" class="action-btn quick-view-btn"--}}
+{{--                                               data-product-id="{{ encrypt($product->id) }}">--}}
+{{--                                                <i class="fi-rs-eye"></i>--}}
+{{--                                            </a>--}}
+
+                                            <a href="javascript:void(0)"
+                                               class="action-btn quick-view-btn"
+                                               data-product="{{ encrypt($product->id) }}">
+                                                <i class="fi-rs-eye"></i>
+                                            </a>
+                                        </div>
+                                        @php
+                                            $currency = $settings->currency_symbol ?? 'TK';
+                                            $discount = null;
+
+                                            if ($product->discount_type == 'amount' && !empty($product->discount_amount)) {
+                                                $discount = '- ' . $currency . ' ' . number_format($product->discount_amount, 2);
+                                            } elseif ($product->discount_type == 'percent' && !empty($product->discount_amount)) {
+                                                $discount = '- ' . number_format($product->discount_amount, 0) . '%';
+                                            }
+                                        @endphp
+                                        @if($product->discount_type)
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="new">{{$discount}}</span>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <div class="product-action-1">
-                                        <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                    </div>
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                        <span class="hot">Hot</span>
-                                    </div>
-                                </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
-                                        <a href="shop-grid-right.html">Snack</a>
+                                        <a href="{{route('category.products',$product->category->slug)}}">{{$product->category->name ?? ' '}}</a>
                                     </div>
-                                    <h2><a href="shop-product-right.html">Seeds of Change Organic Quinoa, Brown, & Red Rice</a></h2>
+                                    <h2><a href="{{route('product.details',encrypt($product->id))}}" class="product-title-shamim">{{$product->name ?? '-'}} </a></h2>
                                     <div class="product-rate-cover">
                                         <div class="product-rate d-inline-block">
                                             <div class="product-rating" style="width: 90%"></div>
@@ -133,21 +158,38 @@
                                         <span class="font-small ml-5 text-muted"> (4.0)</span>
                                     </div>
                                     <div>
-                                        <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
+                                        <span class="font-small text-muted">By <a href="{{route('shop')}}">Nozor</a></span>
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">
-                                            <span>$28.85</span>
-                                            <span class="old-price">$32.8</span>
+                                            @php
+                                                $price = $product->selling_price ?? 0;
+                                                $currency = $settings->currency_symbol ?? 'TK';
+
+                                                if ($product->discount_type == 'amount') {
+                                                    $finalPrice = $price - ($product->discount_amount ?? 0);
+                                                } elseif ($product->discount_type == 'percent') {
+                                                    $finalPrice = $price - ($price * ($product->discount_amount ?? 0) / 100);
+                                                } else {
+                                                    $finalPrice = $price;
+                                                }
+                                            @endphp
+                                            <span>{{ $currency }} {{ number_format($finalPrice, 2) }}</span>
+                                            @if($product->discount_type)
+                                                <span class="old-price">{{ $currency }} {{ number_format($price, 2) }}</span>
+                                            @endif
+
                                         </div>
                                         <div class="add-cart">
-                                            <a class="add" href="shop-cart.html"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            <a class="add" href="#"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--end product card-->
+                            <!--end product card-->
+                        @endforeach
+
                         <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
                             <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".2s">
                                 <div class="product-img-action-wrap">

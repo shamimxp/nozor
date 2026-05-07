@@ -29,8 +29,8 @@ Route::get('about',[\App\Http\Controllers\FrontendController::class,'about'])->n
 Route::get('shop',[\App\Http\Controllers\FrontendController::class,'shop'])->name('shop');
 Route::get('today-deal',[\App\Http\Controllers\FrontendController::class,'deal'])->name('deal');
 Route::get('category-product/{slug}',[\App\Http\Controllers\FrontendController::class,'shop'])->name('category.products');
-
-
+Route::get('/product/quick-view', [App\Http\Controllers\FrontendController::class, 'quickView'])->name('quick-view');
+Route::get('product/{id}',[\App\Http\Controllers\FrontendController::class,'details'])->name('product.details');
 
 Route::get('/pos/sale', [\App\Http\Controllers\Admin\AdminController::class, 'pos'])->middleware('auth:admin')->name('admin.pos');
 Route::get('/pos/get-products', [\App\Http\Controllers\Admin\AdminController::class, 'getPosProducts'])->middleware('auth:admin')->name('admin.pos.getProducts');

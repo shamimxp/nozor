@@ -20,110 +20,62 @@
 
 <body>
 <!-- Modal -->
-<div class="modal fade custom-modal" id="onloadModal" tabindex="-1" aria-labelledby="onloadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+{{--<div class="modal fade custom-modal" id="onloadModal" tabindex="-1" aria-labelledby="onloadModalLabel" aria-hidden="true">--}}
+{{--    <div class="modal-dialog">--}}
+{{--        <div class="modal-content">--}}
+{{--            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>--}}
+{{--            <div class="modal-body">--}}
+{{--                <div class="deal" style="background-image: url('{{asset('web')}}/assets/imgs/banner/popup-1.png')">--}}
+{{--                    <div class="deal-top">--}}
+{{--                        <h6 class="mb-10 text-brand-2">Deal of the Day</h6>--}}
+{{--                    </div>--}}
+{{--                    <div class="deal-content detail-info">--}}
+{{--                        <h4 class="product-title"><a href="shop-product-right.html" class="text-heading">Organic fruit for your family's health</a></h4>--}}
+{{--                        <div class="clearfix product-price-cover">--}}
+{{--                            <div class="product-price primary-color float-left">--}}
+{{--                                <span class="current-price text-brand">$38</span>--}}
+{{--                                <span>--}}
+{{--                                        <span class="save-price font-md color3 ml-15">26% Off</span>--}}
+{{--                                        <span class="old-price font-md ml-15">$52</span>--}}
+{{--                                    </span>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="deal-bottom">--}}
+{{--                        <p class="mb-20">Hurry Up! Offer End In:</p>--}}
+{{--                        <div class="deals-countdown pl-5" data-countdown="2025/03/25 00:00:00">--}}
+{{--                            <span class="countdown-section"><span class="countdown-amount hover-up">03</span><span class="countdown-period"> days </span></span><span class="countdown-section"><span class="countdown-amount hover-up">02</span><span class="countdown-period"> hours </span></span><span class="countdown-section"><span class="countdown-amount hover-up">43</span><span class="countdown-period"> mins </span></span><span class="countdown-section"><span class="countdown-amount hover-up">29</span><span class="countdown-period"> sec </span></span>--}}
+{{--                        </div>--}}
+{{--                        <div class="product-detail-rating">--}}
+{{--                            <div class="product-rate-cover text-end">--}}
+{{--                                <div class="product-rate d-inline-block">--}}
+{{--                                    <div class="product-rating" style="width: 90%"></div>--}}
+{{--                                </div>--}}
+{{--                                <span class="font-small ml-5 text-muted"> (32 rates)</span>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <a href="shop-grid-right.html" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--</div>--}}
+<div class="modal fade custom-modal" id="quickViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="modal-body">
-                <div class="deal" style="background-image: url('{{asset('web')}}/assets/imgs/banner/popup-1.png')">
-                    <div class="deal-top">
-                        <h6 class="mb-10 text-brand-2">Deal of the Day</h6>
-                    </div>
-                    <div class="deal-content detail-info">
-                        <h4 class="product-title"><a href="shop-product-right.html" class="text-heading">Organic fruit for your family's health</a></h4>
-                        <div class="clearfix product-price-cover">
-                                <div class="product-price primary-color float-left">
-                                    <span class="current-price text-brand" id="qv-final-price"></span>
-                                    <span id="qv-old-price-container" style="display:none;">
-                                            <span class="save-price font-md color3 ml-15" id="qv-discount-label"></span>
-                                            <span class="old-price font-md ml-15" id="qv-old-price"></span>
-                                        </span>
-                                </div>
-                            </div>
-                    </div>
-                    <div class="deal-bottom">
-                        <p class="mb-20">Hurry Up! Offer End In:</p>
-                        <div class="deals-countdown pl-5" data-countdown="2025/03/25 00:00:00">
-                            <span class="countdown-section"><span class="countdown-amount hover-up">03</span><span class="countdown-period"> days </span></span><span class="countdown-section"><span class="countdown-amount hover-up">02</span><span class="countdown-period"> hours </span></span><span class="countdown-section"><span class="countdown-amount hover-up">43</span><span class="countdown-period"> mins </span></span><span class="countdown-section"><span class="countdown-amount hover-up">29</span><span class="countdown-period"> sec </span></span>
-                        </div>
-                        <div class="product-detail-rating">
-                            <div class="product-rate-cover text-end">
-                                <div class="product-rate d-inline-block">
-                                    <div class="product-rating" style="width: 90%"></div>
-                                </div>
-                                <span class="font-small ml-5 text-muted"> (32 rates)</span>
-                            </div>
-                        </div>
-                        <a href="shop-grid-right.html" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                    </div>
-                </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+            <div class="modal-body" id="quick-view-content">
+                <!-- AJAX content will load here -->
+                <div class="text-center p-5">Loading...</div>
             </div>
+
         </div>
     </div>
 </div>
-<!-- Quick view -->
-<div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
-                        <div class="detail-gallery">
-                            <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                            <!-- MAIN SLIDES -->
-                            <div class="product-image-slider" id="qv-product-image-slider">
-                            </div>
-                            <!-- THUMBNAILS -->
-                            <div class="slider-nav-thumbnails" id="qv-slider-nav-thumbnails">
-                            </div>
-                        </div>
-                        <!-- End Gallery -->
-                    </div>
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <div class="detail-info pr-30 pl-30">
-                            <span class="stock-status out-stock" id="qv-discount" style="display:none;"> Sale Off </span>
-                            <h3 class="title-detail"><a href="#" class="text-heading" id="qv-title"></a></h3>
-                            <div class="product-detail-rating">
-                                <div class="product-rate-cover text-end">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (32 reviews)</span>
-                                </div>
-                            </div>
-                            <div class="clearfix product-price-cover">
-                                <div class="product-price primary-color float-left">
-                                    <span class="current-price text-brand">$38</span>
-                                    <span>
-                                            <span class="save-price font-md color3 ml-15">26% Off</span>
-                                            <span class="old-price font-md ml-15">$52</span>
-                                        </span>
-                                </div>
-                            </div>
-                            <div class="detail-extralink mb-30">
-                                <div class="detail-qty border radius">
-                                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                    <input type="text" name="quantity" class="qty-val" value="1" min="1">
-                                    <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                </div>
-                                <div class="product-extra-link2">
-                                    <button type="submit" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
-                                </div>
-                            </div>
-                            <div class="font-xs">
-                                <ul>
-                                    <li class="mb-5">Category: <span class="text-brand" id="qv-category"></span></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Detail Info -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
 @include('frontend.inc.header')
 <!--End header-->
 <main class="main">
@@ -146,15 +98,15 @@
         to { transform: rotate(360deg); }
     }
 </style>
-<div id="preloader-active">
-    <div class="preloader d-flex align-items-center justify-content-center">
-        <div class="preloader-inner position-relative">
-            <div class="text-center">
-                <div class="custom-preloader"></div>
-            </div>
-        </div>
-    </div>
-</div>
+{{--<div id="preloader-active">--}}
+{{--    <div class="preloader d-flex align-items-center justify-content-center">--}}
+{{--        <div class="preloader-inner position-relative">--}}
+{{--            <div class="text-center">--}}
+{{--                <div class="custom-preloader"></div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--</div>--}}
 <!-- Vendor JS-->
 <script src="{{asset('web')}}/assets/js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="{{asset('web')}}/assets/js/vendor/jquery-3.6.0.min.js"></script>
@@ -179,80 +131,94 @@
 <script src="{{asset('web')}}/assets/js/main.js?v=5.5"></script>
 <script src="{{asset('web')}}/assets/js/shop.js?v=5.5"></script>
 <script>
-    $(document).on('click', '.quick-view-btn', function (e) {
+    $(document).on('click', '.quick-view-btn', function(e) {
         e.preventDefault();
-        var id = $(this).data('product-id');
+
+        let product_id = $(this).data('product');
+
+        if (!product_id) {
+            alert('Invalid product ID');
+            return;
+        }
+
+        // Show modal first
+        $('#quickViewModal').modal('show');
+
+        // Show loading spinner
+        $('#quick-view-content').html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+
         $.ajax({
-            url: "/product/quick-view/" + id,
+            url: "{{ route('quick-view') }}",
             type: "GET",
-            dataType: "json",
-            success: function (data) {
-                $('#qv-title').text(data.name);
-                $('#qv-title').attr('href', data.detail_url);
-                $('#qv-category').text(data.category);
-                $('#qv-final-price').text(data.final_price);
+            data: { id: product_id },
+            timeout: 10000,
 
-                if (data.discount) {
-                    $('#qv-discount').text('Sale Off').show();
-                    $('#qv-discount-label').text(data.discount);
-                    $('#qv-old-price').text(data.price);
-                    $('#qv-old-price-container').show();
-                } else {
-                    $('#qv-discount').hide();
-                    $('#qv-old-price-container').hide();
-                }
+            success: function(response) {
+                $('#quick-view-content').html(response);
 
-                if ($('#qv-product-image-slider').hasClass('slick-initialized')) {
-                    $('#qv-product-image-slider').slick('unslick');
-                }
-                if ($('#qv-slider-nav-thumbnails').hasClass('slick-initialized')) {
-                    $('#qv-slider-nav-thumbnails').slick('unslick');
-                }
+                // Re-initialize Slick sliders after content is injected
+                setTimeout(function() {
+                    if ($('.product-image-slider').length) {
+                        if ($('.product-image-slider').hasClass('slick-initialized')) {
+                            $('.product-image-slider').slick('unslick');
+                        }
+                        if ($('.slider-nav-thumbnails').hasClass('slick-initialized')) {
+                            $('.slider-nav-thumbnails').slick('unslick');
+                        }
 
-                var sliderHtml = '';
-                var thumbHtml = '';
-                $.each(data.gallery, function (key, value) {
-                    sliderHtml += '<figure class="border-radius-10"><img src="' + value + '" alt="product image" /></figure>';
-                    thumbHtml += '<div><img src="' + value + '" alt="product image" /></div>';
-                });
-                
-                if(data.gallery.length === 0 && data.featured_image) {
-                     sliderHtml += '<figure class="border-radius-10"><img src="' + data.featured_image + '" alt="product image" /></figure>';
-                     thumbHtml += '<div><img src="' + data.featured_image + '" alt="product image" /></div>';
-                }
+                        $('.product-image-slider').slick({
+                            slidesToShow: 1,
+                            slidesToScroll: 1,
+                            arrows: false,
+                            fade: true,
+                            asNavFor: '.slider-nav-thumbnails'
+                        });
+                        $('.slider-nav-thumbnails').slick({
+                            slidesToShow: 5,
+                            slidesToScroll: 1,
+                            asNavFor: '.product-image-slider',
+                            dots: false,
+                            arrows: false,
+                            focusOnSelect: true
+                        });
+                    }
+                }, 150);
+            },
 
-                $('#qv-product-image-slider').html(sliderHtml);
-                $('#qv-slider-nav-thumbnails').html(thumbHtml);
-
-                $('#qv-product-image-slider').slick({
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    arrows: false,
-                    fade: false,
-                    asNavFor: '#qv-slider-nav-thumbnails',
-                });
-
-                $('#qv-slider-nav-thumbnails').slick({
-                    slidesToShow: 4,
-                    slidesToScroll: 1,
-                    asNavFor: '#qv-product-image-slider',
-                    dots: false,
-                    focusOnSelect: true,
-                    prevArrow: '<button type="button" class="slick-prev"><i class="fi-rs-arrow-small-left"></i></button>',
-                    nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>'
-                });
-                
-                $('#qv-slider-nav-thumbnails .slick-slide').removeClass('slick-active');
-                $('#qv-slider-nav-thumbnails .slick-slide').eq(0).addClass('slick-active');
-                $('#qv-product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
-                    var mySlideNumber = nextSlide;
-                    $('#qv-slider-nav-thumbnails .slick-slide').removeClass('slick-active');
-                    $('#qv-slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
-                });
+            error: function(xhr, status, error) {
+                console.error('Quick view error:', status, error);
+                $('#quick-view-content').html('<div class="alert alert-danger m-3">Failed to load product. Please try again.</div>');
             }
         });
     });
 </script>
+
+
+{{--<script>--}}
+{{--    $(document).on('click', '.quick-view-btn', function() {--}}
+{{--        let product_id = $(this).data('product');--}}
+
+{{--        // Show modal first--}}
+{{--        $('#quickViewModal').modal('show');--}}
+
+{{--        // Show loading--}}
+{{--        $('#quick-view-content').html('<div class="text-center p-5">Loading...</div>');--}}
+
+{{--        $.ajax({--}}
+{{--            url: "{{ route('quick-view') }}",--}}
+{{--            type: "GET",--}}
+{{--            data: { id: product_id },--}}
+
+{{--            success: function(response) {--}}
+{{--                $('#quick-view-content').html(response);--}}
+{{--            },--}}
+
+{{--            error: function() {--}}
+{{--                $('#quick-view-content').html('<p class="text-danger">Failed to load product.</p>');--}}
+{{--            }--}}
+{{--        });--}}
+{{--    });--}}
+{{--</script>--}}
 
 </body>
 
