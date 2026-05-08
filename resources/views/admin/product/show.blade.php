@@ -92,6 +92,22 @@
                             <p class="text-muted">No attributes assigned.</p>
                             @endif
                         </div>
+
+                        <div class="mt-2">
+                            <h5>Variations</h5>
+                            @if($product->variations && $product->variations->count() > 0)
+                            <ul>
+                                @php
+                                    $groupedVariations = $product->variations->groupBy('variation_id');
+                                @endphp
+                                @foreach($groupedVariations as $varId => $vars)
+                                <li><strong>{{ $vars->first()->variation->name }}:</strong> {{ $vars->pluck('variationValue.value')->implode(', ') }}</li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <p class="text-muted">No variations assigned.</p>
+                            @endif
+                        </div>
                     </div>
                     <div class="col-12 mt-2">
                         <h5>Short Description</h5>

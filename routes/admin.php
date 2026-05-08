@@ -88,6 +88,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Product Attribute module
     Route::resource('product-attribute', \App\Http\Controllers\Admin\ProductAttributeController::class, ['as' => 'admin']);
     Route::post('/product-attribute/status', [\App\Http\Controllers\Admin\ProductAttributeController::class, 'getStatus'])->name('admin.product_attribute.status');
+    
+    // Variations
+    Route::resource('variations', \App\Http\Controllers\Admin\VariationController::class, ['as' => 'admin']);
 
     //Product module
     Route::get('/product/out-of-stock', [\App\Http\Controllers\Admin\ProductController::class, 'outOfStock'])->name('admin.product.out-of-stock');

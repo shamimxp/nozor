@@ -107,11 +107,14 @@
                     </li>
                 </ul>
             </li>
-            <li class=" nav-item @if(Route::is('admin.product-attribute*')) open @endif">
+            <li class=" nav-item @if(Route::is('admin.product-attribute*') || Route::is('admin.variations*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Product Setup</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.product-attribute*')?'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Attribute</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.variations*')?'active':'' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.variations.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Variation</span></a>
                     </li>
                     <li class="{{ Route::is('admin.product.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product List</span></a>

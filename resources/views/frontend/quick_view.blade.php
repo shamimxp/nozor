@@ -60,6 +60,27 @@
                 </div>
             </div>
 
+            @if($product->variations && $product->variations->count() > 0)
+                @php
+                    $groupedVariations = $product->variations->groupBy('variation_id');
+                @endphp
+                <div class="product-variations mb-20">
+                    @foreach($groupedVariations as $varId => $vars)
+                    <div class="attr-detail attr-size mb-2 d-flex align-items-center">
+                        <strong class="mr-10">{{ $vars->first()->variation->name }}: </strong>
+                        <select class="form-control form-control-sm" style="max-width: 150px; display: inline-block;">
+                            <option value="">Select {{ $vars->first()->variation->name }}</option>
+                            @foreach($vars as $var)
+                                @if($var->variationValue)
+                                    <option value="{{ $var->variationValue->id }}">{{ $var->variationValue->value }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                    @endforeach
+                </div>
+            @endif
+
             <div class="detail-extralink mb-30">
                 <div class="detail-qty border radius">
                     <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>

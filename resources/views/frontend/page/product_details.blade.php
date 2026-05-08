@@ -77,10 +77,6 @@
                                             }
                                         @endphp
 
-                                        <span>{{ $currency }} {{ number_format($finalPrice, 2) }}</span>
-                                        @if($product->discount_type)
-                                            <span class="old-price">{{ $currency }} {{ number_format($price, 2) }}</span>
-                                        @endif
 
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
@@ -93,16 +89,26 @@
                                               @endif
                                             </div>
                                         </div>
-                                        <div class="attr-detail attr-size mb-30">
-                                            <strong class="mr-10">Size: </strong>
-                                            <ul class="list-filter size-filter font-small">
-                                                <li><a href="#">50g</a></li>
-                                                <li class="active"><a href="#">60g</a></li>
-                                                <li><a href="#">80g</a></li>
-                                                <li><a href="#">100g</a></li>
-                                                <li><a href="#">150g</a></li>
-                                            </ul>
-                                        </div>
+                                        @if($product->variations && $product->variations->count() > 0)
+                                            @php
+                                                $groupedVariations = $product->variations->groupBy('variation_id');
+                                            @endphp
+                                            <div class="product-variations mb-20">
+                                                @foreach($groupedVariations as $varId => $vars)
+                                                <div class="attr-detail attr-size mb-20 d-flex align-items-center">
+                                                    <strong class="mr-10">{{ $vars->first()->variation->name }}: </strong>
+                                                    <select class="form-control" style="max-width: 150px; display: inline-block;">
+                                                        <option value="">Select {{ $vars->first()->variation->name }}</option>
+                                                        @foreach($vars as $var)
+                                                            @if($var->variationValue)
+                                                                <option value="{{ $var->variationValue->id }}">{{ $var->variationValue->value }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                         <div class="detail-extralink mb-50">
                                             <div class="detail-qty border radius">
                                                 <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
@@ -122,7 +128,7 @@
                                             </ul>
                                             <ul class="float-start">
                                                 <li class="mb-5">SKU: <a href="#">{{ $product->slug ?? '-' }}</a></li>
-                                                <li>Stock:<span class="in-stock text-brand ml-5">{{$product->count() ?? 0}} Items In Stock</span></li>
+                                                <li>Stock:<span class="in-stock text-brand ml-5">{{$product->stock ?? 0}} Items In Stock</span></li>
                                             </ul>
                                         </div>
                                     </div>

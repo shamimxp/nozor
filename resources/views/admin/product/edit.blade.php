@@ -133,7 +133,7 @@
                             </div>
                         </div>
 
-                        <div class="col-12 mt-2">
+                        <div class="col-md-6 mt-2">
                             <h5>Product Attributes</h5>
                             <hr>
                             <div id="attributeSection">
@@ -142,14 +142,41 @@
                                     $attrValue = $product->attributes->where('product_attribute_id', $attribute->id)->first();
                                 @endphp
                                 <div class="row align-items-center mb-1">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input attr-check" name="attributes_id[]" id="attr_{{ $attribute->id }}" value="{{ $attribute->id }}" {{ $attrValue ? 'checked' : '' }}>
                                             <label class="custom-control-label" for="attr_{{ $attribute->id }}">{{ $attribute->name }}</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-md-8">
                                         <input type="text" name="attribute_values[]" class="form-control attr-val" value="{{ $attrValue ? $attrValue->attribute_value : '' }}" placeholder="{{ $attribute->name }} Value" {{ $attrValue ? '' : 'disabled' }}>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-2">
+                            <h5>Product Variations</h5>
+                            <hr>
+                            <div id="variationSection">
+                                @foreach($variations as $variation)
+                                    @php
+                                        $selectedValues = $product->variations->where('variation_id', $variation->id)->pluck('variation_value_id')->toArray();
+                                    @endphp
+                                <div class="row align-items-center mb-1">
+                                    <div class="col-md-4">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input variation-check" id="var_{{ $variation->id }}" value="{{ $variation->id }}" {{ count($selectedValues) > 0 ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="var_{{ $variation->id }}">{{ $variation->name }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="variation_values[{{ $variation->id }}][]" class="form-control select2 variation-val" multiple {{ count($selectedValues) > 0 ? '' : 'disabled' }}>
+                                            @foreach($variation->variationValues as $val)
+                                                <option value="{{ $val->id }}" {{ in_array($val->id, $selectedValues) ? 'selected' : '' }}>{{ $val->value }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 @endforeach
@@ -201,6 +228,16 @@
                 valInput.prop('disabled', false).attr('required', true);
             } else {
                 valInput.prop('disabled', true).attr('required', false).val('');
+            }
+        });
+
+        // Variation toggle
+        $('.variation-check').on('change', function() {
+            let valInput = $(this).closest('.row').find('.variation-val');
+            if ($(this).is(':checked')) {
+                valInput.prop('disabled', false).attr('required', true);
+            } else {
+                valInput.prop('disabled', true).attr('required', false).val(null).trigger('change');
             }
         });
 

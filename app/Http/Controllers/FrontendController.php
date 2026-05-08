@@ -47,7 +47,7 @@ class FrontendController extends Controller
         return view('frontend.page.dealpage');
     }
     public function details($id){
-        $product = Product::with('gallery','category')->findOrFail(decrypt($id));
+        $product = Product::with('gallery','category', 'variations.variationValue', 'variations.variation')->findOrFail(decrypt($id));
         
         $relatedProducts = Product::where('status', 1)
             ->where('category_id', $product->category_id);
@@ -185,7 +185,7 @@ class FrontendController extends Controller
             abort(404, 'Invalid product.');
         }
 
-        $product = Product::with('gallery', 'category')->findOrFail($id);
+        $product = Product::with('gallery', 'category', 'variations.variationValue', 'variations.variation')->findOrFail($id);
         $settings = \App\Models\WebSetting::first();
 
         // Calculate final price

@@ -107,8 +107,9 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 1)->get();
         $attributes = ProductAttribute::where('status', 1)->get();
+        $variations = \App\Models\Variation::with('variationValues')->get();
         $units = \App\Models\Unit::where('status', 1)->get();
-        return view('admin.product.create', compact('categories', 'attributes', 'units'));
+        return view('admin.product.create', compact('categories', 'attributes', 'variations', 'units'));
     }
 
     public function store(Request $request)
@@ -169,22 +170,36 @@ class ProductController extends Controller
             }
         }
 
+        // Variations
+        if ($request->variation_values) {
+            foreach ($request->variation_values as $variation_id => $values) {
+                foreach ($values as $value_id) {
+                    \App\Models\ProductVariation::create([
+                        'product_id' => $product->id,
+                        'variation_id' => $variation_id,
+                        'variation_value_id' => $value_id,
+                    ]);
+                }
+            }
+        }
+
         return response()->json(['success' => 'Product saved successfully.']);
     }
 
     public function edit($id)
     {
-        $product = Product::with(['gallery', 'attributes.attribute'])->findOrFail($id);
+        $product = Product::with(['gallery', 'attributes.attribute', 'variations'])->findOrFail($id);
         $categories = Category::where('status', 1)->get();
         $subcategories = SubCategory::where('category_id', $product->category_id)->get();
         $attributes = ProductAttribute::where('status', 1)->get();
+        $variations = \App\Models\Variation::with('variationValues')->get();
         $units = \App\Models\Unit::where('status', 1)->get();
-        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes', 'units'));
+        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes', 'variations', 'units'));
     }
 
     public function show($id)
     {
-        $product = Product::with(['category', 'subCategory', 'unit', 'gallery', 'attributes.attribute'])->findOrFail($id);
+        $product = Product::with(['category', 'subCategory', 'unit', 'gallery', 'attributes.attribute', 'variations.variationValue'])->findOrFail($id);
         return view('admin.product.show', compact('product'));
     }
 
@@ -245,6 +260,20 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'product_attribute_id' => $attr_id,
                         'attribute_value' => $request->attribute_values[$key],
+                    ]);
+                }
+            }
+        }
+
+        // Update Variations
+        \App\Models\ProductVariation::where('product_id', $product->id)->delete();
+        if ($request->variation_values) {
+            foreach ($request->variation_values as $variation_id => $values) {
+                foreach ($values as $value_id) {
+                    \App\Models\ProductVariation::create([
+                        'product_id' => $product->id,
+                        'variation_id' => $variation_id,
+                        'variation_value_id' => $value_id,
                     ]);
                 }
             }
