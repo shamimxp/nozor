@@ -76,7 +76,9 @@ class FrontendController extends Controller
             ->get()
             ->shuffle();
 
-        return view('frontend.page.product_details',compact('product', 'relatedProducts', 'newProducts'));
+        $categories = \App\Models\Category::withCount('products')->where('status', 1)->take(10)->get();
+
+        return view('frontend.page.product_details',compact('product', 'relatedProducts', 'newProducts', 'categories'));
     }
 
 //    public function quickView($id)

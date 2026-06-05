@@ -3,8 +3,8 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                <span></span> <a href="shop-grid-right.html">Vegetables & tubers</a> <span></span> Seeds of Change Organic
+                <a href="{{Url('/')}}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span></span> <a href="{{route('shop')}}">shop</a> <span></span> product details
             </div>
         </div>
     </div>
@@ -116,18 +116,16 @@
                                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                             </div>
                                             <div class="product-extra-link2">
-                                                <button type="submit" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                                                <button type="submit" class="button button-add-to-cart add-to-cart-btn" data-id="{{ $product->id }}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
                                         </div>
                                         <div class="font-xs">
                                             <ul class="mr-50 float-start">
                                                 <li class="mb-5">Category: <span class="text-brand">{{ $product->category->name ?? '-' }}</span></li>
-                                                <li>LIFE: <span class="text-brand">70 days</span></li>
+                                                <li class="mb-5">SKU: <a href="#">{{ $product->slug ?? '-' }}</a></li>
                                             </ul>
                                             <ul class="float-start">
-                                                <li class="mb-5">SKU: <a href="#">{{ $product->slug ?? '-' }}</a></li>
                                                 <li>Stock:<span class="in-stock text-brand ml-5">{{$product->stock ?? 0}} Items In Stock</span></li>
                                             </ul>
                                         </div>
@@ -161,7 +159,7 @@
                                                             <div class="single-comment justify-content-between d-flex mb-30">
                                                                 <div class="user justify-content-between d-flex">
                                                                     <div class="thumb text-center">
-                                                                        <img src="assets/imgs/blog/author-2.png" alt="" />
+                                                                        <img src="{{asset('web')}}/assets/imgs/blog/author-2.png" alt="" />
                                                                         <a href="#" class="font-heading text-brand">Sienna</a>
                                                                     </div>
                                                                     <div class="desc">
@@ -180,7 +178,7 @@
                                                             <div class="single-comment justify-content-between d-flex mb-30 ml-30">
                                                                 <div class="user justify-content-between d-flex">
                                                                     <div class="thumb text-center">
-                                                                        <img src="assets/imgs/blog/author-3.png" alt="" />
+                                                                        <img src="{{asset('web')}}/assets/imgs/blog/author-3.png" alt="" />
                                                                         <a href="#" class="font-heading text-brand">Brenna</a>
                                                                     </div>
                                                                     <div class="desc">
@@ -199,7 +197,7 @@
                                                             <div class="single-comment justify-content-between d-flex">
                                                                 <div class="user justify-content-between d-flex">
                                                                     <div class="thumb text-center">
-                                                                        <img src="assets/imgs/blog/author-4.png" alt="" />
+                                                                        <img src="{{asset('web')}}/assets/imgs/blog/author-4.png" alt="" />
                                                                         <a href="#" class="font-heading text-brand">Gemma</a>
                                                                     </div>
                                                                     <div class="desc">
@@ -360,7 +358,7 @@
                                                             @endif
                                                         </div>
                                                         <div class="add-cart">
-                                                            <a class="add" href="#"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                                            <a  class="add add-to-cart-btn" href="javascript:void(0)" data-id="{{ $relProduct->id }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -378,54 +376,17 @@
                         <div class="sidebar-widget widget-category-2 mb-30">
                             <h5 class="section-title style-1 mb-30">Category</h5>
                             <ul>
-                                <li>
-                                    <a href="shop-grid-right.html"> <img src="assets/imgs/theme/icons/category-1.svg" alt="" />Milks & Dairies</a><span class="count">30</span>
-                                </li>
-                                <li>
-                                    <a href="shop-grid-right.html"> <img src="assets/imgs/theme/icons/category-2.svg" alt="" />Clothing</a><span class="count">35</span>
-                                </li>
-                                <li>
-                                    <a href="shop-grid-right.html"> <img src="assets/imgs/theme/icons/category-3.svg" alt="" />Pet Foods </a><span class="count">42</span>
-                                </li>
-                                <li>
-                                    <a href="shop-grid-right.html"> <img src="assets/imgs/theme/icons/category-4.svg" alt="" />Baking material</a><span class="count">68</span>
-                                </li>
-                                <li>
-                                    <a href="shop-grid-right.html"> <img src="assets/imgs/theme/icons/category-5.svg" alt="" />Fresh Fruit</a><span class="count">87</span>
-                                </li>
+                                @foreach($categories as $cat)
+                                    <li>
+                                        <a href="{{route('category.products',$cat->slug)}}">
+                                            <img src="{{ $cat->image
+                             ? asset(config('imagepath.category') . $cat->image)
+                             : asset('images/no-image.png') }}" alt=""  />{{$cat->name ?? '-'}}</a><span class="count">{{$cat->products_count}}</span>
+                                    </li>
+                                @endforeach
                             </ul>
                         </div>
-                        <!-- Fillter By Price -->
-                        <div class="sidebar-widget price_range range mb-30">
-                            <h5 class="section-title style-1 mb-30">Fill by price</h5>
-                            <div class="list-group">
-                                <div class="list-group-item mb-10 mt-10">
-                                    <label class="fw-900">Color</label>
-                                    <div class="custome-checkbox">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
-                                        <label class="form-check-label" for="exampleCheckbox1"><span>Red (56)</span></label>
-                                        <br />
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox2" value="" />
-                                        <label class="form-check-label" for="exampleCheckbox2"><span>Green (78)</span></label>
-                                        <br />
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox3" value="" />
-                                        <label class="form-check-label" for="exampleCheckbox3"><span>Blue (54)</span></label>
-                                    </div>
-                                    <label class="fw-900 mt-15">Item Condition</label>
-                                    <div class="custome-checkbox">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox11" value="" />
-                                        <label class="form-check-label" for="exampleCheckbox11"><span>New (1506)</span></label>
-                                        <br />
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox21" value="" />
-                                        <label class="form-check-label" for="exampleCheckbox21"><span>Refurbished (27)</span></label>
-                                        <br />
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox31" value="" />
-                                        <label class="form-check-label" for="exampleCheckbox31"><span>Used (45)</span></label>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="shop-grid-right.html" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Fillter</a>
-                        </div>
+
                         <!-- Product sidebar Widget -->
                         <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10">
                             <h5 class="section-title style-1 mb-30">New products</h5>
@@ -458,7 +419,7 @@
 
                         </div>
                         <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
-                            <img src="assets/imgs/banner/banner-11.png" alt="" />
+                            <img src="{{asset('web')}}/assets/imgs/banner/banner-11.png" alt="" />
                             <div class="banner-text">
                                 <span>Oganic</span>
                                 <h4>
