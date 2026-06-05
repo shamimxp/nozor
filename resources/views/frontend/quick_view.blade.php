@@ -88,7 +88,7 @@
                     <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                 </div>
                 <div class="product-extra-link2">
-                    <button type="submit" class="button button-add-to-cart"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                    <button type="button" class="button button-add-to-cart add-to-cart-btn" data-id="{{ $product->id }}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
                 </div>
             </div>
 

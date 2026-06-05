@@ -23,6 +23,11 @@
     <!-- SweetAlert2 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable
+        {
+            background-color: #0F1729!important;
+            color: white!important;
+        }
         /* Product box — base overrides (layout in main.css) */
         .product__box {
             transition: all 0.22s ease;
@@ -2076,39 +2081,40 @@
         <div class="pos_footer_wrapper">
             <!-- pos footer button -->
             <div class="pos_footer_btn d-flex align-items-center gap-2 flex-wrap">
+                <p> this is footer </p>
                 <!-- draft btn -->
-                <button class="btn_main bg-info footer_innerbtn">
-                    <span><i class="fa-solid fa-notes"></i></span> Draft </button>
-                <!-- Quotation btn -->
-                <button class="btn_main bg-purple footer_innerbtn">
-                    <span><i class="fa-solid fa-edit"></i></span> Quotation </button>
-                <!-- suspend btn -->
-                <button class="btn_main misty-color footer_innerbtn" data-bs-target="#suspend_modalnote"
-                        data-bs-toggle="modal">
-                    <span><i class="fas fa-pause"></i></span> Suspend
-                </button>
-                <!-- Credit sale btn -->
-                <button class="btn_main bg-yellow footer_innerbtn">
-                    <span><i class="fa-solid fa-check"></i></span> Credit Sale </button>
-                <!-- card btn -->
-                <button class="btn_main bg-navy footer_innerbtn" data-bs-target="#card_payment"
-                        data-bs-toggle="modal">
-                    <span><i class="fa-solid fa-credit-card"></i></span> Card </button>
-                <!-- multiple payment -->
-                <button class="btn_main btn-success footer_innerbtn" data-bs-target="#multiple_payment"
-                        data-bs-toggle="modal">
-                    <span><i class="fas fa-money-check-alt"></i></span> Multiple Payment </button>
-                <!-- cash payment -->
-                <button type="button" id="cash_payment_btn" class="btn_main bg-primary footer_innerbtn">
-                    <span><i class="fas fa-money-check-alt"></i></span> Cash </button>
-                <!-- total payable -->
-                <div class="total_payable">
-                    <span>Total Payable:</span>
-                    <strong id="total_payment">000</strong>
-                </div>
-                <!-- cencel -->
-                <button class="btn_main misty-color footer_innerbtn">
-                    <span><i class="fa-solid fa-xmark"></i></span> Cencel </button>
+{{--                <button class="btn_main bg-info footer_innerbtn">--}}
+{{--                    <span><i class="fa-solid fa-notes"></i></span> Draft </button>--}}
+{{--                <!-- Quotation btn -->--}}
+{{--                <button class="btn_main bg-purple footer_innerbtn">--}}
+{{--                    <span><i class="fa-solid fa-edit"></i></span> Quotation </button>--}}
+{{--                <!-- suspend btn -->--}}
+{{--                <button class="btn_main misty-color footer_innerbtn" data-bs-target="#suspend_modalnote"--}}
+{{--                        data-bs-toggle="modal">--}}
+{{--                    <span><i class="fas fa-pause"></i></span> Suspend--}}
+{{--                </button>--}}
+{{--                <!-- Credit sale btn -->--}}
+{{--                <button class="btn_main bg-yellow footer_innerbtn">--}}
+{{--                    <span><i class="fa-solid fa-check"></i></span> Credit Sale </button>--}}
+{{--                <!-- card btn -->--}}
+{{--                <button class="btn_main bg-navy footer_innerbtn" data-bs-target="#card_payment"--}}
+{{--                        data-bs-toggle="modal">--}}
+{{--                    <span><i class="fa-solid fa-credit-card"></i></span> Card </button>--}}
+{{--                <!-- multiple payment -->--}}
+{{--                <button class="btn_main btn-success footer_innerbtn" data-bs-target="#multiple_payment"--}}
+{{--                        data-bs-toggle="modal">--}}
+{{--                    <span><i class="fas fa-money-check-alt"></i></span> Multiple Payment </button>--}}
+{{--                <!-- cash payment -->--}}
+{{--                <button type="button" id="cash_payment_btn" class="btn_main bg-primary footer_innerbtn">--}}
+{{--                    <span><i class="fas fa-money-check-alt"></i></span> Cash </button>--}}
+{{--                <!-- total payable -->--}}
+{{--                <div class="total_payable">--}}
+{{--                    <span>Total Payable:</span>--}}
+{{--                    <strong id="total_payment">000</strong>--}}
+{{--                </div>--}}
+{{--                <!-- cencel -->--}}
+{{--                <button class="btn_main misty-color footer_innerbtn">--}}
+{{--                    <span><i class="fa-solid fa-xmark"></i></span> Cencel </button>--}}
             </div>
             <!-- recent transection -->
             <button class="btn_main bg-navy footer_innerbtn">
@@ -2643,7 +2649,7 @@ function updateDynamicChange() {
         selectedPaymentMethod = 'Cash';
         $('.payment-method-btn').removeClass('active btn-navy').addClass('btn-outline-secondary').css({'background-color': '', 'color': ''});
         $('.payment-method-btn[data-method="Cash"]').removeClass('btn-outline-secondary').addClass('active btn-navy').css({'background-color': '#001f3f', 'color': 'white'});
-        
+
         $('#place_order').trigger('click');
     });
 });

@@ -16,6 +16,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{asset('web')}}/assets/css/plugins/animate.min.css" />
     <link rel="stylesheet" href="{{asset('web')}}/assets/css/main.css?v=5.5" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 </head>
 
 <body>
@@ -111,6 +112,7 @@
 <script src="{{asset('web')}}/assets/js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="{{asset('web')}}/assets/js/vendor/jquery-3.6.0.min.js"></script>
 <script src="{{asset('web')}}/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="{{asset('web')}}/assets/js/vendor/bootstrap.bundle.min.js"></script>
 <script src="{{asset('web')}}/assets/js/plugins/slick.js"></script>
 <script src="{{asset('web')}}/assets/js/plugins/jquery.syotimer.min.js"></script>
@@ -189,6 +191,8 @@
                                 focusOnSelect: true
                             });
                         }
+                        
+                        disableCartButtons();
                     }
                 }, 300);
             },
@@ -215,6 +219,95 @@
         if (val > 1) {
             $input.val(val - 1);
         }
+    });
+
+    $(document).on('click', '.add-to-cart-btn', function(e) {
+        e.preventDefault();
+        let btn = $(this);
+        let product_id = btn.data('id');
+        
+        // Find quantity if available (e.g., from quick view modal)
+        let qty = 1;
+        let qtyInput = btn.closest('.detail-info').find('.qty-val');
+        if(qtyInput.length) {
+            qty = qtyInput.val();
+        }
+
+        let _token = '{{ csrf_token() }}';
+
+        $.ajax({
+            url: "{{ route('cart.add') }}",
+            type: "POST",
+            data: {
+                product_id: product_id,
+                quantity: qty,
+                _token: _token
+            },
+            success: function(response) {
+                if(response.status === 'success') {
+                    toastr.success(response.message);
+                    if($('.cart-count').length) {
+                        $('.cart-count').text(response.cart_count);
+                    }
+                    if($('.dynamic-cart-list').length) {
+                        $('.dynamic-cart-list').html(response.cart_html);
+                    }
+                    if($('.cart-total-amount').length) {
+                        $('.cart-total-amount').text(response.cart_total);
+                    }
+                    
+                    btn.addClass('disabled').css('pointer-events', 'none').html('<i class="fi-rs-check mr-5"></i>Added');
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function() {
+                toastr.error('An error occurred. Please try again.');
+            }
+        });
+    });
+
+    $(document).on('click', '.remove-cart-item', function(e) {
+        e.preventDefault();
+        let cart_id = $(this).data('id');
+        let product_id = $(this).data('product-id');
+        let _token = '{{ csrf_token() }}';
+
+        $.ajax({
+            url: "{{ route('cart.remove') }}",
+            type: "POST",
+            data: {
+                cart_id: cart_id,
+                _token: _token
+            },
+            success: function(response) {
+                if(response.status === 'success') {
+                    toastr.success(response.message);
+                    if($('.cart-count').length) {
+                        $('.cart-count').text(response.cart_count);
+                    }
+                    if($('.dynamic-cart-list').length) {
+                        $('.dynamic-cart-list').html(response.cart_html);
+                    }
+                    if($('.cart-total-amount').length) {
+                        $('.cart-total-amount').text(response.cart_total);
+                    }
+                    
+                    $(`.add-to-cart-btn[data-id="${product_id}"]`).removeClass('disabled').css('pointer-events', 'auto').html('<i class="fi-rs-shopping-cart mr-5"></i>Add');
+                }
+            }
+        });
+    });
+
+    function disableCartButtons() {
+        $('.remove-cart-item').each(function() {
+            let pid = $(this).data('product-id');
+            $(`.add-to-cart-btn[data-id="${pid}"]`).addClass('disabled').css('pointer-events', 'none').html('<i class="fi-rs-check mr-5"></i>Added');
+        });
+    }
+
+    $(document).ready(function() {
+        disableCartButtons();
     });
 </script>
 

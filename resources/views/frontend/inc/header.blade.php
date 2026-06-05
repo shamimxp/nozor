@@ -108,39 +108,35 @@
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="{{route('cart')}}">
                                     <img alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-cart.svg" />
-                                    <span class="pro-count blue">2</span>
+                                    <span class="pro-count blue cart-count">{{\App\Models\Cart::where('session_id', session()->getId())->sum('quantity')}}</span>
                                 </a>
                                 <a href="{{route('cart')}}"><span class="lable">Cart</span></a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    <ul>
+                                    @php
+                                        $cartItems = \App\Models\Cart::with('product')->where('session_id', session()->getId())->get();
+                                        $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
+                                    @endphp
+                                    <ul class="dynamic-cart-list">
+                                        @foreach($cartItems as $cItem)
                                         <li>
                                             <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Nest" src="{{asset('web')}}/assets/imgs/shop/thumbnail-3.jpg" /></a>
+                                                <a href="{{ route('product.details', encrypt($cItem->product->id)) }}">
+                                                    <img alt="Nest" src="{{ $cItem->product->featured_image ? asset(config('imagepath.product') . $cItem->product->featured_image) : asset('images/no-image.png') }}" />
+                                                </a>
                                             </div>
                                             <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Daisy Casual Bag</a></h4>
-                                                <h4><span>1 × </span>$800.00</h4>
+                                                <h4><a href="{{ route('product.details', encrypt($cItem->product->id)) }}">{{ \Illuminate\Support\Str::words($cItem->product->name, 2, '...') }}</a></h4>
+                                                <h4><span>{{ $cItem->quantity }} × </span>{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cItem->price, 2) }}</h4>
                                             </div>
                                             <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                                <a href="javascript:void(0)" class="remove-cart-item" data-id="{{ $cItem->id }}" data-product-id="{{ $cItem->product_id }}"><i class="fi-rs-cross-small"></i></a>
                                             </div>
                                         </li>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Nest" src="{{asset('web')}}/assets/imgs/shop/thumbnail-2.jpg" /></a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Corduroy Shirts</a></h4>
-                                                <h4><span>1 × </span>$3200.00</h4>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
+                                        @endforeach
                                     </ul>
                                     <div class="shopping-cart-footer">
                                         <div class="shopping-cart-total">
-                                            <h4>Total <span>$4000.00</span></h4>
+                                            <h4>Total <span class="cart-total-amount">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cartTotal, 2) }}</span></h4>
                                         </div>
                                         <div class="shopping-cart-button">
                                             <a href="{{route('cart')}}" class="outline">View cart</a>
@@ -313,38 +309,30 @@
                         <div class="header-action-icon-2">
                             <a class="mini-cart-icon" href="#">
                                 <img alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-cart.svg" />
-                                <span class="pro-count white">2</span>
+                                <span class="pro-count white cart-count">{{\App\Models\Cart::where('session_id', session()->getId())->sum('quantity')}}</span>
                             </a>
                             <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                <ul>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Nest" src="{{asset('web')}}/assets/imgs/shop/thumbnail-3.jpg" /></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
-                                            <h3><span>1 × </span>$800.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Nest" src="{{asset('web')}}/assets/imgs/shop/thumbnail-4.jpg" /></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Macbook Pro 2022</a></h4>
-                                            <h3><span>1 × </span>$3500.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="shopping-cart-footer">
-                                    <div class="shopping-cart-total">
-                                        <h4>Total <span>$383.00</span></h4>
+                                    <ul class="dynamic-cart-list">
+                                        @foreach($cartItems as $cItem)
+                                        <li>
+                                            <div class="shopping-cart-img">
+                                                <a href="{{ route('product.details', encrypt($cItem->product->id)) }}">
+                                                    <img alt="Nest" src="{{ $cItem->product->featured_image ? asset(config('imagepath.product') . $cItem->product->featured_image) : asset('images/no-image.png') }}" />
+                                                </a>
+                                            </div>
+                                            <div class="shopping-cart-title">
+                                                <h4><a href="{{ route('product.details', encrypt($cItem->product->id)) }}">{{ \Illuminate\Support\Str::words($cItem->product->name, 2, '...') }}</a></h4>
+                                                <h3><span>{{ $cItem->quantity }} × </span>{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cItem->price, 2) }}</h3>
+                                            </div>
+                                            <div class="shopping-cart-delete">
+                                                <a href="javascript:void(0)" class="remove-cart-item" data-id="{{ $cItem->id }}" data-product-id="{{ $cItem->product_id }}"><i class="fi-rs-cross-small"></i></a>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="shopping-cart-footer">
+                                        <div class="shopping-cart-total">
+                                            <h4>Total <span class="cart-total-amount">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cartTotal, 2) }}</span></h4>
                                     </div>
                                     <div class="shopping-cart-button">
                                         <a href="shop-cart.html">View cart</a>
