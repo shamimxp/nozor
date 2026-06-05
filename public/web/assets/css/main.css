@@ -5528,11 +5528,11 @@ table .product-thumbnail img {
 }
 
 .shopping-summery table thead th.start {
-  border-radius: 20px 0 0 20px;
+  /*border-radius: 20px 0 0 20px;*/
 }
 
 .shopping-summery table thead th.end {
-  border-radius: 0 20px 20px 0;
+  /*border-radius: 0 20px 20px 0;*/
 }
 
 .shopping-summery table tbody tr img {

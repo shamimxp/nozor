@@ -69,22 +69,25 @@
         });
         //Qty Up-Down
         $('.detail-qty').each(function () {
-            var qtyval = parseInt($(this).find(".qty-val").val(), 10);
+            var $this = $(this);
+            var qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
 
-            $('.qty-up').on('click', function (event) {
+            $this.find('.qty-up').on('click', function (event) {
                 event.preventDefault();
+                qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
                 qtyval = qtyval + 1;   
-                $(this).prev().val(qtyval);
+                $(this).prev().val(qtyval).trigger('change');
             });
 
-             $(".qty-down").on("click", function (event) {
+             $this.find(".qty-down").on("click", function (event) {
                  event.preventDefault(); 
+                 qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
                  qtyval = qtyval - 1;
-                 if (qtyval > 1) {
-                     $(this).next().val(qtyval);
+                 if (qtyval > 0) {
+                     $(this).next().val(qtyval).trigger('change');
                  } else {
                      qtyval = 1;
-                     $(this).next().val(qtyval);
+                     $(this).next().val(qtyval).trigger('change');
                  }
              });
         });

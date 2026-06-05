@@ -29,7 +29,11 @@ class FrontendController extends Controller
         return view('frontend.page.wishlist');
     }
     public function cart(){
-     return view('frontend.page.cart');
+        $sessionId = session()->getId();
+        $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
+        $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
+        $settings = \App\Models\WebSetting::first();
+        return view('frontend.page.cart', compact('cartItems', 'cartTotal', 'settings'));
     }
     public function checkout(){
         return view('frontend.page.checkout');
@@ -329,6 +333,67 @@ class FrontendController extends Controller
             'cart_count' => $cartCount,
             'cart_html' => $cartHtml,
             'cart_total' => $currency . ' ' . number_format($cartTotal, 2)
+        ]);
+    }
+    public function updateCart(Request $request)
+    {
+        $cartId = $request->cart_id;
+        $quantity = $request->quantity;
+        
+        $cart = \App\Models\Cart::find($cartId);
+        if($cart) {
+            $cart->quantity = $quantity;
+            $cart->save();
+        }
+
+        // Return updated generic header cart data
+        $sessionId = session()->getId();
+        $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
+        $cartCount = $cartItems->sum('quantity');
+        $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
+        
+        $settings = \App\Models\WebSetting::first();
+        $currency = $settings->currency_symbol ?? 'TK';
+
+        $cartHtml = '';
+        foreach($cartItems as $cItem) {
+            $imageUrl = $cItem->product->featured_image ? asset(config('imagepath.product') . $cItem->product->featured_image) : asset('images/no-image.png');
+            $detailUrl = route('product.details', encrypt($cItem->product->id));
+            $shortName = \Illuminate\Support\Str::words($cItem->product->name, 2, '...');
+            $cartHtml .= '<li>
+                <div class="shopping-cart-img">
+                    <a href="'.$detailUrl.'"><img alt="Nest" src="'.$imageUrl.'" /></a>
+                </div>
+                <div class="shopping-cart-title">
+                    <h4><a href="'.$detailUrl.'">'.$shortName.'</a></h4>
+                    <h4><span>'.$cItem->quantity.' × </span>'.$currency.' '.number_format($cItem->price, 2).'</h4>
+                </div>
+                <div class="shopping-cart-delete">
+                    <a href="javascript:void(0)" class="remove-cart-item" data-id="'.$cItem->id.'" data-product-id="'.$cItem->product_id.'"><i class="fi-rs-cross-small"></i></a>
+                </div>
+            </li>';
+        }
+
+        return response()->json([
+            'status' => 'success', 
+            'cart_count' => $cartCount,
+            'cart_html' => $cartHtml,
+            'cart_total' => $currency . ' ' . number_format($cartTotal, 2)
+        ]);
+    }
+    public function clearCart(Request $request)
+    {
+        $sessionId = session()->getId();
+        \App\Models\Cart::where('session_id', $sessionId)->delete();
+        
+        $settings = \App\Models\WebSetting::first();
+        $currency = $settings->currency_symbol ?? 'TK';
+
+        return response()->json([
+            'status' => 'success', 
+            'cart_count' => 0,
+            'cart_html' => '',
+            'cart_total' => $currency . ' 0.00'
         ]);
     }
 }
