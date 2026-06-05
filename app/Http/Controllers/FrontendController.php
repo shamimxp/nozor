@@ -36,7 +36,11 @@ class FrontendController extends Controller
         return view('frontend.page.cart', compact('cartItems', 'cartTotal', 'settings'));
     }
     public function checkout(){
-        return view('frontend.page.checkout');
+        $sessionId = session()->getId();
+        $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
+        $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
+        $settings = \App\Models\WebSetting::first();
+        return view('frontend.page.checkout', compact('cartItems', 'cartTotal', 'settings'));
     }
     public function contact(){
         return view('frontend.page.contact');

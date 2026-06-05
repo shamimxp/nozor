@@ -395,9 +395,9 @@
                                 </td>
                                 <td class="cart_total_amount">
                                     <select id="shipping_area" class="form-control" style="padding: 5px; height: auto;">
-                                        <option value="{{ $settings->inside_dhaka ?? 50 }}">Inside Dhaka ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->inside_dhaka ?? 50 }})</option>
-                                        <option value="{{ $settings->subcity ?? 70 }}">Sub City ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->subcity ?? 70 }})</option>
-                                        <option value="{{ $settings->outside_dhaka ?? 100 }}">Outside Dhaka ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->outside_dhaka ?? 100 }})</option>
+                                        <option value="{{ $settings->inside_dhaka ?? 0 }}">Inside Dhaka ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->inside_dhaka ?? 0 }})</option>
+                                        <option value="{{ $settings->subcity ?? 0 }}">Sub City ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->subcity ?? 0 }})</option>
+                                        <option value="{{ $settings->outside_dhaka ?? 0 }}">Outside Dhaka ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->outside_dhaka ?? 0 }})</option>
                                     </select>
                                 </td>
                             </tr>
@@ -407,14 +407,6 @@
                                 </td>
                                 <td class="cart_total_amount">
                                     <h5 class="text-heading text-end" id="cart-page-shipping">{{ $settings->currency_symbol ?? 'TK' }} {{ $settings->inside_dhaka ?? 50 }}</h5>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="cart_total_label">
-                                    <h6 class="text-muted">Payment Type</h6>
-                                </td>
-                                <td class="cart_total_amount">
-                                    <h5 class="text-heading text-end" id="cart-page-shipping">COD</h5>
                                 </td>
                             </tr>
                             <tr>
