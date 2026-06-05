@@ -183,6 +183,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('banner', \App\Http\Controllers\Admin\BannerController::class, ['as' => 'admin']);
     Route::post('/banner/status', [\App\Http\Controllers\Admin\BannerController::class, 'getStatus'])->name('admin.banner.status');
 
+    // Coupon module
+    Route::resource('coupon', \App\Http\Controllers\Admin\CouponController::class, ['as' => 'admin']);
+
     // Web Settings module
     Route::get('/web-setting', [\App\Http\Controllers\Admin\WebSettingController::class, 'index'])->name('admin.web-setting.index');
     Route::post('/web-setting/update', [\App\Http\Controllers\Admin\WebSettingController::class, 'update'])->name('admin.web-setting.update');

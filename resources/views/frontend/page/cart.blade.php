@@ -12,7 +12,6 @@
     <div class="container mb-80 mt-50">
         <div class="row">
             <div class="col-lg-8 mb-40">
-                <h1 class="heading-2 mb-10">Your Cart</h1>
                 <div class="d-flex justify-content-between">
                     <h6 class="text-body">There are <span class="text-brand cart-page-count">{{ $cartItems->sum('quantity') }}</span> products in your cart</h6>
                     <h6 class="text-body text-danger"><a href="javascript:void(0)" class="text-muted clear-cart-btn"><i class="fi-rs-trash mr-5 text-danger"></i>Clear Cart</a></h6>
@@ -47,6 +46,26 @@
                             <td class="image product-thumbnail pt-40"><a href="{{ $detailUrl }}"><img style="max-width: 80px!important;" src="{{ $imageUrl }}" alt="#"></a></td>
                             <td class="product-des product-name" style="max-width: 150px;">
                                 <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="{{ $detailUrl }}" style="display: block; white-space: normal; word-wrap: break-word;">{{ \Illuminate\Support\Str::limit($cItem->product->name, 45) }}</a></h6>
+                                @if($cItem->product->variations && $cItem->product->variations->count() > 0)
+                                    @php
+                                        $groupedVariations = $cItem->product->variations->groupBy('variation_id');
+                                    @endphp
+                                    <div class="mt-2">
+                                        @foreach($groupedVariations as $varId => $vars)
+                                            @php $varName = strtolower($vars->first()->variation->name); @endphp
+                                            @if(in_array($varName, ['size', 'color']))
+                                                <select class="form-control form-control-sm variation-update mt-1" data-cart-id="{{ $cItem->id }}" data-type="{{ $varName }}" style="padding: 2px 5px; height: auto; font-size: 12px; width: 100px;">
+                                                    <option value="">{{ ucfirst($varName) }}</option>
+                                                    @foreach($vars as $var)
+                                                        @if($var->variationValue)
+                                                            <option value="{{ $var->variationValue->value }}" {{ $cItem->{$varName} == $var->variationValue->value ? 'selected' : '' }}>{{ $var->variationValue->value }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                @endif
                             </td>
                             <td class="price" data-title="Price">
                                 <h4 class="text-body" style="white-space: nowrap;">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cItem->price, 2) }} </h4>
@@ -74,12 +93,12 @@
                 </div>
                 <div class="divider-2 mb-30"></div>
                 <div class="cart-action d-flex justify-content-between">
-                    <a class="btn "><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
+                    <a href="{{route('shop')}}" class="btn"><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
 {{--                    <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-refresh mr-10"></i>Update Cart</a>--}}
                     <div class="col-lg-5">
-                            <form action="#">
+                            <form id="coupon-form" action="#">
                                 <div class="d-flex justify-content-between">
-                                    <input class="font-medium mr-15 coupon" name="Coupon" placeholder="Enter Your Coupon">
+                                    <input class="font-medium mr-15 coupon" id="coupon_code_input" name="Coupon" placeholder="Enter Your Coupon" value="{{ session()->has('coupon') ? session('coupon')['code'] : '' }}">
                                     <button class="btn"><i class="fi-rs-label mr-10"></i>Apply</button>
                                 </div>
                             </form>
@@ -376,8 +395,9 @@
                                 </td>
                                 <td class="cart_total_amount">
                                     <select id="shipping_area" class="form-control" style="padding: 5px; height: auto;">
-                                        <option value="50">Inside Dhaka (TK 50)</option>
-                                        <option value="100">Outside Dhaka (TK 100)</option>
+                                        <option value="{{ $settings->inside_dhaka ?? 50 }}">Inside Dhaka ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->inside_dhaka ?? 50 }})</option>
+                                        <option value="{{ $settings->subcity ?? 70 }}">Sub City ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->subcity ?? 70 }})</option>
+                                        <option value="{{ $settings->outside_dhaka ?? 100 }}">Outside Dhaka ({{ $settings->currency_symbol ?? 'TK' }} {{ $settings->outside_dhaka ?? 100 }})</option>
                                     </select>
                                 </td>
                             </tr>
@@ -386,7 +406,7 @@
                                     <h6 class="text-muted">Shipping</h6>
                                 </td>
                                 <td class="cart_total_amount">
-                                    <h5 class="text-heading text-end" id="cart-page-shipping">{{ $settings->currency_symbol ?? 'TK' }} 50</h5>
+                                    <h5 class="text-heading text-end" id="cart-page-shipping">{{ $settings->currency_symbol ?? 'TK' }} {{ $settings->inside_dhaka ?? 50 }}</h5>
                                 </td>
                             </tr>
                             <tr>
@@ -402,7 +422,7 @@
                                     <h6 class="text-muted">Discount</h6>
                                 </td>
                                 <td class="cart_total_amount">
-                                    <h5 class="text-heading text-end" id="cart-page-shipping">{{ $settings->currency_symbol ?? 'TK' }} 0.00</h5>
+                                    <h5 class="text-heading text-end" id="cart-page-discount" data-amount="{{ session()->has('coupon') ? (session('coupon')['type'] == 'fixed' ? session('coupon')['amount'] : 'percent_'.session('coupon')['amount']) : '0' }}">{{ $settings->currency_symbol ?? 'TK' }} 0.00</h5>
                                 </td>
                             </tr>
                             <tr>
@@ -410,7 +430,7 @@
                                     <h6 class="text-muted">Total</h6>
                                 </td>
                                 <td class="cart_total_amount">
-                                    <h4 class="text-brand text-end" id="cart-page-total">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cartTotal + 50, 2) }}</h4>
+                                    <h4 class="text-brand text-end" id="cart-page-total">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cartTotal + ($settings->inside_dhaka ?? 50), 2) }}</h4>
                                 </td>
                             </tr>
                             </tbody>
@@ -432,15 +452,109 @@
                         });
 
                         let shipping = parseFloat($('#shipping_area').val()) || 0;
-                        let total = subtotal + shipping;
+                        let discountData = $('#cart-page-discount').attr('data-amount') || '0';
+                        let discount = 0;
+
+                        if (discountData.toString().includes('percent_')) {
+                            let percentage = parseFloat(discountData.toString().replace('percent_', ''));
+                            discount = (subtotal * percentage) / 100;
+                        } else {
+                            discount = parseFloat(discountData);
+                        }
+
+                        // Prevent discount from being more than subtotal
+                        if (discount > subtotal) {
+                            discount = subtotal;
+                        }
+
+                        let total = subtotal + shipping - discount;
 
                         $('#cart-page-subtotal').text(currency + ' ' + subtotal.toFixed(2));
                         $('#cart-page-shipping').text(currency + ' ' + shipping.toFixed(2));
+                        $('#cart-page-discount').text(currency + ' ' + discount.toFixed(2));
                         $('#cart-page-total').text(currency + ' ' + total.toFixed(2));
                     }
 
+                    // Run once on load
+                    updateCartTotals();
+
                     $('#shipping_area').on('change', function() {
                         updateCartTotals();
+                    });
+
+                    $('#coupon-form').on('submit', function(e) {
+                        e.preventDefault();
+                        let code = $('#coupon_code_input').val();
+                        if (!code) {
+                            toastr.error('Please enter a coupon code.');
+                            return;
+                        }
+
+                        $.ajax({
+                            url: "{{ route('cart.apply-coupon') }}",
+                            type: "POST",
+                            data: {
+                                coupon_code: code,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.status === 'success') {
+                                    toastr.success(response.message);
+                                    let cpn = response.coupon;
+                                    if (cpn.type === 'fixed') {
+                                        $('#cart-page-discount').attr('data-amount', cpn.amount);
+                                    } else {
+                                        $('#cart-page-discount').attr('data-amount', 'percent_' + cpn.amount);
+                                    }
+                                    couponApplied = true;
+                                    updateCartTotals();
+                                } else {
+                                    toastr.error(response.message);
+                                    $('#cart-page-discount').attr('data-amount', '0');
+                                    couponApplied = false;
+                                    updateCartTotals();
+                                }
+                            }
+                        });
+                    });
+
+                    let couponApplied = {{ session()->has('coupon') ? 'true' : 'false' }};
+                    $('#coupon_code_input').on('input', function() {
+                        if (couponApplied) {
+                            couponApplied = false;
+                            $('#cart-page-discount').attr('data-amount', '0');
+                            updateCartTotals();
+                            $.ajax({
+                                url: "{{ route('cart.remove-coupon') }}",
+                                type: "POST",
+                                data: { _token: '{{ csrf_token() }}' }
+                            });
+                        }
+                    });
+
+                    $('.variation-update').on('change', function() {
+                        let select = $(this);
+                        let cartId = select.data('cart-id');
+                        let type = select.data('type');
+                        let value = select.val();
+
+                        $.ajax({
+                            url: "{{ route('cart.update-variation') }}",
+                            type: "POST",
+                            data: {
+                                cart_id: cartId,
+                                type: type,
+                                value: value,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if(response.status === 'success') {
+                                    toastr.success(response.message);
+                                } else {
+                                    toastr.error('Failed to update variation');
+                                }
+                            }
+                        });
                     });
 
                     function syncCartQuantity(cartId, quantity) {

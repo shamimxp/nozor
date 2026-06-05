@@ -41,6 +41,9 @@ class WebSettingController extends Controller
             'pinterest'        => 'nullable|url|max:500',
             'office_hour'      => 'nullable|string|max:255',
             'currency_symbol'  => 'nullable|string|max:10',
+            'inside_dhaka'     => 'nullable|numeric|min:0',
+            'outside_dhaka'    => 'nullable|numeric|min:0',
+            'subcity'          => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -53,6 +56,7 @@ class WebSettingController extends Controller
                 'slogan', 'contact_number_1', 'contact_number_2', 'address', 'email',
                 'facebook', 'twitter', 'instagram', 'youtube', 'linkedin',
                 'whatsapp', 'tiktok', 'pinterest', 'office_hour', 'currency_symbol',
+                'inside_dhaka', 'outside_dhaka', 'subcity'
             ]));
 
             $setting->save();

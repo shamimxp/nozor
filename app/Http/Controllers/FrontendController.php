@@ -381,6 +381,26 @@ class FrontendController extends Controller
             'cart_total' => $currency . ' ' . number_format($cartTotal, 2)
         ]);
     }
+
+    public function updateVariation(Request $request)
+    {
+        $cartId = $request->cart_id;
+        $type = $request->type; // 'color' or 'size'
+        $value = $request->value;
+
+        $cart = \App\Models\Cart::where('id', $cartId)
+                    ->where('session_id', session()->getId())
+                    ->first();
+
+        if($cart && in_array($type, ['color', 'size'])) {
+            $cart->{$type} = $value;
+            $cart->save();
+            return response()->json(['status' => 'success', 'message' => ucfirst($type) . ' updated successfully']);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Cart item not found'], 404);
+    }
+
     public function clearCart(Request $request)
     {
         $sessionId = session()->getId();
@@ -395,5 +415,40 @@ class FrontendController extends Controller
             'cart_html' => '',
             'cart_total' => $currency . ' 0.00'
         ]);
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $code = $request->coupon_code;
+        $coupon = \App\Models\Coupon::where('code', $code)->where('status', 1)->first();
+
+        if(!$coupon) {
+            session()->forget('coupon');
+            return response()->json(['status' => 'error', 'message' => 'Invalid Coupon Code.']);
+        }
+
+        if(date('Y-m-d') < $coupon->start_date || date('Y-m-d') > $coupon->end_date) {
+            session()->forget('coupon');
+            return response()->json(['status' => 'error', 'message' => 'Coupon has expired or is not active yet.']);
+        }
+
+        // Apply coupon to session
+        session()->put('coupon', [
+            'code' => $coupon->code,
+            'type' => $coupon->type,
+            'amount' => $coupon->amount
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Coupon applied successfully.',
+            'coupon' => session()->get('coupon')
+        ]);
+    }
+    
+    public function removeCoupon(Request $request)
+    {
+        session()->forget('coupon');
+        return response()->json(['status' => 'success', 'message' => 'Coupon removed.']);
     }
 }

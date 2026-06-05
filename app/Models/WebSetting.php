@@ -25,5 +25,8 @@ class WebSetting extends Model
         'pinterest',
         'office_hour',
         'currency_symbol',
+        'inside_dhaka',
+        'outside_dhaka',
+        'subcity',
     ];
 }

@@ -26,7 +26,10 @@ Route::get('cart',[\App\Http\Controllers\FrontendController::class,'cart'])->nam
 Route::post('cart/add',[\App\Http\Controllers\FrontendController::class,'addToCart'])->name('cart.add');
 Route::post('cart/remove',[\App\Http\Controllers\FrontendController::class,'removeFromCart'])->name('cart.remove');
 Route::post('cart/update',[\App\Http\Controllers\FrontendController::class,'updateCart'])->name('cart.update');
+Route::post('cart/update-variation',[\App\Http\Controllers\FrontendController::class,'updateVariation'])->name('cart.update-variation');
 Route::post('cart/clear',[\App\Http\Controllers\FrontendController::class,'clearCart'])->name('cart.clear');
+Route::post('cart/apply-coupon',[\App\Http\Controllers\FrontendController::class,'applyCoupon'])->name('cart.apply-coupon');
+Route::post('cart/remove-coupon',[\App\Http\Controllers\FrontendController::class,'removeCoupon'])->name('cart.remove-coupon');
 Route::get('checkout',[\App\Http\Controllers\FrontendController::class,'checkout'])->name('checkout');
 Route::get('contact',[\App\Http\Controllers\FrontendController::class,'contact'])->name('contact');
 Route::get('about',[\App\Http\Controllers\FrontendController::class,'about'])->name('about');

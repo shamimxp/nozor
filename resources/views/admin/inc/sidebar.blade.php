@@ -203,6 +203,12 @@
                     <span class="menu-title text-truncate">Banner</span>
                 </a>
             </li>
+            <li class="{{ Route::is('admin.coupon*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.coupon.index')}}">
+                    <i data-feather="tag"></i>
+                    <span class="menu-title text-truncate">Coupon</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

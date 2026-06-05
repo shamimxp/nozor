@@ -65,6 +65,31 @@
                         </div>
 
                         <div class="col-md-12 mt-2">
+                            <h5 class="border-bottom pb-1">Delivery Charges</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="inside_dhaka">Inside Dhaka</label>
+                                <input type="number" step="0.01" name="inside_dhaka" id="inside_dhaka" class="form-control" value="{{ $setting->inside_dhaka ?? 50 }}" placeholder="50">
+                                <span class="text-danger error-text inside_dhaka_error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="outside_dhaka">Outside Dhaka</label>
+                                <input type="number" step="0.01" name="outside_dhaka" id="outside_dhaka" class="form-control" value="{{ $setting->outside_dhaka ?? 100 }}" placeholder="100">
+                                <span class="text-danger error-text outside_dhaka_error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="subcity">Sub City</label>
+                                <input type="number" step="0.01" name="subcity" id="subcity" class="form-control" value="{{ $setting->subcity ?? 70 }}" placeholder="70">
+                                <span class="text-danger error-text subcity_error"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-2">
                             <h5 class="border-bottom pb-1">Social Links</h5>
                         </div>
 
