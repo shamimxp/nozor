@@ -14,6 +14,14 @@
             </li>
             <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">Order Management</span><i data-feather="more-horizontal"></i>
             </li>
+            <li class="nav-item @if(Route::is('admin.web-order*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">Web Orders</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.web-order.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.web-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item @if(Route::is('admin.pos-order*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="shopping-bag"></i><span class="menu-title text-truncate">POS Orders</span></a>
                 <ul class="menu-content">

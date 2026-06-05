@@ -136,6 +136,12 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/custom-order/due-list', [\App\Http\Controllers\Admin\CustomOrderController::class, 'dueList'])->name('admin.custom-order.due-list');
     Route::resource('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, ['as' => 'admin']);
 
+    Route::get('/web-order/export-excel', [\App\Http\Controllers\Admin\WebOrderController::class, 'exportExcel'])->name('admin.web-order.export-excel');
+    Route::get('/web-order/export-list-pdf', [\App\Http\Controllers\Admin\WebOrderController::class, 'exportListPdf'])->name('admin.web-order.export-list-pdf');
+    Route::get('/web-order/export-pdf/{id}', [\App\Http\Controllers\Admin\WebOrderController::class, 'exportPdf'])->name('admin.web-order.export-pdf');
+    Route::post('/web-order/update-status', [\App\Http\Controllers\Admin\WebOrderController::class, 'updateStatus'])->name('admin.web-order.update-status');
+    Route::resource('web-order', \App\Http\Controllers\Admin\WebOrderController::class, ['as' => 'admin', 'except' => ['create', 'store', 'destroy']]);
+
     //POS Order module
     Route::get('/pos-order/export-list-excel', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListExcel'])->name('admin.pos-order.export-list-excel');
     Route::get('/pos-order/export-list-pdf', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListPdf'])->name('admin.pos-order.export-list-pdf');

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Invoice - {{ $order->order_number }}</title>
+    <title>Invoice - {{ $order->invoice_no }}</title>
     <style>
         @page { margin: 0; }
         body {
@@ -111,12 +111,6 @@
         .grand-total-label { color: #5e5873; font-weight: bold; font-size: 14px; text-align: right; width: 60%; display: inline-block; }
         .grand-total-amount { color: #5e5873; font-weight: bold; font-size: 14px; text-align: right; width: 35%; display: inline-block; }
 
-        .paid-amount-label { color: #28c76f; font-size: 14px; text-align: right; width: 60%; display: inline-block; }
-        .paid-amount-val { color: #28c76f; font-size: 14px; text-align: right; width: 35%; display: inline-block; }
-
-        .due-amount-label { color: #ea5455; font-size: 14px; text-align: right; width: 60%; display: inline-block; }
-        .due-amount-val { color: #ea5455; font-size: 14px; text-align: right; width: 35%; display: inline-block; }
-
         .text-right { text-align: right; }
         .text-center { text-align: center; }
     </style>
@@ -131,8 +125,8 @@
                 <td style="width: 50%; vertical-align: top;">
                     <div class="invoice-title">INVOICE</div>
                     <div class="meta-data">
-                        <p><strong>#{{ $order->order_number }}</strong></p>
-                        <p>Order Date: {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : 'N/A' }}</p>
+                        <p><strong>#{{ $order->invoice_no }}</strong></p>
+                        <p>Order Date: {{ $order->created_at->format('d M Y') }}</p>
                     </div>
                 </td>
             </tr>
@@ -144,15 +138,14 @@
             <tr>
                 <td style="width: 50%; vertical-align: top;">
                     <div class="info-label">Invoice To:</div>
-                    <div class="info-value"><strong>Name: {{ $order->customer->name ?? 'Walk-in Customer' }}</strong></div>
-                    <div class="info-value">Address: {{ $order->customer->addresses->first()->address ?? 'Address not provided' }}</div>
-                    <div class="info-value">Phone: {{ $order->customer->phone ?? '' }}</div>
+                    <div class="info-value"><strong>Name: {{ $order->address->name ?? 'N/A' }}</strong></div>
+                    <div class="info-value">Address: {{ $order->address->address ?? 'N/A' }}</div>
+                    <div class="info-value">Phone: {{ $order->address->phone ?? 'N/A' }}</div>
                 </td>
                 <td style="width: 50%; vertical-align: top; text-align: right;">
-                    <div class="info-label">Order Details:</div>
-                    <div class="info-value">Style: <strong>{{ $order->style_number }}</strong></div>
-                    <div class="info-value">Type: {{ strtoupper($order->type) }}</div>
-{{--                    <div class="info-value">Vendor: {{ $order->vendor->name ?? 'N/A' }}</div>--}}
+                    <div class="info-label">Payment Information:</div>
+                    <div class="info-value">Method: <strong>{{ strtoupper($order->payment_method) }}</strong></div>
+                    <div class="info-value">Status: <strong style="color: {{ $order->status == 'delivered' ? '#28c76f' : '#ea5455' }}">{{ $order->status == 'delivered' ? 'PAID' : 'DUE' }}</strong></div>
                 </td>
             </tr>
         </table>
@@ -161,23 +154,28 @@
     <table class="items-table">
         <thead>
             <tr>
-                <th style="width: 40%;">Fabric Specification</th>
-                <th style="width: 25%;">Category</th>
-                <th style="width: 15%;">Rate</th>
+                <th style="width: 65%;">Product Name</th>
                 <th style="width: 5%; text-align: center;">Qty</th>
+                <th style="width: 15%; text-align: right;">Rate</th>
                 <th style="width: 15%; text-align: right;">Total</th>
             </tr>
         </thead>
         <tbody>
             @foreach($order->items as $item)
             <tr>
-                <td>{{ $item->fabric_name }}</td>
                 <td>
-                    <span class="category-badge">{{ $item->type }} • {{ $item->sleeve }}</span>
+                    {{ $item->product->name ?? 'Deleted Product' }}
+                    @if($item->size || $item->color)
+                        <span style="color: #82868b; font-size: 0.9em;">
+                            (@if($item->size)Size: {{ $item->size }}@endif
+                            @if($item->size && $item->color), @endif
+                            @if($item->color)Color: {{ $item->color }}@endif)
+                        </span>
+                    @endif
                 </td>
-                <td>TK {{ number_format($item->unit_price, 2) }}</td>
                 <td style="text-align: center;">{{ $item->quantity }}</td>
-                <td style="text-align: right; width: 25%">TK {{ number_format($item->total, 2) }} </td>
+                <td style="text-align: right;">TK {{ number_format($item->price, 2) }}</td>
+                <td style="text-align: right;">TK {{ number_format($item->price * $item->quantity, 2) }} </td>
             </tr>
             @endforeach
         </tbody>
@@ -188,30 +186,25 @@
             <tr>
                 <td class="notes-col">
                     <div class="notes-title">Customer Notes:</div>
-                    <div class="notes-text">{{ $order->customer_note ?: 'No special notes provided.' }}</div>
+                    <div class="notes-text">{{ $order->address->note ?: 'No special notes provided.' }}</div>
                 </td>
                 <td class="totals-col">
                     <div class="total-item">
                         <span class="total-label">Subtotal:</span>
-                        <span class="total-amount">TK {{ number_format($order->sub_total, 2) }}</span>
+                        <span class="total-amount">TK {{ number_format($order->subtotal, 2) }}</span>
                     </div>
                     <div class="total-item">
-                        <span class="total-label">Carrying:</span>
-                        <span class="total-amount">TK {{ number_format($order->carrying_charge, 2) }}</span>
+                        <span class="total-label">Shipping:</span>
+                        <span class="total-amount">TK {{ number_format($order->shipping_charge, 2) }}</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="total-label">Discount:</span>
+                        <span class="total-amount">-TK {{ number_format($order->discount, 2) }}</span>
                     </div>
 
                     <div class="grand-total-row">
                         <span class="grand-total-label">Grand Total:</span>
-                        <span class="grand-total-amount">TK {{ number_format($order->grand_total, 2) }}</span>
-                    </div>
-
-                    <div class="total-item">
-                        <span class="paid-amount-label">Paid Amount:</span>
-                        <span class="paid-amount-val">TK {{ number_format($order->paid, 2) }}</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="due-amount-label">Due Amount:</span>
-                        <span class="due-amount-val">TK {{ number_format($order->due, 2) }}</span>
+                        <span class="grand-total-amount">TK {{ number_format($order->total, 2) }}</span>
                     </div>
                 </td>
             </tr>
