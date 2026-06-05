@@ -450,6 +450,76 @@ class FrontendController extends Controller
         ]);
     }
     
+    public function placeOrder(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
+            'billing_address' => 'required',
+            'payment_method' => 'required',
+            'shipping_area' => 'required'
+        ]);
+
+        $sessionId = session()->getId();
+        $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->back()->with('error', 'Your cart is empty!');
+        }
+
+        $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
+        
+        $discount = 0;
+        if(session()->has('coupon')) {
+            $cpn = session()->get('coupon');
+            if($cpn['type'] == 'percent') {
+                $discount = ($cartTotal * $cpn['amount']) / 100;
+            } else {
+                $discount = $cpn['amount'];
+            }
+            if($discount > $cartTotal) $discount = $cartTotal;
+        }
+
+        $shippingCharge = $request->shipping_area;
+        $total = $cartTotal - $discount + $shippingCharge;
+
+        $order = \App\Models\WebOrder::create([
+            'invoice_no' => 'INV-' . strtoupper(uniqid()),
+            'session_id' => $sessionId,
+            'subtotal' => $cartTotal,
+            'discount' => $discount,
+            'shipping_charge' => $shippingCharge,
+            'total' => $total,
+            'payment_method' => $request->payment_method,
+            'status' => 'pending'
+        ]);
+
+        \App\Models\WebOrderAddress::create([
+            'web_order_id' => $order->id,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->billing_address,
+            'note' => $request->note
+        ]);
+
+        foreach($cartItems as $item) {
+            \App\Models\WebOrderItem::create([
+                'web_order_id' => $order->id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'color' => $item->color,
+                'size' => $item->size
+            ]);
+        }
+
+        // Clear cart and coupon
+        \App\Models\Cart::where('session_id', $sessionId)->delete();
+        session()->forget('coupon');
+
+        return redirect()->route('index')->with('success', 'Order placed successfully!');
+    }
+
     public function removeCoupon(Request $request)
     {
         session()->forget('coupon');

@@ -311,8 +311,20 @@
     });
 </script>
 
-
-{{--<script>--}}
+<script>
+    @if(Session::has('success'))
+        toastr.success("{{ Session::get('success') }}");
+    @endif
+    @if(Session::has('error'))
+        toastr.error("{{ Session::get('error') }}");
+    @endif
+    @if(Session::has('warning'))
+        toastr.warning("{{ Session::get('warning') }}");
+    @endif
+    @if(Session::has('info'))
+        toastr.info("{{ Session::get('info') }}");
+    @endif
+</script>{{--<script>--}}
 {{--    $(document).on('click', '.quick-view-btn', function() {--}}
 {{--        let product_id = $(this).data('product');--}}
 

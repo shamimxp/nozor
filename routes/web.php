@@ -31,6 +31,7 @@ Route::post('cart/clear',[\App\Http\Controllers\FrontendController::class,'clear
 Route::post('cart/apply-coupon',[\App\Http\Controllers\FrontendController::class,'applyCoupon'])->name('cart.apply-coupon');
 Route::post('cart/remove-coupon',[\App\Http\Controllers\FrontendController::class,'removeCoupon'])->name('cart.remove-coupon');
 Route::get('checkout',[\App\Http\Controllers\FrontendController::class,'checkout'])->name('checkout');
+Route::post('place-order',[\App\Http\Controllers\FrontendController::class,'placeOrder'])->name('place.order');
 Route::get('contact',[\App\Http\Controllers\FrontendController::class,'contact'])->name('contact');
 Route::get('about',[\App\Http\Controllers\FrontendController::class,'about'])->name('about');
 Route::get('shop',[\App\Http\Controllers\FrontendController::class,'shop'])->name('shop');

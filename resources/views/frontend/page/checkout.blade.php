@@ -18,12 +18,12 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-7">
-                    <div class="row">
-                        <h4 class="mb-30">Billing Details</h4>
-                        <form method="post" id="checkout-form">
-                            @csrf
+            <form method="post" id="checkout-form" action="{{ route('place.order') }}">
+                @csrf
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="row">
+                            <h4 class="mb-30">Billing Details</h4>
                             <div class="row">
                                 <div class="form-group col-lg-6">
                                     <input type="text" required name="name" placeholder="Full name *">
@@ -40,14 +40,13 @@
                             <div class="form-group mb-30">
                                 <textarea name="note" rows="5" placeholder="Additional information"></textarea>
                             </div>
-                        </form>
                     </div>
 
                     <div class="payment mt-30">
                         <h4 class="mb-30">Payment</h4>
                         <div class="payment_option">
                             <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" value="cod" checked="">
+                                <input class="form-check-input" required type="radio" name="payment_method" id="exampleRadios4" value="cod" checked>
                                 <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
                             </div>
                         </div>
@@ -57,7 +56,7 @@
                             <img class="mr-15" src="{{ asset('web/assets/imgs/theme/icons/payment-master.svg') }}" alt="">
                             <img src="{{ asset('web/assets/imgs/theme/icons/payment-zapper.svg') }}" alt="">
                         </div>
-                        <button type="button" class="btn btn-fill-out btn-block mt-30" onclick="$('#checkout-form').submit();">Place an Order<i class="fi-rs-sign-out ml-15"></i></button>
+                        <button type="submit" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></button>
                     </div>
                 </div>
 
@@ -143,7 +142,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
+            </form>
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
