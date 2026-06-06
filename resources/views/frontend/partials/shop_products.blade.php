@@ -11,7 +11,6 @@
                 </div>
                 <div class="product-action-1">
                     <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
-                    <a aria-label="Compare" class="action-btn" href="#"><i class="fi-rs-shuffle"></i></a>
                     <a aria-label="Quick view" class="action-btn quick-view-btn" data-product="{{ encrypt($product->id) }}"><i class="fi-rs-eye"></i></a>
                 </div>
                 @php
@@ -25,7 +24,7 @@
                 @endphp
                 @if($discountLabel)
                 <div class="product-badges product-badges-position product-badges-mrg">
-                    <span class="sale">{{$discountLabel}}</span>
+                    <span class="new">{{$discountLabel}}</span>
                 </div>
                 @endif
             </div>
@@ -34,11 +33,16 @@
                     <a href="{{ isset($product->category) ? route('category.products', $product->category->slug) : '#' }}">{{ $product->category->name ?? '-' }}</a>
                 </div>
                 <h2><a href="{{ route('product.details', encrypt($product->id)) }}" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;" class="product-title-shamim">{{ $product->name }}</a></h2>
+                @php
+                    $totalReviews = $product->approvedReviews->count();
+                    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+                    $percentRating = $avgRating * 20;
+                @endphp
                 <div class="product-rate-cover">
                     <div class="product-rate d-inline-block">
-                        <div class="product-rating" style="width: 90%"></div>
+                        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
                     </div>
-                    <span class="font-small ml-5 text-muted"> (4.0)</span>
+                    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
                 </div>
                 <div>
                     <span class="font-small text-muted">By <a href="{{ route('shop') }}">Nozor</a></span>

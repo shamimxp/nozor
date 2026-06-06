@@ -58,10 +58,18 @@
                                         <h2 class="title-detail">{{$product->name ?? ' '}}</h2>
                                         <div class="product-detail-rating">
                                             <div class="product-rate-cover text-end">
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width: 90%"></div>
-                                                </div>
-                                                <span class="font-small ml-5 text-muted"> (32 reviews)</span>
+                                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
+                                                <!-- <span class="font-small ml-5 text-muted"> (32 reviews)</span> -->
                                             </div>
                                         </div>
                                         @php
@@ -140,7 +148,7 @@
                                             <a class="nav-link active" id="Description-tab" data-bs-toggle="tab" href="#Description">Description</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab" href="#Reviews">Reviews (3)</a>
+                                            <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab" href="#Reviews">Reviews ({{ $product->reviews->count() }})</a>
                                         </li>
                                     </ul>
                                     <div class="tab-content shop_info_tab entry-main-content">
@@ -156,129 +164,100 @@
                                                     <div class="col-lg-8">
                                                         <h4 class="mb-30">Customer questions & answers</h4>
                                                         <div class="comment-list">
-                                                            <div class="single-comment justify-content-between d-flex mb-30">
-                                                                <div class="user justify-content-between d-flex">
-                                                                    <div class="thumb text-center">
-                                                                        <img src="{{asset('web')}}/assets/imgs/blog/author-2.png" alt="" />
-                                                                        <a href="#" class="font-heading text-brand">Sienna</a>
+                                                            @foreach($product->reviews as $review)
+                                                            <div class="single-comment justify-content-between d-flex mb-30 p-4 border radius shadow-sm">
+                                                                <div class="user d-flex w-100">
+                                                                    <div class="thumb text-center" style="min-width: 80px; margin-right: 20px;">
+                                                                        <img src="{{asset('web/assets/imgs/blog/author-2.png')}}" alt="" class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover; border: 2px solid #e1e8f2;" />
                                                                     </div>
-                                                                    <div class="desc">
-                                                                        <div class="d-flex justify-content-between mb-10">
-                                                                            <div class="d-flex align-items-center">
-                                                                                <span class="font-xs text-muted">December 4, 2022 at 3:12 pm </span>
+                                                                    <div class="desc w-100">
+                                                                        <div class="d-flex justify-content-between align-items-center mb-10">
+                                                                            <div>
+                                                                                <h5 class="font-heading text-brand mb-1">{{ $review->name }}</h5>
+                                                                                <span class="font-xs text-muted">{{ $review->created_at->format('F j, Y \a\t g:i a') }}</span>
                                                                             </div>
                                                                             <div class="product-rate d-inline-block">
-                                                                                <div class="product-rating" style="width: 100%"></div>
+                                                                                <div class="product-rating" style="width: {{ $review->rating * 20 }}%"></div>
                                                                             </div>
                                                                         </div>
-                                                                        <p class="mb-10">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus, suscipit exercitationem accusantium obcaecati quos voluptate nesciunt facilis itaque modi commodi dignissimos sequi repudiandae minus ab deleniti totam officia id incidunt? <a href="#" class="reply">Reply</a></p>
+                                                                        <p class="mb-10 text-body">{{ $review->comment }}</p>
+                                                                        @if($review->reply)
+                                                                            <div class="mt-15 p-15 border radius bg-light">
+                                                                                <strong class="text-brand">Admin Reply:</strong>
+                                                                                <p class="mb-0 mt-5 text-body">{{ $review->reply }}</p>
+                                                                            </div>
+                                                                        @endif
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="single-comment justify-content-between d-flex mb-30 ml-30">
-                                                                <div class="user justify-content-between d-flex">
-                                                                    <div class="thumb text-center">
-                                                                        <img src="{{asset('web')}}/assets/imgs/blog/author-3.png" alt="" />
-                                                                        <a href="#" class="font-heading text-brand">Brenna</a>
-                                                                    </div>
-                                                                    <div class="desc">
-                                                                        <div class="d-flex justify-content-between mb-10">
-                                                                            <div class="d-flex align-items-center">
-                                                                                <span class="font-xs text-muted">December 4, 2022 at 3:12 pm </span>
-                                                                            </div>
-                                                                            <div class="product-rate d-inline-block">
-                                                                                <div class="product-rating" style="width: 80%"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p class="mb-10">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus, suscipit exercitationem accusantium obcaecati quos voluptate nesciunt facilis itaque modi commodi dignissimos sequi repudiandae minus ab deleniti totam officia id incidunt? <a href="#" class="reply">Reply</a></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="single-comment justify-content-between d-flex">
-                                                                <div class="user justify-content-between d-flex">
-                                                                    <div class="thumb text-center">
-                                                                        <img src="{{asset('web')}}/assets/imgs/blog/author-4.png" alt="" />
-                                                                        <a href="#" class="font-heading text-brand">Gemma</a>
-                                                                    </div>
-                                                                    <div class="desc">
-                                                                        <div class="d-flex justify-content-between mb-10">
-                                                                            <div class="d-flex align-items-center">
-                                                                                <span class="font-xs text-muted">December 4, 2022 at 3:12 pm </span>
-                                                                            </div>
-                                                                            <div class="product-rate d-inline-block">
-                                                                                <div class="product-rating" style="width: 80%"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p class="mb-10">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus, suscipit exercitationem accusantium obcaecati quos voluptate nesciunt facilis itaque modi commodi dignissimos sequi repudiandae minus ab deleniti totam officia id incidunt? <a href="#" class="reply">Reply</a></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            @endforeach
+                                                            @if($product->reviews->isEmpty())
+                                                                <p>No reviews yet. Be the first to review this product!</p>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <h4 class="mb-30">Customer reviews</h4>
+                                                        @php
+                                                            $totalReviews = $product->reviews->count();
+                                                            $avgRating = $totalReviews > 0 ? $product->reviews->avg('rating') : 0;
+                                                        @endphp
                                                         <div class="d-flex mb-30">
                                                             <div class="product-rate d-inline-block mr-15">
-                                                                <div class="product-rating" style="width: 90%"></div>
+                                                                <div class="product-rating" style="width: {{ $avgRating * 20 }}%"></div>
                                                             </div>
-                                                            <h6>4.8 out of 5</h6>
+                                                            <h6>{{ number_format($avgRating, 1) }} out of 5</h6>
                                                         </div>
-                                                        <div class="progress">
-                                                            <span>5 star</span>
-                                                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
-                                                        </div>
-                                                        <div class="progress">
-                                                            <span>4 star</span>
-                                                            <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                                        </div>
-                                                        <div class="progress">
-                                                            <span>3 star</span>
-                                                            <div class="progress-bar" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
-                                                        </div>
-                                                        <div class="progress">
-                                                            <span>2 star</span>
-                                                            <div class="progress-bar" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
-                                                        </div>
-                                                        <div class="progress mb-30">
-                                                            <span>1 star</span>
-                                                            <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                                                        </div>
-                                                        <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
+                                                        @for($i=5; $i>=1; $i--)
+                                                            @php
+                                                                $count = $product->reviews->where('rating', $i)->count();
+                                                                $percent = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
+                                                            @endphp
+                                                            <div class="progress mb-10">
+                                                                <span>{{ $i }} star</span>
+                                                                <div class="progress-bar" role="progressbar" style="width: {{ $percent }}%" aria-valuenow="{{ $percent }}" aria-valuemin="0" aria-valuemax="100">{{ number_format($percent, 0) }}%</div>
+                                                            </div>
+                                                        @endfor
                                                     </div>
                                                 </div>
                                             </div>
                                             <!--comment form-->
                                             <div class="comment-form">
                                                 <h4 class="mb-15">Add a review</h4>
-                                                <div class="product-rate d-inline-block mb-30"></div>
                                                 <div class="row">
                                                     <div class="col-lg-8 col-md-12">
-                                                        <form class="form-contact comment_form" action="#" id="commentForm">
+                                                        <form class="form-contact comment_form" action="#" id="reviewForm">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                             <div class="row">
+                                                                <div class="col-sm-12 mb-20">
+                                                                    <div class="form-group">
+                                                                        <label>Rating <span class="text-danger">*</span></label>
+                                                                        <div class="star-rating" style="font-size: 24px; cursor: pointer;">
+                                                                            <i class="fi-rs-star rating-star" data-val="1" style="color: #ffb300;"></i>
+                                                                            <i class="fi-rs-star rating-star" data-val="2" style="color: #ffb300;"></i>
+                                                                            <i class="fi-rs-star rating-star" data-val="3" style="color: #ffb300;"></i>
+                                                                            <i class="fi-rs-star rating-star" data-val="4" style="color: #ffb300;"></i>
+                                                                            <i class="fi-rs-star rating-star" data-val="5" style="color: #ffb300;"></i>
+                                                                        </div>
+                                                                        <input type="hidden" name="rating" id="ratingInput" value="5">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <input class="form-control" name="name" id="name" type="text" placeholder="Name" required />
+                                                                    </div>
+                                                                </div>
                                                                 <div class="col-12">
                                                                     <div class="form-group">
-                                                                        <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <div class="form-group">
-                                                                        <input class="form-control" name="name" id="name" type="text" placeholder="Name" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <div class="form-group">
-                                                                        <input class="form-control" name="email" id="email" type="email" placeholder="Email" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="form-group">
-                                                                        <input class="form-control" name="website" id="website" type="text" placeholder="Website" />
+                                                                        <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment" required></textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <button type="submit" class="button button-contactForm">Submit Review</button>
+                                                                <button type="submit" class="button button-contactForm" id="submitReviewBtn">Submit Review</button>
                                                             </div>
+                                                            <div id="reviewMessage" class="mt-15"></div>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -322,7 +301,7 @@
                                                     @endphp
                                                     @if($discountLabel)
                                                     <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="sale">{{$discountLabel}}</span>
+                                                        <span class="new">{{$discountLabel}}</span>
                                                     </div>
                                                     @endif
                                                 </div>
@@ -331,12 +310,17 @@
                                                         <a href="{{ isset($relProduct->category) ? route('category.products', $relProduct->category->slug) : '#' }}">{{ $relProduct->category->name ?? '-' }}</a>
                                                     </div>
                                                     <h2><a href="{{route('product.details',encrypt($relProduct->id))}}" class="product-title-shamim" tabindex="0">{{$relProduct->name}}</a></h2>
-                                                    <div class="product-rate-cover">
-                                                        <div class="product-rate d-inline-block">
-                                                            <div class="product-rating" style="width: 90%"></div>
-                                                        </div>
-                                                        <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                                    </div>
+@php
+    $totalReviews = $relProduct->approvedReviews->count() ?? 0;
+    $avgRating = $totalReviews > 0 ? $relProduct->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                                     <div>
                                                         <span class="font-small text-muted">By <a href="{{ route('shop') }}">Nozor</a></span>
                                                     </div>
@@ -409,25 +393,17 @@
                                         $currency = $settings->currency_symbol ?? 'TK';
                                     @endphp
                                     <p class="price mb-0 mt-5">{{$currency}} {{ number_format($newFinalPrice, 2) }}</p>
+                                    @php
+                                        $newTotalReviews = $newProd->approvedReviews->count() ?? 0;
+                                        $newAvgRating = $newTotalReviews > 0 ? $newProd->approvedReviews->avg('rating') : 0;
+                                        $newPercentRating = $newAvgRating * 20;
+                                    @endphp
                                     <div class="product-rate">
-                                        <div class="product-rating" style="width: 90%"></div>
+                                        <div class="product-rating" style="width: {{ $newPercentRating }}%"></div>
                                     </div>
                                 </div>
                             </div>
                             @endforeach
-
-
-                        </div>
-                        <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
-                            <img src="{{asset('web')}}/assets/imgs/banner/banner-11.png" alt="" />
-                            <div class="banner-text">
-                                <span>Oganic</span>
-                                <h4>
-                                    Save 17% <br />
-                                    on <span class="text-brand">Oganic</span><br />
-                                    Juice
-                                </h4>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -435,3 +411,86 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#reviewForm').on('submit', function(e) {
+            e.preventDefault();
+            let btn = $('#submitReviewBtn');
+            let originalText = btn.text();
+            btn.prop('disabled', true).text('Submitting...');
+            $('#reviewMessage').html('');
+
+            $.ajax({
+                url: "{{ route('review.submit') }}",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function(response) {
+                    if(response.status === 'success') {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message);
+                        } else {
+                            $('#reviewMessage').html('<div class="alert alert-success">' + response.message + '</div>');
+                        }
+                        $('#reviewForm')[0].reset();
+                        // Reset stars visually
+                        $('.rating-star').css('color', '#ffb300');
+                        $('#ratingInput').val(5);
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'Something went wrong. Please try again.';
+                    if(xhr.responseJSON && xhr.responseJSON.errors) {
+                        errorMessage = Object.values(xhr.responseJSON.errors).map(err => err.join(', ')).join('<br>');
+                    }
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMessage);
+                    } else {
+                        $('#reviewMessage').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+                    }
+                },
+                complete: function() {
+                    btn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Star rating click and hover logic
+        $('.rating-star').on('click', function() {
+            let val = $(this).data('val');
+            $('#ratingInput').val(val);
+            $('.rating-star').each(function() {
+                if ($(this).data('val') <= val) {
+                    $(this).css('color', '#ffb300');
+                } else {
+                    $(this).css('color', '#ccc');
+                }
+            });
+        });
+
+        $('.rating-star').hover(
+            function() {
+                let val = $(this).data('val');
+                $('.rating-star').each(function() {
+                    if ($(this).data('val') <= val) {
+                        $(this).css('color', '#ffb300');
+                    } else {
+                        $(this).css('color', '#ccc');
+                    }
+                });
+            },
+            function() {
+                let val = $('#ratingInput').val();
+                $('.rating-star').each(function() {
+                    if ($(this).data('val') <= val) {
+                        $(this).css('color', '#ffb300');
+                    } else {
+                        $(this).css('color', '#ccc');
+                    }
+                });
+            }
+        );
+    });
+</script>
+@endpush

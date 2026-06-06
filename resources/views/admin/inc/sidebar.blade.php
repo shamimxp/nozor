@@ -216,6 +216,11 @@
                     <i data-feather="tag"></i>
                     <span class="menu-title text-truncate">Coupon</span>
                 </a>
+            <li class="{{ Route::is('admin.product_reviews*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.product_reviews.index')}}">
+                    <i data-feather="star"></i>
+                    <span class="menu-title text-truncate">Product Reviews</span>
+                </a>
             </li>
         </ul>
     </div>

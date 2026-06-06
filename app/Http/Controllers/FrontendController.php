@@ -145,7 +145,9 @@ class FrontendController extends Controller
         return view('frontend.page.dealpage');
     }
     public function details($id){
-        $product = Product::with('gallery','category', 'variations.variationValue', 'variations.variation')->findOrFail(decrypt($id));
+        $product = Product::with(['gallery','category', 'variations.variationValue', 'variations.variation', 'reviews' => function($q) {
+            $q->where('status', 1)->latest();
+        }])->findOrFail(decrypt($id));
 
         $relatedProducts = Product::where('status', 1)
             ->where('category_id', $product->category_id);
@@ -156,7 +158,7 @@ class FrontendController extends Controller
 
         $relatedProducts = $relatedProducts->where('id', '!=', $product->id)
             ->inRandomOrder()
-            ->take(4)
+            ->take(8)
             ->get();
 
         $newProducts = Product::where('status', 1)
@@ -169,6 +171,29 @@ class FrontendController extends Controller
         $categories = \App\Models\Category::withCount('products')->where('status', 1)->take(10)->get();
 
         return view('frontend.page.product_details',compact('product', 'relatedProducts', 'newProducts', 'categories'));
+    }
+
+    public function submitReview(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255',
+            'comment' => 'required|string',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        \App\Models\ProductReview::create([
+            'product_id' => $request->product_id,
+            'name' => $request->name,
+            'comment' => $request->comment,
+            'rating' => $request->rating,
+            'status' => 0 // pending admin approval
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Review submitted successfully! It will be visible after admin approval.'
+        ]);
     }
 
 //    public function quickView($id)

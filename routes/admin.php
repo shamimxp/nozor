@@ -195,4 +195,10 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Web Settings module
     Route::get('/web-setting', [\App\Http\Controllers\Admin\WebSettingController::class, 'index'])->name('admin.web-setting.index');
     Route::post('/web-setting/update', [\App\Http\Controllers\Admin\WebSettingController::class, 'update'])->name('admin.web-setting.update');
+
+    // Product Reviews module
+    Route::get('/product-reviews', [\App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('admin.product_reviews.index');
+    Route::post('/product-reviews/status', [\App\Http\Controllers\Admin\ProductReviewController::class, 'updateStatus'])->name('admin.product_reviews.status');
+    Route::post('/product-reviews/reply/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'reply'])->name('admin.product_reviews.reply');
+    Route::delete('/product-reviews/delete/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'destroy'])->name('admin.product_reviews.destroy');
 });

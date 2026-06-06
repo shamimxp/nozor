@@ -39,6 +39,7 @@ Route::get('today-deal',[\App\Http\Controllers\FrontendController::class,'deal']
 Route::get('category-product/{slug}',[\App\Http\Controllers\FrontendController::class,'shop'])->name('category.products');
 Route::get('/product/quick-view', [App\Http\Controllers\FrontendController::class, 'quickView'])->name('quick-view');
 Route::get('product/{id}',[\App\Http\Controllers\FrontendController::class,'details'])->name('product.details');
+Route::post('product/review/submit',[\App\Http\Controllers\FrontendController::class,'submitReview'])->name('review.submit');
 
 Route::get('/pos/sale', [\App\Http\Controllers\Admin\AdminController::class, 'pos'])->middleware('auth:admin')->name('admin.pos');
 Route::get('/pos/get-products', [\App\Http\Controllers\Admin\AdminController::class, 'getPosProducts'])->middleware('auth:admin')->name('admin.pos.getProducts');

@@ -38,12 +38,17 @@
                             <td class="image product-thumbnail pt-40"><img src="{{asset('web')}}/assets/imgs/shop/product-1-1.jpg" alt="#" /></td>
                             <td class="product-des product-name">
                                 <h6><a class="product-name mb-10" href="shop-product-right.html">Field Roast Chao Cheese Creamy Original</a></h6>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                             </td>
                             <td class="price" data-title="Price">
                                 <h3 class="text-brand">$2.51</h3>
@@ -66,12 +71,17 @@
                             <td class="image product-thumbnail"><img src="{{asset('web')}}/assets/imgs/shop/product-2-1.jpg" alt="#" /></td>
                             <td class="product-des product-name">
                                 <h6><a class="product-name mb-10" href="shop-product-right.html">Blue Diamond Almonds Lightly Salted</a></h6>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                             </td>
                             <td class="price" data-title="Price">
                                 <h3 class="text-brand">$3.2</h3>
@@ -94,12 +104,17 @@
                             <td class="image product-thumbnail"><img src="{{asset('web')}}/assets/imgs/shop/product-3-1.jpg" alt="#" /></td>
                             <td class="product-des product-name">
                                 <h6><a class="product-name mb-10" href="shop-product-right.html">Fresh Organic Mustard Leaves Bell Pepper</a></h6>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                             </td>
                             <td class="price" data-title="Price">
                                 <h3 class="text-brand">$2.43</h3>
@@ -122,12 +137,17 @@
                             <td class="image product-thumbnail"><img src="{{asset('web')}}/assets/imgs/shop/product-4-1.jpg" alt="#" /></td>
                             <td class="product-des product-name">
                                 <h6><a class="product-name mb-10" href="shop-product-right.html">Angie’s Boomchickapop Sweet & Salty </a></h6>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                             </td>
                             <td class="price" data-title="Price">
                                 <h3 class="text-brand">$3.21</h3>
@@ -150,12 +170,17 @@
                             <td class="image product-thumbnail"><img src="{{asset('web')}}/assets/imgs/shop/product-5-1.jpg" alt="#" /></td>
                             <td class="product-des product-name">
                                 <h6><a class="product-name mb-10" href="shop-product-right.html">Foster Farms Takeout Crispy Classic</a></h6>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                             </td>
                             <td class="price" data-title="Price">
                                 <h3 class="text-brand">$3.17</h3>

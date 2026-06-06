@@ -72,12 +72,17 @@
                                     <a href="shop-grid-right.html">Snack</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Seeds of Change Organic Quinoe Naturel</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -117,12 +122,17 @@
                                     <a href="shop-grid-right.html">Hodo Foods</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">All Natural Italian-Style Chicken Meatballs</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 80%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (3.5)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">Stouffer</a></span>
                                 </div>
@@ -162,12 +172,17 @@
                                     <a href="shop-grid-right.html">Snack</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Angie’s Boomchickapop Sweet & Salty</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 85%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">StarKist</a></span>
                                 </div>
@@ -204,12 +219,17 @@
                                     <a href="shop-grid-right.html">Vegetables</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Foster Farms Takeout Crispy Classic</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -249,12 +269,17 @@
                                     <a href="shop-grid-right.html">Pet Foods</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Blue Diamond Almonds Lightly Naturel</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -291,12 +316,17 @@
                                     <a href="shop-grid-right.html">Hodo Foods</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Chobani Complete Vanilla Greek Bottle</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -333,12 +363,17 @@
                                     <a href="shop-grid-right.html">Meats</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Canada Dry Ginger Ale – 2 L Bottle</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -378,12 +413,17 @@
                                     <a href="shop-grid-right.html">Snack</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Encore Seafoods Stuffed Alaskan</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -423,12 +463,17 @@
                                     <a href="shop-grid-right.html">Coffes</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Gorton’s Beer Battered Fish Fillets</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">Old El Paso</a></span>
                                 </div>
@@ -465,12 +510,17 @@
                                     <a href="shop-grid-right.html">Cream</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Haagen-Dazs Caramel Cone Ice Cream</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 50%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (2.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">Tyson</a></span>
                                 </div>
@@ -510,12 +560,17 @@
                                     <a href="shop-grid-right.html">Snack</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Seeds of Change Organic Quinoe Naturel</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -555,12 +610,17 @@
                                     <a href="shop-grid-right.html">Hodo Foods</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">All Natural Italian-Style Chicken Meatballs</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 80%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (3.5)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">Stouffer</a></span>
                                 </div>
@@ -600,12 +660,17 @@
                                     <a href="shop-grid-right.html">Snack</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Angie’s Boomchickapop Sweet & Salty</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 85%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">StarKist</a></span>
                                 </div>
@@ -642,12 +707,17 @@
                                     <a href="shop-grid-right.html">Vegetables</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Foster Farms Takeout Crispy Classic</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -687,12 +757,17 @@
                                     <a href="shop-grid-right.html">Pet Foods</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Blue Diamond Almonds Lightly Naturel</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -729,12 +804,17 @@
                                     <a href="shop-grid-right.html">Hodo Foods</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Chobani Complete Vanilla Greek Bottle</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -771,12 +851,17 @@
                                     <a href="shop-grid-right.html">Meats</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Canada Dry Ginger Ale – 2 L Bottle</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -816,12 +901,17 @@
                                     <a href="shop-grid-right.html">Snack</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Encore Seafoods Stuffed Alaskan</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                 </div>
@@ -861,12 +951,17 @@
                                     <a href="shop-grid-right.html">Coffes</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Gorton’s Beer Battered Fish Fillets</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 90%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">Old El Paso</a></span>
                                 </div>
@@ -903,12 +998,17 @@
                                     <a href="shop-grid-right.html">Cream</a>
                                 </div>
                                 <h2><a href="shop-product-right.html">Haagen-Dazs Caramel Cone Ice Cream</a></h2>
-                                <div class="product-rate-cover">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width: 50%"></div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (2.0)</span>
-                                </div>
+                                @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                 <div>
                                     <span class="font-small text-muted">By <a href="vendor-details-1.html">Tyson</a></span>
                                 </div>
@@ -968,12 +1068,17 @@
                                     </div>
                                     <div class="deals-content">
                                         <h2><a href="shop-product-right.html">Seeds of Change Organic Quinoa, Brown</a></h2>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 90%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                        </div>
+                                        @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                         <div>
                                             <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
                                         </div>
@@ -1005,12 +1110,17 @@
                                     </div>
                                     <div class="deals-content">
                                         <h2><a href="shop-product-right.html">Perdue Simply Smart Organics Gluten</a></h2>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 90%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                        </div>
+                                        @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                         <div>
                                             <span class="font-small text-muted">By <a href="vendor-details-1.html">Old El Paso</a></span>
                                         </div>
@@ -1042,12 +1152,17 @@
                                     </div>
                                     <div class="deals-content">
                                         <h2><a href="shop-product-right.html">Signature Wood-Fired Mushroom</a></h2>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 80%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (3.0)</span>
-                                        </div>
+                                        @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                         <div>
                                             <span class="font-small text-muted">By <a href="vendor-details-1.html">Progresso</a></span>
                                         </div>
@@ -1079,12 +1194,17 @@
                                     </div>
                                     <div class="deals-content">
                                         <h2><a href="shop-product-right.html">Simply Lemonade with Raspberry Juice</a></h2>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 80%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (3.0)</span>
-                                        </div>
+                                        @php
+    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
+    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+    $percentRating = $avgRating * 20;
+@endphp
+<div class="product-rate-cover">
+    <div class="product-rate d-inline-block">
+        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+    </div>
+    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+</div>
                                         <div>
                                             <span class="font-small text-muted">By <a href="vendor-details-1.html">Yoplait</a></span>
                                         </div>

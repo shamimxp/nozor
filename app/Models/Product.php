@@ -17,6 +17,8 @@ class Product extends Model
         'stock', 'discount_type', 'discount_amount'
     ];
 
+    protected $with = ['approvedReviews'];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -45,5 +47,15 @@ class Product extends Model
     public function variations()
     {
         return $this->hasMany(ProductVariation::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(ProductReview::class)->where('status', 1);
     }
 }

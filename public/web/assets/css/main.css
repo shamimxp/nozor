@@ -5139,8 +5139,8 @@ table .product-thumbnail img {
 }
 
 .stock-status.out-stock {
-  color: #f74b81;
-  background: #fde0e9;
+  color: #FFFFFF;
+  background: #F15822;
 }
 
 .detail-info .product-price-cover {
