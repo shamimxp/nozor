@@ -1,6 +1,15 @@
 @extends('frontend.layouts.app')
 @section('content')
 <style>
+    /* Brand related background color */
+    .bg-brand-light {
+        background-color: #fdede7 !important; /* Very Light Peach from logo */
+        transition: all 0.3s ease;
+    }
+    .bg-brand-light:hover {
+        background-color: #f9d2c5 !important; /* Slightly darker peach on hover */
+    }
+
     /* Prevent FOUC (Flash of Unstyled Content) before Slick JS loads */
     .hero-slider-1:not(.slick-initialized) {
         display: block;
@@ -74,7 +83,7 @@
             <div class="carausel-10-columns-cover position-relative">
                 <div class="carausel-10-columns" id="carausel-10-columns">
                    @foreach($categories as $category)
-                    <div class="card-2 bg-9 wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
+                    <div class="card-2 bg-brand-light wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
                         <figure class="img-hover-scale overflow-hidden">
                             <a href="{{route('category.products',$category->slug)}}">
                                 <img src="{{ $category->image
