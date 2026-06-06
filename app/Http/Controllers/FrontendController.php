@@ -27,7 +27,8 @@ class FrontendController extends Controller
             ->take(20)
             ->get();
         $settings = WebSetting::first();
-        return view('frontend.index',compact('categories','banners','products','settings'));
+        $featuredProducts = Product::where('status', 1)->where('is_featured', 1)->latest()->take(20)->get();
+        return view('frontend.index',compact('categories','banners','products','settings','featuredProducts'));
     }
     public function wishlist(){
         return view('frontend.page.wishlist');
