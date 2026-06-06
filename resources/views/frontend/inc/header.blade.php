@@ -273,13 +273,14 @@
                                 <li>
                                     <a class="active" href="{{Url('/')}}">Home </a>
                                 </li>
-                                <li class="hot-deals"><img style="color:#f15822 !important;" src="{{asset('web')}}/assets/imgs/theme/icons/hot.svg" alt="hot deals" /><a href="{{route('deal')}}">Deals</a></li>
-                                <li>
-                                    <a href="{{route('about')}}">About</a>
-                                </li>
                                 <li>
                                     <a href="{{route('shop')}}">Shop</a>
                                 </li>
+{{--                                <li class="hot-deals"><img style="color:#f15822 !important;" src="{{asset('web')}}/assets/imgs/theme/icons/hot.svg" alt="hot deals" /><a href="{{route('deal')}}">Deals</a></li>--}}
+                                <li>
+                                    <a href="{{route('about')}}">About</a>
+                                </li>
+
                                 <li>
                                     <a href="{{route('contact')}}">Contact</a>
                                 </li>
