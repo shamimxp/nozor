@@ -97,7 +97,7 @@
                 <h3>Popular Products</h3>
                 <ul class="nav nav-tabs links" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">All Items <i style="font-size: 12px" class="fi-rs-angle-right"></i></button>
+                        <a href="{{route('shop')}}" class="nav-link active" id="nav-tab-one">All Items <i style="font-size: 12px" class="fi-rs-angle-right"></i></a>
                     </li>
                 </ul>
             </div>

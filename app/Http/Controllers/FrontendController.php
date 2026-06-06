@@ -21,7 +21,11 @@ class FrontendController extends Controller
             ->get();
 
         $banners = Banner::where('status',1)->get();
-        $products = Product::with('gallery')->where('status',1)->get();
+        $products = Product::with('gallery')
+            ->where('status', 1)
+            ->latest()
+            ->take(20)
+            ->get();
         $settings = WebSetting::first();
         return view('frontend.index',compact('categories','banners','products','settings'));
     }
@@ -48,27 +52,77 @@ class FrontendController extends Controller
     public function about(){
         return view('frontend.page.about');
     }
-    public function shop(){
-        return view('frontend.page.shop');
+    public function shop(Request $request, $slug = null){
+        $query = \App\Models\Product::with('category')->where('status', 1);
+
+        if ($slug) {
+            $category = \App\Models\Category::where('slug', $slug)->first();
+            if ($category) {
+                $query->where('category_id', $category->id);
+            }
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'latest');
+        if ($sort == 'price_low') {
+            $query->orderBy('selling_price', 'asc')->orderBy('id', 'desc');
+        } elseif ($sort == 'price_high') {
+            $query->orderBy('selling_price', 'desc')->orderBy('id', 'desc');
+        } else {
+            $query->latest()->orderBy('id', 'desc');
+        }
+
+        $settings = \App\Models\WebSetting::first();
+        $totalProducts = $query->count();
+
+        // AJAX: called by infinite scroll
+        if ($request->ajax()) {
+            $scrollPage  = (int) $request->get('scroll_page', 1); // 0 = reload initial 50; 1+ = batches of 10
+            $perScroll   = 10;
+            $initialLoad = 50;
+
+            if ($scrollPage <= 0) {
+                // Sort changed — reload first 50
+                $products  = (clone $query)->take($initialLoad)->get();
+                $hasMore   = $totalProducts > $initialLoad;
+            } else {
+                $offset   = $initialLoad + (($scrollPage - 1) * $perScroll);
+                $products = (clone $query)->skip($offset)->take($perScroll)->get();
+                $hasMore  = ($offset + $perScroll) < $totalProducts;
+            }
+
+            $html = view('frontend.partials.shop_products', compact('products', 'settings'))->render();
+            return response()->json([
+                'html'     => $html,
+                'total'    => $totalProducts,
+                'has_more' => $hasMore,
+            ]);
+        }
+
+        // Initial page load: show first 50 products
+        $products = (clone $query)->take(50)->get();
+        $categories = \App\Models\Category::withCount('products')->where('status', 1)->take(10)->get();
+
+        return view('frontend.page.shop', compact('products', 'categories', 'settings', 'totalProducts'));
     }
     public function deal(){
         return view('frontend.page.dealpage');
     }
     public function details($id){
         $product = Product::with('gallery','category', 'variations.variationValue', 'variations.variation')->findOrFail(decrypt($id));
-        
+
         $relatedProducts = Product::where('status', 1)
             ->where('category_id', $product->category_id);
-            
+
         if ($product->sub_category_id) {
             $relatedProducts->where('sub_category_id', $product->sub_category_id);
         }
-        
+
         $relatedProducts = $relatedProducts->where('id', '!=', $product->id)
             ->inRandomOrder()
             ->take(4)
             ->get();
-            
+
         $newProducts = Product::where('status', 1)
              ->where('id', '!=', $product->id)
             ->latest()
@@ -268,7 +322,7 @@ class FrontendController extends Controller
         $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
         $cartCount = $cartItems->sum('quantity');
         $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
-        
+
         $settings = \App\Models\WebSetting::first();
         $currency = $settings->currency_symbol ?? 'TK';
 
@@ -292,7 +346,7 @@ class FrontendController extends Controller
         }
 
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'message' => 'Product added to cart successfully',
             'cart_count' => $cartCount,
             'cart_html' => $cartHtml,
@@ -310,7 +364,7 @@ class FrontendController extends Controller
         $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
         $cartCount = $cartItems->sum('quantity');
         $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
-        
+
         $settings = \App\Models\WebSetting::first();
         $currency = $settings->currency_symbol ?? 'TK';
 
@@ -334,7 +388,7 @@ class FrontendController extends Controller
         }
 
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'message' => 'Product removed from cart successfully',
             'cart_count' => $cartCount,
             'cart_html' => $cartHtml,
@@ -345,7 +399,7 @@ class FrontendController extends Controller
     {
         $cartId = $request->cart_id;
         $quantity = $request->quantity;
-        
+
         $cart = \App\Models\Cart::find($cartId);
         if($cart) {
             $cart->quantity = $quantity;
@@ -357,7 +411,7 @@ class FrontendController extends Controller
         $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
         $cartCount = $cartItems->sum('quantity');
         $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
-        
+
         $settings = \App\Models\WebSetting::first();
         $currency = $settings->currency_symbol ?? 'TK';
 
@@ -381,7 +435,7 @@ class FrontendController extends Controller
         }
 
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'cart_count' => $cartCount,
             'cart_html' => $cartHtml,
             'cart_total' => $currency . ' ' . number_format($cartTotal, 2)
@@ -411,12 +465,12 @@ class FrontendController extends Controller
     {
         $sessionId = session()->getId();
         \App\Models\Cart::where('session_id', $sessionId)->delete();
-        
+
         $settings = \App\Models\WebSetting::first();
         $currency = $settings->currency_symbol ?? 'TK';
 
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'cart_count' => 0,
             'cart_html' => '',
             'cart_total' => $currency . ' 0.00'
@@ -451,7 +505,7 @@ class FrontendController extends Controller
             'coupon' => session()->get('coupon')
         ]);
     }
-    
+
     public function placeOrder(Request $request)
     {
         $request->validate([
@@ -470,7 +524,7 @@ class FrontendController extends Controller
         }
 
         $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
-        
+
         $discount = 0;
         if(session()->has('coupon')) {
             $cpn = session()->get('coupon');
