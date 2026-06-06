@@ -21,47 +21,6 @@
 
 <body>
 <!-- Modal -->
-{{--<div class="modal fade custom-modal" id="onloadModal" tabindex="-1" aria-labelledby="onloadModalLabel" aria-hidden="true">--}}
-{{--    <div class="modal-dialog">--}}
-{{--        <div class="modal-content">--}}
-{{--            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>--}}
-{{--            <div class="modal-body">--}}
-{{--                <div class="deal" style="background-image: url('{{asset('web')}}/assets/imgs/banner/popup-1.png')">--}}
-{{--                    <div class="deal-top">--}}
-{{--                        <h6 class="mb-10 text-brand-2">Deal of the Day</h6>--}}
-{{--                    </div>--}}
-{{--                    <div class="deal-content detail-info">--}}
-{{--                        <h4 class="product-title"><a href="shop-product-right.html" class="text-heading">Organic fruit for your family's health</a></h4>--}}
-{{--                        <div class="clearfix product-price-cover">--}}
-{{--                            <div class="product-price primary-color float-left">--}}
-{{--                                <span class="current-price text-brand">$38</span>--}}
-{{--                                <span>--}}
-{{--                                        <span class="save-price font-md color3 ml-15">26% Off</span>--}}
-{{--                                        <span class="old-price font-md ml-15">$52</span>--}}
-{{--                                    </span>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="deal-bottom">--}}
-{{--                        <p class="mb-20">Hurry Up! Offer End In:</p>--}}
-{{--                        <div class="deals-countdown pl-5" data-countdown="2025/03/25 00:00:00">--}}
-{{--                            <span class="countdown-section"><span class="countdown-amount hover-up">03</span><span class="countdown-period"> days </span></span><span class="countdown-section"><span class="countdown-amount hover-up">02</span><span class="countdown-period"> hours </span></span><span class="countdown-section"><span class="countdown-amount hover-up">43</span><span class="countdown-period"> mins </span></span><span class="countdown-section"><span class="countdown-amount hover-up">29</span><span class="countdown-period"> sec </span></span>--}}
-{{--                        </div>--}}
-{{--                        <div class="product-detail-rating">--}}
-{{--                            <div class="product-rate-cover text-end">--}}
-{{--                                <div class="product-rate d-inline-block">--}}
-{{--                                    <div class="product-rating" style="width: 90%"></div>--}}
-{{--                                </div>--}}
-{{--                                <span class="font-small ml-5 text-muted"> (32 rates)</span>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <a href="shop-grid-right.html" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-{{--</div>--}}
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -99,15 +58,6 @@
         to { transform: rotate(360deg); }
     }
 </style>
-{{--<div id="preloader-active">--}}
-{{--    <div class="preloader d-flex align-items-center justify-content-center">--}}
-{{--        <div class="preloader-inner position-relative">--}}
-{{--            <div class="text-center">--}}
-{{--                <div class="custom-preloader"></div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-{{--</div>--}}
 <!-- Vendor JS-->
 <script src="{{asset('web')}}/assets/js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="{{asset('web')}}/assets/js/vendor/jquery-3.6.0.min.js"></script>
@@ -324,31 +274,11 @@
     @if(Session::has('info'))
         toastr.info("{{ Session::get('info') }}");
     @endif
-</script>{{--<script>--}}
-{{--    $(document).on('click', '.quick-view-btn', function() {--}}
-{{--        let product_id = $(this).data('product');--}}
 
-{{--        // Show modal first--}}
-{{--        $('#quickViewModal').modal('show');--}}
 
-{{--        // Show loading--}}
-{{--        $('#quick-view-content').html('<div class="text-center p-5">Loading...</div>');--}}
 
-{{--        $.ajax({--}}
-{{--            url: "{{ route('quick-view') }}",--}}
-{{--            type: "GET",--}}
-{{--            data: { id: product_id },--}}
 
-{{--            success: function(response) {--}}
-{{--                $('#quick-view-content').html(response);--}}
-{{--            },--}}
 
-{{--            error: function() {--}}
-{{--                $('#quick-view-content').html('<p class="text-danger">Failed to load product.</p>');--}}
-{{--            }--}}
-{{--        });--}}
-{{--    });--}}
-{{--</script>--}}
 
 @stack('scripts')
 </body>

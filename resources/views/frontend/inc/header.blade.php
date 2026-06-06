@@ -2,68 +2,6 @@
     <div class="mobile-promotion">
         <span>Grand opening, <strong>up to 15%</strong> off all items. Only <strong>3 days</strong> left</span>
     </div>
-{{--    <div class="header-top header-top-ptb-1 d-none d-lg-block">--}}
-{{--        <div class="container">--}}
-{{--            <div class="row align-items-center">--}}
-{{--                <div class="col-xl-3 col-lg-4">--}}
-{{--                    <div class="header-info">--}}
-{{--                        <ul>--}}
-{{--                            <li><a href="page-about.htlm">About Us</a></li>--}}
-{{--                            <li><a href="page-account.html">My Account</a></li>--}}
-{{--                            <li><a href="shop-wishlist.html">Wishlist</a></li>--}}
-{{--                            <li><a href="shop-order.html">Order Tracking</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--                <div class="col-xl-6 col-lg-4">--}}
-{{--                    <div class="text-center">--}}
-{{--                        <div id="news-flash" class="d-inline-block">--}}
-{{--                            <ul>--}}
-{{--                                <li>100% Secure delivery without contacting the courier</li>--}}
-{{--                                <li>Supper Value Deals - Save more with coupons</li>--}}
-{{--                                <li>Trendy 25silver jewelry, save up 35% off today</li>--}}
-{{--                            </ul>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--                <div class="col-xl-3 col-lg-4">--}}
-{{--                    <div class="header-info header-info-right">--}}
-{{--                        <ul>--}}
-{{--                            <li>Need help? Call Us: <strong class="text-brand"> + 1800 900</strong></li>--}}
-{{--                            <li>--}}
-{{--                                <a class="language-dropdown-active" href="#">English <i class="fi-rs-angle-small-down"></i></a>--}}
-{{--                                <ul class="language-dropdown">--}}
-{{--                                    <li>--}}
-{{--                                        <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/flag-fr.png" alt="" />Français</a>--}}
-{{--                                    </li>--}}
-{{--                                    <li>--}}
-{{--                                        <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/flag-dt.png" alt="" />Deutsch</a>--}}
-{{--                                    </li>--}}
-{{--                                    <li>--}}
-{{--                                        <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/flag-ru.png" alt="" />Pусский</a>--}}
-{{--                                    </li>--}}
-{{--                                </ul>--}}
-{{--                            </li>--}}
-{{--                            <li>--}}
-{{--                                <a class="language-dropdown-active" href="#">USD <i class="fi-rs-angle-small-down"></i></a>--}}
-{{--                                <ul class="language-dropdown">--}}
-{{--                                    <li>--}}
-{{--                                        <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/flag-fr.png" alt="" />INR</a>--}}
-{{--                                    </li>--}}
-{{--                                    <li>--}}
-{{--                                        <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/flag-dt.png" alt="" />MBP</a>--}}
-{{--                                    </li>--}}
-{{--                                    <li>--}}
-{{--                                        <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/flag-ru.png" alt="" />EU</a>--}}
-{{--                                    </li>--}}
-{{--                                </ul>--}}
-{{--                            </li>--}}
-{{--                        </ul>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
     <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
         <div class="container">
             <div class="header-wrap">
@@ -91,13 +29,6 @@
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-{{--                            <div class="header-action-icon-2">--}}
-{{--                                <a href="shop-compare.html">--}}
-{{--                                    <img class="svgInject" alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-compare.svg" />--}}
-{{--                                    <span class="pro-count blue">3</span>--}}
-{{--                                </a>--}}
-{{--                                <a href="shop-compare.html"><span class="lable ml-0">Compare</span></a>--}}
-{{--                            </div>--}}
                             <div class="header-action-icon-2">
                                 <a href="{{route('wishlist')}}">
                                     <img class="svgInject" alt="wishlist" src="{{asset('web')}}/assets/imgs/theme/icons/icon-heart.svg" />
@@ -224,7 +155,6 @@
 
                             </div>
 
-                            {{-- More categories --}}
                             @if($categories->count() > 10)
                                 <div class="more_slide_open" style="display: none">
                                     <div class="d-flex categori-dropdown-inner">
@@ -276,7 +206,6 @@
                                 <li>
                                     <a href="{{route('shop')}}">Shop</a>
                                 </li>
-{{--                                <li class="hot-deals"><img style="color:#f15822 !important;" src="{{asset('web')}}/assets/imgs/theme/icons/hot.svg" alt="hot deals" /><a href="{{route('deal')}}">Deals</a></li>--}}
                                 <li>
                                     <a href="{{route('about')}}">About</a>
                                 </li>
