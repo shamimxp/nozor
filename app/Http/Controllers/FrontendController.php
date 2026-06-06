@@ -27,8 +27,43 @@ class FrontendController extends Controller
             ->take(20)
             ->get();
         $settings = WebSetting::first();
+
+        $webSales = \App\Models\WebOrderItem::select('product_id', \Illuminate\Support\Facades\DB::raw('SUM(quantity) as total'))
+            ->groupBy('product_id')
+            ->pluck('total', 'product_id')->toArray();
+
+        $posSales = \App\Models\PosOrderItem::select('product_id', \Illuminate\Support\Facades\DB::raw('SUM(quantity) as total'))
+            ->groupBy('product_id')
+            ->pluck('total', 'product_id')->toArray();
+
+        $productSales = [];
+        foreach ($webSales as $id => $total) {
+            $productSales[$id] = ($productSales[$id] ?? 0) + $total;
+        }
+        foreach ($posSales as $id => $total) {
+            $productSales[$id] = ($productSales[$id] ?? 0) + $total;
+        }
+
+        arsort($productSales);
+        $topProductIds = array_slice(array_keys($productSales), 0, 3);
+
+        $topSellingProducts = collect();
+        if (!empty($topProductIds)) {
+            $topSellingProductsResult = Product::with('category')->where('status', 1)->whereIn('id', $topProductIds)->get();
+            $topSellingProducts = collect($topProductIds)->map(function ($id) use ($topSellingProductsResult) {
+                return $topSellingProductsResult->where('id', $id)->first();
+            })->filter();
+        } else {
+            $topSellingProducts = Product::with( 'category')->where('status', 1)->take(3)->get();
+        }
+
+        $featuredProducts3 = Product::with( 'category')->where('status', 1)->where('is_featured', 1)->inRandomOrder()->take(3)->get();
+
+        $recentProducts3 = Product::with( 'category')->where('status', 1)->latest()->take(3)->get();
+
         $featuredProducts = Product::where('status', 1)->where('is_featured', 1)->latest()->take(20)->get();
-        return view('frontend.index',compact('categories','banners','products','settings','featuredProducts'));
+
+        return view('frontend.index',compact('categories','banners','products','settings','featuredProducts', 'topSellingProducts', 'featuredProducts3', 'recentProducts3'));
     }
     public function wishlist(){
         return view('frontend.page.wishlist');
