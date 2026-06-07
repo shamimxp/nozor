@@ -63,7 +63,26 @@ class FrontendController extends Controller
 
         $featuredProducts = Product::where('status', 1)->where('is_featured', 1)->latest()->take(20)->get();
 
-        return view('frontend.index',compact('categories','banners','products','settings','featuredProducts', 'topSellingProducts', 'featuredProducts3', 'recentProducts3'));
+        $topRatedProducts3 = Product::with('approvedReviews')
+            ->where('status', 1)
+            ->whereHas('approvedReviews', function($q) {
+                $q->where('rating', '>=', 4);
+            })
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
+        if ($topRatedProducts3->count() < 3) {
+            $needed = 3 - $topRatedProducts3->count();
+            $additional = Product::where('status', 1)
+                ->whereNotIn('id', $topRatedProducts3->pluck('id'))
+                ->inRandomOrder()
+                ->take($needed)
+                ->get();
+            $topRatedProducts3 = $topRatedProducts3->merge($additional);
+        }
+
+        return view('frontend.index',compact('categories','banners','products','settings','featuredProducts', 'topSellingProducts', 'featuredProducts3', 'recentProducts3', 'topRatedProducts3'));
     }
 
     public function cart(){

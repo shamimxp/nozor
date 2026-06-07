@@ -103,36 +103,44 @@
     <section class="banners mb-25">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6 mb-sm-4 mb-md-4 mb-lg-0">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay="0">
-                        <img  style="width: 461px;height: 270px"  src="{{asset('web')}}/assets/imgs/banner/1.jpg" alt="" />
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_1.png')}}" alt="" />
                         <div class="banner-text">
-                            <h4>
-                                Everyday Fresh & <br />Clean with Our<br />
-                                Products
+                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">
+                                Trendy Streetwear <br />For Cool Kids<br />
                             </h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6 mb-sm-4 mb-md-4 mb-lg-0">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
-                        <img style="width: 461px;height: 270px" src="{{asset('web')}}/assets/imgs/banner/2.jpg" alt="" />
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_2.png')}}" alt="" />
                         <div class="banner-text">
-                            <h4>
-                                Make your Fashion<br />
-                                Choice and Easy
+                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">
+                                Smart Casuals<br />
+                                To Stand Out
                             </h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 d-md-none d-lg-flex">
-                    <div class="banner-img mb-sm-0 wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                        <img style="width: 461px;height: 270px" src="{{asset('web')}}/assets/imgs/banner/1.jpg" alt="" />
+                <div class="col-lg-3 col-md-6 mb-sm-4 mb-md-0">
+                    <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_3.png')}}" alt="" />
                         <div class="banner-text">
-                            <h4>The best trusted <br />Products Online</h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">The Best Footwear <br />& Accessories</h4>
+                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-sm-0">
+                    <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".6s">
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_4.png')}}" alt="" />
+                        <div class="banner-text">
+                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">Winter Jackets<br />& Warm Knits</h4>
+                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -804,81 +812,35 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-sm-5 mb-md-0 d-none d-xl-block wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
                     <h4 class="section-title style-1 mb-30 animated animated">Top Rated</h4>
                     <div class="product-list-small animated animated">
+                        @foreach($topRatedProducts3 as $product)
                         <article class="row align-items-center hover-up">
                             <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="{{asset('web')}}/assets/imgs/shop/thumbnail-10.jpg" alt="" /></a>
+                                <a href="{{ route('product.details', encrypt($product->id)) }}"><img src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{ $product->name }}" /></a>
                             </figure>
                             <div class="col-md-8 mb-0">
                                 <h6>
-                                    <a href="shop-product-right.html">Foster Farms Takeout Crispy Classic Buffalo Wings</a>
+                                    <a href="{{ route('product.details', encrypt($product->id)) }}">{{ Str::limit($product->name, 40) }}</a>
                                 </h6>
                                 @php
-    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
-    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
-    $percentRating = $avgRating * 20;
-@endphp
-<div class="product-rate-cover">
-    <div class="product-rate d-inline-block">
-        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
-    </div>
-    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
-</div>
+                                    $totalReviews = $product->approvedReviews ? $product->approvedReviews->count() : 0;
+                                    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
+                                    $percentRating = $avgRating * 20;
+                                @endphp
+                                <div class="product-rate-cover">
+                                    <div class="product-rate d-inline-block">
+                                        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
+                                    </div>
+                                    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
+                                </div>
                                 <div class="product-price">
-                                    <span>$32.85</span>
-                                    <span class="old-price">$33.8</span>
+                                    <span>৳ {{ number_format($product->selling_price, 2) }}</span>
+                                    @if($product->regular_price > $product->selling_price)
+                                        <span class="old-price">৳ {{ number_format($product->regular_price, 2) }}</span>
+                                    @endif
                                 </div>
                             </div>
                         </article>
-                        <article class="row align-items-center hover-up">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="{{asset('web')}}/assets/imgs/shop/thumbnail-11.jpg" alt="" /></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h6>
-                                    <a href="shop-product-right.html">Angie’s Boomchickapop Sweet & Salty Kettle Corn</a>
-                                </h6>
-                                @php
-    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
-    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
-    $percentRating = $avgRating * 20;
-@endphp
-<div class="product-rate-cover">
-    <div class="product-rate d-inline-block">
-        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
-    </div>
-    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
-</div>
-                                <div class="product-price">
-                                    <span>$32.85</span>
-                                    <span class="old-price">$33.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center hover-up">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="{{asset('web')}}/assets/imgs/shop/thumbnail-12.jpg" alt="" /></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h6>
-                                    <a href="shop-product-right.html">All Natural Italian-Style Chicken Meatballs</a>
-                                </h6>
-                                @php
-    $totalReviews = isset($product) && $product->approvedReviews ? $product->approvedReviews->count() : 0;
-    $avgRating = $totalReviews > 0 ? $product->approvedReviews->avg('rating') : 0;
-    $percentRating = $avgRating * 20;
-@endphp
-<div class="product-rate-cover">
-    <div class="product-rate d-inline-block">
-        <div class="product-rating" style="width: {{ $percentRating }}%"></div>
-    </div>
-    <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
-</div>
-                                <div class="product-price">
-                                    <span>$32.85</span>
-                                    <span class="old-price">$33.8</span>
-                                </div>
-                            </div>
-                        </article>
+                        @endforeach
                     </div>
                 </div>
             </div>
