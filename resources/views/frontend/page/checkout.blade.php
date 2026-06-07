@@ -26,10 +26,10 @@
                             <h4 class="mb-30">Billing Details</h4>
                             <div class="row">
                                 <div class="form-group col-lg-6">
-                                    <input type="text" required name="name" placeholder="Full name *">
+                                    <input type="text" required name="name" placeholder="Full name *" value="{{ auth()->check() ? auth()->user()->name : '' }}">
                                 </div>
                                 <div class="form-group col-lg-6">
-                                    <input type="text" required name="phone" placeholder="Phone *">
+                                    <input type="text" required name="phone" placeholder="Phone *" value="{{ auth()->check() ? auth()->user()->phone : '' }}">
                                 </div>
                             </div>
                             <div class="row">

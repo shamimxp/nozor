@@ -38,27 +38,16 @@
                     <form class="auth-login-form mt-2" action="{{ route('login') }}" method="POST">
                             @csrf
                         <div class="form-group">
-                            <label for="login-email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="login-email" name="email" placeholder="john@example.com" aria-describedby="login-email" tabindex="1" autofocus />
+                            <label for="login-phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="login-phone" name="phone" placeholder="01XXXXXXXXX" aria-describedby="login-phone" tabindex="1" autofocus />
+                            @error('phone')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="form-group">
-                            <div class="d-flex justify-content-between">
-                                <label for="login-password">Password</label>
-                                <a href="#">
-                                    <small>Forgot Password?</small>
-                                </a>
-                            </div>
-                            <div class="input-group input-group-merge form-password-toggle">
-                                <input type="password" class="form-control form-control-merge" id="login-password" name="password" tabindex="2" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="login-password" />
-                                <div class="input-group-append">
-                                    <span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" type="checkbox" id="remember-me" tabindex="3" />
+                                <input class="custom-control-input" type="checkbox" id="remember-me" name="remember" tabindex="3" />
                                 <label class="custom-control-label" for="remember-me"> Remember Me </label>
                             </div>
                         </div>

@@ -602,7 +602,7 @@ class FrontendController extends Controller
 
         $order = \App\Models\WebOrder::create([
             'invoice_no' => 'INV-' . strtoupper(uniqid()),
-            'session_id' => $sessionId,
+            'user_id' => auth()->check() ? auth()->id() : null,
             'subtotal' => $cartTotal,
             'discount' => $discount,
             'shipping_charge' => $shippingCharge,

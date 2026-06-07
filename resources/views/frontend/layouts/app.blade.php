@@ -274,11 +274,7 @@
     @if(Session::has('info'))
         toastr.info("{{ Session::get('info') }}");
     @endif
-
-
-
-
-
+</script>
 
 @stack('scripts')
 </body>

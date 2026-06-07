@@ -10,6 +10,7 @@ class WebOrder extends Model
     use HasFactory;
     protected $fillable = [
         'invoice_no',
+        'user_id',
         'subtotal',
         'discount',
         'shipping_charge',

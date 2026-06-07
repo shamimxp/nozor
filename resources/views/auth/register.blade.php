@@ -42,27 +42,11 @@
                             <input type="text" class="form-control" id="register-username" name="name" placeholder="johndoe" aria-describedby="register-username" tabindex="1" autofocus />
                         </div>
                         <div class="form-group">
-                            <label for="register-email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="register-email" name="email" placeholder="john@example.com" aria-describedby="register-email" tabindex="2" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="register-password" class="form-label">Password</label>
-                            <div class="input-group input-group-merge form-password-toggle">
-                                <input type="password" class="form-control form-control-merge" id="register-password" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="register-password" tabindex="3" />
-                                <div class="input-group-append">
-                                    <span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="password_confirmation" class="form-label">Confirm Password</label>
-                            <div class="input-group input-group-merge form-password-toggle">
-                                <input type="password" class="form-control form-control-merge" id="password_confirmation" name="password_confirmation" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="register-password" tabindex="3" />
-                                <div class="input-group-append">
-                                    <span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span>
-                                </div>
-                            </div>
+                            <label for="register-phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="register-phone" name="phone" placeholder="01XXXXXXXXX" aria-describedby="register-phone" tabindex="2" />
+                            @error('phone')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">

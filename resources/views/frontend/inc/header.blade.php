@@ -76,34 +76,34 @@
                                     </div>
                                 </div>
                             </div>
+                           @guest
+                                <div class="header-action-icon-2">
+                                    <a href="{{route('login')}}">
+                                        <img class="svgInject" alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-user.svg" />
+                                    </a>
+                                    <a href="{{route('login')}}"><span class="lable ml-0">Login</span></a>
+                                </div>
+                           @else
                             <div class="header-action-icon-2">
-                                <a href="page-account.html">
+                                <a href="#">
                                     <img class="svgInject" alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-user.svg" />
                                 </a>
-                                <a href="page-account.html"><span class="lable ml-0">Account</span></a>
+                                <a href="#"><span class="lable ml-0">{{ auth()->user()->name ?? 'Account' }}</span></a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
                                     <ul>
                                         <li>
-                                            <a href="page-account.html"><i class="fi fi-rs-user mr-10"></i>My Account</a>
+                                            <a href="{{ route('my-account') }}"><i class="fi fi-rs-user mr-10"></i>My Account</a>
                                         </li>
                                         <li>
-                                            <a href="page-account.html"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a>
-                                        </li>
-                                        <li>
-                                            <a href="page-account.html"><i class="fi fi-rs-label mr-10"></i>My Voucher</a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-wishlist.html"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
-                                        </li>
-                                        <li>
-                                            <a href="page-account.html"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a>
-                                        </li>
-                                        <li>
-                                            <a href="page-login.html"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a>
+                                            </form>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+                         @endguest
                         </div>
                     </div>
                 </div>
