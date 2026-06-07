@@ -313,6 +313,52 @@
 </script>
 
 @stack('scripts')
-</body>
+<!-- AJAX Search -->
+<script>
+$(document).ready(function() {
+    let searchTimer;
+    
+    function handleSearch(inputId, resultsId, categoryId = null) {
+        let q = $('#' + inputId).val();
+        let cat = categoryId ? $('#' + categoryId).val() : '';
+        
+        if(q.length < 2) {
+            $('#' + resultsId).hide();
+            return;
+        }
 
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            $.ajax({
+                url: "{{ route('ajax-search') }}",
+                type: "GET",
+                data: { q: q, category: cat },
+                success: function(res) {
+                    if(res.html) {
+                        $('#' + resultsId).html(res.html).show();
+                    } else {
+                        $('#' + resultsId).hide();
+                    }
+                }
+            });
+        }, 300);
+    }
+
+    $('#search-input-desktop').on('keyup', function() {
+        handleSearch('search-input-desktop', 'search-results-desktop', 'search-category-desktop');
+    });
+
+    $('#search-input-mobile').on('keyup', function() {
+        handleSearch('search-input-mobile', 'search-results-mobile');
+    });
+
+    // Close dropdown when clicking outside
+    $(document).on('click', function(e) {
+        if(!$(e.target).closest('.search-style-2, .search-style-3').length) {
+            $('.search-results-dropdown').hide();
+        }
+    });
+});
+</script>
+</body>
 </html>

@@ -9,22 +9,18 @@
                     <a href="{{Url('/')}}"><img src="{{asset('images/nozor_clean.png')}}" alt="logo" /></a>
                 </div>
                 <div class="header-right">
-                    <div class="search-style-2">
-                        <form action="#">
-                            <select class="select-active">
-                                <option>All Categories</option>
-                                <option>Milks and Dairies</option>
-                                <option>Wines & Alcohol</option>
-                                <option>Clothing & Beauty</option>
-                                <option>Pet Foods & Toy</option>
-                                <option>Fast food</option>
-                                <option>Baking material</option>
-                                <option>Vegetables</option>
-                                <option>Fresh Seafood</option>
-                                <option>Noodles & Rice</option>
-                                <option>Ice cream</option>
+                    <div class="search-style-2" style="position: relative;">
+                        <form action="{{ route('shop') }}" method="GET">
+                            <select class="select-active" name="category" id="search-category-desktop">
+                                <option value="">All Categories</option>
+                                @foreach(\App\Models\Category::where('status', 1)->get() as $cat)
+                                    <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                @endforeach
                             </select>
-                            <input type="text" placeholder="Search for items..." />
+                            <input type="text" name="q" id="search-input-desktop" placeholder="Search for items..." autocomplete="off" />
+                            <div class="search-results-dropdown" id="search-results-desktop" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; z-index:9999; border:1px solid #ececec; border-top:none; border-radius:0 0 10px 10px; max-height:400px; overflow-y:auto; box-shadow:0 10px 15px rgba(0,0,0,0.05); padding: 10px 0;">
+                                <!-- Results go here -->
+                            </div>
                         </form>
                     </div>
                     <div class="header-action-right">
@@ -291,10 +287,13 @@
             </div>
         </div>
         <div class="mobile-header-content-area">
-            <div class="mobile-search search-style-3 mobile-header-border">
-                <form action="#">
-                    <input type="text" placeholder="Search for items…" />
+            <div class="mobile-search search-style-3 mobile-header-border" style="position: relative;">
+                <form action="{{ route('shop') }}" method="GET">
+                    <input type="text" name="q" id="search-input-mobile" placeholder="Search for items…" autocomplete="off" />
                     <button type="submit"><i class="fi-rs-search"></i></button>
+                    <div class="search-results-dropdown" id="search-results-mobile" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; z-index:9999; border:1px solid #ececec; border-top:none; border-radius:0 0 10px 10px; max-height:400px; overflow-y:auto; box-shadow:0 10px 15px rgba(0,0,0,0.05); padding: 10px 0; text-align: left;">
+                        <!-- Results go here -->
+                    </div>
                 </form>
             </div>
             <div class="mobile-menu-wrap mobile-header-border">

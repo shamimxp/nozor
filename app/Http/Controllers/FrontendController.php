@@ -86,6 +86,55 @@ class FrontendController extends Controller
     public function about(){
         return view('frontend.page.about');
     }
+
+    public function ajaxSearch(Request $request)
+    {
+        $query = $request->get('q');
+        $categoryId = $request->get('category');
+        
+        $productsQuery = \App\Models\Product::where('status', 1)->where('name', 'LIKE', '%' . $query . '%');
+        
+        if (!empty($categoryId)) {
+            $category = \App\Models\Category::where('slug', $categoryId)->first();
+            if ($category) {
+                $productsQuery->where('category_id', $category->id);
+            }
+        }
+
+        $products = $productsQuery->take(6)->get();
+
+        $html = '';
+        if ($products->count() > 0) {
+            foreach ($products as $product) {
+                $imageUrl = $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png');
+                $detailUrl = route('product.details', encrypt($product->id));
+                $price = $product->selling_price;
+                if ($product->discount_type == 'amount') {
+                    $finalPrice = $price - ($product->discount_amount ?? 0);
+                } elseif ($product->discount_type == 'percent') {
+                    $finalPrice = $price - ($price * ($product->discount_amount ?? 0) / 100);
+                } else {
+                    $finalPrice = $price;
+                }
+                $settings = \App\Models\WebSetting::first();
+                $currency = $settings->currency_symbol ?? 'TK';
+                $formattedPrice = number_format($finalPrice, 2);
+
+                $html .= '<a href="'.$detailUrl.'" style="display:flex; align-items:center; padding:10px 15px; border-bottom:1px solid #f1f1f1; text-decoration:none; color:#333; transition:background 0.2s;">
+                    <img src="'.$imageUrl.'" style="width:40px; height:40px; object-fit:cover; border-radius:4px; margin-right:15px;">
+                    <div style="flex-grow:1;">
+                        <h6 style="margin:0; font-size:14px; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:200px;">'.$product->name.'</h6>
+                        <span style="font-size:13px; color:#F15822; font-weight:700;">'.$currency.' '.$formattedPrice.'</span>
+                    </div>
+                </a>';
+            }
+            $html .= '<a href="'.route('shop').'?q='.$query.'&category='.$categoryId.'" style="display:block; text-align:center; padding:10px; font-size:13px; font-weight:600; color:#F15822;">View All Results</a>';
+        } else {
+            $html = '<div style="padding:15px; text-align:center; color:#999;">No products found</div>';
+        }
+
+        return response()->json(['html' => $html]);
+    }
     public function shop(Request $request, $slug = null){
         $query = \App\Models\Product::with('category')->where('status', 1);
 
@@ -93,6 +142,17 @@ class FrontendController extends Controller
             $category = \App\Models\Category::where('slug', $slug)->first();
             if ($category) {
                 $query->where('category_id', $category->id);
+            }
+        }
+
+        if ($request->has('q') && !empty($request->get('q'))) {
+            $query->where('name', 'LIKE', '%' . $request->get('q') . '%');
+        }
+
+        if ($request->has('category') && !empty($request->get('category'))) {
+            $reqCat = \App\Models\Category::where('slug', $request->get('category'))->first();
+            if ($reqCat) {
+                $query->where('category_id', $reqCat->id);
             }
         }
 

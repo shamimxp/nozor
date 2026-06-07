@@ -34,6 +34,7 @@ Route::get('checkout',[\App\Http\Controllers\FrontendController::class,'checkout
 Route::post('place-order',[\App\Http\Controllers\FrontendController::class,'placeOrder'])->name('place.order');
 Route::get('contact',[\App\Http\Controllers\FrontendController::class,'contact'])->name('contact');
 Route::get('about',[\App\Http\Controllers\FrontendController::class,'about'])->name('about');
+Route::get('ajax-search', [\App\Http\Controllers\FrontendController::class, 'ajaxSearch'])->name('ajax-search');
 Route::get('shop',[\App\Http\Controllers\FrontendController::class,'shop'])->name('shop');
 Route::get('today-deal',[\App\Http\Controllers\FrontendController::class,'deal'])->name('deal');
 Route::get('category-product/{slug}',[\App\Http\Controllers\FrontendController::class,'shop'])->name('category.products');

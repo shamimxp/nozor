@@ -76,6 +76,8 @@
 
 @else
     <div class="col-12 text-center mt-50">
-        <h4 class="text-muted">No products found.</h4>
+        <img src="{{ asset('web/assets/imgs/page/no_product_found.png') }}" alt="No products found" style="max-width: 300px; opacity: 0.8; margin-bottom: 20px;">
+        <h4 class="text-muted">Oops! No products found in this category.</h4>
+        <a href="{{ route('shop') }}" class="btn btn-brand mt-15">Back to Shop</a>
     </div>
 @endif

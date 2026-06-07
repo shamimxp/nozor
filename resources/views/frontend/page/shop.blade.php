@@ -78,9 +78,15 @@
             let btn = $('#load-more-btn');
             btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
 
+            let searchParams = new URLSearchParams(window.location.search);
+            let q = searchParams.get('q') || '';
+            let category = searchParams.get('category') || '';
+
             let url = window.location.pathname
                     + '?scroll_page=' + scrollPage
-                    + '&sort=' + currentSort;
+                    + '&sort=' + currentSort
+                    + (q ? '&q=' + encodeURIComponent(q) : '')
+                    + (category ? '&category=' + encodeURIComponent(category) : '');
 
             $.ajax({
                 url: url,
@@ -119,8 +125,17 @@
 
             // Reload page=initial via AJAX (scroll_page=0 means no offset, return 50)
             // We use scroll_page=0 special case: backend returns first 50
+            let searchParams = new URLSearchParams(window.location.search);
+            let q = searchParams.get('q') || '';
+            let category = searchParams.get('category') || '';
+            
+            let url = window.location.pathname 
+                    + '?scroll_page=0&sort=' + currentSort
+                    + (q ? '&q=' + encodeURIComponent(q) : '')
+                    + (category ? '&category=' + encodeURIComponent(category) : '');
+
             $.ajax({
-                url: window.location.pathname + '?scroll_page=0&sort=' + currentSort,
+                url: url,
                 type: 'GET',
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 success: function(response) {
