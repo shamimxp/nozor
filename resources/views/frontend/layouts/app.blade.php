@@ -298,6 +298,40 @@
 </script>
 
 <script>
+    $(document).ready(function() {
+        $('#newsletter-form').on('submit', function(e) {
+            e.preventDefault();
+            let email = $('#newsletter-email').val();
+            let btn = $(this).find('button[type="submit"]');
+            btn.prop('disabled', true).text('Subscribing...');
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#newsletter-form')[0].reset();
+                    }
+                    btn.prop('disabled', false).text('Subscribe');
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).text('Subscribe');
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        if (xhr.responseJSON.errors.email) {
+                            toastr.error(xhr.responseJSON.errors.email[0]);
+                        }
+                    } else {
+                        toastr.error('An error occurred. Please try again later.');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<script>
     @if(Session::has('success'))
         toastr.success("{{ Session::get('success') }}");
     @endif

@@ -204,4 +204,12 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/product-reviews/status', [\App\Http\Controllers\Admin\ProductReviewController::class, 'updateStatus'])->name('admin.product_reviews.status');
     Route::post('/product-reviews/reply/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'reply'])->name('admin.product_reviews.reply');
     Route::delete('/product-reviews/delete/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'destroy'])->name('admin.product_reviews.destroy');
+
+    // Contact Messages
+    Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('admin.contact-messages.index');
+    Route::delete('contact-messages/{id}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('admin.contact-messages.destroy');
+
+    // Subscribers
+    Route::get('subscribers', [\App\Http\Controllers\Admin\SubscriberController::class, 'index'])->name('admin.subscribers.index');
+    Route::delete('subscribers/{id}', [\App\Http\Controllers\Admin\SubscriberController::class, 'destroy'])->name('admin.subscribers.destroy');
 });

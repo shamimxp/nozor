@@ -20,6 +20,15 @@ use Illuminate\Support\Facades\Route;
 //    return view('frontend.index');
 //});
 
+Route::get('/run-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return \Illuminate\Support\Facades\Artisan::output();
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+});
+
 Route::get('/',[\App\Http\Controllers\FrontendController::class,'index'])->name('index');
 Route::get('wishlist',[\App\Http\Controllers\FrontendController::class,'wishlist'])->name('wishlist');
 Route::get('cart',[\App\Http\Controllers\FrontendController::class,'cart'])->name('cart');
@@ -32,8 +41,10 @@ Route::post('cart/apply-coupon',[\App\Http\Controllers\FrontendController::class
 Route::post('cart/remove-coupon',[\App\Http\Controllers\FrontendController::class,'removeCoupon'])->name('cart.remove-coupon');
 Route::get('checkout',[\App\Http\Controllers\FrontendController::class,'checkout'])->name('checkout');
 Route::post('place-order',[\App\Http\Controllers\FrontendController::class,'placeOrder'])->name('place.order');
-Route::get('contact',[\App\Http\Controllers\FrontendController::class,'contact'])->name('contact');
 Route::get('about',[\App\Http\Controllers\FrontendController::class,'about'])->name('about');
+Route::get('contact',[\App\Http\Controllers\FrontendController::class,'contact'])->name('contact');
+Route::post('contact/store', [\App\Http\Controllers\FrontendController::class, 'storeContact'])->name('contact.store');
+Route::post('subscribe', [\App\Http\Controllers\FrontendController::class, 'storeSubscribe'])->name('subscribe.store');
 Route::get('ajax-search', [\App\Http\Controllers\FrontendController::class, 'ajaxSearch'])->name('ajax-search');
 Route::get('shop',[\App\Http\Controllers\FrontendController::class,'shop'])->name('shop');
 Route::get('today-deal',[\App\Http\Controllers\FrontendController::class,'deal'])->name('deal');

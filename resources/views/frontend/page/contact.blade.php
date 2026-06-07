@@ -43,11 +43,6 @@
                 </div>
             </div>
         </div>
-        <section class="container mb-50 d-none d-md-block">
-            <div class="border-radius-15 overflow-hidden">
-                <div id="map-panes" class="leaflet-map"></div>
-            </div>
-        </section>
         <div class="container">
             <div class="row">
                 <div class="col-xl-10 col-lg-12 m-auto">
@@ -84,31 +79,32 @@
                                     <h5 class="text-brand mb-10">Contact form</h5>
                                     <h2 class="mb-10">Drop Us a Line</h2>
                                     <p class="text-muted mb-30 font-sm">Your email address will not be published. Required fields are marked *</p>
-                                    <form class="contact-form-style mt-30" id="contact-form" action="#" method="post">
+                                    <form class="contact-form-style mt-30" id="contact-form" action="{{ route('contact.store') }}" method="post">
+                                        @csrf
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="input-style mb-20">
-                                                    <input name="name" placeholder="First Name" type="text" />
+                                                    <input name="first_name" placeholder="First Name" type="text" required />
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="input-style mb-20">
-                                                    <input name="email" placeholder="Your Email" type="email" />
+                                                    <input name="email" placeholder="Your Email" type="email" required />
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="input-style mb-20">
-                                                    <input name="telephone" placeholder="Your Phone" type="tel" />
+                                                    <input name="phone" placeholder="Your Phone" type="tel" required />
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="input-style mb-20">
-                                                    <input name="subject" placeholder="Subject" type="text" />
+                                                    <input name="subject" placeholder="Subject" type="text" required />
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="textarea-style mb-30">
-                                                    <textarea name="message" placeholder="Message"></textarea>
+                                                    <textarea name="message" placeholder="Message" required></textarea>
                                                 </div>
                                                 <button class="submit submit-auto-width" type="submit">Send message</button>
                                             </div>

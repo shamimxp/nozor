@@ -225,6 +225,18 @@
                     <span class="menu-title text-truncate">Product Reviews</span>
                 </a>
             </li>
+            <li class="{{ Route::is('admin.contact-messages*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.contact-messages.index')}}">
+                    <i data-feather="mail"></i>
+                    <span class="menu-title text-truncate">Contact Messages</span>
+                </a>
+            </li>
+            <li class="{{ Route::is('admin.subscribers*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.subscribers.index')}}">
+                    <i data-feather="user-plus"></i>
+                    <span class="menu-title text-truncate">Subscribers</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

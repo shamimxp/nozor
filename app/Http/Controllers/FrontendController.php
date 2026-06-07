@@ -83,6 +83,34 @@ class FrontendController extends Controller
     public function contact(){
         return view('frontend.page.contact');
     }
+
+    public function storeContact(Request $request){
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:50',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string'
+        ]);
+
+        \App\Models\ContactMessage::create($request->all());
+
+        return redirect()->back()->with('success', 'Your message has been sent successfully!');
+    }
+
+    public function storeSubscribe(Request $request){
+        $request->validate([
+            'email' => 'required|email|unique:subscribers,email'
+        ]);
+
+        \App\Models\Subscriber::create($request->only('email'));
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Subscribed successfully!']);
+        }
+
+        return redirect()->back()->with('success', 'Subscribed successfully!');
+    }
     public function about(){
         return view('frontend.page.about');
     }

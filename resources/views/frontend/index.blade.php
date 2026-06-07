@@ -269,9 +269,9 @@
             </div>
             <div class="row">
                 <div class="col-lg-3 d-none d-lg-flex wow animate__animated animate__fadeIn">
-                    <div class="banner-img style-2">
+                    <div class="banner-img style-2" style="background-image: url('{{asset('web/assets/imgs/banner/fashion_vertical_banner.png')}}'); background-size: cover; background-position: center;">
                         <div class="banner-text">
-                            <h2 class="mb-100">Bring nature into your home</h2>
+                            <h2 class="mb-100">Elevate your<br>everyday style</h2>
                             <a href="{{route('shop')}}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
