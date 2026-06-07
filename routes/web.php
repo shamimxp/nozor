@@ -41,6 +41,10 @@ Route::get('/product/quick-view', [App\Http\Controllers\FrontendController::clas
 Route::get('product/{id}',[\App\Http\Controllers\FrontendController::class,'details'])->name('product.details');
 Route::post('product/review/submit',[\App\Http\Controllers\FrontendController::class,'submitReview'])->name('review.submit');
 
+// Wishlist AJAX routes
+Route::post('wishlist/toggle',[\App\Http\Controllers\FrontendController::class,'toggleWishlist'])->name('wishlist.toggle');
+Route::post('wishlist/remove',[\App\Http\Controllers\FrontendController::class,'removeWishlist'])->name('wishlist.remove');
+
 Route::get('/pos/sale', [\App\Http\Controllers\Admin\AdminController::class, 'pos'])->middleware('auth:admin')->name('admin.pos');
 Route::get('/pos/get-products', [\App\Http\Controllers\Admin\AdminController::class, 'getPosProducts'])->middleware('auth:admin')->name('admin.pos.getProducts');
 Route::get('/pos/get-subcategories/{id}', [\App\Http\Controllers\Admin\AdminController::class, 'getPosSubcategories'])->middleware('auth:admin')->name('admin.pos.getSubcategories');

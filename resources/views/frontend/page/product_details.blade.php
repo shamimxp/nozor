@@ -125,7 +125,7 @@
                                             </div>
                                             <div class="product-extra-link2">
                                                 <button type="submit" class="button button-add-to-cart add-to-cart-btn" data-id="{{ $product->id }}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up wishlist-toggle-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}"><i class="fi-rs-heart"></i></a>
                                             </div>
                                         </div>
                                         <div class="font-xs">
@@ -288,7 +288,7 @@
                                                            data-product="{{ encrypt($relProduct->id) }}">
                                                             <i class="fi-rs-eye"></i>
                                                         </a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn" href="#" tabindex="0"><i class="fi-rs-heart"></i></a>
+                                                        <a aria-label="Add To Wishlist" class="action-btn wishlist-toggle-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}" tabindex="0"><i class="fi-rs-heart"></i></a>
                                                     </div>
                                                     @php
                                                         $currency = $settings->currency_symbol ?? 'TK';

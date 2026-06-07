@@ -142,6 +142,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/web-order/update-status', [\App\Http\Controllers\Admin\WebOrderController::class, 'updateStatus'])->name('admin.web-order.update-status');
     Route::resource('web-order', \App\Http\Controllers\Admin\WebOrderController::class, ['as' => 'admin', 'except' => ['create', 'store', 'destroy']]);
 
+    // Wishlist module
+    Route::resource('wishlist', \App\Http\Controllers\Admin\WishlistController::class, ['as' => 'admin', 'only' => ['index', 'destroy']]);
+
     //POS Order module
     Route::get('/pos-order/export-list-excel', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListExcel'])->name('admin.pos-order.export-list-excel');
     Route::get('/pos-order/export-list-pdf', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListPdf'])->name('admin.pos-order.export-list-pdf');

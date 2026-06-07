@@ -10,7 +10,7 @@
                     </a>
                 </div>
                 <div class="product-action-1">
-                    <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+                    <a aria-label="Add To Wishlist" class="action-btn wishlist-toggle-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}"><i class="fi-rs-heart"></i></a>
                     <a aria-label="Quick view" class="action-btn quick-view-btn" data-product="{{ encrypt($product->id) }}"><i class="fi-rs-eye"></i></a>
                 </div>
                 @php

@@ -165,7 +165,7 @@
                                             </a>
                                         </div>
                                         <div class="product-action-1">
-                                            <a aria-label="Add To Wishlist" class="action-btn" href="#"><i class="fi-rs-heart"></i></a>
+                                            <a aria-label="Add To Wishlist" class="action-btn wishlist-toggle-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}"><i class="fi-rs-heart"></i></a>
                                             {{-- <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>--}}
 {{--                                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>--}}
 {{--                                            <a aria-label="Quick view" class="action-btn quick-view-btn"--}}
@@ -292,7 +292,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="#"><i class="fi-rs-heart"></i></a>
+                                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up wishlist-toggle-btn" href="javascript:void(0)" data-product-id="{{ $featuredProduct->id }}"><i class="fi-rs-heart"></i></a>
                                                     <a href="javascript:void(0)"
                                                        class="action-btn quick-view-btn"
                                                        data-product="{{ encrypt($featuredProduct->id) }}">
@@ -582,7 +582,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="#"><i class="fi-rs-heart"></i></a>
+                                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up wishlist-toggle-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}"><i class="fi-rs-heart"></i></a>
                                                     <a href="javascript:void(0)"
                                                        class="action-btn quick-view-btn"
                                                        data-product="{{ encrypt($product->id) }}">

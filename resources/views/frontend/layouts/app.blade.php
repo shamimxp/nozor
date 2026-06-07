@@ -259,6 +259,42 @@
     $(document).ready(function() {
         disableCartButtons();
     });
+
+    // ── Wishlist Toggle (AJAX, works on all pages) ──
+    $(document).on('click', '.wishlist-toggle-btn', function(e) {
+        e.preventDefault();
+        var btn = $(this);
+        var productId = btn.data('product-id');
+
+        $.ajax({
+            url: "{{ route('wishlist.toggle') }}",
+            type: "POST",
+            data: {
+                product_id: productId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if(response.status === 'error') {
+                    toastr.error(response.message);
+                    return;
+                }
+                if(response.status === 'added') {
+                    toastr.success(response.message);
+                    btn.find('i').css('color', '#F15822');
+                } else if(response.status === 'removed') {
+                    toastr.info(response.message);
+                    btn.find('i').css('color', '');
+                }
+                // Update all wishlist count badges
+                if(response.wishlist_count !== undefined) {
+                    $('.wishlist-count').text(response.wishlist_count);
+                }
+            },
+            error: function() {
+                toastr.error('An error occurred. Please try again.');
+            }
+        });
+    });
 </script>
 
 <script>

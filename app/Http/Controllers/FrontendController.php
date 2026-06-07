@@ -65,9 +65,7 @@ class FrontendController extends Controller
 
         return view('frontend.index',compact('categories','banners','products','settings','featuredProducts', 'topSellingProducts', 'featuredProducts3', 'recentProducts3'));
     }
-    public function wishlist(){
-        return view('frontend.page.wishlist');
-    }
+
     public function cart(){
         $sessionId = session()->getId();
         $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
@@ -641,5 +639,74 @@ class FrontendController extends Controller
     {
         session()->forget('coupon');
         return response()->json(['status' => 'success', 'message' => 'Coupon removed.']);
+    }
+
+    public function wishlist()
+    {
+        $wishlists = collect();
+        if (auth()->check()) {
+            $wishlists = \App\Models\Wishlist::with('product')
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+        }
+        return view('frontend.page.wishlist', compact('wishlists'));
+    }
+
+    public function toggleWishlist(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Please login to add items to your wishlist.'
+            ]);
+        }
+
+        $productId = $request->product_id;
+        $userId = auth()->id();
+
+        $existing = \App\Models\Wishlist::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $wishlistCount = \App\Models\Wishlist::where('user_id', $userId)->count();
+            return response()->json([
+                'status' => 'removed',
+                'message' => 'Product removed from wishlist.',
+                'wishlist_count' => $wishlistCount
+            ]);
+        }
+
+        \App\Models\Wishlist::create([
+            'user_id' => $userId,
+            'product_id' => $productId,
+        ]);
+
+        $wishlistCount = \App\Models\Wishlist::where('user_id', $userId)->count();
+        return response()->json([
+            'status' => 'added',
+            'message' => 'Product added to wishlist!',
+            'wishlist_count' => $wishlistCount
+        ]);
+    }
+
+    public function removeWishlist(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized.']);
+        }
+
+        \App\Models\Wishlist::where('user_id', auth()->id())
+            ->where('id', $request->wishlist_id)
+            ->delete();
+
+        $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product removed from wishlist.',
+            'wishlist_count' => $wishlistCount
+        ]);
     }
 }
