@@ -55,8 +55,8 @@
 
 .pos__product_wrapper {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
     padding-right: 5px;
     align-items: start;
 }
@@ -66,32 +66,35 @@
 }
 
 .product__box {
-    background: #ffffff;
+    background: linear-gradient(145deg, #ffffff, #fafafa);
     text-align: center;
     cursor: pointer;
     font-weight: 500;
-    border-radius: 8px;
-    border: 1.5px solid #e8e8e8;
-    padding: 8px 6px 6px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.07);
-    transition: all 0.22s ease;
+    border-radius: 12px;
+    border: 1px solid #eaeaea;
+    padding: 12px 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     overflow: hidden;
+    min-height: 220px;
 }
 
 .product_thumb {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 6px;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 130px;
+    margin: 0 auto 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-radius: 6px;
-    background: #f9f9f9;
+    border-radius: 8px;
+    background: #f4f5f7;
+    transition: transform 0.3s ease;
 }
 
 .product_thumb img {
@@ -99,18 +102,18 @@
     height: 100%;
     object-fit: contain;
     mix-blend-mode: darken;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     will-change: transform;
 }
 
 .product__box:not(.stock__out):hover .product_thumb img {
-    /* transform: scale(2.15); */
+    transform: scale(1.12);
 }
 
 .product_title {
-    padding: 4px 4px 2px;
-    font-size: 12px;
-    line-height: 16px;
+    padding: 4px 2px 2px;
+    font-size: 13px;
+    line-height: 18px;
     overflow: hidden;
     width: 100%;
     display: -webkit-box;
@@ -118,8 +121,8 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
     color: #444;
-    font-weight: 500;
-    min-height: 32px;
+    font-weight: 600;
+    min-height: 36px;
 }
 
 .cart__box {
@@ -145,8 +148,8 @@
 }
 
 .product__table {
-    min-height: 52vh;
-    max-height: 57vh;
+    min-height: 25vh;
+    max-height: 25vh;
     overflow-y: auto;
     margin-bottom: 20px;
 }

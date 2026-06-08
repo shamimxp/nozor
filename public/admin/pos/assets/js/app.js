@@ -143,17 +143,38 @@ function vatAll() {
 function updateChangeAmount(total) {
     let paidAmountInput = document.getElementById("summary_paid_amount");
     let changeAmountDisplay = document.getElementById("summary_change_amount");
-    if (paidAmountInput && changeAmountDisplay) {
+    let dueAmountDisplay = document.getElementById("summary_due_amount");
+    
+    if (paidAmountInput && changeAmountDisplay && dueAmountDisplay) {
         let paid = parseFloat(paidAmountInput.value) || 0;
-        let change = paid - total;
+        let change = 0;
+        let due = 0;
+        
+        if (paid >= total) {
+            change = paid - total;
+            due = 0;
+        } else {
+            change = 0;
+            due = total - paid;
+        }
+        
+        changeAmountDisplay.innerText = change.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        dueAmountDisplay.innerText = due.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    } else if (paidAmountInput && changeAmountDisplay) {
+        let paid = parseFloat(paidAmountInput.value) || 0;
+        let change = paid >= total ? paid - total : 0;
         changeAmountDisplay.innerText = change.toFixed(2);
     }
 }
 
 // Add event listener for paid amount
-$(document).on('keyup', '#summary_paid_amount', function () {
-    let total = parseFloat(document.getElementById("summary_total").innerText) || 0;
-    updateChangeAmount(total);
+$(document).on('keyup input change', '#summary_paid_amount', function () {
+    let total = parseFloat(document.getElementById("summary_total").innerText.replace(/,/g, '')) || 0;
+    if (typeof updateDynamicChange === 'function') {
+        updateDynamicChange();
+    } else {
+        updateChangeAmount(total);
+    }
 });
 
 // Payment Method Toggle

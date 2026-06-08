@@ -200,13 +200,13 @@ class AdminController extends Controller
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 
-        $limit = 10;
+        $limit = 54;
         $offset = $request->offset ?? 0;
-        
-        $products = $query->latest()->offset($offset)->limit($limit)->get();
-        
+
+        $products = $query->inRandomOrder()->offset($offset)->limit($limit)->get();
+
         if ($products->isEmpty() && $offset == 0) {
-            $html = '<div class="no-product-found w-100 text-center" style="width: 100%; flex: 0 0 100%; padding: 50px 0;">
+            $html = '<div class="no-product-found w-100 text-center" style="grid-column: 1 / -1; min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 50px 0;">
                         <img src="' . asset('images/no-product-found.png') . '" alt="No Product Found" style="width: 150px; display: block; margin: 0 auto;">
                         <h4 class="mt-3 text-muted">No Product Found</h4>
                      </div>';
@@ -223,9 +223,9 @@ class AdminController extends Controller
             $stockText = $product->stock <= 0 ? '<span>Stock Out</span>' : '';
             $imageUrl = $product->featured_image ? asset(config('imagepath.product') . '/' . $product->featured_image) : asset('images/no-image.png');
 
-            $html .= '<div class="product__box ' . $stockOut . '" title="' . $product->name . '" 
-                        data-id="' . $product->id . '" 
-                        data-name="' . $product->name . '" 
+            $html .= '<div class="product__box ' . $stockOut . '" title="' . $product->name . '"
+                        data-id="' . $product->id . '"
+                        data-name="' . $product->name . '"
                         data-price="' . $product->selling_price . '"
                         data-stock="' . $product->stock . '"
                         data-discount-type="' . $product->discount_type . '"
@@ -235,9 +235,10 @@ class AdminController extends Controller
                             <img src="' . $imageUrl . '" alt="' . $product->name . '">
                         </div>
                         <h4 class="product_title">' . $product->name . '</h4>
+                        <span class="product_price" style="color: #f5365c; font-weight: 700; font-size: 14px;">' . $product->selling_price . ' ৳</span>
                       </div>';
         }
-        
+
         return response()->json([
             'html' => $html,
             'count' => $products->count(),

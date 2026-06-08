@@ -1702,7 +1702,7 @@
                         </div>
                     </div>
                     <!-- pos product -->
-                    <div class="pos__product_wrapper mt-2" id="pos_product_list">
+                    <div class="pos__product_wrapper mt-5" id="pos_product_list">
                         <!-- Products will be loaded here via AJAX -->
                     </div>
                     <div id="load_more_loader" class="text-center my-3 d-none">
@@ -1715,7 +1715,6 @@
             </div>
         </div>
     </div>
-</div>
 <!-- content main end-->
 
 <!-- footer modal list -->
@@ -2355,7 +2354,7 @@ $(document).ready(function() {
                             <button class="input-group-text rounded-0 bg-navy add_btn decress_quantity" data-id="${item.id}">
                                 <i class="fa-solid fa-minus text-white"></i>
                             </button>
-                            <input class="form-control text-center quantity_input" type="text" value="${item.quantity}" readonly>
+                            <input class="form-control text-center quantity_input" type="number" min="1" data-id="${item.id}" value="${item.quantity}">
                             <button class="input-group-text rounded-0 bg-navy add_btn incress_quantity" data-id="${item.id}">
                                 <i class="fa-solid fa-plus text-white"></i>
                             </button>
@@ -2497,6 +2496,24 @@ function updateDynamicChange() {
             updateCart();
         }
     });
+
+    $(document).on('change', '.quantity_input', function() {
+        const id = $(this).data('id');
+        let newQty = parseInt($(this).val());
+        
+        if (isNaN(newQty) || newQty < 1) {
+            newQty = 1;
+        }
+        
+        if (newQty > cart[id].stock) {
+            toastr.warning('Only ' + cart[id].stock + ' items in stock!');
+            newQty = cart[id].stock;
+        }
+        
+        cart[id].quantity = newQty;
+        updateCart();
+    });
+
 
     $(document).on('click', '.remove_item', function() {
         const id = $(this).data('id');

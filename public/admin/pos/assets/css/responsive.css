@@ -17,14 +17,14 @@
 /* Responsive Grid for Product List */
 @media (min-width: 1200px) {
     .pos__product_wrapper {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        grid-template-columns: repeat(6, 1fr);
         gap: 12px;
     }
 }
 
 @media (max-width: 1199px) {
     .pos__product_wrapper {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 10px;
     }
 }
