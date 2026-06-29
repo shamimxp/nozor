@@ -85,12 +85,21 @@ class WebOrderController extends Controller
     public function show($id)
     {
         $order = WebOrder::with(['address', 'items.product'])->findOrFail($id);
+        
+        if (!$order->is_read) {
+            $order->update(['is_read' => 1]);
+        }
+
         return view('admin.web-order.show', compact('order'));
     }
 
     public function edit($id)
     {
         $order = WebOrder::with(['address', 'items.product'])->findOrFail($id);
+
+        if (!$order->is_read) {
+            $order->update(['is_read' => 1]);
+        }
 
         if ($order->status !== 'pending') {
             toastr()->warning('Only pending orders can be modified.');
@@ -271,5 +280,39 @@ class WebOrderController extends Controller
         $pdf = Pdf::loadView('admin.web-order.list_pdf', compact('orders', 'filters'))
             ->setPaper('a4', 'landscape');
         return $pdf->download('web_orders_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function notifications()
+    {
+        $pendingOrders = WebOrder::with('address')->where('is_read', 0)->latest()->take(10)->get();
+        $count = WebOrder::where('is_read', 0)->count();
+
+        $html = '';
+        foreach ($pendingOrders as $order) {
+            $customerName = $order->address ? $order->address->name : 'Unknown';
+            $url = route('admin.web-order.show', $order->id);
+            $html .= '<a class="d-flex" href="' . $url . '">
+                            <div class="media d-flex align-items-start">
+                                <div class="media-left">
+                                    <div class="avatar bg-light-warning">
+                                        <div class="avatar-content"><i class="avatar-icon" data-feather="shopping-cart"></i></div>
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <p class="media-heading"><span class="font-weight-bolder">New Web Order #' . $order->invoice_no . '</span></p>
+                                    <small class="notification-text"> From: ' . $customerName . ' (' . $order->created_at->diffForHumans() . ')</small>
+                                </div>
+                            </div>
+                        </a>';
+        }
+
+        if ($count == 0) {
+            $html = '<div class="p-2 text-center text-muted">No new web orders</div>';
+        }
+
+        return response()->json([
+            'count' => $count,
+            'html' => $html
+        ]);
     }
 }

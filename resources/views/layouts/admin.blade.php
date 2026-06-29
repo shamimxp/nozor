@@ -88,6 +88,33 @@
     });
     @endforeach
     @endif
+
+    // Real-time Web Order Notifications
+    function fetchWebOrderNotifications() {
+        $.ajax({
+            url: '{{ route('admin.web-order.notifications') }}',
+            type: 'GET',
+            success: function(response) {
+                if(response.count > 0) {
+                    $('.notification-badge').text(response.count).show();
+                    $('.notification-count').text(response.count + ' New');
+                    $('.notification-list').html(response.html);
+                } else {
+                    $('.notification-badge').hide();
+                    $('.notification-count').text('0 New');
+                    $('.notification-list').html('<div class="p-2 text-center text-muted">No new web orders</div>');
+                }
+                
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            }
+        });
+    }
+
+    // Fetch immediately on load, then every 10 seconds
+    fetchWebOrderNotifications();
+    setInterval(fetchWebOrderNotifications, 10000);
 </script>
 </body>
 <!-- END: Body-->

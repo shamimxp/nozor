@@ -55,9 +55,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
 });
 
 Route::group(['middleware' => ['auth:admin']], function () {
-    Route::get('/home', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/home', [\App\Http\Controllers\Admin\AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin_profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::post('/update/admin_profile/{id}', [\App\Http\Controllers\Admin\ProfileController::class, 'update_general'])->name('admin.update_general');
     Route::post('/admin_profile/password/{id}', [\App\Http\Controllers\Admin\ProfileController::class, 'update_password'])->name('admin.update.password');
@@ -136,6 +134,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/custom-order/due-list', [\App\Http\Controllers\Admin\CustomOrderController::class, 'dueList'])->name('admin.custom-order.due-list');
     Route::resource('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, ['as' => 'admin']);
 
+    Route::get('/web-order/notifications', [\App\Http\Controllers\Admin\WebOrderController::class, 'notifications'])->name('admin.web-order.notifications');
     Route::get('/web-order/export-excel', [\App\Http\Controllers\Admin\WebOrderController::class, 'exportExcel'])->name('admin.web-order.export-excel');
     Route::get('/web-order/export-list-pdf', [\App\Http\Controllers\Admin\WebOrderController::class, 'exportListPdf'])->name('admin.web-order.export-list-pdf');
     Route::get('/web-order/export-pdf/{id}', [\App\Http\Controllers\Admin\WebOrderController::class, 'exportPdf'])->name('admin.web-order.export-pdf');

@@ -177,6 +177,23 @@ class AdminController extends Controller
         }
     }
 
+    public function dashboard()
+    {
+        $salesCount = \App\Models\PosOrder::count() + \App\Models\CustomOrder::count() + \App\Models\WebOrder::count();
+        $customerCount = \App\Models\Customer::count();
+        $productCount = \App\Models\Product::count();
+        
+        $posRevenue = \App\Models\PosOrder::sum('payable_amount') ?? 0;
+        $customRevenue = \App\Models\CustomOrder::sum('grand_total') ?? 0;
+        $webRevenue = \App\Models\WebOrder::sum('total') ?? 0;
+        $totalRevenue = $posRevenue + $customRevenue + $webRevenue;
+
+        // Recent Web Orders (for analytics)
+        $recentWebOrders = \App\Models\WebOrder::latest()->take(5)->get();
+
+        return view('admin.dashboard', compact('salesCount', 'customerCount', 'productCount', 'totalRevenue', 'recentWebOrders'));
+    }
+
     public function pos()
     {
         $categories = \App\Models\Category::where('status', 1)->get();

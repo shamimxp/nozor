@@ -17,6 +17,7 @@ class WebOrder extends Model
         'total',
         'payment_method',
         'status',
+        'is_read',
     ];
 
     public function items()
