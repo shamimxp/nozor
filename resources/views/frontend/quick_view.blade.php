@@ -39,12 +39,17 @@
                 <a href="{{ route('product.details', encrypt($product->id)) }}" class="text-heading">{{ $product->name }}</a>
             </h3>
 
+            @php
+                $reviewCount = $product->approvedReviews->count();
+                $averageRating = $reviewCount > 0 ? $product->approvedReviews->avg('rating') : 0;
+                $ratingPercent = ($averageRating / 5) * 100;
+            @endphp
             <div class="product-detail-rating">
                 <div class="product-rate-cover text-end">
                     <div class="product-rate d-inline-block">
-                        <div class="product-rating" style="width: 90%"></div>
+                        <div class="product-rating" style="width: {{ $ratingPercent }}%"></div>
                     </div>
-                    <span class="font-small ml-5 text-muted"> (32 reviews)</span>
+                    <span class="font-small ml-5 text-muted"> ({{ $reviewCount }} reviews)</span>
                 </div>
             </div>
 
@@ -103,5 +108,63 @@
         <!-- Detail Info -->
     </div>
 </div>
+<script>
+    (function ($) {
+        // Initialize Slick Slider for Quick View
+        $('.product-image-slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            fade: false,
+            asNavFor: '.slider-nav-thumbnails',
+        });
+
+        $('.slider-nav-thumbnails').slick({
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            asNavFor: '.product-image-slider',
+            dots: false,
+            focusOnSelect: true,
+            prevArrow: '<button type="button" class="slick-prev"><i class="fi-rs-arrow-small-left"></i></button>',
+            nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>'
+        });
+
+        // Remove active class from all thumbnail slides
+        $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
+        $('.slider-nav-thumbnails .slick-slide').eq(0).addClass('slick-active');
+
+        // On before slide change match active thumbnail to current slide
+        $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+            var mySlideNumber = nextSlide;
+            $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
+            $('.slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
+        });
+
+        // Initialize Qty Up-Down for Quick View
+        $('.detail-qty').each(function () {
+            var $this = $(this);
+            var qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
+
+            $this.find('.qty-up').off('click').on('click', function (event) {
+                event.preventDefault();
+                qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
+                qtyval = qtyval + 1;   
+                $(this).prev().val(qtyval).trigger('change');
+            });
+
+             $this.find(".qty-down").off("click").on("click", function (event) {
+                 event.preventDefault(); 
+                 qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
+                 qtyval = qtyval - 1;
+                 if (qtyval > 0) {
+                     $(this).next().val(qtyval).trigger('change');
+                 } else {
+                     qtyval = 1;
+                     $(this).next().val(qtyval).trigger('change');
+                 }
+             });
+        });
+    })(jQuery);
+</script>
 
 
