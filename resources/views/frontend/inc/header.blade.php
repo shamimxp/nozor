@@ -32,36 +32,47 @@
                                 </a>
                                 <a href="{{route('wishlist')}}"><span class="lable">Wishlist</span></a>
                             </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="{{route('cart')}}">
+                            <div class="header-action-icon-2 cart-drawer-container">
+                                <a class="mini-cart-icon" href="javascript:void(0)" id="cart-drawer-trigger">
                                     <img alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-cart.svg" />
                                     <span class="pro-count blue cart-count">{{\App\Models\Cart::where('session_id', session()->getId())->sum('quantity')}}</span>
                                 </a>
-                                <a href="{{route('cart')}}"><span class="lable">Cart</span></a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                <a href="javascript:void(0)" id="cart-drawer-trigger-text"><span class="lable">Cart</span></a>
+                                
+                                <!-- Overlay -->
+                                <div id="cart-drawer-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9998; transition: all 0.3s ease;"></div>
+                                
+                                <!-- Drawer -->
+                                <div id="cart-drawer" class="cart-drawer">
+                                    <div class="cart-drawer-header">
+                                        <h4>Your Cart</h4>
+                                        <button class="cart-drawer-close" id="cart-drawer-close"><i class="fi-rs-cross-small"></i></button>
+                                    </div>
                                     @php
                                         $cartItems = \App\Models\Cart::with('product')->where('session_id', session()->getId())->get();
                                         $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
                                     @endphp
-                                    <ul class="dynamic-cart-list">
-                                        @foreach($cartItems as $cItem)
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="{{ route('product.details', encrypt($cItem->product->id)) }}">
-                                                    <img alt="Nest" src="{{ $cItem->product->featured_image ? asset(config('imagepath.product') . $cItem->product->featured_image) : asset('images/no-image.png') }}" />
-                                                </a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="{{ route('product.details', encrypt($cItem->product->id)) }}">{{ \Illuminate\Support\Str::words($cItem->product->name, 2, '...') }}</a></h4>
-                                                <h4><span>{{ $cItem->quantity }} × </span>{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cItem->price, 2) }}</h4>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="javascript:void(0)" class="remove-cart-item" data-id="{{ $cItem->id }}" data-product-id="{{ $cItem->product_id }}"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                    <div class="shopping-cart-footer">
+                                    <div class="cart-drawer-content">
+                                        <ul class="dynamic-cart-list">
+                                            @foreach($cartItems as $cItem)
+                                            <li>
+                                                <div class="shopping-cart-img">
+                                                    <a href="{{ route('product.details', encrypt($cItem->product->id)) }}">
+                                                        <img alt="Nest" src="{{ $cItem->product->featured_image ? asset(config('imagepath.product') . $cItem->product->featured_image) : asset('images/no-image.png') }}" />
+                                                    </a>
+                                                </div>
+                                                <div class="shopping-cart-title">
+                                                    <h4><a href="{{ route('product.details', encrypt($cItem->product->id)) }}">{{ \Illuminate\Support\Str::words($cItem->product->name, 2, '...') }}</a></h4>
+                                                    <h4><span>{{ $cItem->quantity }} × </span>{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cItem->price, 2) }}</h4>
+                                                </div>
+                                                <div class="shopping-cart-delete">
+                                                    <a href="javascript:void(0)" class="remove-cart-item" data-id="{{ $cItem->id }}" data-product-id="{{ $cItem->product_id }}"><i class="fi-rs-cross-small"></i></a>
+                                                </div>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    <div class="shopping-cart-footer cart-drawer-footer">
                                         <div class="shopping-cart-total">
                                             <h4>Total <span class="cart-total-amount">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cartTotal, 2) }}</span></h4>
                                         </div>
@@ -233,39 +244,10 @@
                             </a>
                         </div>
                         <div class="header-action-icon-2">
-                            <a class="mini-cart-icon" href="#">
+                            <a class="mini-cart-icon" href="javascript:void(0)" id="cart-drawer-trigger-mobile">
                                 <img alt="Nest" src="{{asset('web')}}/assets/imgs/theme/icons/icon-cart.svg" />
                                 <span class="pro-count white cart-count">{{\App\Models\Cart::where('session_id', session()->getId())->sum('quantity')}}</span>
                             </a>
-                            <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    <ul class="dynamic-cart-list">
-                                        @foreach($cartItems as $cItem)
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="{{ route('product.details', encrypt($cItem->product->id)) }}">
-                                                    <img alt="Nest" src="{{ $cItem->product->featured_image ? asset(config('imagepath.product') . $cItem->product->featured_image) : asset('images/no-image.png') }}" />
-                                                </a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="{{ route('product.details', encrypt($cItem->product->id)) }}">{{ \Illuminate\Support\Str::words($cItem->product->name, 2, '...') }}</a></h4>
-                                                <h3><span>{{ $cItem->quantity }} × </span>{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cItem->price, 2) }}</h3>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="javascript:void(0)" class="remove-cart-item" data-id="{{ $cItem->id }}" data-product-id="{{ $cItem->product_id }}"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                            <h4>Total <span class="cart-total-amount">{{ $settings->currency_symbol ?? 'TK' }} {{ number_format($cartTotal, 2) }}</span></h4>
-                                    </div>
-                                    <div class="shopping-cart-button">
-                                        <a href="shop-cart.html">View cart</a>
-                                        <a href="shop-checkout.html">Checkout</a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -458,3 +440,153 @@
         </div>
     </div>
 </div>
+<style>
+    .cart-drawer {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 350px;
+        height: 100vh;
+        background-color: #fff;
+        z-index: 9999;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        transition: right 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+    }
+    .cart-drawer.open {
+        right: 0;
+    }
+    .cart-drawer-header {
+        padding: 20px;
+        border-bottom: 1px solid #ececec;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .cart-drawer-header h4 {
+        margin: 0;
+        font-size: 18px;
+    }
+    .cart-drawer-close {
+        background: transparent;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #333;
+    }
+    .cart-drawer-close:hover {
+        color: #f53f3f;
+    }
+    .cart-drawer-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+    .cart-drawer-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .cart-drawer-content li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f1f1;
+    }
+    .cart-drawer-content .shopping-cart-img {
+        width: 70px;
+        margin-right: 15px;
+    }
+    .cart-drawer-content .shopping-cart-img img {
+        width: 100%;
+        border-radius: 5px;
+    }
+    .cart-drawer-content .shopping-cart-title {
+        flex: 1;
+    }
+    .cart-drawer-content .shopping-cart-title h4 {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    .cart-drawer-content .shopping-cart-title h4 span {
+        font-weight: 400;
+        color: #777;
+    }
+    .cart-drawer-footer {
+        padding: 20px;
+        border-top: 1px solid #ececec;
+        background: #f9f9f9;
+    }
+    .cart-drawer-footer .shopping-cart-total h4 {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    .cart-drawer-footer .shopping-cart-button {
+        display: flex;
+        gap: 10px;
+    }
+    .cart-drawer-footer .shopping-cart-button a {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+    .cart-drawer-footer .shopping-cart-button a.outline {
+        border: 1px solid #3bb77e;
+        color: #3bb77e;
+        background: transparent;
+    }
+    .cart-drawer-footer .shopping-cart-button a.outline:hover {
+        background: #3bb77e;
+        color: #fff;
+    }
+    .cart-drawer-footer .shopping-cart-button a:not(.outline) {
+        background: #3bb77e;
+        color: #fff;
+        border: 1px solid #3bb77e;
+    }
+    .cart-drawer-footer .shopping-cart-button a:not(.outline):hover {
+        background: #2a9461;
+    }
+    
+    @media (max-width: 576px) {
+        .cart-drawer {
+            width: 300px;
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const trigger1 = document.getElementById('cart-drawer-trigger');
+        const trigger2 = document.getElementById('cart-drawer-trigger-text');
+        const trigger3 = document.getElementById('cart-drawer-trigger-mobile');
+        const drawer = document.getElementById('cart-drawer');
+        const overlay = document.getElementById('cart-drawer-overlay');
+        const closeBtn = document.getElementById('cart-drawer-close');
+
+        function openDrawer(e) {
+            e.preventDefault();
+            drawer.classList.add('open');
+            overlay.style.display = 'block';
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            overlay.style.display = 'none';
+        }
+
+        if(trigger1) trigger1.addEventListener('click', openDrawer);
+        if(trigger2) trigger2.addEventListener('click', openDrawer);
+        if(trigger3) trigger3.addEventListener('click', openDrawer);
+        if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+        if(overlay) overlay.addEventListener('click', closeDrawer);
+        
+        // Optional: close when mouse leaves the drawer completely
+        if(drawer) drawer.addEventListener('mouseleave', closeDrawer);
+    });
+</script>
