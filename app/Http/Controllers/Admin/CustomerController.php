@@ -73,7 +73,14 @@ class CustomerController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => 'Customer created successfully.']);
+            return response()->json([
+                'success' => 'Customer created successfully.',
+                'customer' => [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'phone' => $customer->phone
+                ]
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Something went wrong. ' . $e->getMessage()], 500);

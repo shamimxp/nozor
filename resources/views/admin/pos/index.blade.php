@@ -1234,349 +1234,135 @@
                 <div class="cart__box">
                     <!-- card box header -->
                     <div class="card_box_header mb-3">
-                        <div class="row gx-2">
-                            <div class="col-md-5 col-lg-6 col-xl-5 col-12 col-sm-6">
-                                <!-- select customer -->
+                        <div class="row gx-2 mb-3">
+                            <div class="col-12">
                                 <div class="input-group">
-{{--                                    <span class="input-group-text rounded-0"><i class="fa-solid fa-user"></i></span>--}}
-                                    <!-- select -->
-                                    <select name="customer_id" id="customer_id" class="form-select select2-customer">
-                                        <option value="">Walk-In Customer</option>
-                                        @foreach($customers as $customer)
-                                            <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->phone }})</option>
-                                        @endforeach
-                                    </select>
-                                    <!-- add user btn -->
-                                    <button class="input-group-text rounded-0 bg-navy add_btn"
-                                            data-bs-target="#addcustomer_modal" data-bs-toggle="modal">
+                                    <div class="flex-grow-1" style="flex: 1 1 auto; max-width: 30%;">
+                                        <select name="customer_id" id="customer_id" class="form-select select2-customer w-100" style="border-radius: 0;">
+                                            <option value="">Walk-In Customer</option>
+                                            @foreach($customers as $customer)
+                                                <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->phone }})</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button class="input-group-text rounded-0 bg-navy add_btn" data-bs-target="#addcustomer_modal" data-bs-toggle="modal">
                                         <i class="fa-solid fa-circle-plus"></i>
                                     </button>
-                                    <!-- add user modal -->
-                                    <div class="modal fade" id="addcustomer_modal">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <!-- modal header -->
-                                                <div class="modal-header">
-                                                    <h2 class="modal-title">Add a new contact</h2>
-                                                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <!-- modal body -->
-                                                <div class="modal-body">
-                                                    <div class="addcontact_row">
-                                                        <div class="row gy-3">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Contact
-                                                                        ID:</label>
-                                                                    <!-- select location -->
-                                                                    <input type="text"
-                                                                           class="rounded-0 form-control"
-                                                                           placeholder="Contact ID">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Customer
-                                                                        Group:</label>
-                                                                    <!-- select category -->
-                                                                    <select name="" id=""
-                                                                            class="form-select rounded-0">
-                                                                        <option value="" hidden="" selected="">
-                                                                            Please Select
-                                                                        </option>
-                                                                        <option value="">None</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">First
-                                                                        Name:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="text"
-                                                                           class="form-control rounded-0"
-                                                                           placeholder="First Name">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Last
-                                                                        Name:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="text"
-                                                                           class="form-control rounded-0"
-                                                                           placeholder="Last Name">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Mobile:</label>
-                                                                    <!-- date -->
-                                                                    <input type="tel" class="form-control rounded-0"
-                                                                           placeholder="Mobile Number">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Email:</label>
-                                                                    <!-- date -->
-                                                                    <input type="tel" class="form-control rounded-0"
-                                                                           placeholder="Mobile Number">
-                                                                </div>
-                                                            </div>
+                                    <button class="input-group-text rounded-0 add_btn" data-bs-toggle="modal" data-bs-target="#search_add">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                    <input class="form-control rounded-0" type="text" placeholder="Enter Product Name / SKU / Product bar Code">
+                                    <button class="input-group-text rounded-0 bg-navy add_btn" data-bs-target="#add_product" data-bs-toggle="modal">
+                                        <i class="fa-solid fa-circle-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- add user modal -->
+                        <div class="modal fade" id="addcustomer_modal">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Add a new contact</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form id="add_customer_form">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="addcontact_row">
+                                                <div class="row gy-3">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Name:</label>
+                                                            <input type="text" name="name" class="form-control rounded-0" placeholder="Name" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Phone:</label>
+                                                            <input type="tel" name="phone" class="form-control rounded-0" placeholder="Phone" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Email:</label>
+                                                            <input type="email" name="email" class="form-control rounded-0" placeholder="Email (Optional)">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Address:</label>
+                                                            <textarea name="address[]" class="form-control rounded-0" placeholder="Address (Optional)" rows="3"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- modal footer -->
-                                                <div class="modal-footer">
-                                                    <button type="button"
-                                                            class="btn_main footer_innerbtn misty-color">Save</button>
-                                                    <button type="button" class="btn_main footer_innerbtn bg-navy"
-                                                            data-bs-dismiss="modal">Close</button>
-                                                </div>
                                             </div>
                                         </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn_main footer_innerbtn misty-color">Save</button>
+                                            <button type="button" class="btn_main footer_innerbtn bg-navy" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- search modal -->
+                        <div class="modal fade" id="search_add">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Search products by</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="search_modal_row">
+                                            <div class="row gy-3">
+                                                <div class="col-md-6"><div class="search_checked"><label class="check_inner"><input type="checkbox"><span class="checkmark"></span></label><span>Product Name</span></div></div>
+                                                <div class="col-md-6"><div class="search_checked"><label class="check_inner"><input type="checkbox"><span class="checkmark"></span></label><span>SKU</span></div></div>
+                                                <div class="col-md-6"><div class="search_checked"><label class="check_inner"><input type="checkbox"><span class="checkmark"></span></label><span>Custom Field1</span></div></div>
+                                                <div class="col-md-6"><div class="search_checked"><label class="check_inner"><input type="checkbox"><span class="checkmark"></span></label><span>Custom Field2</span></div></div>
+                                                <div class="col-md-6"><div class="search_checked"><label class="check_inner"><input type="checkbox"><span class="checkmark"></span></label><span>Custom Field3</span></div></div>
+                                                <div class="col-md-6"><div class="search_checked"><label class="check_inner"><input type="checkbox"><span class="checkmark"></span></label><span>Custom Field4</span></div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn_main footer_innerbtn misty-color">Save</button>
+                                        <button type="button" class="btn_main footer_innerbtn bg-navy" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-7 col-lg-6 col-xl-7 col-12 col-sm-6">
-                                <!-- Search Proeduct -->
-                                <div class="input-group">
-                                    <button class="input-group-text rounded-0 add_btn" data-bs-toggle="modal"
-                                            data-bs-target="#search_add">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                    </button>
-                                    <!-- search modal -->
-                                    <div class="modal fade" id="search_add">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <!-- modal header -->
-                                                <div class="modal-header">
-                                                    <h2 class="modal-title">Search products by</h2>
-                                                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <!-- modal body -->
-                                                <div class="modal-body">
-                                                    <div class="search_modal_row">
-                                                        <div class="row gy-3">
-                                                            <div class="col-md-6">
-                                                                <div class="search_checked">
-                                                                    <!-- inner check -->
-                                                                    <label class="check_inner">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>
-                                                                    <span>Product Name</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="search_checked">
-                                                                    <!-- inner check -->
-                                                                    <label class="check_inner">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>
-                                                                    <span>SKU</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="search_checked">
-                                                                    <!-- inner check -->
-                                                                    <label class="check_inner">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>
-                                                                    <span>Custom Field1</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="search_checked">
-                                                                    <!-- inner check -->
-                                                                    <label class="check_inner">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>
-                                                                    <span>Custom Field2</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="search_checked">
-                                                                    <!-- inner check -->
-                                                                    <label class="check_inner">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>
-                                                                    <span>Custom Field3</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="search_checked">
-                                                                    <!-- inner check -->
-                                                                    <label class="check_inner">
-                                                                        <input type="checkbox">
-                                                                        <span class="checkmark"></span>
-                                                                    </label>
-                                                                    <span> Custom Field4</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- modal footer -->
-                                                <div class="modal-footer">
-                                                    <button type="button"
-                                                            class="btn_main footer_innerbtn misty-color">Save</button>
-                                                    <button type="button" class="btn_main footer_innerbtn bg-navy"
-                                                            data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
+                        </div>
+
+                        <!-- add new product -->
+                        <div class="modal fade" id="add_product">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Add new product</h2>
+                                        <button class="btn btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <!-- search input -->
-                                    <input class="form-control" type="text"
-                                           placeholder="Enter Product Name / SKU / Product bar Code">
-                                    <button class="input-group-text rounded-0 bg-navy add_btn"
-                                            data-bs-target="#add_product" data-bs-toggle="modal">
-                                        <i class="fa-solid fa-circle-plus"></i>
-                                    </button>
-                                    <!-- add new product -->
-                                    <div class="modal fade" id="add_product">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <!-- modal header -->
-                                                <div class="modal-header">
-                                                    <h2 class="modal-title">Add new product</h2>
-                                                    <button class="btn btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <!-- modal body -->
-                                                <div class="modal-body">
-                                                    <form action="" class="addproduct_modalrow">
-                                                        <div class="row gy-3">
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Product
-                                                                        Name:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="text"
-                                                                           class="form-control rounded-0">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">SKU:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="text"
-                                                                           class="form-control rounded-0">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Barcode
-                                                                        Type:</label>
-                                                                    <!-- select location -->
-                                                                    <select name="" id=""
-                                                                            class="form-select rounded-0">
-                                                                        <option value="" hidden="" selected="">
-                                                                            Please Select
-                                                                        </option>
-                                                                        <option value="">A</option>
-                                                                        <option value="">B</option>
-                                                                        <option value="">C</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Unit:</label>
-                                                                    <!-- select location -->
-                                                                    <select name="" id=""
-                                                                            class="form-select rounded-0">
-                                                                        <option value="" hidden="" selected="">
-                                                                            Please Select
-                                                                        </option>
-                                                                        <option value="">Pieces</option>
-                                                                        <option value="">Box</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Brand:</label>
-                                                                    <!-- select location -->
-                                                                    <select name="" id=""
-                                                                            class="form-select rounded-0">
-                                                                        <option value="" hidden="" selected="">
-                                                                            Please Select
-                                                                        </option>
-                                                                        <option value="">China</option>
-                                                                        <option value="">Itali</option>
-                                                                        <option value="">USA</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for=""
-                                                                           class="form-label">Category:</label>
-                                                                    <!-- select location -->
-                                                                    <select name="" id=""
-                                                                            class="form-select rounded-0">
-                                                                        <option value="" hidden="" selected="">
-                                                                            Please Select
-                                                                        </option>
-                                                                        <option value="">Silk</option>
-                                                                        <option value="">Reshmi</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for=""
-                                                                           class="form-label">Quantity:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="number"
-                                                                           class="form-control rounded-0">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Selling
-                                                                        Price:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="number"
-                                                                           class="form-control rounded-0">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Product
-                                                                        Image:</label>
-                                                                    <!-- Reference no -->
-                                                                    <input type="file"
-                                                                           class="form-control rounded-0">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                    <label for="" class="form-label">Product
-                                                                        Descreption:</label>
-                                                                    <!-- Reference no -->
-                                                                    <textarea name="" id="" rows="5"
-                                                                              class="form-control rounded-0"></textarea>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <!-- modal footer -->
-                                                <div class="modal-footer">
-                                                    <button type="button"
-                                                            class="btn_main footer_innerbtn misty-color">Save</button>
-                                                    <button type="button" class="btn_main footer_innerbtn bg-navy"
-                                                            data-bs-dismiss="modal">Close</button>
-                                                </div>
+                                    <div class="modal-body">
+                                        <form action="" class="addproduct_modalrow">
+                                            <div class="row gy-3">
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Product Name:</label><input type="text" class="form-control rounded-0"></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">SKU:</label><input type="text" class="form-control rounded-0"></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Barcode Type:</label><select class="form-select rounded-0"><option value="" hidden selected>Please Select</option><option value="">A</option><option value="">B</option><option value="">C</option></select></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Unit:</label><select class="form-select rounded-0"><option value="" hidden selected>Please Select</option><option value="">Pieces</option><option value="">Box</option></select></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Brand:</label><select class="form-select rounded-0"><option value="" hidden selected>Please Select</option><option value="">China</option><option value="">Itali</option><option value="">USA</option></select></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Category:</label><select class="form-select rounded-0"><option value="" hidden selected>Please Select</option><option value="">Silk</option><option value="">Reshmi</option></select></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Quantity:</label><input type="number" class="form-control rounded-0"></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Selling Price:</label><input type="number" class="form-control rounded-0"></div></div>
+                                                <div class="col-md-4"><div class="form-group"><label class="form-label">Product Image:</label><input type="file" class="form-control rounded-0"></div></div>
+                                                <div class="col-md-12"><div class="form-group"><label class="form-label">Product Descreption:</label><textarea rows="5" class="form-control rounded-0"></textarea></div></div>
                                             </div>
-                                        </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn_main footer_innerbtn misty-color">Save</button>
+                                        <button type="button" class="btn_main footer_innerbtn bg-navy" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
@@ -2281,6 +2067,21 @@ $(document).ready(function() {
         }, 500);
     });
 
+    // Infinite Scrolling
+    // Listen on the window scroll
+    $(window).on('scroll', function() {
+        if($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+            loadProducts(true);
+        }
+    });
+
+    // Listen on the product list parent container (if it's the one with the scrollbar)
+    $('#pos_product_list').parent().on('scroll', function() {
+        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 100) {
+            loadProducts(true);
+        }
+    });
+
     // Cart Logic
     let cart = {};
     let extraDiscount = {
@@ -2345,8 +2146,8 @@ $(document).ready(function() {
                     <td style="width: 35%;">
                         <h4 class="cart__product_title">${item.name}</h4>
                         <p class="product_cart_price">
-                            <span class="product_price_amount">${item.price.toFixed(2)}</span> ৳
-                            ${item.discountAmount > 0 ? `<small class="text-success ms-1">(-${item.discountType === 'percentage' ? item.discountAmount+'%' : '৳'+item.discountAmount})</small>` : ''}
+                            <span class="product_price_amount text-success"> ৳ ${item.price.toFixed(2)}</span>
+                            ${item.discountAmount > 0 ? `<small class="text-danger ms-1">(-${item.discountType === 'percentage' ? item.discountAmount+'%' : '৳'+item.discountAmount})</small>` : ''}
                         </p>
                     </td>
                     <td style="width: 30%;">
@@ -2362,7 +2163,7 @@ $(document).ready(function() {
                     </td>
                     <td style="width:25%">
                         <p class="product_item_subtotal text-center">
-                            <span class="subtotal__amount">${itemOriginalTotal.toFixed(2)}</span> ৳
+                          ৳ <span class="subtotal__amount">${itemOriginalTotal.toFixed(2)}</span> 
                         </p>
                     </td>
                     <td style="width: 10%;" class="text-center">
@@ -2668,6 +2469,48 @@ function updateDynamicChange() {
         $('.payment-method-btn[data-method="Cash"]').removeClass('btn-outline-secondary').addClass('active btn-navy').css({'background-color': '#001f3f', 'color': 'white'});
 
         $('#place_order').trigger('click');
+    });
+
+    // Handle dynamic customer creation
+    $('#add_customer_form').on('submit', function(e) {
+        e.preventDefault();
+        let form = $(this);
+        let btn = form.find('button[type="submit"]');
+        btn.prop('disabled', true).text('Saving...');
+
+        $.ajax({
+            url: "{{ route('admin.customer.store') }}",
+            type: "POST",
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    toastr.success(response.success);
+                    $('#addcustomer_modal').modal('hide');
+                    form[0].reset();
+
+                    // If the backend returned the newly created customer details, add to select2
+                    if (response.customer) {
+                        let newOption = new Option(response.customer.name + ' (' + response.customer.phone + ')', response.customer.id, true, true);
+                        $('#customer_id').append(newOption).trigger('change');
+                    }
+                }
+            },
+            error: function(xhr) {
+                const errors = xhr.responseJSON ? xhr.responseJSON.errors : null;
+                if (errors) {
+                    let msg = '';
+                    for (let key in errors) {
+                        msg += errors[key][0] + '<br>';
+                    }
+                    toastr.error(msg, 'Validation Error');
+                } else {
+                    toastr.error(xhr.responseJSON ? xhr.responseJSON.message : 'Something went wrong.');
+                }
+            },
+            complete: function() {
+                btn.prop('disabled', false).text('Save');
+            }
+        });
     });
 });
 </script>
