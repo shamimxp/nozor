@@ -14,7 +14,7 @@ class Product extends Model
         'name', 'slug', 'category_id', 'sub_category_id', 'unit_id', 
         'short_description', 'max_order_qty', 'is_featured', 
         'status', 'selling_price', 'cost_price', 'featured_image', 
-        'stock', 'discount_type', 'discount_amount'
+        'stock', 'discount_type', 'discount_amount', 'is_manufacturer'
     ];
 
     protected $with = ['approvedReviews'];

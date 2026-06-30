@@ -65,6 +65,7 @@
                             <th>Stock Quantity</th>
                             <th>Price</th>
                             <th>Featured</th>
+                            <th>Manufacturer</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -133,6 +134,7 @@
                 {data: 'stock', name: 'stock'},
                 {data: 'price', name: 'price'},
                 {data: 'featured', name: 'featured', orderable: false, searchable: false},
+                {data: 'manufacturer', name: 'manufacturer', orderable: false, searchable: false},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
@@ -227,6 +229,19 @@
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.product.featured-status') }}",
+                data: { 'id': id, 'status': status },
+                success: function(data) {
+                    toastr.success(data.success);
+                }
+            });
+        });
+
+        $('body').on('change', '.changeManufacturer', function() {
+            var id = $(this).data('id');
+            var status = $(this).prop('checked') == true ? 1 : 0;
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.product.manufacturer-status') }}",
                 data: { 'id': id, 'status': status },
                 success: function(data) {
                     toastr.success(data.success);

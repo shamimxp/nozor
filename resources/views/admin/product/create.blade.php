@@ -94,10 +94,22 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group mt-2">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" name="is_featured" id="is_featured" value="1">
-                                    <label class="custom-control-label" for="is_featured">Is Featured?</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mt-2">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="is_featured" id="is_featured" value="1">
+                                            <label class="custom-control-label" for="is_featured">Is Featured?</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mt-2">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="is_manufacturer" id="is_manufacturer" value="1">
+                                            <label class="custom-control-label" for="is_manufacturer">Is Manufacturer Product?</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -191,6 +203,23 @@
         $('.select2').select2({
             placeholder: 'Select an option'
         });
+
+        function toggleManufacturer() {
+            let sellingPrice = parseFloat($('#selling_price').val()) || 0;
+            let costPrice = parseFloat($('#cost_price').val()) || 0;
+
+            if (sellingPrice > 0 || costPrice > 0) {
+                $('#is_manufacturer').prop('disabled', true).prop('checked', false);
+            } else {
+                $('#is_manufacturer').prop('disabled', false);
+            }
+        }
+
+        $('#selling_price, #cost_price').on('keyup change', function() {
+            toggleManufacturer();
+        });
+
+        toggleManufacturer();
 
         // Fetch subcategories
         $('#category_id').on('change', function() {

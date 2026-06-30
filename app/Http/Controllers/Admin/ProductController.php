@@ -45,7 +45,11 @@ class ProductController extends Controller
     public function outOfStock(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::with(['category', 'subCategory'])->where('stock', '<=', 0)->latest()->get();
+            $products = Product::with(['category', 'subCategory'])
+                               ->where('stock', '<=', 0)
+                               ->where('is_manufacturer', 0)
+                               ->latest()
+                               ->get();
             return $this->productDataTable($products);
         }
         return view('admin.product.out_of_stock');
@@ -68,10 +72,12 @@ class ProductController extends Controller
                 return $cat . $sub;
             })
             ->addColumn('price', function ($row) {
-                return '৳' . $row->selling_price . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="edit"></i></a>';
+                $editBtn = $row->is_manufacturer == 1 ? '' : ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="edit"></i></a>';
+                return '৳' . $row->selling_price . $editBtn;
             })
             ->addColumn('stock', function ($row) {
-                return $row->stock . ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="edit"></i></a>';
+                $editBtn = $row->is_manufacturer == 1 ? '' : ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="stock" data-value="'.$row->stock.'"><i data-feather="edit"></i></a>';
+                return $row->stock . $editBtn;
             })
             ->addColumn('featured', function ($row) {
                 $featured = $row->is_featured == 1 ? 'checked' : '';
@@ -82,6 +88,13 @@ class ProductController extends Controller
                                 <span class="switch-icon-right"><i data-feather="x"></i></span>
                             </label>
                         </div>';
+            })
+            ->addColumn('manufacturer', function ($row) {
+                if($row->is_manufacturer == 1){
+                    return '<span class="badge badge-info">Yes</span>';
+                } else {
+                    return '<span class="badge badge-secondary">No</span>';
+                }
             })
             ->addColumn('status', function ($row) {
                 $status = $row->status == 1 ? 'checked' : '';
@@ -99,7 +112,7 @@ class ProductController extends Controller
                 $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct"><i data-feather="trash"></i></a>';
                 return $btn;
             })
-            ->rawColumns(['product', 'price', 'stock', 'featured', 'status', 'action'])
+            ->rawColumns(['product', 'price', 'stock', 'featured', 'manufacturer', 'status', 'action'])
             ->make(true);
     }
 
@@ -132,6 +145,7 @@ class ProductController extends Controller
         $product->short_description = $request->short_description;
         $product->max_order_qty = $request->max_order_qty ?? 0;
         $product->is_featured = $request->is_featured ? 1 : 0;
+        $product->is_manufacturer = $request->is_manufacturer ? 1 : 0;
         $product->status = $request->status ?? 1;
         $product->selling_price = $request->selling_price;
         $product->cost_price = $request->cost_price;
@@ -223,6 +237,7 @@ class ProductController extends Controller
         $product->short_description = $request->short_description;
         $product->max_order_qty = $request->max_order_qty ?? 0;
         $product->is_featured = $request->is_featured ? 1 : 0;
+        $product->is_manufacturer = $request->is_manufacturer ? 1 : 0;
         $product->status = $request->status ?? 1;
         $product->selling_price = $request->selling_price;
         $product->cost_price = $request->cost_price;
@@ -310,6 +325,14 @@ class ProductController extends Controller
         $product->is_featured = $request->status;
         $product->save();
         return response()->json(['success' => 'Featured status changed successfully.']);
+    }
+
+    public function getManufacturerStatus(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        $product->is_manufacturer = $request->status;
+        $product->save();
+        return response()->json(['success' => 'Manufacturer status changed successfully.']);
     }
 
     public function getSubCategory($category_id)

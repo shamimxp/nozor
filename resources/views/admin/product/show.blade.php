@@ -78,6 +78,14 @@
                                     </span>
                                 </td>
                             </tr>
+                            <tr>
+                                <th>Manufacturer</th>
+                                <td>
+                                    <span class="badge badge-{{ $product->is_manufacturer ? 'info' : 'secondary' }}">
+                                        {{ $product->is_manufacturer ? 'Yes' : 'No' }}
+                                    </span>
+                                </td>
+                            </tr>
                         </table>
                         
                         <div class="mt-2">
