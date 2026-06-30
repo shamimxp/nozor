@@ -115,6 +115,10 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Fabric Price module
     Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
 
+    //Raw Material Product module
+    Route::resource('raw-material-product', \App\Http\Controllers\Admin\RawMaterialProductController::class, ['as' => 'admin']);
+    Route::post('/raw-material-product/status', [\App\Http\Controllers\Admin\RawMaterialProductController::class, 'getStatus'])->name('admin.raw_material_product.status');
+
     //Purchase module
     Route::get('/purchase/vendor-history-pdf', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistoryPdf'])->name('admin.purchase.vendor-history-pdf');
     Route::get('/purchase/vendor-history', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistory'])->name('admin.purchase.vendor-history');

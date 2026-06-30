@@ -2,8 +2,10 @@
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href=""><span class="brand-logo">
-                    <h2 class="brand-text">NOZOR Fashion</h2>
-                </a></li>
+                    <h2 class="brand-text">WOOD Machinery</h2>
+                    </span>
+                </a>
+            </li>
             <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary" data-feather="disc" data-ticon="disc"></i></a></li>
         </ul>
     </div>
@@ -135,6 +137,15 @@
                     </li>
                     <li class="{{ Route::is('admin.unit*') ? 'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.unit.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Units</span></a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class=" nav-item @if(Route::is('admin.raw-material-product*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Manufacture</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.raw-material-product.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.raw-material-product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Raw Material</span></a>
                     </li>
                 </ul>
             </li>
