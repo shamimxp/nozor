@@ -31,6 +31,11 @@
                         <input type="number" step="0.01" name="price_per_unit" id="price_per_unit" class="form-control" value="0" required>
                         <span class="text-danger error-text price_per_unit_error"></span>
                     </div>
+                    <div class="form-group">
+                        <label for="grade_value">Grade Value<span class="text-danger">*</span></label>
+                        <input type="text" name="grade_value" id="grade_value" class="form-control" value="0" required>
+                        <span class="text-danger error-text grade_value_error"></span>
+                    </div>
                     <div class="mt-2">
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                         <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
@@ -78,6 +83,7 @@
                             <th>#</th>
                             <th>Name</th>
                             <th>Unit</th>
+                            <th>Grade Value</th>
                             <th>Price</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -116,6 +122,7 @@
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'name', name: 'name'},
                 {data: 'unit_name', name: 'unit_name'},
+                {data: 'grade_value', name: 'grade_value'},
                 {data: 'price', name: 'price'},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
@@ -192,6 +199,7 @@
                 $('#name').val(data.name);
                 $('#unit_id').val(data.unit_id).trigger('change');
                 $('#price_per_unit').val(data.price_per_unit);
+                $('#grade_value').val(data.grade_value);
             })
         });
 

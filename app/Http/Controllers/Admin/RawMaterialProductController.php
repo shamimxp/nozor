@@ -30,6 +30,9 @@ class RawMaterialProductController extends Controller
                 ->addColumn('price', function ($row) {
                     return '৳' . $row->price_per_unit;
                 })
+                ->addColumn('grade_value', function ($row) {
+                    return $row->grade_value ?? 0.00;
+                })
                 ->addColumn('status', function ($row) {
                     $status = $row->status == 1 ? 'checked' : '';
                     return '<div class="custom-control custom-switch custom-switch-success">
@@ -58,12 +61,14 @@ class RawMaterialProductController extends Controller
             'name' => 'required|unique:raw_material_products,name|max:255',
             'unit_id' => 'nullable|integer',
             'price_per_unit' => 'required|numeric',
+            'grade_value' => 'required|numeric',
         ]);
 
         RawMaterialProduct::create([
             'name' => $request->name,
             'unit_id' => $request->unit_id,
             'price_per_unit' => $request->price_per_unit,
+            'grade_value' => $request->grade_value,
             'status' => 1,
         ]);
 
@@ -82,6 +87,7 @@ class RawMaterialProductController extends Controller
             'name' => 'required|max:255|unique:raw_material_products,name,' . $id,
             'unit_id' => 'nullable|integer',
             'price_per_unit' => 'required|numeric',
+            'grade_value' => 'required|numeric',
         ]);
 
         $data = RawMaterialProduct::findOrFail($id);
@@ -89,6 +95,7 @@ class RawMaterialProductController extends Controller
             'name' => $request->name,
             'unit_id' => $request->unit_id,
             'price_per_unit' => $request->price_per_unit,
+            'grade_value' => $request->grade_value,
         ]);
 
         return response()->json(['success' => 'Raw Material Product updated successfully.']);

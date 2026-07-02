@@ -10,7 +10,7 @@ class RawMaterialProduct extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'unit_id', 'price_per_unit', 'status'
+        'name', 'unit_id', 'price_per_unit','grade_value', 'status'
     ];
 
     public function unit()
