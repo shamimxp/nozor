@@ -141,11 +141,17 @@
                 </ul>
             </li>
 
-            <li class=" nav-item @if(Route::is('admin.raw-material-product*')) open @endif">
+            <li class=" nav-item @if(Route::is('admin.raw-material-product*') || Route::is('admin.material-type*') || Route::is('admin.product-recipe*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Manufacture</span></a>
                 <ul class="menu-content">
+                    <li class="{{ Route::is('admin.material-type.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.material-type.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Material Type</span></a>
+                    </li>
                     <li class="{{ Route::is('admin.raw-material-product.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.raw-material-product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Raw Material</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.product-recipe.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.product-recipe.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Recipe</span></a>
                     </li>
                 </ul>
             </li>

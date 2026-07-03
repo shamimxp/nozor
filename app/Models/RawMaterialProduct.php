@@ -10,11 +10,16 @@ class RawMaterialProduct extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'unit_id', 'price_per_unit','grade_value', 'status'
+        'name', 'unit_id', 'material_type_id', 'price_per_unit','grade_value', 'status'
     ];
 
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function materialType()
+    {
+        return $this->belongsTo(MaterialType::class);
     }
 }

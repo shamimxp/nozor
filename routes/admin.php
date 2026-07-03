@@ -86,7 +86,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Product Attribute module
     Route::resource('product-attribute', \App\Http\Controllers\Admin\ProductAttributeController::class, ['as' => 'admin']);
     Route::post('/product-attribute/status', [\App\Http\Controllers\Admin\ProductAttributeController::class, 'getStatus'])->name('admin.product_attribute.status');
-    
+
     // Variations
     Route::resource('variations', \App\Http\Controllers\Admin\VariationController::class, ['as' => 'admin']);
 
@@ -118,7 +118,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Raw Material Product module
     Route::resource('raw-material-product', \App\Http\Controllers\Admin\RawMaterialProductController::class, ['as' => 'admin']);
     Route::post('/raw-material-product/status', [\App\Http\Controllers\Admin\RawMaterialProductController::class, 'getStatus'])->name('admin.raw_material_product.status');
+    Route::resource('product-recipe', \App\Http\Controllers\Admin\ProductRecipeController::class, ['as' => 'admin']);
 
+    // Material Type module
+    Route::resource('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, ['as' => 'admin']);
+    Route::post('/material-type/status', [\App\Http\Controllers\Admin\MaterialTypeController::class, 'getStatus'])->name('admin.material_type.status');
     //Purchase module
     Route::get('/purchase/vendor-history-pdf', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistoryPdf'])->name('admin.purchase.vendor-history-pdf');
     Route::get('/purchase/vendor-history', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistory'])->name('admin.purchase.vendor-history');
