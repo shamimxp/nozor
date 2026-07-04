@@ -15,8 +15,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Product</th>
-                                <th>Body Charge</th>
-                                <th>Finishing Charge</th>
+                                <th>Material Items</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -38,8 +37,7 @@
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'product_name', name: 'product.name'},
-                {data: 'body_charge', name: 'body_charge'},
-                {data: 'finishing_charge', name: 'finishing_charge'},
+                {data: 'material_items', name: 'material_items', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
             drawCallback: function() {

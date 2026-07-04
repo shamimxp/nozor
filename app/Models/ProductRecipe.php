@@ -19,10 +19,16 @@ class ProductRecipe extends Model
         'gas_bill',
         'box_price',
         'carrying_charge',
+        'wire_price',
     ];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(ProductRecipeItem::class);
     }
 }

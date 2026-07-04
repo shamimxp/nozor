@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('electric_bill', 10, 2)->default(0);
             $table->decimal('gas_bill', 10, 2)->default(0);
             $table->decimal('box_price', 10, 2)->default(0);
+            $table->decimal('wire_price', 10, 2)->default(0);
             $table->decimal('carrying_charge', 10, 2)->default(0);
             $table->timestamps();
         });

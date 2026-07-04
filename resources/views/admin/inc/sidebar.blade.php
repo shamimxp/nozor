@@ -172,24 +172,30 @@
                     <span class="menu-title text-truncate">Customer List</span>
                 </a>
             </li>
+            <li class="{{ Route::is('admin.dealer*')?'active':'' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.dealer.index')}}">
+                    <i data-feather="briefcase"></i>
+                    <span class="menu-title text-truncate">Dealer List</span>
+                </a>
+            </li>
             <li class="{{ Route::is('admin.vendor*')?'active':'' }} nav-item">
                 <a class="d-flex align-items-center" href="{{route('admin.vendor.index')}}">
                     <i data-feather="truck"></i>
                     <span class="menu-title text-truncate">Vendor List</span>
                 </a>
             </li>
-            <li class="{{ Route::is('admin.fabric.index') || Route::is('admin.fabric.create') || Route::is('admin.fabric.edit') ? 'active' : '' }} nav-item">
-                <a class="d-flex align-items-center" href="{{route('admin.fabric.index')}}">
-                    <i data-feather="scissors"></i>
-                    <span class="menu-title text-truncate">Fabric List</span>
-                </a>
-            </li>
-            <li class="{{ Route::is('admin.fabric-price*')?'active':'' }} nav-item">
-                <a class="d-flex align-items-center" href="{{route('admin.fabric-price.index')}}">
-                    <i data-feather="tag"></i>
-                    <span class="menu-title text-truncate">Fabric Price Setup</span>
-                </a>
-            </li>
+{{--            <li class="{{ Route::is('admin.fabric.index') || Route::is('admin.fabric.create') || Route::is('admin.fabric.edit') ? 'active' : '' }} nav-item">--}}
+{{--                <a class="d-flex align-items-center" href="{{route('admin.fabric.index')}}">--}}
+{{--                    <i data-feather="scissors"></i>--}}
+{{--                    <span class="menu-title text-truncate">Fabric List</span>--}}
+{{--                </a>--}}
+{{--            </li>--}}
+{{--            <li class="{{ Route::is('admin.fabric-price*')?'active':'' }} nav-item">--}}
+{{--                <a class="d-flex align-items-center" href="{{route('admin.fabric-price.index')}}">--}}
+{{--                    <i data-feather="tag"></i>--}}
+{{--                    <span class="menu-title text-truncate">Fabric Price Setup</span>--}}
+{{--                </a>--}}
+{{--            </li>--}}
 
             <li class="navigation-header"><span>Account & Finance</span><i data-feather="more-horizontal"></i></li>
             <li class="nav-item {{ Route::is('admin.due-collection*') ? 'active' : '' }}">
