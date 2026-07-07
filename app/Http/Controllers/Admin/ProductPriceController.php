@@ -11,17 +11,14 @@ class ProductPriceController extends Controller
 {
      public function calculate(Request $request, ProductPriceCalculator $calculator)
     {
-        $request->product_id = 59;
-        $request->dealer_id = 1;
-//        $validated = $request->validate([
-//            'product_id' => 'required|integer|exists:products,id',
-//            'dealer_id'  => 'required|integer|exists:dealers,id',
-//        ]);
+        $validated = $request->validate([
+            'product_id' => 'required|integer|exists:products,id',
+            'dealer_id'  => 'required|integer|exists:dealers,id',
+        ]);
 
-
-        $result = $calculator->calculate(59,1
-//            $validated['product_id'],
-//            $validated['dealer_id']
+        $result = $calculator->calculate(
+            $validated['product_id'],
+            $validated['dealer_id']
         );
 
         return response()->json([

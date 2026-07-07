@@ -8,7 +8,7 @@
         --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
         --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     }
-    .card-premium { border: none; border-radius: 12px; box-shadow: var(--card-shadow); overflow: hidden; margin-bottom: 2rem; }
+    .card-premium { border: none; border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 2rem; }
     .card-premium .card-header { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 1.25rem; }
     .sticky-summary { position: sticky; top: 100px; }
     .summary-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px dashed #e5e7eb; }
@@ -92,24 +92,25 @@
                     <div class="bg-light p-1 rounded-lg border row mx-0 mb-2">
                         <div class="col-md-12 px-50">
                             <label class="small font-weight-bold ">Select Product</label>
-                            <select id="productSelect" class="form-control select2">
-                                <option value="">Select product...</option>
+                            <select id="productSelect" class="form-control select2" data-placeholder="Select product...">
+                                <option value="" disabled selected>Select product...</option>
                                 @foreach($products as $product)
-                                    <option value="{{ $product->id }}">
+                                    <option value="{{ $product->id }}" data-image="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : '' }}">
                                         {{ $product->name ?? '-' }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-
-                    <div class="table-responsive">
+                </div>
+                   <div class="card-body">
+                      <div class="table-responsive">
                         <table class="table table-hover" id="cartTable">
                             <thead class="bg-light">
                                 <tr>
                                     <th>Product Name</th>
                                     <th class="text-right">Price</th>
-                                    <th class="text-center" style="width:100px;">Qty</th>
+                                    <th class="text-center" style="width:150px;">Qty</th>
                                     <th class="text-right">Total</th>
                                     <th></th>
                                 </tr>
@@ -117,11 +118,11 @@
                             <tbody></tbody>
                         </table>
                     </div>
-                </div>
+                  </div>
             </div>
 
             {{-- 4. Images --}}
-            <div class="card card-premium">
+            <div class="card card-premium d-none" id="designImagesCard">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="section-title"><i data-feather="image"></i> Design Images</span>
 {{--                    <button type="button" class="btn btn-outline-primary btn-sm" id="addImageBtn"><i data-feather="upload"></i> Add Images</button>--}}
@@ -200,5 +201,200 @@
 @endsection
 @push('scripts')
 <script>
+    let cart = [];
+    
+    $(document).ready(function() {
+        $('#productSelect').on('change', function() {
+            let productId = $(this).val();
+            let dealerId = $('select[name="customer_id"]').val();
+            
+            if (!productId) return;
+            
+            if (!dealerId) {
+                toastr.error('Please select a dealer first.');
+                $(this).val('').trigger('change.select2');
+                return;
+            }
+            
+            let productName = $(this).find(':selected').text().trim();
+            let productImage = $(this).find(':selected').data('image');
+            
+            // fetch real-time price
+            $.ajax({
+                url: "{{ route('admin.product-price-calculator') }}",
+                type: "GET",
+                data: {
+                    product_id: productId,
+                    dealer_id: dealerId
+                },
+                success: function(res) {
+                    if (res.success && res.data) {
+                        let dealerPrice = res.data.dealer_price;
+                        addToCart(productId, productName, dealerPrice, productImage);
+                    } else {
+                        toastr.error('Error fetching product price calculation');
+                    }
+                },
+                error: function(err) {
+                    toastr.error('Failed to fetch product price');
+                }
+            });
+            
+            // clear selection
+            $(this).val('').trigger('change.select2');
+        });
+        
+        $('#discount, #carryingCharge, #paidAmount').on('input', function() {
+            updateSummary();
+        });
+    });
+    
+    function addToCart(id, name, price, image) {
+        let existing = cart.find(i => i.id == id);
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                price: price,
+                qty: 1,
+                image: image
+            });
+            
+            // Display image if available
+            if (image) {
+                if ($('#imagePreviewContainer .text-center:contains("No images attached.")').length) {
+                    $('#imagePreviewContainer').empty();
+                }
+                $('#imagePreviewContainer').append(`
+                    <div class="col-auto mb-2 text-center img-prod-${id}">
+                        <img src="${image}" class="img-thumbnail" style="height:100px;width:100px;object-fit:cover;">
+                    </div>
+                `);
+            }
+        }
+        renderCart();
+    }
+    
+    function renderCart() {
+        let tbody = $('#cartTable tbody');
+        tbody.empty();
+        
+        let hiddenInputs = $('#cartHiddenInputs');
+        hiddenInputs.empty();
+        
+        cart.forEach((item, index) => {
+            let itemTotal = item.price * item.qty;
+            
+            let tr = `
+                <tr>
+                    <td>${item.name}</td>
+                    <td class="text-right align-middle">৳${item.price}</td>
+                    <td class="text-center align-middle">
+                        <input type="number" class="form-control text-center item-qty mx-auto" style="min-width: 100px;" data-id="${item.id}" value="${item.qty}" min="1">
+                    </td>
+                    <td class="text-right item-total align-middle">৳${itemTotal.toFixed(2)}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger remove-item" data-id="${item.id}">
+                            <i data-feather="trash-2"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tbody.append(tr);
+            
+            hiddenInputs.append(`
+                <input type="hidden" name="items[${index}][product_id]" value="${item.id}">
+                <input type="hidden" name="items[${index}][price]" value="${item.price}">
+                <input type="hidden" name="items[${index}][qty]" value="${item.qty}">
+            `);
+        });
+        
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        
+        let hasImage = cart.some(item => item.image && item.image !== '');
+        if (hasImage) {
+            $('#designImagesCard').removeClass('d-none');
+        } else {
+            $('#designImagesCard').addClass('d-none');
+        }
+        
+        updateSummary();
+    }
+    
+    $(document).on('input', '.item-qty', function() {
+        let id = $(this).data('id');
+        let qty = $(this).val();
+        let item = cart.find(i => i.id == id);
+        if (item) {
+            item.qty = parseFloat(qty) || 0;
+            
+            let itemTotal = item.price * item.qty;
+            $(this).closest('tr').find('.item-total').text('৳' + itemTotal.toFixed(2));
+            
+            let itemIndex = cart.indexOf(item);
+            $('#cartHiddenInputs input[name="items['+itemIndex+'][qty]"]').val(item.qty);
+            
+            updateSummary();
+        }
+    });
+
+    $(document).on('change', '.item-qty', function() {
+        let id = $(this).data('id');
+        let qty = parseFloat($(this).val());
+        if (!qty || qty < 1) {
+            qty = 1;
+            $(this).val(qty);
+        }
+        let item = cart.find(i => i.id == id);
+        if (item) {
+            item.qty = qty;
+            
+            let itemTotal = item.price * item.qty;
+            $(this).closest('tr').find('.item-total').text('৳' + itemTotal.toFixed(2));
+            
+            let itemIndex = cart.indexOf(item);
+            $('#cartHiddenInputs input[name="items['+itemIndex+'][qty]"]').val(item.qty);
+            
+            updateSummary();
+        }
+    });
+    
+    $(document).on('click', '.remove-item', function() {
+        let id = $(this).data('id');
+        cart = cart.filter(i => i.id != id);
+        
+        // Remove image
+        $('#imagePreviewContainer .img-prod-' + id).remove();
+        if (cart.length === 0) {
+             $('#imagePreviewContainer').html('<div class="col-12 text-center py-2 ">No images attached.</div>');
+        }
+        renderCart();
+    });
+    
+    function updateSummary() {
+        let totalQty = 0;
+        let subTotal = 0;
+        
+        cart.forEach(item => {
+            totalQty += parseFloat(item.qty) || 0;
+            subTotal += (parseFloat(item.price) || 0) * (parseFloat(item.qty) || 0);
+        });
+        
+        let discount = parseFloat($('#discount').val()) || 0;
+        let carryingCharge = parseFloat($('#carryingCharge').val()) || 0;
+        let paidAmount = parseFloat($('#paidAmount').val()) || 0;
+        
+        let grandTotal = (subTotal - discount) + carryingCharge;
+        let due = grandTotal - paidAmount;
+        
+        $('#summaryTotalQty').text(totalQty + ' Pcs');
+        $('#summarySubTotal').text('৳' + subTotal.toFixed(2));
+        $('#summaryGrandTotal').text('৳' + grandTotal.toFixed(2));
+        $('#summaryDue').text('৳' + due.toFixed(2));
+    }
 </script>
 @endpush
