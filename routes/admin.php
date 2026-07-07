@@ -105,7 +105,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
     //Customer module
     Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class, ['as' => 'admin']);
-    
+
     //Dealer module
     Route::resource('dealer', \App\Http\Controllers\Admin\DealerController::class, ['as' => 'admin']);
 
@@ -122,6 +122,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('raw-material-product', \App\Http\Controllers\Admin\RawMaterialProductController::class, ['as' => 'admin']);
     Route::post('/raw-material-product/status', [\App\Http\Controllers\Admin\RawMaterialProductController::class, 'getStatus'])->name('admin.raw_material_product.status');
     Route::resource('product-recipe', \App\Http\Controllers\Admin\ProductRecipeController::class, ['as' => 'admin']);
+    Route::get('/product-price-calculate', [\App\Http\Controllers\Admin\ProductPriceController::class,'calculate'])->name('product-price-calculator');
 
     // Material Type module
     Route::resource('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, ['as' => 'admin']);

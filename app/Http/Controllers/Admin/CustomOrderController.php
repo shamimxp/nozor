@@ -7,8 +7,10 @@ use App\Models\Customer;
 use App\Models\CustomOrder;
 use App\Models\CustomOrderImage;
 use App\Models\CustomOrderItem;
+use App\Models\Dealer;
 use App\Models\Fabric;
 use App\Models\FabricPrice;
+use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
@@ -125,7 +127,7 @@ class CustomOrderController extends Controller
                     return $r->customer ? '<strong>' . $r->customer->name . '</strong><br><small>' . $r->customer->phone . '</small>' : '-';
                 })
                 ->addColumn('financials', function($r) {
-                    return 
+                    return
                            '<strong class="text-danger">Due: ৳' . number_format($r->due, 2) . '</strong>';
                 })
                 ->addColumn('status_badge', function($r) {
@@ -134,9 +136,9 @@ class CustomOrderController extends Controller
                 })
                 ->addColumn('action', function($r) {
                     $btn = '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn" 
-                                data-id="'.$r->id.'" 
-                                data-customer-id="'.$r->customer_id.'" 
+                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn"
+                                data-id="'.$r->id.'"
+                                data-customer-id="'.$r->customer_id.'"
                                 data-customer-name="'.($r->customer->name ?? '').'"
                                 data-order-number="'.$r->order_number.'"
                                 data-due="'.$r->due.'"
@@ -154,15 +156,11 @@ class CustomOrderController extends Controller
      */
     public function create()
     {
-        $styleNumber = CustomOrder::generateStyleNumber();
         $orderNumber = CustomOrder::generateOrderNumber();
-        $customers   = Customer::orderBy('name')->get();
-        $vendors     = Vendor::orderBy('name')->get();
-        $fabrics     = Fabric::where('status', 1)->orderBy('name')->get();
-        $fabricPrices = FabricPrice::with('fabric')->where('status', 1)->get();
-
+        $customers   = Dealer::orderBy('shop_name')->get();
+        $products   = Product::where('is_manufacturer',1)->where('status',1)->get();
         return view('admin.custom-order.create', compact(
-            'styleNumber', 'orderNumber', 'customers', 'vendors', 'fabrics', 'fabricPrices'
+            'orderNumber', 'customers','products'
         ));
     }
 

@@ -75,7 +75,8 @@ class ProductRecipeController extends Controller
             }
         }
 
-        return redirect()->route('admin.product-recipe.index')->with('success', 'Product Recipe saved successfully.');
+        toastr()->success('Product Recipe saved successfully.');
+        return redirect()->route('admin.product-recipe.index');
     }
     public function show($id){
         $recipe = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct'])->findOrFail($id);
@@ -128,7 +129,8 @@ class ProductRecipeController extends Controller
             }
         }
 
-        return redirect()->route('admin.product-recipe.index')->with('success', 'Product Recipe updated successfully.');
+        toastr()->success('Product Recipe updated successfully.');
+        return redirect()->route('admin.product-recipe.index');
     }
 
     public function destroy($id){
