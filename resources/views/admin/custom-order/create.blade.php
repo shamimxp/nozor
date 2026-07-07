@@ -38,9 +38,8 @@
     @csrf
 
     <div class="row">
-        <div class="col-lg-8">
-            {{-- 1. Basic Info --}}
-            <div class="card card-premium">
+          <div class="col-lg-12">
+             <div class="card card-premium">
                 <div class="card-header"><span class="section-title"><i data-feather="user"></i> Basic Information</span></div>
                 <div class="card-body">
                     <div class="row">
@@ -68,28 +67,17 @@
                                 <option value="confirm">Confirm</option>
                             </select>
                         </div>
-{{--                        <div class="col-md-4 mt-1">--}}
-{{--                            <label class="font-weight-bold small">Delivery Date <span class="text-danger">*</span></label>--}}
-{{--                            <input type="date" name="delivery_date" class="form-control" value="" required>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-md-4 mt-1">--}}
-{{--                            <label class="font-weight-bold small">SLEEVE <span class="text-danger">*</span></label>--}}
-{{--                            <select name="sleeve" id="filterSleeve" class="form-control select2" required>--}}
-{{--                                <option value="half">Half Sleeve</option>--}}
-{{--                                <option value="full">Full Sleeve</option>--}}
-{{--                            </select>--}}
-{{--                        </div>--}}
+
                     </div>
                 </div>
             </div>
 
-            {{-- 3. Fabric Specs --}}
             <div class="card card-premium">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="section-title"><i data-feather="shopping-cart"></i> Product Items</span>
                 </div>
                 <div class="card-body">
-                    <div class="bg-light p-1 rounded-lg border row mx-0 mb-2">
+                    <div class="bg-light p-1 rounded-lg border row mx-0">
                         <div class="col-md-12 px-50">
                             <label class="small font-weight-bold ">Select Product</label>
                             <select id="productSelect" class="form-control select2" data-placeholder="Select product...">
@@ -103,7 +91,9 @@
                         </div>
                     </div>
                 </div>
-                   <div class="card-body">
+            </div>
+              <div class="card card-premium">
+                 <div class="card-body">
                       <div class="table-responsive">
                         <table class="table table-hover" id="cartTable">
                             <thead class="bg-light">
@@ -117,10 +107,11 @@
                             </thead>
                             <tbody></tbody>
                         </table>
-                    </div>
+                        </div>
                   </div>
             </div>
-
+        </div>
+        <div class="col-lg-8">
             {{-- 4. Images --}}
             <div class="card card-premium d-none" id="designImagesCard">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -162,11 +153,11 @@
                         <div class="summary-item"><span>Sub Total</span> <span id="summarySubTotal">৳0.00</span></div>
                         <div class="summary-item align-items-center">
                             <span>Discount</span>
-                            <input type="number" name="Discount" id="discount" class="form-control form-control-sm text-right" style="width:100px" value="0.00">
+                            <input type="number" name="Discount" id="discount" class="form-control form-control-sm text-right" style="width:100px" placeholder="0.00">
                         </div>
                         <div class="summary-item align-items-center">
                             <span>Carrying Charge</span>
-                            <input type="number" name="carrying_charge" id="carryingCharge" class="form-control form-control-sm text-right" style="width:100px" value="0.00">
+                            <input type="number" name="carrying_charge" id="carryingCharge" class="form-control form-control-sm text-right" style="width:100px" placeholder="0.00">
                         </div>
                         <div class="grand-total-box d-flex justify-content-between align-items-center">
                             <span class="h5 mb-0 font-weight-bold">Grand Total</span>
@@ -320,6 +311,7 @@
             $('#designImagesCard').removeClass('d-none');
         } else {
             $('#designImagesCard').addClass('d-none');
+            //   $('#designImagesCard').removeClass('d-none');
         }
         
         updateSummary();
