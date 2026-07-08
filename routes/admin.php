@@ -157,6 +157,14 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Wishlist module
     Route::resource('wishlist', \App\Http\Controllers\Admin\WishlistController::class, ['as' => 'admin', 'only' => ['index', 'destroy']]);
 
+    // Dealer Order module
+    Route::get('/dealer-order/export-list-excel', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportExcel'])->name('admin.dealer-order.export-list-excel');
+    Route::get('/dealer-order/export-list-pdf', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportListPdf'])->name('admin.dealer-order.export-list-pdf');
+    Route::get('/dealer-order/export-pdf/{id}', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportPdf'])->name('admin.dealer-order.export-pdf');
+    Route::post('/dealer-order/status', [\App\Http\Controllers\Admin\DealerOrderController::class, 'updateStatus'])->name('admin.dealer-order.status');
+    Route::get('/dealer-order/due-list', [\App\Http\Controllers\Admin\DealerOrderController::class, 'dueList'])->name('admin.dealer-order.due-list');
+    Route::resource('dealer-order', \App\Http\Controllers\Admin\DealerOrderController::class, ['as' => 'admin']);
+
     //POS Order module
     Route::get('/pos-order/export-list-excel', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListExcel'])->name('admin.pos-order.export-list-excel');
     Route::get('/pos-order/export-list-pdf', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportListPdf'])->name('admin.pos-order.export-list-pdf');
