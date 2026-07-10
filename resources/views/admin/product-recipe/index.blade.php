@@ -1,8 +1,4 @@
-11x39mm Baju Bit	
-￼￼
-Carbait Iron	
-2	11x32mm Baju Bit	
-￼￼@extends('layouts.admin')
+@extends('layouts.admin')
 @section('title', 'Product Recipes')
 @section('content')
 <div class="row">
