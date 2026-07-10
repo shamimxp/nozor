@@ -76,4 +76,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::prefix('dealer')->name('dealer.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Dealer\AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Dealer\AuthController::class, 'login'])->name('login.submit');
+
+    Route::middleware('auth:dealer')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Dealer\DashboardController::class, 'index'])->name('dashboard');
+        
+        Route::get('/profile', [\App\Http\Controllers\Dealer\ProfileController::class, 'edit'])->name('profile');
+        Route::post('/profile', [\App\Http\Controllers\Dealer\ProfileController::class, 'update'])->name('profile.update');
+        
+        Route::post('/logout', [\App\Http\Controllers\Dealer\AuthController::class, 'logout'])->name('logout');
+        
+        Route::get('/back-to-admin', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'backToAdmin'])->name('back');
+    });
+});
+
 require __DIR__.'/auth.php';

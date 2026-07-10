@@ -107,6 +107,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class, ['as' => 'admin']);
 
     //Dealer module
+    Route::get('dealer/{id}/login-as', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'loginAs'])->name('admin.dealer.loginAs');
     Route::resource('dealer', \App\Http\Controllers\Admin\DealerController::class, ['as' => 'admin']);
 
     //Vendor module

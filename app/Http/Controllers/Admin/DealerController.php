@@ -54,6 +54,7 @@ class DealerController extends Controller
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="'.route('admin.dealer.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewDealer" title="View"><i data-feather="eye"></i></a>';
                     $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editDealer" title="Edit"><i data-feather="edit"></i></a>';
+                    $btn .= '<a href="'.route('admin.dealer.loginAs', $row->id).'" class="btn btn-success btn-sm mr-1" title="Login As Dealer"><i data-feather="log-in"></i></a>';
                     $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteDealer" title="Delete"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
@@ -70,6 +71,7 @@ class DealerController extends Controller
             'shop_name' => 'required',
             'phone' => 'required|unique:dealers,phone',
             'email' => 'nullable|email',
+            'password' => 'nullable|confirmed|min:6',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'nid_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'trade_license' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -78,8 +80,13 @@ class DealerController extends Controller
         try {
             DB::beginTransaction();
 
-            $data = $request->except(['profile_image', 'nid_image', 'trade_license', '_token', 'dealer_id', '_method', 'password', 'status', 'is_special']);
-            $data['password'] = Hash::make($request->phone); // default password is phone number
+            $data = $request->except(['profile_image', 'nid_image', 'trade_license', '_token', 'dealer_id', '_method', 'password', 'password_confirmation', 'status', 'is_special']);
+            
+            if ($request->filled('password')) {
+                $data['password'] = $request->password;
+            } else {
+                $data['password'] = $request->phone;
+            }
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_special'] = $request->has('is_special') ? 1 : 0;
 
@@ -138,6 +145,7 @@ class DealerController extends Controller
             'shop_name' => 'required',
             'phone' => 'required|unique:dealers,phone,' . $id,
             'email' => 'nullable|email',
+            'password' => 'nullable|confirmed|min:6',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'nid_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'trade_license' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -146,7 +154,11 @@ class DealerController extends Controller
         try {
             DB::beginTransaction();
 
-            $data = $request->except(['profile_image', 'nid_image', 'trade_license', '_token', 'dealer_id', '_method', 'password', 'status', 'is_special']);
+            $data = $request->except(['profile_image', 'nid_image', 'trade_license', '_token', 'dealer_id', '_method', 'password', 'password_confirmation', 'status', 'is_special']);
+            
+            if ($request->filled('password')) {
+                $data['password'] = $request->password;
+            }
             $data['status'] = $request->has('status') ? 1 : 0;
             $data['is_special'] = $request->has('is_special') ? 1 : 0;
 
