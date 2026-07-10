@@ -33,10 +33,15 @@ class DealerOrderController extends Controller
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('order_info', function($r) {
-                    return '<strong>Num:</strong> ' . $r->order_number . '<br>' .
+                    return '<strong>Order Num:</strong> ' . $r->order_number . '<br>' .
+                             '<strong>Order Status:</strong> ' . $r->status . '<br>' .
                            '<strong>Date:</strong> ' . $r->order_date->format('d M, Y');
                 })
-                ->addColumn('dealer_name', fn($r) => $r->dealer ? '<strong>'.$r->dealer->shop_name.'</strong><br><small>'.$r->dealer->name.'</small>' : '-')
+                ->addColumn('dealer_name', function($r) {
+                    return '<strong>Shop Name:</strong> ' . $r->dealer->shop_name . '<br>' .
+                           '<strong>Name:</strong> ' . $r->dealer->name. '<br>' .
+                           '<strong>Phone:</strong> ' . $r->dealer->phone;
+                })
                 ->addColumn('totals', function($r) {
                     return 'Total: ৳' . number_format($r->grand_total, 2) . '<br>' .
                             'Paid: ৳' . number_format($r->paid, 2) . '<br>' .
@@ -62,11 +67,12 @@ class DealerOrderController extends Controller
                 })
                 ->addColumn('action', function ($r) {
                     $btn = '';
-                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25"><i data-feather="eye"></i></a>';
+                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm mr-25" title="Download PDF"><i data-feather="download"></i></a>';
                     if (!in_array($r->status, ['delivered', 'cancelled'])) {
-                        $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25"><i data-feather="edit"></i></a>';
+                        $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25" title="Edit"><i data-feather="edit"></i></a>';
                     }
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder"><i data-feather="trash"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder" title="Delete"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'dealer_name', 'totals', 'status_badge', 'action'])
@@ -74,7 +80,7 @@ class DealerOrderController extends Controller
         }
         return view('admin.dealer-order.index');
     }
-    
+
     public function dueList(Request $request)
     {
         if ($request->ajax()) {
@@ -82,6 +88,16 @@ class DealerOrderController extends Controller
 
             if ($request->order_number) {
                 $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
+            }
+            if ($request->shop_name) {
+                $query->whereHas('dealer', function ($q) use ($request) {
+                    $q->where('shop_name', 'LIKE', '%' . $request->shop_name . '%');
+                });
+            }
+            if ($request->dealer_phone) {
+                $query->whereHas('dealer', function ($q) use ($request) {
+                    $q->where('phone', 'LIKE', '%' . $request->dealer_phone . '%');
+                });
             }
             if ($request->start_date && $request->end_date) {
                 $query->whereBetween('order_date', [$request->start_date, $request->end_date]);
@@ -97,7 +113,11 @@ class DealerOrderController extends Controller
                     return '<strong>Num:</strong> ' . $r->order_number . '<br>' .
                            '<strong>Date:</strong> ' . $r->order_date->format('d M, Y');
                 })
-                ->addColumn('dealer_name', fn($r) => $r->dealer ? '<strong>'.$r->dealer->shop_name.'</strong><br><small>'.$r->dealer->name.'</small>' : '-')
+                ->addColumn('dealer_name', function($r) {
+                    return '<strong>Shop Name:</strong> ' . $r->dealer->shop_name . '<br>' .
+                            '<strong>Name:</strong> ' . $r->dealer->name . '<br>' .
+                            '<strong>Phone:</strong> ' . $r->dealer->phone;
+                })
                 ->addColumn('totals', function($r) {
                     return 'Total: ৳' . number_format($r->grand_total, 2) . '<br>' .
                             'Paid: ৳' . number_format($r->paid, 2) . '<br>' .
@@ -107,7 +127,8 @@ class DealerOrderController extends Controller
                     return ucfirst($r->status);
                 })
                 ->addColumn('action', function ($r) {
-                    $btn = '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25"><i data-feather="eye"></i></a>';
+                    $btn = '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm mr-25" title="Download PDF"><i data-feather="download"></i></a>';
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'dealer_name', 'totals', 'status_badge', 'action'])
@@ -142,15 +163,15 @@ class DealerOrderController extends Controller
             DB::beginTransaction();
             $orderNumber = DealerOrder::generateOrderNumber();
 
-            $subTotal = 0; 
+            $subTotal = 0;
             $cartItems = [];
-            
+
             foreach ($request->items as $item) {
                 $qty = (int) $item['qty'];
                 $price = (float) $item['price'];
                 $lineTotal = $price * $qty;
                 $subTotal += $lineTotal;
-                
+
                 $cartItems[] = [
                     'product_id' => $item['product_id'],
                     'qty'        => $qty,
@@ -238,15 +259,15 @@ class DealerOrderController extends Controller
 
         try {
             DB::beginTransaction();
-            $subTotal = 0; 
+            $subTotal = 0;
             $cartItems = [];
-            
+
             foreach ($request->items as $item) {
                 $qty = (int) $item['qty'];
                 $price = (float) $item['price'];
                 $lineTotal = $price * $qty;
                 $subTotal += $lineTotal;
-                
+
                 $cartItems[] = [
                     'product_id' => $item['product_id'],
                     'qty'        => $qty,
@@ -329,7 +350,7 @@ class DealerOrderController extends Controller
     public function exportExcel(Request $request)
     {
         $fileName = 'dealer_orders_' . date('Y-m-d') . '.csv';
-        $query = DealerOrder::with('dealer')->latest();
+        $query = DealerOrder::with(['dealer', 'items'])->latest();
 
         if ($request->order_number) {
             $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
@@ -351,7 +372,7 @@ class DealerOrderController extends Controller
             'Expires'             => '0',
         ];
 
-        $columns = ['Order No', 'Order Date', 'Dealer', 'Phone', 'Sub Total', 'Discount', 'Carrying Charge', 'Grand Total', 'Paid', 'Due', 'Status'];
+        $columns = ['Order No', 'Order Date', 'Dealer Name', 'Dealer Phone', 'Qty', 'Sub Total', 'Discount', 'Carrying Charge', 'Grand Total', 'Paid', 'Due', 'Status'];
 
         $callback = function () use ($orders, $columns) {
             $file = fopen('php://output', 'w');
@@ -360,8 +381,9 @@ class DealerOrderController extends Controller
                 fputcsv($file, [
                     $order->order_number,
                     $order->order_date->format('Y-m-d'),
-                    $order->dealer->shop_name ?? 'N/A',
+                    $order->dealer->shop_name ?? ($order->dealer->name ?? 'N/A'),
                     $order->dealer->phone ?? 'N/A',
+                    $order->items->sum('qty'),
                     $order->sub_total,
                     $order->discount,
                     $order->carrying_charge,
@@ -379,7 +401,7 @@ class DealerOrderController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = DealerOrder::with('dealer')->latest();
+        $query = DealerOrder::with(['dealer', 'items'])->latest();
 
         if ($request->order_number) {
             $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');

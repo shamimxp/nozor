@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Create Custom Order')
+@section('title', 'Create Dealer Order')
 
 @section('content')
 <style>

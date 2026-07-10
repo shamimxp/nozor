@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Custom Orders List</title>
+    <title>Dealer Order List</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #333; }
@@ -39,7 +39,7 @@
 <body>
 
 <div class="header">
-    <h1>Custom Orders Report</h1>
+    <h1>Dealer Order List</h1>
     <p>Generated on {{ date('d M Y, h:i A') }}</p>
 </div>
 
@@ -75,9 +75,8 @@
             <th>#</th>
             <th>Order No</th>
             <th>Date</th>
-            <th>Customer</th>
-            <th>Type</th>
-            <th>Sleeve</th>
+            <th>Dealer Name</th>
+            <th>Dealer Phone</th>
             <th>Qty</th>
             <th>Grand Total</th>
             <th>Paid</th>
@@ -113,15 +112,11 @@
             @endphp
             <tr>
                 <td>{{ $i + 1 }}</td>
-                <td><strong>{{ $order->order_number }}</strong><br><small>{{ $order->style_number }}</small></td>
+                <td><strong>{{ $order->order_number }}</strong></td>
                 <td>{{ $order->order_date->format('d M Y') }}</td>
-                <td>
-                    {{ $order->customer->name ?? 'N/A' }}<br>
-                    <small>{{ $order->customer->phone ?? '' }}</small>
-                </td>
-                <td>{{ strtoupper($order->type) }}</td>
-                <td>{{ strtoupper($order->sleeve) }}</td>
-                <td class="text-right">{{ $order->total_quantity }}</td>
+                <td>{{ $order->dealer->shop_name ?? ($order->dealer->name ?? 'N/A') }}</td>
+                <td>{{ $order->dealer->phone ?? 'N/A' }}</td>
+                <td class="text-right">{{ $order->items->sum('qty') }}</td>
                 <td class="text-right">৳{{ number_format($order->grand_total, 2) }}</td>
                 <td class="text-right">৳{{ number_format($order->paid, 2) }}</td>
                 <td class="text-right {{ $order->due > 0 ? 'text-danger' : 'text-success' }}">৳{{ number_format($order->due, 2) }}</td>
@@ -129,13 +124,13 @@
             </tr>
         @empty
             <tr>
-                <td colspan="11" style="text-align:center; color:#999; padding: 20px;">No records found.</td>
+                <td colspan="10" style="text-align:center; color:#999; padding: 20px;">No records found.</td>
             </tr>
         @endforelse
 
         @if($orders->count() > 0)
         <tr class="totals-row">
-            <td colspan="7" class="text-right"><strong>TOTALS</strong></td>
+            <td colspan="6" class="text-right"><strong>TOTALS</strong></td>
             <td class="text-right"><strong>৳{{ number_format($totalGrand, 2) }}</strong></td>
             <td class="text-right"><strong>৳{{ number_format($totalPaid, 2) }}</strong></td>
             <td class="text-right text-danger"><strong>৳{{ number_format($totalDue, 2) }}</strong></td>
