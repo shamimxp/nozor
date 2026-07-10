@@ -386,12 +386,17 @@
 
             <!-- Notes Section -->
             <div class="card-modern mb-xl-0 mb-3">
-                <div class="card-header">
+                <div class="card-header border-bottom">
                     <h4 class="section-title"><i data-feather="file-text"></i> Additional Notes</h4>
                 </div>
                 <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label>Order Note</label>
+                        <textarea name="note" class="form-control" rows="3" placeholder="Enter any special instructions or order notes here..."></textarea>
+                    </div>
                     <div class="form-group mb-0">
-                        <textarea name="note" class="form-control" rows="4" placeholder="Enter any special instructions or order notes here..."></textarea>
+                        <label>Admin Note</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Enter admin specific notes here..."></textarea>
                     </div>
                 </div>
             </div>

@@ -103,6 +103,10 @@
                                     <span class="font-weight-bold">Notes:</span><br>
                                     <span>{{ $order->note ?: 'No special notes provided.' }}</span>
                                 </p>
+                                <p class="card-text mt-1">
+                                    <span class="font-weight-bold text-primary">Admin Notes:</span><br>
+                                    <span>{{ $order->admin_notes ?: 'No admin notes provided.' }}</span>
+                                </p>
                             </div>
                             <div class="col-md-6 d-flex justify-content-end order-md-2 order-1">
                                 <div class="invoice-total-wrapper" style="width: 100%; max-width: 200px;">
@@ -217,7 +221,10 @@
             <div class="row align-items-start">
                 <div class="col-7">
                     <p class="mb-0" style="font-weight: bold; color: #5e5873; font-size: 14px;">Notes:</p>
-                    <p style="color: #b9b9c3; font-size: 13px;">{{ $order->note ?: 'No special notes provided.' }}</p>
+                    <p style="color: #b9b9c3; font-size: 13px; margin-bottom: 8px;">{{ $order->note ?: 'No special notes provided.' }}</p>
+                    
+                    <p class="mb-0" style="font-weight: bold; color: #7367f0; font-size: 14px;">Admin Notes:</p>
+                    <p style="color: #b9b9c3; font-size: 13px;">{{ $order->admin_notes ?: 'No admin notes provided.' }}</p>
                 </div>
                 <div class="col-5">
                     <div class="d-flex justify-content-between mb-1">
