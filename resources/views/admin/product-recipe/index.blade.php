@@ -1,4 +1,8 @@
-@extends('layouts.admin')
+11x39mm Baju Bit	
+￼￼
+Carbait Iron	
+2	11x32mm Baju Bit	
+￼￼@extends('layouts.admin')
 @section('title', 'Product Recipes')
 @section('content')
 <div class="row">
@@ -15,6 +19,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Product</th>
+                                <th>Images</th>
                                 <th>Material Items</th>
                                 <th>Action</th>
                             </tr>
@@ -37,6 +42,7 @@
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'product_name', name: 'product.name'},
+                {data: 'images', name: 'images', orderable: false, searchable: false},
                 {data: 'material_items', name: 'material_items', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],

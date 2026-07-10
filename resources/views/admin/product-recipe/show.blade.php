@@ -21,6 +21,21 @@
                     <div class="col-md-3 mt-2"><strong>Wire Price:</strong> {{ $recipe->wire_price }}</div>
                 </div>
 
+                @if(is_array($recipe->manufacture_images) && count($recipe->manufacture_images) > 0)
+                <div class="card border shadow-none mb-4">
+                    <div class="card-header bg-light p-2 border-bottom">
+                        <h4 class="card-title mb-0">Manufacture Images</h4>
+                    </div>
+                    <div class="card-body p-2 d-flex flex-wrap" style="gap: 10px;">
+                        @foreach($recipe->manufacture_images as $img)
+                            <a href="{{ asset($img) }}" target="_blank">
+                                <img src="{{ asset($img) }}" alt="image" width="100" height="100" class="rounded border" style="object-fit: cover;">
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 <div class="card border shadow-none">
                     <div class="card-header bg-light p-2 border-bottom">
                         <h4 class="card-title mb-0">Recipe Items</h4>

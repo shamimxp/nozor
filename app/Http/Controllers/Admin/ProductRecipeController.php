@@ -23,6 +23,20 @@ class ProductRecipeController extends Controller
                         return $item->rawMaterialProduct ? '<span class="badge badge-light-primary">' . $item->rawMaterialProduct->name . '</span>' : '';
                     })->filter()->implode(' ');
                 })
+                ->addColumn('images', function ($row) {
+                    $html = '';
+                    if(is_array($row->manufacture_images) && count($row->manufacture_images) > 0) {
+                        $html .= '<div class="d-flex" style="gap: 5px;">';
+                        foreach(array_slice($row->manufacture_images, 0, 3) as $img) {
+                            $html .= '<img src="' . asset($img) . '" width="40" height="40" class="rounded border" style="object-fit: cover;">';
+                        }
+                        if(count($row->manufacture_images) > 3) {
+                            $html .= '<span class="badge badge-light-secondary align-self-center">+'.(count($row->manufacture_images)-3).'</span>';
+                        }
+                        $html .= '</div>';
+                    }
+                    return $html;
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="'.route('admin.product-recipe.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewBtn" title="View"><i data-feather="eye"></i></a>';
                     $btn .= '<a href="'.route('admin.product-recipe.edit', $row->id).'" class="btn btn-dark btn-sm mr-1 editBtn" title="Edit"><i data-feather="edit"></i></a>';
@@ -30,7 +44,7 @@ class ProductRecipeController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'material_items'])
+                ->rawColumns(['action', 'material_items', 'images'])
                 ->make(true);
         }
         return view('admin.product-recipe.index');
@@ -47,6 +61,15 @@ class ProductRecipeController extends Controller
             'raw_material_id' => 'required|array',
         ]);
 
+        $manufacture_images = [];
+        if ($request->hasFile('manufacture_images')) {
+            foreach ($request->file('manufacture_images') as $file) {
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/product_recipes'), $filename);
+                $manufacture_images[] = 'uploads/product_recipes/' . $filename;
+            }
+        }
+
         $recipe = \App\Models\ProductRecipe::create([
             'product_id' => $request->product_id,
             'body_charge' => $request->body_charge ?? 0,
@@ -58,6 +81,7 @@ class ProductRecipeController extends Controller
             'box_price' => $request->box_price ?? 0,
             'carrying_charge' => $request->carrying_charge ?? 0,
             'wire_price' => $request->wire_price ?? 0,
+            'manufacture_images' => $manufacture_images,
         ]);
 
         if ($request->has('raw_material_id')) {
@@ -99,6 +123,27 @@ class ProductRecipeController extends Controller
         ]);
 
         $recipe = \App\Models\ProductRecipe::findOrFail($id);
+        $old_images = is_array($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+        $existing_images_from_request = $request->existing_images ?? [];
+        
+        foreach ($old_images as $old_img) {
+            if (!in_array($old_img, $existing_images_from_request)) {
+                if (file_exists(public_path($old_img))) {
+                    @unlink(public_path($old_img));
+                }
+            }
+        }
+
+        $manufacture_images = $existing_images_from_request;
+        
+        if ($request->hasFile('manufacture_images')) {
+            foreach ($request->file('manufacture_images') as $file) {
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/product_recipes'), $filename);
+                $manufacture_images[] = 'uploads/product_recipes/' . $filename;
+            }
+        }
+
         $recipe->update([
             'product_id' => $request->product_id,
             'body_charge' => $request->body_charge ?? 0,
@@ -109,6 +154,8 @@ class ProductRecipeController extends Controller
             'gas_bill' => $request->gas_bill ?? 0,
             'box_price' => $request->box_price ?? 0,
             'carrying_charge' => $request->carrying_charge ?? 0,
+            'wire_price' => $request->wire_price ?? 0,
+            'manufacture_images' => $manufacture_images,
         ]);
 
         // Re-create items
@@ -135,6 +182,15 @@ class ProductRecipeController extends Controller
 
     public function destroy($id){
         $recipe = \App\Models\ProductRecipe::findOrFail($id);
+        
+        if (is_array($recipe->manufacture_images)) {
+            foreach ($recipe->manufacture_images as $old_img) {
+                if (file_exists(public_path($old_img))) {
+                    @unlink(public_path($old_img));
+                }
+            }
+        }
+        
         $recipe->delete();
         return response()->json(['success' => 'Product Recipe deleted successfully.']);
     }

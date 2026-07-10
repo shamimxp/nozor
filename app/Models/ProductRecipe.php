@@ -20,6 +20,11 @@ class ProductRecipe extends Model
         'box_price',
         'carrying_charge',
         'wire_price',
+        'manufacture_images',
+    ];
+
+    protected $casts = [
+        'manufacture_images' => 'array',
     ];
 
     public function product()

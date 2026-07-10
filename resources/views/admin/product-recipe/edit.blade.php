@@ -9,7 +9,7 @@
                 <a href="{{ route('admin.product-recipe.index') }}" class="btn btn-secondary"><i data-feather="arrow-left"></i> Back to List</a>
             </div>
             <div class="card-body pt-2">
-                <form action="{{ route('admin.product-recipe.update', $recipe->id) }}" method="POST">
+                <form action="{{ route('admin.product-recipe.update', $recipe->id) }}" method="POST" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="row">
@@ -65,6 +65,22 @@
                         <div class="col-md-3 form-group">
                             <label>Wire Price</label>
                             <input type="number" step="0.01" name="wire_price" class="form-control" value="{{ $recipe->wire_price }}">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Manufacture Images (Multiple)</label>
+                            <input type="file" name="manufacture_images[]" id="manufacture_images" class="form-control" multiple accept="image/*">
+                            @if(is_array($recipe->manufacture_images) && count($recipe->manufacture_images) > 0)
+                                <div id="existing_images_container" class="mt-2 d-flex flex-wrap" style="gap: 10px; margin-bottom: 10px;">
+                                    @foreach($recipe->manufacture_images as $img)
+                                        <div class="position-relative existing-image-wrapper">
+                                            <input type="hidden" name="existing_images[]" value="{{ $img }}">
+                                            <img src="{{ asset($img) }}" alt="image" width="80" height="80" class="rounded border" style="object-fit: cover;">
+                                            <button type="button" class="btn btn-sm btn-danger position-absolute remove-existing-image" style="top: -5px; right: -5px; padding: 2px 5px; font-size: 10px;">&times;</button>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                            <div id="image_preview_container" class="mt-2 d-flex flex-wrap" style="gap: 10px;"></div>
                         </div>
                         <div class="col-md-12 mt-3 mb-3">
                             <div class="card border">
@@ -207,6 +223,64 @@
             
             let qty = Math.round(area * grade);
             tr.find('.row-qty').val(qty);
+        });
+
+        let selectedFiles = new DataTransfer();
+
+        $('#manufacture_images').on('change', function(e) {
+            let files = e.target.files;
+            if (files && files.length > 0) {
+                $.each(files, function(i, file) {
+                    selectedFiles.items.add(file);
+                });
+                
+                this.files = selectedFiles.files;
+                renderNewImagePreviews();
+            }
+        });
+
+        function renderNewImagePreviews() {
+            let container = $('#image_preview_container');
+            container.empty();
+            
+            $.each(selectedFiles.files, function(i, file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let img = $('<img>').attr('src', e.target.result)
+                                        .addClass('rounded border')
+                                        .css({ width: '80px', height: '80px', objectFit: 'cover' });
+                    
+                    let removeBtn = $('<button>')
+                        .attr('type', 'button')
+                        .addClass('btn btn-sm btn-danger position-absolute remove-new-image')
+                        .css({ top: '-5px', right: '-5px', padding: '2px 5px', fontSize: '10px' })
+                        .html('&times;')
+                        .data('index', i);
+
+                    let wrapper = $('<div>').addClass('position-relative').append(img).append(removeBtn);
+                    container.append(wrapper);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        $(document).on('click', '.remove-new-image', function() {
+            let index = $(this).data('index');
+            let newFiles = new DataTransfer();
+            
+            $.each(selectedFiles.files, function(i, file) {
+                if (i !== index) {
+                    newFiles.items.add(file);
+                }
+            });
+            
+            selectedFiles = newFiles;
+            $('#manufacture_images')[0].files = selectedFiles.files;
+            renderNewImagePreviews();
+        });
+
+        $(document).on('click', '.remove-existing-image', function() {
+            $(this).closest('.existing-image-wrapper').remove();
         });
     });
 </script>
