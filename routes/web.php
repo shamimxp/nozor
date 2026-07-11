@@ -89,6 +89,10 @@ Route::prefix('dealer')->name('dealer.')->group(function () {
         
         Route::post('/logout', [\App\Http\Controllers\Dealer\AuthController::class, 'logout'])->name('logout');
         
+        Route::get('/pos', [\App\Http\Controllers\Dealer\PosController::class, 'index'])->name('pos');
+        Route::get('/pos/products', [\App\Http\Controllers\Dealer\PosController::class, 'getProducts'])->name('pos.products');
+        Route::get('/pos/subcategories/{id}', [\App\Http\Controllers\Dealer\PosController::class, 'getSubCategories'])->name('pos.subcategories');
+        
         Route::get('/back-to-admin', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'backToAdmin'])->name('back');
     });
 });
