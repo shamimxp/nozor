@@ -1984,7 +1984,7 @@ $(document).ready(function() {
         if (!append) {
             currentOffset = 0;
             currentLimit = 36;
-            $('#pos_product_list').html('<div class="col-12 d-flex justify-content-center align-items-center w-100" style="min-height: 200px;"><div class="spinner-border text-primary" role="status"></div></div>');
+            $('#pos_product_list').html('<div class="w-100 d-flex justify-content-center align-items-center" style="grid-column: 1 / -1; min-height: 200px;"><div class="spinner-border text-primary" role="status"></div></div>');
             $('#load_more_btn').hide();
         } else {
             $('#load_more_btn').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...').prop('disabled', true);

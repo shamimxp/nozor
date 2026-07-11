@@ -20,7 +20,7 @@ class PosController extends Controller
 
     public function getProducts(Request $request, ProductPriceCalculator $calculator)
     {
-        $query = Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
+        $query = Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
             ->where('status', 1);
 
         if ($request->has('search') && $request->search != '') {
@@ -48,8 +48,10 @@ class PosController extends Controller
         
         $dealerId = auth('dealer')->id();
         
-        // Process prices
+        // Process prices and stock
         foreach ($products as $product) {
+            $product->is_out_of_stock = (!$product->is_manufacturer && $product->stock <= 0);
+            
             if ($product->is_manufacturer) {
                 try {
                     $calc = $calculator->calculate($product->id, $dealerId);

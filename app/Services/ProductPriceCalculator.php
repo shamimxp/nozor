@@ -12,13 +12,13 @@ class ProductPriceCalculator
     const SPECIAL_DEALER_PROFIT_PERCENT = 25;
     const RETAIL_MULTIPLIER             = 42.85714;
 
-    public function calculate(int $productId, int $dealerId): array
+    public function calculate(int $productId, ?int $dealerId = null): array
     {
         $recipe = ProductRecipe::with('items.rawMaterialProduct')
             ->where('product_id', $productId)
             ->firstOrFail();
 
-        $dealer = Dealer::findOrFail($dealerId);
+        $dealer = $dealerId ? Dealer::find($dealerId) : null;
 
         // 1. Material cost (recomputed live from current material price/grade)
         $itemBreakdown = [];
@@ -61,7 +61,7 @@ class ProductPriceCalculator
         $totalCostPrice = round($materialCost + $chargesTotal, 2);
 
         // 4. Dealer price (profit % depends on dealer type)
-        $profitPercent = $dealer->is_special
+        $profitPercent = ($dealer && $dealer->is_special)
             ? self::SPECIAL_DEALER_PROFIT_PERCENT
             : self::NORMAL_DEALER_PROFIT_PERCENT;
 
@@ -74,7 +74,7 @@ class ProductPriceCalculator
         return [
             'product_id'        => $productId,
             'dealer_id'         => $dealerId,
-            'dealer_type'       => $dealer->is_special ? 'special' : 'normal',
+            'dealer_type'       => ($dealer && $dealer->is_special) ? 'special' : 'normal',
             'items'             => $itemBreakdown,
 //            'material_cost'     => round($materialCost, 2),
 //            'charges'           => $charges,

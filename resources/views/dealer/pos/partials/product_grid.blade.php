@@ -1,12 +1,19 @@
 @forelse($products as $product)
     <div class="col-xl-2 col-lg-3 col-md-4 col-6 mb-2 px-1">
-        <div class="card border text-center shadow-none product-card" 
-             style="border-radius: 12px; transition: 0.3s; cursor:pointer;"
+        <div class="card border text-center shadow-none product-card {{ $product->is_out_of_stock ? 'stock__out' : '' }}" 
+             style="border-radius: 12px; transition: 0.3s; cursor:pointer; position: relative;"
              data-id="{{ $product->id }}" 
              data-title="{{ $product->name }}" 
              data-price="{{ $product->pos_price }}" 
+             data-stock="{{ $product->is_manufacturer ? 999999 : $product->stock }}"
              data-image="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : '' }}"
-             onclick="addToCart(this)">
+             onclick="{{ $product->is_out_of_stock ? '' : 'addToCart(this)' }}">
+             
+            @if($product->is_out_of_stock)
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); z-index: 8; border-radius: 12px; pointer-events: none;"></div>
+                <div style="position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); background-color: #f5365c; color: #ffffff !important; padding: 10px 0; font-size: 14px; font-weight: 800; text-transform: uppercase; text-align: center; z-index: 10; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); letter-spacing: 1.5px; pointer-events: none;">Stock Out</div>
+            @endif
+
             <div class="card-body p-1">
                 <div class="mb-50" style="height: 100px; background:#f8f9fa; border-radius: 8px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                     @if($product->featured_image)

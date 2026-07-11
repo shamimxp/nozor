@@ -254,9 +254,9 @@ class AdminController extends Controller
         return view('admin.pos.index', compact('categories', 'customers'));
     }
 
-    public function getPosProducts(Request $request)
+    public function getPosProducts(Request $request, \App\Services\ProductPriceCalculator $calculator)
     {
-        $query = \App\Models\Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'status')
+        $query = \App\Models\Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
             ->where('status', 1);
 
         if ($request->category_id) {
@@ -297,23 +297,41 @@ class AdminController extends Controller
 
         $html = '';
         foreach ($products as $product) {
-            $stockOut = $product->stock <= 0 ? 'stock__out' : '';
-            $stockText = $product->stock <= 0 ? '<span>Stock Out</span>' : '';
+            $displayPrice = $product->selling_price;
+            
+            if ($product->is_manufacturer) {
+                try {
+                    $calc = $calculator->calculate($product->id, null);
+                    $displayPrice = $calc['retail_price'];
+                } catch (\Exception $e) {
+                    $displayPrice = $product->selling_price;
+                }
+            }
+
+            // Manufacturer products always bypass stock check (made to order)
+            $isOutOfStock = (!$product->is_manufacturer && $product->stock <= 0);
+            
+            $stockOut = $isOutOfStock ? 'stock__out' : '';
+            
+            $stockOverlay = $isOutOfStock ? '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); z-index: 8; border-radius: 12px; pointer-events: none;"></div>' : '';
+            $stockText = $isOutOfStock ? '<div style="position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); background-color: #f5365c; color: #ffffff !important; padding: 10px 0; font-size: 14px; font-weight: 800; text-transform: uppercase; text-align: center; z-index: 10; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); letter-spacing: 1.5px; pointer-events: none;">Stock Out</div>' : '';
+            
             $imageUrl = $product->featured_image ? asset(config('imagepath.product') . '/' . $product->featured_image) : asset('images/no-image.png');
 
             $html .= '<div class="product__box ' . $stockOut . '" title="' . $product->name . '"
                         data-id="' . $product->id . '"
                         data-name="' . $product->name . '"
-                        data-price="' . $product->selling_price . '"
-                        data-stock="' . $product->stock . '"
+                        data-price="' . $displayPrice . '"
+                        data-stock="' . ($product->is_manufacturer ? 999999 : $product->stock) . '"
                         data-discount-type="' . $product->discount_type . '"
                         data-discount-amount="' . $product->discount_amount . '">
+                        ' . $stockOverlay . '
                         ' . $stockText . '
                         <div class="product_thumb">
                             <img src="' . $imageUrl . '" alt="' . $product->name . '">
                         </div>
                         <h4 class="product_title">' . $product->name . '</h4>
-                        <span class="product_price" style="color: #f5365c; font-weight: 700; font-size: 14px;">' . $product->selling_price . ' ৳</span>
+                        <div class="product_price" style="color: #f5365c; font-weight: 700; font-size: 14px; margin-top: auto;">' . $displayPrice . ' ৳</div>
                       </div>';
         }
 
