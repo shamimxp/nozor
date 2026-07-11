@@ -256,7 +256,8 @@ class AdminController extends Controller
 
     public function getPosProducts(Request $request)
     {
-        $query = \App\Models\Product::where('status', 1);
+        $query = \App\Models\Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'status')
+            ->where('status', 1);
 
         if ($request->category_id) {
             $query->where('category_id', $request->category_id);
@@ -270,10 +271,15 @@ class AdminController extends Controller
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 
-        $limit = 54;
-        $offset = $request->offset ?? 0;
+        $totalCount = $query->count();
+        
+        $offset = (int) $request->input('offset', 0);
+        $limit = (int) $request->input('limit', 36);
 
-        $products = $query->inRandomOrder()->offset($offset)->limit($limit)->get();
+        $products = $query->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
+        
+        $remainingCount = max(0, $totalCount - ($offset + $limit));
+        $hasMore = $remainingCount > 0;
 
         if ($products->isEmpty() && $offset == 0) {
             $html = '<div class="no-product-found w-100 text-center" style="grid-column: 1 / -1; min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 50px 0;">
@@ -283,7 +289,9 @@ class AdminController extends Controller
             return response()->json([
                 'html' => $html,
                 'count' => 0,
-                'total' => 0
+                'total_count' => $totalCount,
+                'remaining_count' => 0,
+                'has_more' => false
             ]);
         }
 
@@ -312,7 +320,9 @@ class AdminController extends Controller
         return response()->json([
             'html' => $html,
             'count' => $products->count(),
-            'total' => $query->count()
+            'total_count' => $totalCount,
+            'remaining_count' => $remainingCount,
+            'has_more' => $hasMore
         ]);
     }
 

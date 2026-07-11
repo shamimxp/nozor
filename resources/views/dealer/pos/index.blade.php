@@ -33,8 +33,15 @@
                     <hr class="mt-1 mb-2">
 
                     <!-- Product Grid -->
-                    <div class="row match-height" id="product-grid" style="overflow-y: auto; max-height: calc(85vh - 100px);">
-                        <!-- Products will be loaded here via AJAX -->
+                    <div id="product-scroll-area" style="overflow-y: auto; max-height: calc(85vh - 100px); overflow-x: hidden;">
+                        <div class="row match-height" id="product-grid">
+                            <!-- Products will be loaded here via AJAX -->
+                        </div>
+                        <div id="load-more-btn-container" class="text-center mt-2 mb-3" style="display: none;">
+                            <button id="load-more-btn" class="btn btn-outline-dark" onclick="loadProducts(true)" style="border-radius: 8px; padding: 8px 24px; font-weight: bold;">
+                                Load More
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -182,14 +189,29 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     let cart = [];
+    let currentOffset = 0;
+    let currentLimit = 36;
+    let isLoading = false;
 
-    function loadProducts() {
-        $('#product-grid').html('<div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;"><div class="spinner-border" style="color: #0F172A; width: 2.5rem; height: 2.5rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+    function loadProducts(append = false) {
+        if (isLoading) return;
+        isLoading = true;
+
+        if (!append) {
+            currentOffset = 0;
+            currentLimit = 36;
+            $('#product-grid').html('<div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;"><div class="spinner-border" style="color: #0F172A; width: 2.5rem; height: 2.5rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+            $('#load-more-btn-container').hide();
+        } else {
+            $('#load-more-btn').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...').prop('disabled', true);
+        }
 
         const data = {
             search: $('#search-input').val(),
             category_id: $('#category-select').val(),
             subcategory_id: $('#subcategory-select').val(),
+            offset: currentOffset,
+            limit: currentLimit
         };
 
         $.ajax({
@@ -197,13 +219,35 @@
             type: 'GET',
             data: data,
             success: function(response) {
-                $('#product-grid').html(response.html);
+                if (!append) {
+                    $('#product-grid').html(response.html);
+                } else {
+                    $('#product-grid').append(response.html);
+                }
+                
                 if (feather) {
                     feather.replace({ width: 14, height: 14 });
                 }
+
+                if (response.has_more) {
+                    $('#load-more-btn-container').show();
+                    $('#load-more-btn').html('Load More').prop('disabled', false);
+                    currentOffset += currentLimit;
+                    currentLimit = 12; // Subsequent loads
+                } else {
+                    $('#load-more-btn-container').hide();
+                }
+                
+                isLoading = false;
             },
             error: function() {
-                $('#product-grid').html('<div class="col-12 text-center py-5 text-danger">Failed to load products</div>');
+                if (!append) {
+                    $('#product-grid').html('<div class="col-12 text-center py-5 text-danger">Failed to load products</div>');
+                } else {
+                    $('#load-more-btn').html('Load More').prop('disabled', false);
+                    alert('Failed to load more products.');
+                }
+                isLoading = false;
             }
         });
     }

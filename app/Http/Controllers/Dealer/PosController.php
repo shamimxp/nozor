@@ -20,7 +20,8 @@ class PosController extends Controller
 
     public function getProducts(Request $request, ProductPriceCalculator $calculator)
     {
-        $query = Product::where('status', 1);
+        $query = Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
+            ->where('status', 1);
 
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -32,9 +33,18 @@ class PosController extends Controller
             $query->where('sub_category_id', $request->subcategory_id);
         }
 
+        $totalCount = $query->count();
+        
+        $offset = (int) $request->input('offset', 0);
+        $limit = (int) $request->input('limit', 36);
 
-        $products = $query->inRandomOrder()->get();
-        $total = $query->count();
+        $products = $query->orderBy('id', 'desc')
+                          ->offset($offset)
+                          ->limit($limit)
+                          ->get();
+                          
+        $remainingCount = max(0, $totalCount - ($offset + $limit));
+        $hasMore = $remainingCount > 0;
         
         $dealerId = auth('dealer')->id();
         
@@ -62,6 +72,9 @@ class PosController extends Controller
 
         return response()->json([
             'html' => $html,
+            'total_count' => $totalCount,
+            'remaining_count' => $remainingCount,
+            'has_more' => $hasMore,
         ]);
     }
 

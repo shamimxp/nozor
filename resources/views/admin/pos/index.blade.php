@@ -1491,10 +1491,8 @@
                     <div class="pos__product_wrapper mt-5" id="pos_product_list">
                         <!-- Products will be loaded here via AJAX -->
                     </div>
-                    <div id="load_more_loader" class="text-center my-3 d-none">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
+                    <div id="load_more_loader" class="text-center my-3" style="display: none;">
+                        <button id="load_more_btn" class="btn btn-navy" onclick="loadProducts(true)" style="padding: 8px 24px; font-weight: bold; border-radius: 6px;">Load More</button>
                     </div>
                     </div>
                 </div>
@@ -1974,19 +1972,23 @@ $(document).ready(function() {
         width: '100%'
     });
 
-    let offset = 0;
-    const limit = 10;
+    let currentOffset = 0;
+    let currentLimit = 36;
     let isLoading = false;
-    let hasMore = true;
-    let totalProductsLoaded = 0;
-    const maxProducts = 55;
 
-    function loadProducts(append = false) {
-        if (isLoading || (!hasMore && append)) return;
-        if (append && totalProductsLoaded >= maxProducts) return;
+    window.loadProducts = function(append = false) {
+        if (isLoading) return;
 
         isLoading = true;
-        $('#load_more_loader').removeClass('d-none');
+        
+        if (!append) {
+            currentOffset = 0;
+            currentLimit = 36;
+            $('#pos_product_list').html('<div class="col-12 d-flex justify-content-center align-items-center w-100" style="min-height: 200px;"><div class="spinner-border text-primary" role="status"></div></div>');
+            $('#load_more_btn').hide();
+        } else {
+            $('#load_more_btn').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...').prop('disabled', true);
+        }
 
         const category_id = $('#category_filter').val();
         const sub_category_id = $('#sub_category_filter').val();
@@ -1999,31 +2001,36 @@ $(document).ready(function() {
                 category_id: category_id,
                 sub_category_id: sub_category_id,
                 search: search,
-                offset: append ? offset : 0
+                offset: currentOffset,
+                limit: currentLimit
             },
             success: function(response) {
                 if (append) {
                     $('#pos_product_list').append(response.html);
-                    offset += response.count;
-                    totalProductsLoaded += response.count;
                 } else {
                     $('#pos_product_list').html(response.html);
-                    offset = response.count;
-                    totalProductsLoaded = response.count;
                 }
 
-                hasMore = response.count === limit;
-
-                if (totalProductsLoaded >= maxProducts) {
-                    hasMore = false;
+                if (response.has_more) {
+                    $('#load_more_loader').show();
+                    $('#load_more_btn').show().html('Load More').prop('disabled', false);
+                    currentOffset += currentLimit;
+                    currentLimit = 12;
+                } else {
+                    $('#load_more_loader').hide();
+                    $('#load_more_btn').hide();
                 }
 
                 isLoading = false;
-                $('#load_more_loader').addClass('d-none');
             },
             error: function() {
                 isLoading = false;
-                $('#load_more_loader').addClass('d-none');
+                if (!append) {
+                    $('#pos_product_list').html('<div class="col-12 text-center py-5 text-danger">Failed to load products</div>');
+                } else {
+                    $('#load_more_btn').html('Load More').prop('disabled', false);
+                    toastr.error('Failed to load more products.');
+                }
             }
         });
     }
@@ -2067,21 +2074,7 @@ $(document).ready(function() {
         }, 500);
     });
 
-    // Infinite Scrolling
-    // Listen on the window scroll
-    $(window).on('scroll', function() {
-        if($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-            loadProducts(true);
-        }
-    });
-
-    // Listen on the product list parent container (if it's the one with the scrollbar)
-    $('#pos_product_list').parent().on('scroll', function() {
-        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 100) {
-            loadProducts(true);
-        }
-    });
-
+    // Infinite Scrolling removed in favor of Load More button
     // Cart Logic
     let cart = {};
     let extraDiscount = {
