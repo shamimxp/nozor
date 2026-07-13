@@ -13,22 +13,12 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
             <li class="{{ Route::currentRouteName()=='dealer.dashboard'?'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('dealer.dashboard')}}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboard</span></a>
             </li>
-            <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">Apps &amp; Pages</span><i data-feather="more-horizontal"></i>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="app-email.html"><i data-feather="mail"></i><span class="menu-title text-truncate" data-i18n="Email">Email</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="app-chat.html"><i data-feather="message-square"></i><span class="menu-title text-truncate" data-i18n="Chat">Chat</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="app-todo.html"><i data-feather="check-square"></i><span class="menu-title text-truncate" data-i18n="Todo">Todo</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="app-calendar.html"><i data-feather="calendar"></i><span class="menu-title text-truncate" data-i18n="Calendar">Calendar</span></a>
-            </li>
-            <li class=" nav-item"><a class="d-flex align-items-center" href="app-kanban.html"><i data-feather="grid"></i><span class="menu-title text-truncate" data-i18n="Kanban">Kanban</span></a>
-            </li>
             <li class="{{ Route::currentRouteName()=='dealer.pos'?'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('dealer.pos')}}"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">POS</span></a>
             </li>
-      
-   
+            <li class="{{ Route::currentRouteName()=='dealer.order-requests.index' || Route::currentRouteName()=='dealer.order-requests.show' ? 'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('dealer.order-requests.index')}}"><i data-feather="list"></i><span class="menu-title text-truncate">Order Requests</span></a>
+            </li>
+            <li class="{{ Route::currentRouteName()=='dealer.orders.index' || Route::currentRouteName()=='dealer.orders.show' ? 'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('dealer.orders.index')}}"><i data-feather="box"></i><span class="menu-title text-truncate">Orders</span></a>
+            </li>
         </ul>
     </div>
 </div>

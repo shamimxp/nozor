@@ -12,7 +12,7 @@ class DealerOrder extends Model
     protected $fillable = [
         'order_number', 'order_date', 'dealer_id',
         'sub_total', 'discount', 'carrying_charge', 'grand_total',
-        'paid', 'due', 'note', 'admin_notes', 'status',
+        'paid', 'due', 'note', 'admin_notes', 'status', 'request_date', 'creator_id',
     ];
 
     protected $casts = [

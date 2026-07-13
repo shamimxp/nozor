@@ -16,9 +16,11 @@
     </div>
 </div>
 
-<div class="card shadow-sm border-0 mb-3">
-    <div class="card-body p-3">
-        <div class="row align-items-end">
+
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="row align-items-end mb-3">
             <div class="col-md-3">
                 <label class="small font-weight-bold">Order Number</label>
                 <input type="text" id="filterOrderNumber" class="form-control form-control-sm" placeholder="Search by order #...">
@@ -55,11 +57,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="card shadow-sm border-0">
-    <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover table-striped w-100" id="dealerOrderTable">
                 <thead class="bg-light">

@@ -24,8 +24,8 @@
                     <div class="card-header border-bottom p-1">
                         <h4 class="card-title mb-0">Orders with Pending Due</h4>
                     </div>
-                    <div class="card-body border-bottom p-3">
-                        <div class="row align-items-end">
+                    <div class="card-body pt-3 pb-3">
+                        <div class="row align-items-end mb-3">
                             <div class="col-md-3">
                                 <label class="small font-weight-bold">Order Number</label>
                                 <input type="text" id="filterOrderNumber" class="form-control form-control-sm" placeholder="Search by order #...">
@@ -53,9 +53,8 @@
                                 <button type="button" id="resetBtn" class="btn btn-sm btn-secondary shadow-sm"><i data-feather="refresh-ccw"></i></button>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body table-responsive pt-2">
-                        <table id="dealerDueTable" class="table table-bordered table-striped">
+                        <div class="table-responsive">
+                            <table id="dealerDueTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>#</th>

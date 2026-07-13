@@ -130,6 +130,19 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-4 form-group mt-2">
+                            <label>Delivery Status</label>
+                            <select name="delivery_status" class="form-control select2">
+                                <option value="">Pending / Not Shipped</option>
+                                <option value="processing" {{ $order->delivery_status == 'processing' ? 'selected' : '' }}>Processing</option>
+                                <option value="shipped" {{ $order->delivery_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                                <option value="delivered" {{ $order->delivery_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 form-group mt-2 mb-0">
+                            <label>Delivery Details / Courier Info</label>
+                            <input type="text" name="delivery_details" class="form-control" placeholder="E.g. Sundarban Courier, Tracking #123456" value="{{ $order->delivery_details }}">
+                        </div>
                     </div>
                 </div>
             </div>

@@ -44,7 +44,7 @@ class DealerOrderController extends Controller
                 })
                 ->addColumn('totals', function($r) {
                     return 'Total: ৳' . number_format($r->grand_total, 2) . '<br>' .
-                            'Paid: ৳' . number_format($r->paid, 2) . '<br>' .
+                            '<span class="text-success font-weight-bold">Paid: ৳' . number_format($r->paid, 2) . '</span><br>' .
                            '<small class="' . ($r->due > 0 ? 'text-danger font-weight-bold' : 'text-success') . '">Due: ৳' . number_format($r->due, 2) . '</small>';
                 })
                 ->addColumn('status_badge', function ($r) {
@@ -84,7 +84,7 @@ class DealerOrderController extends Controller
     public function dueList(Request $request)
     {
         if ($request->ajax()) {
-            $query = DealerOrder::with('dealer')->where('due', '>', 0)->latest();
+            $query = DealerOrder::with('dealer')->where('due', '>', 0)->where('status','!=','Pending')->latest();
 
             if ($request->order_number) {
                 $query->where('order_number', 'LIKE', '%' . $request->order_number . '%');
@@ -120,7 +120,7 @@ class DealerOrderController extends Controller
                 })
                 ->addColumn('totals', function($r) {
                     return 'Total: ৳' . number_format($r->grand_total, 2) . '<br>' .
-                            'Paid: ৳' . number_format($r->paid, 2) . '<br>' .
+                            '<span class="text-success font-weight-bold">Paid: ৳' . number_format($r->paid, 2) . '</span><br>' .
                            '<small class="text-danger font-weight-bold">Due: ৳' . number_format($r->due, 2) . '</small>';
                 })
                 ->addColumn('status_badge', function ($r) {

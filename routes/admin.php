@@ -158,6 +158,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Wishlist module
     Route::resource('wishlist', \App\Http\Controllers\Admin\WishlistController::class, ['as' => 'admin', 'only' => ['index', 'destroy']]);
 
+    // Order Requests module
+    Route::get('order-requests', [\App\Http\Controllers\OrderRequestController::class, 'index'])->name('admin.order-requests.index');
+    Route::get('order-requests/{id}', [\App\Http\Controllers\OrderRequestController::class, 'show'])->name('admin.order-requests.show');
+    Route::post('order-requests/{id}/confirm', [\App\Http\Controllers\OrderRequestController::class, 'confirm'])->name('admin.order-requests.confirm');
+
     // Dealer Order module
     Route::get('/dealer-order/export-list-excel', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportExcel'])->name('admin.dealer-order.export-list-excel');
     Route::get('/dealer-order/export-list-pdf', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportListPdf'])->name('admin.dealer-order.export-list-pdf');

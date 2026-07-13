@@ -92,7 +92,17 @@ Route::prefix('dealer')->name('dealer.')->group(function () {
         Route::get('/pos', [\App\Http\Controllers\Dealer\PosController::class, 'index'])->name('pos');
         Route::get('/pos/products', [\App\Http\Controllers\Dealer\PosController::class, 'getProducts'])->name('pos.products');
         Route::get('/pos/subcategories/{id}', [\App\Http\Controllers\Dealer\PosController::class, 'getSubCategories'])->name('pos.subcategories');
+        Route::post('/pos/order-request', [\App\Http\Controllers\Dealer\PosController::class, 'submitOrderRequest'])->name('pos.order-request');
         
+        // Dealer Order Requests
+        Route::get('/order-requests', [\App\Http\Controllers\Dealer\OrderRequestController::class, 'index'])->name('order-requests.index');
+        Route::get('/order-requests/{id}', [\App\Http\Controllers\Dealer\OrderRequestController::class, 'show'])->name('order-requests.show');
+        Route::delete('/order-requests/{id}', [\App\Http\Controllers\Dealer\OrderRequestController::class, 'destroy'])->name('order-requests.destroy');
+
+        // Dealer Orders
+        Route::get('/orders', [\App\Http\Controllers\Dealer\OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{id}', [\App\Http\Controllers\Dealer\OrderController::class, 'show'])->name('orders.show');
+
         Route::get('/back-to-admin', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'backToAdmin'])->name('back');
     });
 });

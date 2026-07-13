@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.dealer')
 @section('title', 'Order Details - ' . $order->order_number)
 
 @section('content')
@@ -6,10 +6,10 @@
     <div class="content-header-left col-md-9 col-12 mb-2">
         <div class="row breadcrumbs-top">
             <div class="col-12">
-                <h2 class="content-header-title float-left mb-0">Dealer Order Details</h2>
+                <h2 class="content-header-title float-left mb-0">Order Details</h2>
                 <div class="breadcrumb-wrapper">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dealer-order.index') }}"> Dealer Orders</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dealer.orders.index') }}"> My Orders</a></li>
                         <li class="breadcrumb-item active">{{ $order->order_number }}</li>
                     </ol>
                 </div>
@@ -54,7 +54,7 @@
                     <div class="card-body invoice-padding pt-0">
                         <div class="row invoice-spacing">
                             <div class="col-xl-6 p-2">
-                                <h6 class="mb-2">Dealer Details:</h6>
+                                <h6 class="mb-2">Your Details:</h6>
                                 <h6 class="mb-25">Shop Name: {{ $order->dealer->shop_name ?? 'N/A' }}</h6>
                                 <p class="card-text mb-25">Name: {{ $order->dealer->name ?? 'N/A' }}</p>
                                 <p class="card-text mb-25">Phone: {{ $order->dealer->phone ?? 'N/A' }}</p>
@@ -65,7 +65,7 @@
                                 <p class="card-text mb-25">
                                     <strong>Status:</strong>
                                 </p>
-                                <p class="card-text mb-25"><strong>Details:</strong></p>
+                                <p class="card-text mb-25"><strong>Details:</strong> </p>
                             </div>
                         </div>
                     </div>
@@ -123,10 +123,6 @@
                                     <span class="font-weight-bold">Notes:</span><br>
                                     <span>{{ $order->note ?: 'No special notes provided.' }}</span>
                                 </p>
-                                <p class="card-text mt-1">
-                                    <span class="font-weight-bold text-primary">Admin Notes:</span><br>
-                                    <span>{{ $order->admin_notes ?: 'No admin notes provided.' }}</span>
-                                </p>
                             </div>
                             <div class="col-md-6 d-flex justify-content-end order-md-2 order-1">
                                 <div class="invoice-total-wrapper" style="width: 100%; max-width: 200px;">
@@ -170,14 +166,10 @@
             <div class="col-xl-3 col-md-4 col-12 invoice-actions mt-md-0 mt-2">
                 <div class="card">
                     <div class="card-body">
-                        <a href="{{ route('admin.dealer-order.export-pdf', $order->id) }}" class="btn btn-primary btn-block mb-75">Download PDF</a>
-                        <button class="btn btn-outline-secondary btn-block mb-75" onclick="window.print()">
-                            Print
+                        <button class="btn btn-primary btn-block mb-75" onclick="window.print()">
+                            Print Order
                         </button>
-                        @if($order->status != 'delivered' && $order->status != 'cancelled')
-                        <a class="btn btn-outline-secondary btn-block mb-75" href="{{ route('admin.dealer-order.edit', $order->id) }}"> Edit Order </a>
-                        @endif
-                        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-success btn-block">
+                        <a href="{{ route('dealer.orders.index') }}" class="btn btn-outline-secondary btn-block">
                             Back to List
                         </a>
                     </div>
@@ -242,14 +234,10 @@
                 </tbody>
             </table>
 
-            <!-- Summary Section from Image -->
             <div class="row align-items-start">
                 <div class="col-7">
                     <p class="mb-0" style="font-weight: bold; color: #5e5873; font-size: 14px;">Notes:</p>
                     <p style="color: #b9b9c3; font-size: 13px; margin-bottom: 8px;">{{ $order->note ?: 'No special notes provided.' }}</p>
-                    
-                    <p class="mb-0" style="font-weight: bold; color: #7367f0; font-size: 14px;">Admin Notes:</p>
-                    <p style="color: #b9b9c3; font-size: 13px;">{{ $order->admin_notes ?: 'No admin notes provided.' }}</p>
                 </div>
                 <div class="col-5">
                     <div class="d-flex justify-content-between mb-1">

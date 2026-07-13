@@ -367,7 +367,7 @@
                                 <div class="input-group-prepend">
                                     <button class="btn" type="button" style="padding: 0.2rem 0.5rem; border: 1px solid #0F172A; color: #0F172A; background: white;" onclick="updateQty(${item.id}, -1)">-</button>
                                 </div>
-                                <input type="text" class="form-control text-center px-0 font-weight-bolder bg-white text-dark" style="border-color: #0F172A;" value="${item.qty}" readonly>
+                                <input type="number" class="form-control text-center px-0 font-weight-bolder bg-white text-dark" style="border-color: #0F172A;" value="${item.qty}" min="1" onchange="setQty(${item.id}, this.value)">
                                 <div class="input-group-append">
                                     <button class="btn" type="button" style="padding: 0.2rem 0.5rem; border: 1px solid #0F172A; color: #0F172A; background: white;" onclick="updateQty(${item.id}, 1)">+</button>
                                 </div>
@@ -390,15 +390,84 @@
         $('#cart-total').text('৳ ' + subtotal.toFixed(2));
     }
     
+    function setQty(id, value) {
+        let qty = parseInt(value);
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+        }
+        let item = cart.find(i => i.id === id);
+        if (item) {
+            item.qty = qty;
+            renderCart();
+        }
+    }
+
     function placeOrder() {
         if(cart.length === 0) {
-            alert('Cart is empty!');
+            if (typeof toastr !== 'undefined') toastr.error('Cart is empty!');
+            else alert('Cart is empty!');
             return;
         }
-        alert('Order Placed Successfully! (This is a frontend demo. Backend logic to be implemented)');
-        cart = [];
-        $('#cart-notes').val('');
-        renderCart();
+        
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Place Order?',
+                text: "Are you sure you want to place this order request?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0F172A',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Place Order'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitOrder();
+                }
+            });
+        } else {
+            if(confirm("Are you sure you want to place this order request?")) {
+                submitOrder();
+            }
+        }
+    }
+
+    function submitOrder() {
+        // Format items for backend
+        const items = cart.map(item => ({
+            product_id: item.id,
+            requested_qty: item.qty
+        }));
+        const note = $('#cart-notes').val();
+        
+        $.ajax({
+            url: '{{ route("dealer.pos.order-request") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                items: items,
+                note: note
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    if (typeof toastr !== 'undefined') toastr.success(response.message);
+                    else alert(response.message);
+                    
+                    cart = [];
+                    $('#cart-notes').val('');
+                    renderCart();
+                } else {
+                    if (typeof toastr !== 'undefined') toastr.error(response.message);
+                    else alert(response.message);
+                }
+            },
+            error: function(xhr) {
+                let errorMsg = 'Failed to submit order request.';
+                if(xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                if (typeof toastr !== 'undefined') toastr.error(errorMsg);
+                else alert(errorMsg);
+            }
+        });
     }
 </script>
 @endpush

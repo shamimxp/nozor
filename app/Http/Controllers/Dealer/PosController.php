@@ -85,4 +85,30 @@ class PosController extends Controller
         $subcategories = SubCategory::where('category_id', $id)->get();
         return response()->json($subcategories);
     }
+
+    public function submitOrderRequest(Request $request, \App\Services\OrderRequestService $orderRequestService)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.requested_qty' => 'required|integer|min:1',
+            'note' => 'nullable|string',
+        ]);
+
+        try {
+            $dealerId = auth('dealer')->id();
+            $orderRequest = $orderRequestService->createOrderRequest($dealerId, $request->items, $request->note);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Order request submitted successfully.',
+                'order_request_id' => $orderRequest->id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -44,9 +44,12 @@
                     </li>
                 </ul>
             </li>
-            <li class=" nav-item @if(Route::is('admin.dealer-order*')) open @endif">
+            <li class=" nav-item @if(Route::is('admin.dealer-order*') || Route::is('admin.order-requests*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="package"></i><span class="menu-title text-truncate">Dealer Orders</span></a>
                 <ul class="menu-content">
+                    <li class="{{ Route::is('admin.order-requests*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.order-requests.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order Requests</span></a>
+                    </li>
                     <li class="{{ Route::is('admin.dealer-order.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.dealer-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
                     </li>
