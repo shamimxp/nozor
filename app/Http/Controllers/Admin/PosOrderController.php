@@ -36,20 +36,22 @@ class PosOrderController extends Controller
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('order_info', function($r) {
-                    return '<strong>ID:</strong> ' . $r->order_number . '<br>' .
+                    return '<strong>Order No:</strong> ' . $r->order_number . '<br>' .
                            '<strong>Date:</strong> ' . date('d M, Y', strtotime($r->order_date));
                 })
                 ->addColumn('customer_info', function($r) {
                     if ($r->customer) {
-                        return '<strong>' . $r->customer->name . '</strong><br>' .
-                               '<small>' . $r->customer->phone . '</small>';
+                        return '<strong> Name: ' . $r->customer->name . '</strong><br>' .
+                               '<small> Phone: ' . $r->customer->phone . '</small>';
                     }
                     return '<span class="badge badge-light-secondary">Walk-in Customer</span>';
                 })
                 ->addColumn('payment_summary', function($r) {
-                    return 'Total: ৳' . number_format($r->total_amount, 2) . '<br>' .
-                           'Paid: ৳' . number_format($r->paid_amount, 2) . '<br>' .
-                           '<small class="' . ($r->due_amount > 0 ? 'text-danger' : 'text-success') . '">Due: ৳' . number_format($r->due_amount, 2) . '</small>';
+                   return 'Total: ৳' . number_format($r->total_amount, 2) . '<br>' .
+                            '<span class="text-success">Paid: ৳' . number_format($r->paid_amount, 2) . '</span><br>' .
+                            '<small class="' . ($r->due_amount > 0 ? 'text-danger' : 'text-success') . '">
+                                    Due: ৳' . number_format($r->due_amount, 2) . '
+                                </small>';
                 })
                 ->addColumn('status', function($r) {
                     $status_class = [
