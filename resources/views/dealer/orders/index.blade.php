@@ -1,6 +1,10 @@
 @extends('layouts.dealer')
 @section('title', 'My Orders')
 
+@push('styles')
+    <link rel="stylesheet" type="text/css" href="{{ asset('admin/app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css') }}">
+@endpush
+
 @section('content')
 <div class="content-header row">
     <div class="content-header-left col-md-9 col-12 mb-2">
@@ -27,11 +31,11 @@
             </div>
             <div class="col-md-2">
                 <label class="small font-weight-bold">Start Date</label>
-                <input type="date" id="filterStartDate" class="form-control form-control-sm">
+                <input type="text" id="filterStartDate" class="form-control form-control-sm flatpickr" placeholder="mm/dd/yyyy">
             </div>
             <div class="col-md-2">
                 <label class="small font-weight-bold">End Date</label>
-                <input type="date" id="filterEndDate" class="form-control form-control-sm">
+                <input type="text" id="filterEndDate" class="form-control form-control-sm flatpickr" placeholder="mm/dd/yyyy">
             </div>
             <div class="col-md-3">
                 <label class="small font-weight-bold">Status</label>
@@ -68,8 +72,18 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('admin/app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js') }}"></script>
 <script>
     $(document).ready(function() {
+        if ($('.flatpickr').length) {
+            $('.flatpickr').flatpickr({
+                dateFormat: "Y-m-d",
+                altFormat: "m/d/Y",
+                altInput: true,
+                allowInput: true
+            });
+        }
+
         let table = $('#dealerOrderTable').DataTable({
             processing: true,
             serverSide: true,

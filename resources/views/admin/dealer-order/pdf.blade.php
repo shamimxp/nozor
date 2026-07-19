@@ -4,208 +4,292 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Invoice - {{ $order->order_number }}</title>
     <style>
-        @page { margin: 0; }
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-family: serif;
             margin: 0;
-            padding: 40px;
-            color: #5e5873;
-            background-color: #fff;
-            line-height: 1.5;
+            padding: 30px;
+            color: #333;
+            font-size: 13px;
         }
-        .header {
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            z-index: -1;
+            width: 400px;
+        }
+        .header-table {
             width: 100%;
-            margin-bottom: 30px;
-        }
-        .header table { width: 100%; }
-        .logo { font-size: 24px; font-weight: bold; color: #7367f0; }
-        .invoice-title {
-            text-align: right;
-            font-weight: bold;
-            color: #7367f0;
-            font-size: 28px;
-            margin: 0;
-        }
-        .meta-data { text-align: right; }
-        .meta-data p { margin: 2px 0; font-size: 13px; }
-
-        .client-info {
-            width: 100%;
-            margin-bottom: 30px;
-        }
-        .client-info table { width: 100%; }
-        .info-label {
-            font-weight: bold;
-            color: #b9b9c3;
             margin-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 11px;
         }
-        .info-value { margin: 0; font-size: 14px; }
-
+        .header-table td {
+            vertical-align: middle;
+        }
+        .header-logo {
+            width: 25%;
+            text-align: left;
+        }
+        .header-logo img {
+            width: 140px;
+        }
+        .header-content {
+            width: 50%;
+            text-align: center;
+        }
+        .header-empty {
+            width: 25%;
+        }
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+        .header-address {
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        .divider {
+            border-bottom: 2px solid #555;
+            margin: 10px 0;
+        }
+        .invoice-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .info-table td {
+            vertical-align: top;
+            padding: 2px 0;
+        }
+        .info-left {
+            width: 60%;
+        }
+        .info-right {
+            width: 40%;
+            text-align: right;
+        }
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .items-table th {
-            background-color: #f3f2f7;
-            padding: 12px 15px;
-            text-align: left;
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #5e5873;
-            letter-spacing: 0.5px;
-        }
-        .items-table td {
-            padding: 15px;
-            border-bottom: 1px solid #ebe9f1;
-            font-size: 14px;
-            vertical-align: middle;
-        }
-
-        .summary-row {
-            width: 100%;
-            margin-top: 20px;
-        }
-        .summary-row table { width: 100%; }
-        .notes-col { width: 55%; vertical-align: top; padding-top: 10px; padding-right: 20px; }
-        .totals-col { width: 45%; vertical-align: top; text-align: right; }
-
-        .notes-title {
-            font-weight: bold;
-            color: #5e5873;
-            font-size: 14px;
             margin-bottom: 5px;
         }
-        .notes-text {
-            color: #b9b9c3;
-            font-size: 13px;
+        .items-table th, .items-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 12px;
         }
-
-        .total-item {
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 8px;
-            font-size: 14px;
+        .items-table th {
+            text-align: center;
+            font-weight: bold;
         }
-        .total-label { color: #5e5873; font-weight: bold; text-align: right; width: 60%; display: inline-block; }
-        .total-amount { color: #5e5873; text-align: right; width: 35%; display: inline-block; }
-
-        .grand-total-row {
-            border-top: 1px solid #ebe9f1;
-            margin-top: 10px;
-            padding-top: 15px;
-            margin-bottom: 15px;
-        }
-        .grand-total-label { color: #5e5873; font-weight: bold; font-size: 14px; text-align: right; width: 60%; display: inline-block; }
-        .grand-total-amount { color: #5e5873; font-weight: bold; font-size: 14px; text-align: right; width: 35%; display: inline-block; }
-
-        .paid-amount-label { color: #28c76f; font-size: 14px; text-align: right; width: 60%; display: inline-block; }
-        .paid-amount-val { color: #28c76f; font-size: 14px; text-align: right; width: 35%; display: inline-block; }
-
-        .due-amount-label { color: #ea5455; font-size: 14px; text-align: right; width: 60%; display: inline-block; }
-        .due-amount-val { color: #ea5455; font-size: 14px; text-align: right; width: 35%; display: inline-block; }
-
-        .text-right { text-align: right; }
         .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .bottom-section {
+            width: 100%;
+            margin-top: 5px;
+        }
+        .bottom-table {
+            width: 100%;
+        }
+        .bottom-table td {
+            vertical-align: top;
+        }
+        .in-words-col {
+            width: 60%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .in-words-col span {
+            font-weight: normal;
+        }
+        .totals-col {
+            width: 40%;
+        }
+        .totals-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+        .totals-table td {
+            padding: 2px 0;
+            text-align: right;
+        }
+        .totals-table td:first-child {
+            width: 60%;
+            padding-right: 10px;
+        }
+        .totals-table td:last-child {
+            width: 40%;
+        }
+        .totals-table .border-bottom td {
+            border-bottom: 1px solid #000;
+        }
+        .description-box {
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .description-box span {
+            font-weight: normal;
+        }
+        .signature-section {
+            width: 100%;
+            margin-top: 70px;
+        }
+        .signature-section table {
+            width: 100%;
+        }
+        .signature-section td {
+            width: 50%;
+        }
+        .sign-line {
+            border-top: 1px solid #000;
+            width: 150px;
+            text-align: center;
+            font-weight: bold;
+            padding-top: 5px;
+            font-size: 12px;
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <table>
-            <tr>
-                <td style="width: 50%;">
-                    <div class="logo" style="color: #7367f0; font-size: 32px; font-weight: bold; margin-bottom: 10px;">NOZOR</div>
-                </td>
-                <td style="width: 50%; vertical-align: top;">
-                    <div class="invoice-title">INVOICE</div>
-                    <div class="meta-data">
-                        <p><strong>#{{ $order->order_number }}</strong></p>
-                        <p>Order Date: {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : 'N/A' }}</p>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    <div class="client-info">
-        <table>
-            <tr>
-                <td style="width: 50%; vertical-align: top;">
-                    <div class="info-label">Invoice To (Dealer):</div>
-                    <div class="info-value"><strong>{{ $order->dealer->shop_name ?? 'N/A' }}</strong></div>
-                    <div class="info-value">Name: {{ $order->dealer->name ?? '' }}</div>
-                    <div class="info-value">Phone: {{ $order->dealer->phone ?? '' }}</div>
-                </td>
-                <td style="width: 50%; vertical-align: top; text-align: right;">
-                    <div class="info-label">Order Details:</div>
-                    <div class="info-value">Status: <strong style="text-transform: uppercase;">{{ str_replace('_', ' ', $order->status) }}</strong></div>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <img src="{{ public_path('admin/app-assets/images/logo/edited_red_letters.svg') }}" class="watermark" alt="Watermark">
+
+    @php
+    function getAmountInWords($amount) {
+        $f = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+        $amt = explode('.', number_format($amount, 2, '.', ''));
+        $taka = (int)$amt[0];
+        $poysa = (int)$amt[1];
+        
+        $str = $f->format($taka) . ' taka';
+        if ($poysa > 0) {
+            $str .= ' and ' . $f->format($poysa) . ' poysa';
+        }
+        return ucwords($str);
+    }
+    @endphp
+
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <img src="{{ public_path('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo">
+            </td>
+            <td class="header-content">
+                <div class="header-title">Wood Machinery and Hardware</div>
+                <div class="header-address">
+                    Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212<br>
+                    Phone Number 01674-088383<br>
+                    Email: info@woodmachinery.com.bd
+                </div>
+            </td>
+            <td class="header-empty"></td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="invoice-title">Dealer Invoice</div>
+
+    <table class="info-table">
+        <tr>
+            <td class="info-left">
+                Invoice No : {{ $order->order_number }}<br>
+                Dealer Name : {{ $order->dealer->name ?? '' }} ({{ $order->dealer->shop_name ?? '' }})<br>
+                Dealer Address : {{ $order->dealer->address ?? '' }}<br>
+                Dealer Phone No : {{ $order->dealer->phone ?? '' }}
+            </td>
+            <td class="info-right">
+                Date : {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : date('d M Y') }}
+            </td>
+        </tr>
+    </table>
 
     <table class="items-table">
         <thead>
             <tr>
-                <th style="width: 45%;">Product</th>
-                <th style="width: 15%;">Rate</th>
-                <th style="width: 15%; text-align: center;">Qty</th>
-                <th style="width: 25%; text-align: right;">Total</th>
+                <th style="width: 5%;">SL</th>
+                <th style="width: 45%; text-align: left;">Product Name</th>
+                <th style="width: 10%;">Req. Qty</th>
+                <th style="width: 10%;">Conf. Qty</th>
+                <th style="width: 15%;">Unit Price</th>
+                <th style="width: 15%;">Total Price</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($order->items as $item)
+            @foreach($order->items as $index => $item)
             <tr>
+                <td class="text-center"><b>{{ $index + 1 }}</b></td>
                 <td>{{ $item->product->name ?? '-' }}</td>
-                <td>TK {{ number_format($item->price, 2) }}</td>
-                <td style="text-align: center;">{{ $item->qty }}</td>
-                <td style="text-align: right;">TK {{ number_format($item->total, 2) }} </td>
+                <td class="text-center">{{ $item->qty }}</td>
+                <td class="text-center">{{ $item->qty }}</td>
+                <td class="text-center">{{ number_format($item->price, strpos($item->price, '.') ? 2 : 0) }}</td>
+                <td class="text-center">{{ number_format($item->total, strpos($item->total, '.') ? 2 : 0) }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
-    <div class="summary-row">
+    <table class="bottom-table">
+        <tr>
+            <td class="in-words-col">
+                Total In Words : <span>{{ getAmountInWords($order->grand_total) }}</span>
+            </td>
+            <td class="totals-col">
+                <table class="totals-table">
+                    <tr>
+                        <td>Total Amount :</td>
+                        <td>{{ number_format($order->grand_total, 2) }}</td>
+                    </tr>
+                    <tr class="border-bottom">
+                        <td>Received Amount :</td>
+                        <td>{{ $order->paid > 0 ? number_format($order->paid, 2) : '0.0' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Due Amount:</td>
+                        <td>{{ $order->due > 0 ? number_format($order->due, 2) : '0.0' }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="description-box">
+        Description: <span>{{ $order->note ?: 'N/A' }}</span>
+    </div>
+
+    <div class="signature-section">
         <table>
             <tr>
-                <td class="notes-col">
-                    <div class="notes-title">Notes:</div>
-                    <div class="notes-text">{{ $order->note ?: 'No special notes provided.' }}</div>
+                <td class="text-left">
+                    <div class="sign-line" style="float: left;">Receiver Signature</div>
                 </td>
-                <td class="totals-col">
-                    <div class="total-item">
-                        <span class="total-label">Subtotal:</span>
-                        <span class="total-amount">TK {{ number_format($order->sub_total, 2) }}</span>
-                    </div>
-                    @if($order->discount > 0)
-                    <div class="total-item">
-                        <span class="total-label">Discount:</span>
-                        <span class="total-amount">TK {{ number_format($order->discount, 2) }}</span>
-                    </div>
-                    @endif
-                    <div class="total-item">
-                        <span class="total-label">Carrying:</span>
-                        <span class="total-amount">TK {{ number_format($order->carrying_charge, 2) }}</span>
-                    </div>
-
-                    <div class="grand-total-row">
-                        <span class="grand-total-label">Grand Total:</span>
-                        <span class="grand-total-amount">TK {{ number_format($order->grand_total, 2) }}</span>
-                    </div>
-
-                    <div class="total-item">
-                        <span class="paid-amount-label">Paid Amount:</span>
-                        <span class="paid-amount-val">TK {{ number_format($order->paid, 2) }}</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="due-amount-label">Due Amount:</span>
-                        <span class="due-amount-val">TK {{ number_format($order->due, 2) }}</span>
-                    </div>
+                <td class="text-right">
+                    <div class="sign-line" style="float: right;">Manager Signature</div>
                 </td>
             </tr>
         </table>
     </div>
+
+    <div class="footer-text">
+       Committed to Your Satisfaction
+    </div>
+
 </body>
 </html>

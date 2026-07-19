@@ -102,6 +102,7 @@ Route::prefix('dealer')->name('dealer.')->group(function () {
         // Dealer Orders
         Route::get('/orders', [\App\Http\Controllers\Dealer\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{id}', [\App\Http\Controllers\Dealer\OrderController::class, 'show'])->name('orders.show');
+        Route::get('/orders/{id}/pdf', [\App\Http\Controllers\Dealer\OrderController::class, 'downloadPdf'])->name('orders.pdf');
 
         Route::get('/back-to-admin', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'backToAdmin'])->name('back');
     });

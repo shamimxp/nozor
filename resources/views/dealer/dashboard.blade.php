@@ -187,8 +187,8 @@
             <div class="card mt-2" style="border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 6px; box-shadow: 0 4px 15px -4px rgba(0, 0, 0, 0.03); opacity: 0; animation: fadeInUp 0.6s ease-out forwards; animation-delay: 0.5s;">
                 <div class="card-header d-flex justify-content-between align-items-center pb-0 border-bottom-0">
                     <div>
-                        <h4 class="card-title mb-50" style="color: #334155; font-weight: 600;">Earning Reports</h4>
-                        <small class="text-muted" style="font-size: 0.9rem;">Yearly Earnings Overview</small>
+                        <h4 class="card-title mb-50" style="color: #334155; font-weight: 600;">Monthly Reports</h4>
+                        <small class="text-muted" style="font-size: 0.9rem;">Monthly Order Overview</small>
                     </div>
                     <i data-feather="more-vertical" class="text-muted cursor-pointer"></i>
                 </div>

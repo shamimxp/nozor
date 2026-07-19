@@ -7,6 +7,7 @@ use App\Models\DealerOrder;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -45,7 +46,9 @@ class OrderController extends Controller
                     return '<span class="badge badge-pill '.$badge.'">'.ucfirst($r->status).'</span>';
                 })
                 ->addColumn('action', function ($r) {
-                    return '<a href="' . route('dealer.orders.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
+                    $viewBtn = '<a href="' . route('dealer.orders.show', $r->id) . '" class="btn btn-info btn-sm mr-50" title="View"><i data-feather="eye"></i></a>';
+                    $pdfBtn = '<a href="' . route('dealer.orders.pdf', $r->id) . '" class="btn btn-primary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
+                    return '<div class="d-flex align-items-center">' . $viewBtn . $pdfBtn . '</div>';
                 })
                 ->rawColumns(['order_info', 'totals', 'status_badge', 'action'])
                 ->make(true);
@@ -57,5 +60,13 @@ class OrderController extends Controller
     {
         $order = DealerOrder::with(['items.product', 'dealer'])->where('dealer_id', auth('dealer')->id())->findOrFail($id);
         return view('dealer.orders.show', compact('order'));
+    }
+
+    public function downloadPdf($id)
+    {
+        $order = DealerOrder::with(['items.product', 'dealer'])->where('dealer_id', auth('dealer')->id())->findOrFail($id);
+        
+        $pdf = Pdf::loadView('admin.dealer-order.pdf', compact('order'));
+        return $pdf->download('order_' . $order->order_number . '.pdf');
     }
 }

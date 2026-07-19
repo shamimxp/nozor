@@ -30,10 +30,10 @@
                             <div>
                                 <div class="logo-wrapper">
                                     <h3 class="text-primary invoice-logo">
-                                        <img src="{{ asset('images/nozor_logo.png') }}" alt="Logo" style="width: 180px;" class="mr-25">
+                                        <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 180px;" class="mr-25">
                                     </h3>
                                 </div>
-                                <p class="card-text mb-0"><strong>Status:</strong> <span class="badge badge-light-primary">{{ ucfirst($order->status) }}</span></p>
+                        
                             </div>
                             <div class="mt-md-0 mt-2 text-md-right">
                                 <h4 class="invoice-title">
@@ -63,9 +63,9 @@
                             <div class="col-xl-6 p-2 border-left">
                                 <h6 class="mb-2">Delivery Details:</h6>
                                 <p class="card-text mb-25">
-                                    <strong>Status:</strong>
+                                    <strong>Status: </strong> <span class="badge badge-light-primary">{{ ucfirst($order->status) }}</span></strong>
                                 </p>
-                                <p class="card-text mb-25"><strong>Details:</strong></p>
+                                <p class="card-text mb-25"><strong>Address:</strong>  {{ $order->dealer->address ?? 'N/A' }}</p>
                             </div>
                         </div>
                     </div>
@@ -188,131 +188,338 @@
     </section>
 
     <!-- Hidden Print Template -->
-    <div id="print-view" class="d-none">
-        <div class="print-container" style="font-family: 'Montserrat', Helvetica, Arial, serif; color: #5e5873; background: #fff; padding: 40px; width: 100%;">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <div>
-                    <img src="{{ asset('images/nozor_logo.png') }}" alt="Logo" style="width: 160px;" class="mb-2">
-                </div>
-                <div class="text-right">
-                    <h1 class="font-weight-bold mb-0" style="color: #7367f0; font-size: 32px;">INVOICE</h1>
-                    <p class="mb-0"><strong>#{{ $order->order_number }}</strong></p>
-                    <p class="mb-0" style="font-size: 13px;">Order Date: {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') : '' }}</p>
-                </div>
-            </div>
+    <div id="print-view">
+        <div class="print-container">
+            <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" class="watermark" alt="Watermark">
 
-            <div class="row mb-4">
-                <div class="col-6">
-                    <p class="mb-0" style="font-size: 11px; color: #b9b9c3; text-transform: uppercase; font-weight: bold;">Invoice To (Dealer):</p>
-                    <p class="mb-0" style="font-size: 14px;"><strong>{{ $order->dealer->shop_name ?? 'N/A' }}</strong></p>
-                    <p class="mb-0" style="font-size: 13px;">{{ $order->dealer->name ?? '' }}</p>
-                    <p class="mb-0" style="font-size: 13px;">{{ $order->dealer->phone ?? '' }}</p>
-                </div>
-                <div class="col-6 text-right">
-                    <p class="mb-0" style="font-size: 11px; color: #b9b9c3; text-transform: uppercase; font-weight: bold;">Order Details:</p>
-                    <p class="mb-0" style="font-size: 14px;">Status: <strong>{{ strtoupper(str_replace('_', ' ', $order->status)) }}</strong></p>
-                </div>
-            </div>
+            @php
+            if (!function_exists('getAmountInWordsPrint')) {
+                function getAmountInWordsPrint($amount) {
+                    $f = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+                    $amt = explode('.', number_format($amount, 2, '.', ''));
+                    $taka = (int)$amt[0];
+                    $poysa = (int)$amt[1];
+                    
+                    $str = $f->format($taka) . ' taka';
+                    if ($poysa > 0) {
+                        $str .= ' and ' . $f->format($poysa) . ' poysa';
+                    }
+                    return ucwords($str);
+                }
+            }
+            @endphp
 
-            <!-- Table -->
-            <table class="table mb-4" style="width: 100%; border-collapse: collapse;">
+            <table class="header-table">
+                <tr>
+                    <td class="header-logo">
+                        <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo">
+                    </td>
+                    <td class="header-content">
+                        <div class="header-title">Wood Machinery and Hardware</div>
+                        <div class="header-address">
+                            Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212<br>
+                            Phone Number 01674-088383<br>
+                            Email: info@woodmachinery.com.bd
+                        </div>
+                    </td>
+                    <td class="header-empty"></td>
+                </tr>
+            </table>
+
+            <div class="divider"></div>
+
+            <div class="invoice-title">Dealer Invoice</div>
+
+            <table class="info-table">
+                <tr>
+                    <td class="info-left">
+                        Invoice No : {{ $order->order_number }}<br>
+                        Dealer Name : {{ $order->dealer->name ?? '' }} ({{ $order->dealer->shop_name ?? '' }})<br>
+                        Dealer Address : {{ $order->dealer->address ?? '' }}<br>
+                        Dealer Phone No : {{ $order->dealer->phone ?? '' }}
+                    </td>
+                    <td class="info-right">
+                        Date : {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : date('d M Y') }}
+                    </td>
+                </tr>
+            </table>
+
+            <table class="items-table">
                 <thead>
-                    <tr style="background-color: #f3f2f7;">
-                        <th class="py-1 px-2 text-left" style="font-size: 11px; color: #5e5873; text-transform: uppercase; width: 45%;">Product</th>
-                        <th class="py-1 px-2 text-left" style="font-size: 11px; color: #5e5873; text-transform: uppercase; width: 15%;">Rate</th>
-                        <th class="py-1 px-2 text-center" style="font-size: 11px; color: #5e5873; text-transform: uppercase; width: 15%;">Qty</th>
-                        <th class="py-1 px-2 text-right" style="font-size: 11px; color: #5e5873; text-transform: uppercase; width: 25%;">Total</th>
+                    <tr>
+                        <th style="width: 5%;">SL</th>
+                        <th style="width: 45%; text-align: left;">Product Name</th>
+                        <th style="width: 10%;">Req. Qty</th>
+                        <th style="width: 10%;">Conf. Qty</th>
+                        <th style="width: 15%;">Unit Price</th>
+                        <th style="width: 15%;">Total Price</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($order->items as $item)
+                    @foreach($order->items as $index => $item)
                     <tr>
-                        <td class="py-2 px-2" style="border-bottom: 1px solid #ebe9f1; font-size: 14px;">
-                            {{ $item->product->name ?? '-' }}
-                            @if($item->product && $item->product->is_manufacturer == 1)
-                                <span style="font-size: 10px; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; margin-left: 4px;">Mfg</span>
-                            @endif
-                        </td>
-                        <td class="py-2 px-2" style="border-bottom: 1px solid #ebe9f1; font-size: 14px;">৳{{ number_format($item->price, 2) }}</td>
-                        <td class="py-2 px-2 text-center" style="border-bottom: 1px solid #ebe9f1; font-size: 14px;">{{ $item->qty }}</td>
-                        <td class="py-2 px-2 text-right" style="border-bottom: 1px solid #ebe9f1; font-size: 14px;">৳{{ number_format($item->total, 2) }}</td>
+                        <td class="text-center"><b>{{ $index + 1 }}</b></td>
+                        <td>{{ $item->product->name ?? '-' }}</td>
+                        <td class="text-center">{{ $item->qty }}</td>
+                        <td class="text-center">{{ $item->qty }}</td>
+                        <td class="text-center">{{ number_format($item->price, strpos($item->price, '.') ? 2 : 0) }}</td>
+                        <td class="text-center">{{ number_format($item->total, strpos($item->total, '.') ? 2 : 0) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
 
-            <!-- Summary Section from Image -->
-            <div class="row align-items-start">
-                <div class="col-7">
-                    <p class="mb-0" style="font-weight: bold; color: #5e5873; font-size: 14px;">Notes:</p>
-                    <p style="color: #b9b9c3; font-size: 13px; margin-bottom: 8px;">{{ $order->note ?: 'No special notes provided.' }}</p>
-                    
-                    <p class="mb-0" style="font-weight: bold; color: #7367f0; font-size: 14px;">Admin Notes:</p>
-                    <p style="color: #b9b9c3; font-size: 13px;">{{ $order->admin_notes ?: 'No admin notes provided.' }}</p>
-                </div>
-                <div class="col-5">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span style="color: #b9b9c3; font-size: 14px;">Subtotal:</span>
-                        <span style="color: #b9b9c3; font-size: 14px;">৳{{ number_format($order->sub_total, 2) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span style="color: #b9b9c3; font-size: 14px;">Discount:</span>
-                        <span style="color: #b9b9c3; font-size: 14px;">৳{{ number_format($order->discount, 2) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span style="color: #b9b9c3; font-size: 14px;">Carrying:</span>
-                        <span style="color: #b9b9c3; font-size: 14px;">৳{{ number_format($order->carrying_charge, 2) }}</span>
-                    </div>
-                    <hr style="border: 0; border-top: 1px solid #ebe9f1; margin: 10px 0;">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span style="font-weight: bold; color: #5e5873; font-size: 18px;">Grand Total:</span>
-                        <span style="font-weight: bold; color: #5e5873; font-size: 18px;">৳{{ number_format($order->grand_total, 2) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1" style="color: #28c76f; font-size: 14px;">
-                        <span>Paid Amount:</span>
-                        <span>৳{{ number_format($order->paid, 2) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between" style="color: #ea5455; font-size: 14px;">
-                        <span>Due Amount:</span>
-                        <span>৳{{ number_format($order->due, 2) }}</span>
-                    </div>
-                </div>
+            <table class="bottom-table">
+                <tr>
+                    <td class="in-words-col">
+                        Total In Words : <span>{{ getAmountInWordsPrint($order->grand_total) }}</span>
+                    </td>
+                    <td class="totals-col">
+                        <table class="totals-table">
+                            <tr>
+                                <td>Total Amount :</td>
+                                <td>{{ number_format($order->grand_total, 2) }}</td>
+                            </tr>
+                            <tr class="border-bottom">
+                                <td>Received Amount :</td>
+                                <td>{{ $order->paid > 0 ? number_format($order->paid, 2) : '0.0' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Due Amount:</td>
+                                <td>{{ $order->due > 0 ? number_format($order->due, 2) : '0.0' }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="description-box">
+                Description: <span>{{ $order->note ?: 'N/A' }}</span>
+            </div>
+
+            <div class="signature-section">
+                <table>
+                    <tr>
+                        <td class="text-left">
+                            <div class="sign-line" style="float: left;">Receiver Signature</div>
+                        </td>
+                        <td class="text-right">
+                            <div class="sign-line" style="float: right;">Manager Signature</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="footer-text">
+               Committed to Your Satisfaction
             </div>
         </div>
     </div>
 </div>
 
 <style>
+    /* Hide print view on screens */
+    @media screen {
+        #print-view { display: none !important; }
+    }
+
     @media print {
-        body * {
-            visibility: hidden;
-            background: #fff !important;
+        /* Safely hide layout wrappers and UI elements */
+        .header-navbar, 
+        .main-menu, 
+        .footer, 
+        .content-header, 
+        .invoice-preview-wrapper,
+        .header-navbar-shadow,
+        .sidenav-overlay,
+        .drag-target,
+        .scroll-to-top,
+        .customizer {
+            display: none !important;
         }
-        #print-view, #print-view * {
-            visibility: visible;
+        
+        /* Reset margins and paddings for a clean print */
+        body, html, .app-content, .content-wrapper, .content-body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: white !important;
+            height: auto !important;
+            min-height: auto !important;
         }
+
+        /* Show the print view inside the normal document flow */
         #print-view {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100% !important;
             display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            font-family: serif;
+            color: #333;
+            font-size: 13px;
+
         }
-        .text-right { text-align: right !important; }
-        .text-center { text-align: center !important; }
-        .d-flex { display: flex !important; }
-        .justify-content-between { justify-content: space-between !important; }
-        .align-items-start { align-items: flex-start !important; }
-        .mb-0 { margin-bottom: 0 !important; }
-        .mb-1 { margin-bottom: 0.25rem !important; }
-        .mb-2 { margin-bottom: 0.5rem !important; }
-        .mb-4 { margin-bottom: 1.5rem !important; }
-        .row { display: flex !important; flex-wrap: wrap !important; }
-        .col-6 { flex: 0 0 50% !important; max-width: 50% !important; }
-        .col-7 { flex: 0 0 58.33% !important; max-width: 58.33% !important; }
-        .col-5 { flex: 0 0 41.66% !important; max-width: 41.66% !important; }
-        .font-weight-bold { font-weight: bold !important; }
+        #print-view .print-container {
+            padding: 30px;
+        }
+        #print-view .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            z-index: -1;
+            width: 400px;
+        }
+        #print-view .header-table {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        #print-view .header-table td {
+            vertical-align: middle;
+            border: none;
+            padding: 0;
+        }
+        #print-view .header-logo {
+            width: 25%;
+            text-align: left;
+        }
+        #print-view .header-logo img {
+            width: 140px;
+        }
+        #print-view .header-content {
+            width: 50%;
+            text-align: center;
+        }
+        #print-view .header-empty {
+            width: 25%;
+        }
+        #print-view .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+        #print-view .header-address {
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        #print-view .divider {
+            border-bottom: 2px solid #555;
+            margin: 10px 0;
+        }
+        #print-view .invoice-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        #print-view .info-table {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        #print-view .info-table td {
+            vertical-align: top;
+            padding: 2px 0;
+            border: none;
+        }
+        #print-view .info-left {
+            width: 60%;
+        }
+        #print-view .info-right {
+            width: 40%;
+            text-align: right;
+        }
+        #print-view .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+        #print-view .items-table th, #print-view .items-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 12px;
+        }
+        #print-view .items-table th {
+            text-align: center;
+            font-weight: bold;
+        }
+        #print-view .text-center { text-align: center !important; }
+        #print-view .text-left { text-align: left !important; }
+        #print-view .text-right { text-align: right !important; }
+        #print-view .bottom-section {
+            width: 100%;
+            margin-top: 5px;
+        }
+        #print-view .bottom-table {
+            width: 100%;
+        }
+        #print-view .bottom-table td {
+            vertical-align: top;
+            border: none;
+        }
+        #print-view .in-words-col {
+            width: 60%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        #print-view .in-words-col span {
+            font-weight: normal;
+        }
+        #print-view .totals-col {
+            width: 40%;
+        }
+        #print-view .totals-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+        #print-view .totals-table td {
+            padding: 2px 0;
+            text-align: right;
+            border: none;
+        }
+        #print-view .totals-table td:first-child {
+            width: 60%;
+            padding-right: 10px;
+        }
+        #print-view .totals-table td:last-child {
+            width: 40%;
+        }
+        #print-view .totals-table .border-bottom td {
+            border-bottom: 1px solid #000;
+        }
+        #print-view .description-box {
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        #print-view .description-box span {
+            font-weight: normal;
+        }
+        #print-view .signature-section {
+            width: 100%;
+            margin-top: 70px;
+        }
+        #print-view .signature-section table {
+            width: 100%;
+        }
+        #print-view .signature-section td {
+            width: 50%;
+            border: none;
+        }
+        #print-view .sign-line {
+            border-top: 1px solid #000;
+            width: 150px;
+            text-align: center;
+            font-weight: bold;
+            padding-top: 5px;
+            font-size: 12px;
+        }
+        #print-view .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
     }
 </style>
 @endsection

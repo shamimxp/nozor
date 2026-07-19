@@ -175,6 +175,12 @@
                     <span class="menu-title text-truncate">Customer List</span>
                 </a>
             </li>
+            <li class="{{ Route::is('admin.worker.*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{route('admin.worker.index')}}">
+                    <i data-feather="users"></i>
+                    <span class="menu-title text-truncate">Worker List</span>
+                </a>
+            </li>
             <li class="{{ Route::is('admin.dealer.*') ? 'active' : '' }} nav-item">
                 <a class="d-flex align-items-center" href="{{route('admin.dealer.index')}}">
                     <i data-feather="briefcase"></i>
