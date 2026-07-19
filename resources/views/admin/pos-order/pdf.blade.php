@@ -1,191 +1,310 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>POS Invoice #{{ $order->order_number }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>POS Invoice - {{ $order->order_number }}</title>
     <style>
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 13px;
-            color: #333;
+            font-family: serif;
             margin: 0;
-            padding: 0;
-        }
-        .invoice-box {
-            max-width: 800px;
-            margin: auto;
             padding: 30px;
-            border: 1px solid #eee;
+            color: #333;
+            font-size: 13px;
         }
-        .header {
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            z-index: -1;
+            width: 400px;
+        }
+        .header-table {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
-        .header td {
-            vertical-align: top;
+        .header-table td {
+            vertical-align: middle;
         }
-        .logo {
-            font-size: 28px;
+        .header-logo {
+            width: 25%;
+            text-align: left;
+        }
+        .header-logo img {
+            width: 140px;
+        }
+        .header-content {
+            width: 50%;
+            text-align: center;
+        }
+        .header-empty {
+            width: 25%;
+        }
+        .header-title {
+            font-size: 20px;
             font-weight: bold;
-            color: #001f3f;
+            line-height: 1.1;
+            margin-bottom: 5px;
         }
-        .company-info {
-            text-align: right;
+        .header-address {
+            font-size: 13px;
+            line-height: 1.3;
         }
-        .invoice-info {
-            margin-bottom: 30px;
+        .divider {
+            border-bottom: 2px solid #555;
+            margin: 10px 0;
+        }
+        .invoice-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
         .info-table {
             width: 100%;
-            border-collapse: collapse;
+            margin-bottom: 15px;
         }
         .info-table td {
-            width: 50%;
             vertical-align: top;
+            padding: 2px 0;
+        }
+        .info-left {
+            width: 60%;
+        }
+        .info-right {
+            width: 40%;
+            text-align: right;
         }
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+        .items-table th, .items-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 12px;
         }
         .items-table th {
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            text-align: left;
-            padding: 10px;
+            text-align: center;
+            font-weight: bold;
         }
-        .items-table td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .bottom-section {
+            width: 100%;
+            margin-top: 5px;
+        }
+        .bottom-table {
+            width: 100%;
+        }
+        .bottom-table td {
+            vertical-align: top;
+        }
+        .in-words-col {
+            width: 60%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .in-words-col span {
+            font-weight: normal;
+        }
+        .totals-col {
+            width: 40%;
         }
         .totals-table {
             width: 100%;
-            margin-top: 30px;
+            font-size: 12px;
+            border-collapse: collapse;
         }
         .totals-table td {
-            padding: 5px;
-        }
-        .totals-label {
+            padding: 2px 0;
             text-align: right;
+        }
+        .totals-table td:first-child {
+            width: 60%;
+            padding-right: 10px;
+        }
+        .totals-table td:last-child {
+            width: 40%;
+        }
+        .totals-table .border-bottom td {
+            border-bottom: 1px solid #000;
+        }
+        .description-box {
+            margin-top: 25px;
             font-weight: bold;
-            width: 80%;
+            font-size: 12px;
         }
-        .totals-value {
-            text-align: right;
-            width: 20%;
+        .description-box span {
+            font-weight: normal;
         }
-        .footer {
-            margin-top: 50px;
+        .signature-section {
+            width: 100%;
+            margin-top: 70px;
+        }
+        .signature-section table {
+            width: 100%;
+        }
+        .signature-section td {
+            width: 50%;
+        }
+        .sign-line {
+            border-top: 1px solid #000;
+            width: 150px;
             text-align: center;
-            font-size: 11px;
-            color: #777;
+            font-weight: bold;
+            padding-top: 5px;
+            font-size: 12px;
         }
-        .status-badge {
-            padding: 3px 8px;
-            border-radius: 4px;
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
             font-size: 11px;
-            text-transform: uppercase;
             font-weight: bold;
         }
-        .bg-success { background: #d4edda; color: #155724; }
-        .bg-danger { background: #f8d7da; color: #721c24; }
-        .bg-warning { background: #fff3cd; color: #856404; }
     </style>
 </head>
 <body>
-    <div class="invoice-box">
-        <table class="header">
+
+    <img src="{{ public_path('admin/app-assets/images/logo/edited_red_letters.svg') }}" class="watermark" alt="Watermark">
+
+    @php
+    if (!function_exists('getAmountInWords')) {
+        function getAmountInWords($amount) {
+            $f = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+            $amt = explode('.', number_format($amount, 2, '.', ''));
+            $taka = (int)$amt[0];
+            $poysa = (int)$amt[1];
+            
+            $str = $f->format($taka) . ' taka';
+            if ($poysa > 0) {
+                $str .= ' and ' . $f->format($poysa) . ' poysa';
+            }
+            return ucwords($str);
+        }
+    }
+    @endphp
+
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <img src="{{ public_path('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo">
+            </td>
+            <td class="header-content">
+                <div class="header-title">Wood Machinery and Hardware</div>
+                <div class="header-address">
+                    Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212<br>
+                    Phone Number 01674-088383<br>
+                    Email: info@woodmachinery.com.bd
+                </div>
+            </td>
+            <td class="header-empty"></td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="invoice-title">POS Invoice</div>
+
+    <table class="info-table">
+        <tr>
+            <td class="info-left">
+                Invoice No : {{ $order->order_number }}<br>
+                @if($order->customer)
+                Customer Name : {{ $order->customer->name }}<br>
+                Customer Phone No : {{ $order->customer->phone }}
+                @else
+                Customer Name : Walk-in Customer
+                @endif
+            </td>
+            <td class="info-right">
+                Order Date : {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : date('d M Y') }}<br>
+                Payment Method: {{ ucfirst($order->payment_method) }}<br>
+                Payment Status: {{ ucfirst($order->payment_status) }}
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
             <tr>
-                <td class="logo">NOZOR POS</td>
-                <td class="company-info">
-                    <strong>NOZOR E-commerce</strong><br>
-                    Phone: +880123456789<br>
-                    Email: support@nozor.com
+                <th style="width: 5%;">SL</th>
+                <th style="width: 45%; text-align: left;">Product Name</th>
+                <th style="width: 10%;">Qty</th>
+                <th style="width: 15%;">Unit Price</th>
+                <th style="width: 10%;">Discount</th>
+                <th style="width: 15%;">Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $index => $item)
+            <tr>
+                <td class="text-center"><b>{{ $index + 1 }}</b></td>
+                <td>{{ $item->product_name ?? '-' }}</td>
+                <td class="text-center">{{ $item->quantity }}</td>
+                <td class="text-center">{{ number_format($item->unit_price, strpos($item->unit_price, '.') ? 2 : 0) }}</td>
+                <td class="text-center">{{ number_format($item->discount, strpos($item->discount, '.') ? 2 : 0) }}</td>
+                <td class="text-center">{{ number_format($item->subtotal, strpos($item->subtotal, '.') ? 2 : 0) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <table class="bottom-table">
+        <tr>
+            <td class="in-words-col">
+                Total In Words : <span>{{ getAmountInWords($order->payable_amount) }}</span>
+            </td>
+            <td class="totals-col">
+                <table class="totals-table">
+                    <tr>
+                        <td>Subtotal :</td>
+                        <td>{{ number_format($order->payable_amount + $order->discount_amount, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount :</td>
+                        <td>{{ number_format($order->discount_amount, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Amount :</td>
+                        <td>{{ number_format($order->payable_amount, 2) }}</td>
+                    </tr>
+                    <tr class="border-bottom">
+                        <td>Received Amount :</td>
+                        <td>{{ $order->paid_amount > 0 ? number_format($order->paid_amount, 2) : '0.0' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Due Amount:</td>
+                        <td>{{ $order->due_amount > 0 ? number_format($order->due_amount, 2) : '0.0' }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="description-box">
+        Description: <span>{{ $order->note ?: 'N/A' }}</span>
+    </div>
+
+    <div class="signature-section">
+        <table>
+            <tr>
+                <td class="text-left">
+                    <div class="sign-line" style="float: left;">Receiver Signature</div>
+                </td>
+                <td class="text-right">
+                    <div class="sign-line" style="float: right;">Manager Signature</div>
                 </td>
             </tr>
         </table>
-
-        <div class="invoice-info">
-            <table class="info-table">
-                <tr>
-                    <td>
-                        <strong>Customer Details:</strong><br>
-                        @if($order->customer)
-                            Name: {{ $order->customer->name }}<br>
-                            Phone: {{ $order->customer->phone }}<br>
-                            Email: {{ $order->customer->email }}
-                        @else
-                            Walk-in Customer
-                        @endif
-                    </td>
-                    <td style="text-align: right;">
-                        <strong>Invoice Info:</strong><br>
-                        Order ID: #{{ $order->order_number }}<br>
-                        Date: {{ date('d M, Y', strtotime($order->order_date)) }}<br>
-                        Method: {{ ucfirst($order->payment_method) }}<br>
-                        Status: <span class="status-badge bg-{{ $order->order_status == 'completed' ? 'success' : ($order->order_status == 'cancelled' ? 'danger' : 'warning') }}">{{ $order->order_status }}</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th>Product Description</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th>Discount</th>
-                    <th style="text-align: right;">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($order->items as $item)
-                <tr>
-                    <td>{{ $item->product_name }}</td>
-                    <td>৳{{ number_format($item->unit_price, 2) }}</td>
-                    <td>{{ $item->quantity }}</td>
-                    <td>৳{{ number_format($item->discount, 2) }}</td>
-                    <td style="text-align: right;">৳{{ number_format($item->subtotal, 2) }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <table class="totals-table">
-            <tr>
-                <td class="totals-label">Subtotal:</td>
-                <td class="totals-value">৳{{ number_format($order->payable_amount + $order->discount_amount, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="totals-label">Discount:</td>
-                <td class="totals-value">-৳{{ number_format($order->discount_amount, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="totals-label" style="font-size: 16px;">Total Payable:</td>
-                <td class="totals-value" style="font-size: 16px;"><strong>৳{{ number_format($order->payable_amount, 2) }}</strong></td>
-            </tr>
-            <tr>
-                <td class="totals-label">Paid Amount:</td>
-                <td class="totals-value">৳{{ number_format($order->paid_amount, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="totals-label" style="color: #dc3545;">Due Amount:</td>
-                <td class="totals-value" style="color: #dc3545;">৳{{ number_format($order->due_amount, 2) }}</td>
-            </tr>
-        </table>
-
-        @if($order->note)
-        <div style="margin-top: 30px;">
-            <strong>Note:</strong><br>
-            {{ $order->note }}
-        </div>
-        @endif
-
-        <div class="footer">
-            THANK YOU FOR YOUR BUSINESS!<br>
-            Generated on: {{ date('d M, Y H:i A') }}
-        </div>
     </div>
+
+    <div class="footer-text">
+       Committed to Your Satisfaction
+    </div>
+
 </body>
 </html>
