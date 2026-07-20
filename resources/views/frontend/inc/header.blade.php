@@ -6,7 +6,7 @@
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                    <a href="{{Url('/')}}"><img src="{{asset('images/nozor_clean.png')}}" alt="logo" /></a>
+                    <a href="{{Url('/')}}"><img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="logo" /></a>
                 </div>
                 <div class="header-right">
                     <div class="search-style-2" style="position: relative;">
@@ -121,7 +121,7 @@
         <div class="container">
             <div class="header-wrap header-space-between position-relative">
                 <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="{{Url('/')}}"><img src="{{asset('images/nozor_clean.png')}}" alt="logo" /></a>
+                    <a href="{{Url('/')}}"><img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="logo" /></a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
                     <div class="main-categori-wrap d-none d-lg-block">
@@ -259,7 +259,7 @@
     <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-top">
             <div class="mobile-header-logo">
-                <a href="index.html"><img src="{{asset('web')}}/assets/imgs/theme/logo.svg" alt="logo" /></a>
+                <a href="{{Url('/')}}"><img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="logo" /></a>
             </div>
             <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                 <button class="close-style search-close">

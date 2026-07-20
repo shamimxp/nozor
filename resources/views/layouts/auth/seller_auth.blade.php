@@ -9,8 +9,8 @@
     <meta name="keywords" content="">
     <meta name="author" content="">
     <title>Amar Code|Login Page</title>
-    <link rel="apple-touch-icon" href="{{asset('admin')}}/app-assets/images/ico/apple-icon-120.png">
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('admin')}}/app-assets/images/ico/favicon.ico">
+    <link rel="apple-touch-icon" href="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}">
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
     <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin')}}/app-assets/vendors/css/vendors.min.css">

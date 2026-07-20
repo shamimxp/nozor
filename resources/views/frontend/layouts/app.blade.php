@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>NOZOR-Fashion</title>
+    <title>Wood-Machinery</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,7 +12,7 @@
     <meta property="og:url" content="" />
     <meta property="og:image" content="" />
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg" />
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{asset('web')}}/assets/css/plugins/animate.min.css" />
     <link rel="stylesheet" href="{{asset('web')}}/assets/css/main.css?v=5.5" />

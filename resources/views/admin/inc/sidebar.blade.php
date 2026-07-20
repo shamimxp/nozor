@@ -1,9 +1,9 @@
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
-            <li class="nav-item mr-auto"><a class="navbar-brand" href=""><span class="brand-logo">
-                    <h2 class="brand-text">WOOD Machinery</h2>
-                    </span>
+            <li class="nav-item mr-auto"><a class="navbar-brand mt-0" href="{{ route('admin.dashboard') }}" style="padding-top: 0; padding-bottom: 0; margin-top: 10px;">
+                    <span class="brand-logo"></span>
+                    <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 180px; height: 55px; object-fit: contain;">
                 </a>
             </li>
             <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary" data-feather="disc" data-ticon="disc"></i></a></li>
