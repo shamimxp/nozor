@@ -16,8 +16,7 @@ Route::get('run-migrate', function () {
     return \Illuminate\Support\Facades\Artisan::output();
 });
 
-//Route::group(['middleware' => ['guest:admin'],'prefix'=>'admin','as'=>'admin.'],function(){
-//    Route::group(['middleware' => ['auth:admin']], function () {
+Route::group(['middleware' => ['guest:admin']], function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('admin.register');
 
@@ -39,7 +38,7 @@ Route::get('run-migrate', function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
-//});
+});
 
 Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
