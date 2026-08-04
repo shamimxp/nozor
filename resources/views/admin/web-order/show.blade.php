@@ -231,7 +231,7 @@
                                 <span style="color: #82868b; font-size: 0.85em;">
                                     (@if($item->size)Size: {{ $item->size }}@endif
                                     @if($item->size && $item->color), @endif
-                                    @if($item->color)Color: {{ $item->color }}@endif)
+                                    @if($item->color)Color: {{ $item->color }}@endif
                                 </span>
                             @endif
                         </td>

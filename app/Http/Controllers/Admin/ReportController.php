@@ -542,4 +542,45 @@ class ReportController extends Controller
         $pdf = Pdf::loadView('admin.report.pdf.product_stock_pdf', compact('products'));
         return $pdf->download('product_stock_' . date('Y-m-d') . '.pdf');
     }
+
+    /**
+     * Manufacture Report
+     */
+    public function manufactureReport(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = \App\Models\Manufacture::with(['product', 'dealer'])->latest();
+
+            if ($request->start_date && $request->end_date) {
+                $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+            }
+            if ($request->product_id) {
+                $query->where('product_id', $request->product_id);
+            }
+            if ($request->dealer_id) {
+                $query->where('dealer_id', $request->dealer_id);
+            }
+            if ($request->is_confirm !== null && $request->is_confirm !== '') {
+                $query->where('is_confirm', $request->is_confirm);
+            }
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('product_name', fn($r) => $r->product->name ?? 'N/A')
+                ->addColumn('dealer_name', fn($r) => $r->dealer->name ?? 'N/A')
+                ->addColumn('status', function($r) {
+                    if ($r->is_confirm) {
+                        return '<span class="badge badge-light-success">Confirmed</span>';
+                    }
+                    return '<span class="badge badge-light-warning">Pending</span>';
+                })
+                ->addColumn('date', fn($r) => $r->created_at->format('d M, Y'))
+                ->rawColumns(['status'])
+                ->make(true);
+        }
+
+        $products = \App\Models\Product::where('status', 1)->get();
+        $dealers = \App\Models\Dealer::where('status', 1)->get();
+        return view('admin.report.manufacture_report', compact('products', 'dealers'));
+    }
 }

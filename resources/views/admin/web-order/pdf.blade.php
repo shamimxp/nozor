@@ -120,7 +120,7 @@
         <table>
             <tr>
                 <td style="width: 50%;">
-                    <div class="logo" style="color: #7367f0; font-size: 32px; font-weight: bold; margin-bottom: 10px;">NOZOR</div>
+                    <div class="logo" style="color: #7367f0; font-size: 32px; font-weight: bold; margin-bottom: 10px;">Wood-Machinery</div>
                 </td>
                 <td style="width: 50%; vertical-align: top;">
                     <div class="invoice-title">INVOICE</div>
@@ -169,7 +169,7 @@
                         <span style="color: #82868b; font-size: 0.9em;">
                             (@if($item->size)Size: {{ $item->size }}@endif
                             @if($item->size && $item->color), @endif
-                            @if($item->color)Color: {{ $item->color }}@endif)
+                            @if($item->color)Color: {{ $item->color }}@endif
                         </span>
                     @endif
                 </td>

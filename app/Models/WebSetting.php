@@ -28,5 +28,9 @@ class WebSetting extends Model
         'inside_dhaka',
         'outside_dhaka',
         'subcity',
+        'body_part_price',
+        'finishing_part_price',
+        'dealer_profit_percent',
+        'special_dealer_profit_percent',
     ];
 }

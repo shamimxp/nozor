@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>NOZOR || POS</title>
+    <title>Wood-Machinery || POS</title>
     <!-- bootstarp link -->
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/bootstrap.min.css')}}">
     <!-- font awesome -->
@@ -1980,7 +1980,7 @@ $(document).ready(function() {
         if (isLoading) return;
 
         isLoading = true;
-        
+
         if (!append) {
             currentOffset = 0;
             currentLimit = 36;
@@ -2156,7 +2156,7 @@ $(document).ready(function() {
                     </td>
                     <td style="width:25%">
                         <p class="product_item_subtotal text-center">
-                          ৳ <span class="subtotal__amount">${itemOriginalTotal.toFixed(2)}</span> 
+                          ৳ <span class="subtotal__amount">${itemOriginalTotal.toFixed(2)}</span>
                         </p>
                     </td>
                     <td style="width: 10%;" class="text-center">
@@ -2294,16 +2294,16 @@ function updateDynamicChange() {
     $(document).on('change', '.quantity_input', function() {
         const id = $(this).data('id');
         let newQty = parseInt($(this).val());
-        
+
         if (isNaN(newQty) || newQty < 1) {
             newQty = 1;
         }
-        
+
         if (newQty > cart[id].stock) {
             toastr.warning('Only ' + cart[id].stock + ' items in stock!');
             newQty = cart[id].stock;
         }
-        
+
         cart[id].quantity = newQty;
         updateCart();
     });

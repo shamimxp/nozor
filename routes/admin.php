@@ -195,6 +195,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/inventory-purchase/{id}/payment-history', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'paymentHistory'])->name('admin.inventory-purchase.payment-history');
     Route::resource('inventory-purchase', \App\Http\Controllers\Admin\InventoryPurchaseController::class, ['as' => 'admin']);
 
+    // Manufacture module
+    Route::get('/manufacture/get-prices', [\App\Http\Controllers\Admin\ManufactureController::class, 'getPrices'])->name('admin.manufacture.get-prices');
+    Route::post('/manufacture/change-status', [\App\Http\Controllers\Admin\ManufactureController::class, 'changeStatus'])->name('admin.manufacture.change-status');
+    Route::resource('manufacture', \App\Http\Controllers\Admin\ManufactureController::class, ['as' => 'admin']);
+
     //Stock Adjustment module
     Route::post('/stock-adjustment/{id}/receive', [\App\Http\Controllers\Admin\StockAdjustmentController::class, 'receive'])->name('admin.stock-adjustment.receive');
     Route::resource('stock-adjustment', \App\Http\Controllers\Admin\StockAdjustmentController::class, ['as' => 'admin']);
@@ -205,6 +210,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/report/custom-profit-loss', [\App\Http\Controllers\Admin\ReportController::class, 'customProfitLossReport'])->name('admin.report.custom-profit-loss');
     Route::get('/report/pos-profit-loss', [\App\Http\Controllers\Admin\ReportController::class, 'posProfitLossReport'])->name('admin.report.pos-profit-loss');
     Route::get('/report/product-stock', [\App\Http\Controllers\Admin\ReportController::class, 'productStockReport'])->name('admin.report.product-stock');
+    Route::get('/report/manufacture-report', [\App\Http\Controllers\Admin\ReportController::class, 'manufactureReport'])->name('admin.report.manufacture-report');
     Route::get('/report/export-product-stock-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportProductStockExcel'])->name('admin.report.export-product-stock-excel');
     Route::get('/report/export-product-stock-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportProductStockPdf'])->name('admin.report.export-product-stock-pdf');
     Route::get('/report/export-custom-profit-loss-excel', [\App\Http\Controllers\Admin\ReportController::class, 'exportCustomProfitLossExcel'])->name('admin.report.export-custom-profit-loss-excel');

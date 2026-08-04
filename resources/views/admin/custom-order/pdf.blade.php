@@ -126,7 +126,7 @@
         <table>
             <tr>
                 <td style="width: 50%;">
-                    <div class="logo" style="color: #7367f0; font-size: 32px; font-weight: bold; margin-bottom: 10px;">NOZOR</div>
+                    <div class="logo" style="color: #7367f0; font-size: 32px; font-weight: bold; margin-bottom: 10px;">Wood-Machinery</div>
                 </td>
                 <td style="width: 50%; vertical-align: top;">
                     <div class="invoice-title">INVOICE</div>

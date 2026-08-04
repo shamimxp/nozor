@@ -61,6 +61,17 @@
                     </li>
                 </ul>
             </li>
+            <li class=" nav-item @if(Route::is('admin.manufacture*') || Route::is('admin.manufacture*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="package"></i><span class="menu-title text-truncate">Manufacture</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.manufacture.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Order List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.manufacture.create') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Create Order</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class=" nav-item @if(Route::is('admin.purchase*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">Custom Purchases</span></a>
                 <ul class="menu-content">
@@ -145,7 +156,7 @@
             </li>
 
             <li class=" nav-item @if(Route::is('admin.raw-material-product*') || Route::is('admin.material-type*') || Route::is('admin.product-recipe*')) open @endif">
-                <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Manufacture</span></a>
+                <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Manufacture Setting</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.material-type.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.material-type.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Material Type</span></a>
@@ -230,6 +241,9 @@
                     </li>
                     <li class="{{ Route::is('admin.report.product-stock') ? 'active' : '' }} pb-4">
                         <a class="d-flex align-items-center" href="{{route('admin.report.product-stock')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Stock Report</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.report.manufacture-report') ? 'active' : '' }} pb-4">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.manufacture-report')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Report</span></a>
                     </li>
                 </ul>
             </li>

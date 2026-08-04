@@ -44,6 +44,10 @@ class WebSettingController extends Controller
             'inside_dhaka'     => 'nullable|numeric|min:0',
             'outside_dhaka'    => 'nullable|numeric|min:0',
             'subcity'          => 'nullable|numeric|min:0',
+            'body_part_price'  => 'nullable|numeric|min:0',
+            'finishing_part_price' => 'nullable|numeric|min:0',
+            'dealer_profit_percent' => 'nullable|numeric|min:0',
+            'special_dealer_profit_percent' => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -56,7 +60,8 @@ class WebSettingController extends Controller
                 'slogan', 'contact_number_1', 'contact_number_2', 'address', 'email',
                 'facebook', 'twitter', 'instagram', 'youtube', 'linkedin',
                 'whatsapp', 'tiktok', 'pinterest', 'office_hour', 'currency_symbol',
-                'inside_dhaka', 'outside_dhaka', 'subcity'
+                'inside_dhaka', 'outside_dhaka', 'subcity', 'body_part_price',
+                'finishing_part_price', 'dealer_profit_percent', 'special_dealer_profit_percent'
             ]));
 
             $setting->save();

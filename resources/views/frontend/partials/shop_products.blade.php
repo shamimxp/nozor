@@ -45,7 +45,7 @@
                     <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
                 </div>
                 <div>
-                    <span class="font-small text-muted">By <a href="{{ route('shop') }}">Nozor</a></span>
+                    <span class="font-small text-muted">By <a href="{{ route('shop') }}">Wood-Machinery</a></span>
                 </div>
                 @php
                     $price = $product->selling_price ?? 0;

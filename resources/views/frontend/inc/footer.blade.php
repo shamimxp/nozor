@@ -9,7 +9,7 @@
                                 Elevate your everyday <br />
                                 style with our collection
                             </h2>
-                            <p class="mb-45">Curated fashion essentials from <span class="text-brand">Nozor</span></p>
+                            <p class="mb-45">Curated fashion essentials from <span class="text-brand">Wood-Machinery</span></p>
                             <form class="form-subcriber d-flex" id="newsletter-form" action="{{ route('subscribe.store') }}" method="POST">
                                 @csrf
                                 <input type="email" name="email" id="newsletter-email" placeholder="Your email address" required />
@@ -166,7 +166,7 @@
                 <div class="footer-bottom"></div>
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6">
-                <p class="font-sm mb-0">&copy; 2026, <strong class="text-brand">NOZOR</strong> - Fashion<br />All rights reserved</p>
+                <p class="font-sm mb-0">&copy; 2026, <strong class="text-brand">Wood-Machinery</strong> <br />All rights reserved</p>
             </div>
             <div class="col-xl-4 col-lg-6 text-center d-none d-xl-block">
                 <div class="hotline d-lg-inline-flex mr-30">

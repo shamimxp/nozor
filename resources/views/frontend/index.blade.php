@@ -37,7 +37,7 @@
     .carausel-4-columns:not(.slick-initialized) .product-cart-wrap {
         flex: 0 0 calc(25% - 15px);
     }
-    
+
     @media (max-width: 991px) {
         .carausel-4-columns:not(.slick-initialized) .product-cart-wrap {
             flex: 0 0 calc(50% - 10px);
@@ -220,7 +220,7 @@
     <span class="font-small ml-5 text-muted"> ({{ number_format($avgRating, 1) }})</span>
 </div>
                                     <div>
-                                        <span class="font-small text-muted">By <a href="{{route('shop')}}">Nozor</a></span>
+                                        <span class="font-small text-muted">By <a href="{{route('shop')}}">Wood-Machinery</a></span>
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">

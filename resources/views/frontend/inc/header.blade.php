@@ -38,10 +38,10 @@
                                     <span class="pro-count blue cart-count">{{\App\Models\Cart::where('session_id', session()->getId())->sum('quantity')}}</span>
                                 </a>
                                 <a href="javascript:void(0)" id="cart-drawer-trigger-text"><span class="lable">Cart</span></a>
-                                
+
                                 <!-- Overlay -->
                                 <div id="cart-drawer-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 9998; transition: all 0.3s ease;"></div>
-                                
+
                                 <!-- Drawer -->
                                 <div id="cart-drawer" class="cart-drawer">
                                     <div class="cart-drawer-header">
@@ -436,7 +436,7 @@
                 <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-pinterest-white.svg" alt="" /></a>
                 <a href="#"><img src="{{asset('web')}}/assets/imgs/theme/icons/icon-youtube-white.svg" alt="" /></a>
             </div>
-            <div class="site-copyright">Copyright 2022 © Nest. All rights reserved. Powered by AliThemes.</div>
+{{--            <div class="site-copyright">Copyright 2022 © Nest. All rights reserved. Powered by AliThemes.</div>--}}
         </div>
     </div>
 </div>
@@ -553,7 +553,7 @@
     .cart-drawer-footer .shopping-cart-button a:not(.outline):hover {
         background: #2a9461;
     }
-    
+
     @media (max-width: 576px) {
         .cart-drawer {
             width: 300px;
@@ -585,7 +585,7 @@
         if(trigger3) trigger3.addEventListener('click', openDrawer);
         if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
         if(overlay) overlay.addEventListener('click', closeDrawer);
-        
+
         // Optional: close when mouse leaves the drawer completely
         if(drawer) drawer.addEventListener('mouseleave', closeDrawer);
     });

@@ -93,7 +93,7 @@
 </table>
 
 <div class="footer">
-    This report was generated automatically. &copy; {{ date('Y') }} Nozor.
+    This report was generated automatically. &copy; {{ date('Y') }} Wood-Machinery.
 </div>
 
 </body>

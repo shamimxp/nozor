@@ -58,4 +58,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductReview::class)->where('status', 1);
     }
+
+    public function recipe()
+    {
+        return $this->hasOne(ProductRecipe::class);
+    }
 }
