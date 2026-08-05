@@ -93,7 +93,10 @@ class ManufactureListController extends Controller
                 })
                 ->addColumn('is_complete', function ($row) {
                     $checked = ($row->status == 2) ? 'checked' : '';
-                    $disabled = ($row->status == 0 && $row->is_confirm == 0) ? 'disabled' : ''; // Can only complete if confirmed
+                    $disabled = ($row->status == 0 && $row->is_confirm == 0) ? 'disabled' : '';
+                    if ($row->collected_by) {
+                        $disabled = 'disabled';
+                    } // Can only complete if confirmed
                     return '<div class="custom-control custom-switch custom-switch-primary">
                                 <input type="checkbox" class="custom-control-input change-status" id="complete_'.$row->id.'" data-id="'.$row->id.'" data-field="is_complete" '.$checked.' '.$disabled.'>
                                 <label class="custom-control-label" for="complete_'.$row->id.'">
@@ -212,6 +215,9 @@ class ManufactureListController extends Controller
                 ->addColumn('is_complete', function ($row) {
                     $checked = ($row->status == 2) ? 'checked' : '';
                     $disabled = ($row->status == 0 && $row->is_confirm == 0) ? 'disabled' : '';
+                    if ($row->collected_by) {
+                        $disabled = 'disabled';
+                    }
                     return '<div class="custom-control custom-switch custom-switch-primary">
                                 <input type="checkbox" class="custom-control-input change-status" id="complete_'.$row->id.'" data-id="'.$row->id.'" data-field="is_complete" '.$checked.' '.$disabled.'>
                                 <label class="custom-control-label" for="complete_'.$row->id.'">

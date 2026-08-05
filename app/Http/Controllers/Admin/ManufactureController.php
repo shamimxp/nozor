@@ -95,6 +95,9 @@ class ManufactureController extends Controller
                 ->addColumn('is_complete', function ($row) {
                     $checked = ($row->status == 2) ? 'checked' : '';
                     $disabled = ($row->status == 0 && $row->is_confirm == 0) ? 'disabled' : ''; // Can only complete if confirmed
+                    if ($row->collected_by) {
+                        $disabled = 'disabled'; // Cannot un-complete if already collected
+                    }
                     return '<div class="custom-control custom-switch custom-switch-primary">
                                 <input type="checkbox" class="custom-control-input change-status" id="complete_'.$row->id.'" data-id="'.$row->id.'" data-field="is_complete" '.$checked.' '.$disabled.'>
                                 <label class="custom-control-label" for="complete_'.$row->id.'">
@@ -306,6 +309,9 @@ class ManufactureController extends Controller
                 $manufacture->status = 0;
             }
         } elseif ($request->field === 'is_complete') {
+            if ($manufacture->collected_by) {
+                return response()->json(['error' => 'Cannot change complete status because the order has already been collected.'], 403);
+            }
             if ($request->value == 1) {
                 $manufacture->status = 2;
                 $manufacture->completed_by = auth()->id();
