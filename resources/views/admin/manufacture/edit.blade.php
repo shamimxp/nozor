@@ -14,23 +14,29 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group mb-1">
-                                <label for="reff_invoice">Reference Invoice No</label>
-                                <input type="text" name="reff_invoice" id="reff_invoice" class="form-control" value="{{ $manufacture->reff_invoice }}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-1">
                                 <label for="product_id">Product <span class="text-danger">*</span></label>
                                 <select name="product_id" id="product_id" class="form-control select2">
                                     <option value="">Select Product</option>
                                     @foreach($products as $product)
-                                    <option value="{{ $product->id }}" {{ $manufacture->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
+                                        @php
+                                            $pimg = $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png');
+                                            $recipe = $product->recipe;
+                                            $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+                                            $mimg = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+                                        @endphp
+                                        <option value="{{ $product->id }}" data-pimg="{{ $pimg }}" data-mimg="{{ $mimg }}" {{ $manufacture->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
                                     @endforeach
                                 </select>
                                 <span class="text-danger error-text product_id_error"></span>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="reff_invoice">Reference Invoice No</label>
+                                <input type="text" name="reff_invoice" id="reff_invoice" class="form-control" value="{{ $manufacture->reff_invoice }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group mb-1">
                                 <label for="dealer_id">Dealer <span class="text-danger">*</span></label>
                                 <select name="dealer_id" id="dealer_id" class="form-control select2">
@@ -42,25 +48,13 @@
                                 <span class="text-danger error-text dealer_id_error"></span>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label for="worker_id">Worker <span class="text-danger">*</span></label>
-                                <select name="worker_id" id="worker_id" class="form-control select2">
-                                    <option value="">Select Worker</option>
-                                    @foreach($workers as $worker)
-                                    <option value="{{ $worker->id }}" {{ $manufacture->worker_id == $worker->id ? 'selected' : '' }}>{{ $worker->name }}</option>
-                                    @endforeach
-                                </select>
-                                <span class="text-danger error-text worker_id_error"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group mb-1">
                                 <label for="dealer_phone">Dealer Phone</label>
                                 <input type="text" id="dealer_phone" class="form-control" value="{{ $manufacture->dealer_phone }}" readonly>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group mb-1">
                                 <label for="dealer_address">Dealer Address</label>
                                 <input type="text" id="dealer_address" class="form-control" value="{{ $manufacture->dealer_address }}" readonly>
@@ -71,6 +65,18 @@
                                 <label for="manufacture_qty">Manufacture Quantity <span class="text-danger">*</span></label>
                                 <input type="number" name="manufacture_qty" id="manufacture_qty" class="form-control" value="{{ $manufacture->manufacture_qty }}" min="1">
                                 <span class="text-danger error-text manufacture_qty_error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="worker_id">Worker <span class="text-danger">*</span></label>
+                                <select name="worker_id" id="worker_id" class="form-control select2">
+                                    <option value="">Select Worker</option>
+                                    @foreach($workers as $worker)
+                                    <option value="{{ $worker->id }}" {{ $manufacture->worker_id == $worker->id ? 'selected' : '' }}>{{ $worker->name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger error-text worker_id_error"></span>
                             </div>
                         </div>
                     </div>
@@ -127,6 +133,20 @@
                                 <input type="checkbox" class="custom-control-input" id="is_confirm" name="is_confirm" value="1">
                                 <label class="custom-control-label" for="is_confirm">Confirm Order (Cannot be edited or deleted later)</label>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                           <div class="row mt-1" id="product_images_preview" style="display: none;">
+                                    <div class="col-6 text-center">
+                                        <small class="text-muted d-block">Product</small>
+                                        <img src="" id="preview_pimg" class="img-fluid rounded border" style="max-height: 100px; object-fit: contain;">
+                                    </div>
+                                    <div class="col-6 text-center">
+                                        <small class="text-muted d-block">Blueprint</small>
+                                        <img src="" id="preview_mimg" class="img-fluid rounded border" style="max-height: 100px; object-fit: contain;">
+                                    </div>
+                                </div>
                         </div>
                     </div>
 
@@ -202,15 +222,27 @@
 
         $('#product_id').on('change', function() {
             let productId = $(this).val();
+            let selected = $(this).find('option:selected');
+            let pimg = selected.data('pimg');
+            let mimg = selected.data('mimg');
+            
+            if (pimg || mimg) {
+                $('#preview_pimg').attr('src', pimg || '{{ asset("images/no-image.png") }}');
+                $('#preview_mimg').attr('src', mimg || '{{ asset("images/no-image.png") }}');
+                $('#product_images_preview').slideDown();
+            } else {
+                $('#product_images_preview').slideUp();
+            }
+
             loadPrices(productId);
         });
 
         $('#manufacture_qty').on('input', calculateTotals);
         $('.part-checkbox').on('change', calculateTotals);
 
-        // Load prices on page load if product is selected
+        // Load prices and images on page load if product is selected
         if ($('#product_id').val()) {
-            loadPrices($('#product_id').val());
+            $('#product_id').trigger('change');
         }
 
         $.ajaxSetup({

@@ -13,20 +13,26 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group mb-1">
-                                <label for="reff_invoice">Reference Invoice No</label>
-                                <input type="text" name="reff_invoice" id="reff_invoice" class="form-control" placeholder="reff invoice no">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-1">
                                 <label for="product_id">Product <span class="text-danger">*</span></label>
                                 <select name="product_id" id="product_id" class="form-control select2">
                                     <option value="">Select Product</option>
                                     @foreach($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                        @php
+                                            $pimg = $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png');
+                                            $recipe = $product->recipe;
+                                            $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+                                            $mimg = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+                                        @endphp
+                                        <option value="{{ $product->id }}" data-pimg="{{ $pimg }}" data-mimg="{{ $mimg }}">{{ $product->name }}</option>
                                     @endforeach
                                 </select>
                                 <span class="text-danger error-text product_id_error"></span>
+                            </div>
+                        </div>
+                         <div class="col-md-4">
+                            <div class="form-group mb-1">
+                                <label for="reff_invoice">Reference Invoice No</label>
+                                <input type="text" name="reff_invoice" id="reff_invoice" class="form-control" placeholder="reff invoice no">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -128,6 +134,21 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div class="row mt-1" id="product_images_preview" style="display: none;">
+                                    <div class="col-6 text-center">
+                                        <small class="text-muted d-block">Product</small>
+                                        <img src="" id="preview_pimg" class="img-fluid rounded border" style="max-height: 100px; object-fit: contain;">
+                                    </div>
+                                    <div class="col-6 text-center">
+                                        <small class="text-muted d-block">Blueprint</small>
+                                        <img src="" id="preview_mimg" class="img-fluid rounded border" style="max-height: 100px; object-fit: contain;">
+                                </div>
+                            </div>
+                      </div>
+                    </div>
+
 
                     <div class="row mt-2">
                         <div class="col-md-12 text-right">
@@ -170,6 +191,20 @@
             let selected = $(this).find('option:selected');
             $('#dealer_phone').val(selected.data('phone') || '');
             $('#dealer_address').val(selected.data('address') || '');
+        });
+
+        $('#product_id').on('change', function() {
+            let selected = $(this).find('option:selected');
+            let pimg = selected.data('pimg');
+            let mimg = selected.data('mimg');
+            
+            if (pimg || mimg) {
+                $('#preview_pimg').attr('src', pimg || '{{ asset("images/no-image.png") }}');
+                $('#preview_mimg').attr('src', mimg || '{{ asset("images/no-image.png") }}');
+                $('#product_images_preview').slideDown();
+            } else {
+                $('#product_images_preview').slideUp();
+            }
         });
 
         function fetchPrices() {

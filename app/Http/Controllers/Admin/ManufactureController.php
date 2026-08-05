@@ -129,7 +129,7 @@ class ManufactureController extends Controller
 
     public function create()
     {
-        $products = \App\Models\Product::where('status', 1)->get();
+        $products = \App\Models\Product::with('recipe')->where('status', 1)->get();
         $dealers = \App\Models\Dealer::where('status', 1)->get();
         $workers = \App\Models\Worker::all(); // Assuming Worker model exists
         // Generate unique invoice number
@@ -213,7 +213,7 @@ class ManufactureController extends Controller
             return redirect()->route('admin.manufacture.index')->with('error', 'Confirmed records cannot be edited.');
         }
 
-        $products = \App\Models\Product::where('status', 1)->get();
+        $products = \App\Models\Product::with('recipe')->where('status', 1)->get();
         $dealers = \App\Models\Dealer::where('status', 1)->get();
         $workers = \App\Models\Worker::all();
         return view('admin.manufacture.edit', compact('manufacture', 'products', 'dealers', 'workers'));
