@@ -30,7 +30,7 @@
                             <div>
                                 <div class="logo-wrapper">
                                     <h3 class="text-primary invoice-logo">
-                                        <img src="{{ asset('images/nozor_logo.png') }}" alt="Logo" style="width: 180px;" class="mr-25">
+                                        <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 180px;" class="mr-25">
                                     </h3>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <div>
-                    <img src="{{ asset('images/nozor_logo.png') }}" alt="Logo" style="width: 160px;" class="mb-2">
+                    <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 160px;" class="mb-2">
                 </div>
                 <div class="text-right">
                     <h1 class="font-weight-bold mb-0" style="color: #7367f0; font-size: 32px;">INVOICE</h1>

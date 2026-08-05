@@ -21,8 +21,25 @@
 <div class="content-body">
     <section class="invoice-preview-wrapper">
         <div class="row invoice-preview">
+            <!-- Invoice Actions -->
+            <div class="col-xl-12 col-md-12 col-12 invoice-actions mt-md-0 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="{{ route('admin.dealer-order.export-pdf', $order->id) }}" class="btn btn-primary btn-block mb-75">Download PDF</a>
+                        <button class="btn btn-outline-secondary btn-block mb-75" onclick="window.print()">
+                            Print
+                        </button>
+                        @if($order->status != 'delivered' && $order->status != 'cancelled')
+                            <a class="btn btn-outline-secondary btn-block mb-75" href="{{ route('admin.dealer-order.edit', $order->id) }}"> Edit Order </a>
+                        @endif
+                        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-success btn-block">
+                            Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
             <!-- Invoice -->
-            <div class="col-xl-9 col-md-8 col-12">
+            <div class="col-xl-12 col-md-12 col-12">
                 <div class="card invoice-preview-card">
                     <div class="card-body invoice-padding pb-0">
                         <!-- Header starts -->
@@ -33,7 +50,7 @@
                                         <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 180px;" class="mr-25">
                                     </h3>
                                 </div>
-                        
+
                             </div>
                             <div class="mt-md-0 mt-2 text-md-right">
                                 <h4 class="invoice-title">
@@ -166,23 +183,7 @@
             </div>
             <!-- /Invoice -->
 
-            <!-- Invoice Actions -->
-            <div class="col-xl-3 col-md-4 col-12 invoice-actions mt-md-0 mt-2">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route('admin.dealer-order.export-pdf', $order->id) }}" class="btn btn-primary btn-block mb-75">Download PDF</a>
-                        <button class="btn btn-outline-secondary btn-block mb-75" onclick="window.print()">
-                            Print
-                        </button>
-                        @if($order->status != 'delivered' && $order->status != 'cancelled')
-                        <a class="btn btn-outline-secondary btn-block mb-75" href="{{ route('admin.dealer-order.edit', $order->id) }}"> Edit Order </a>
-                        @endif
-                        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-success btn-block">
-                            Back to List
-                        </a>
-                    </div>
-                </div>
-            </div>
+
             <!-- /Invoice Actions -->
         </div>
     </section>
@@ -199,7 +200,7 @@
                     $amt = explode('.', number_format($amount, 2, '.', ''));
                     $taka = (int)$amt[0];
                     $poysa = (int)$amt[1];
-                    
+
                     $str = $f->format($taka) . ' taka';
                     if ($poysa > 0) {
                         $str .= ' and ' . $f->format($poysa) . ' poysa';
@@ -325,10 +326,10 @@
 
     @media print {
         /* Safely hide layout wrappers and UI elements */
-        .header-navbar, 
-        .main-menu, 
-        .footer, 
-        .content-header, 
+        .header-navbar,
+        .main-menu,
+        .footer,
+        .content-header,
         .invoice-preview-wrapper,
         .header-navbar-shadow,
         .sidenav-overlay,
@@ -337,7 +338,7 @@
         .customizer {
             display: none !important;
         }
-        
+
         /* Reset margins and paddings for a clean print */
         body, html, .app-content, .content-wrapper, .content-body {
             margin: 0 !important;

@@ -120,7 +120,9 @@
         <table>
             <tr>
                 <td style="width: 50%;">
-                    <div class="logo" style="color: #7367f0; font-size: 32px; font-weight: bold; margin-bottom: 10px;">Wood-Machinery</div>
+                    <div style="margin-bottom: 10px;">
+                        <img src="{{ public_path('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 180px;">
+                    </div>
                 </td>
                 <td style="width: 50%; vertical-align: top;">
                     <div class="invoice-title">INVOICE</div>
