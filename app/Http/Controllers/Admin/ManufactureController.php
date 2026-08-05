@@ -110,7 +110,7 @@ class ManufactureController extends Controller
                     return $row->updated_at ? $row->updated_at->format('d M Y h:i A') : 'N/A';
                 })
                 ->addColumn('creaded_by', function ($row) {
-                    return $row->completedBy->name ?? 'N/A';
+                    return $row->creator->name ?? 'N/A';
                 })
                 ->addColumn('collected_by', function ($row) {
                     return $row->collectedBy->name ?? 'N/A';
