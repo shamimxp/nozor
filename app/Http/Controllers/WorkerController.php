@@ -44,7 +44,8 @@ class WorkerController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editWorker"><i data-feather="edit"></i></a>';
+                    $btn = '<a href="' . route('admin.worker.show', $row->id) . '" class="btn btn-info btn-sm" title="View Profile"><i data-feather="eye"></i></a>';
+                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editWorker"><i data-feather="edit"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteWorker"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
@@ -76,6 +77,55 @@ class WorkerController extends Controller
         Worker::create($data);
 
         return response()->json(['success' => 'Worker created successfully.']);
+    }
+
+    public function show(\Illuminate\Http\Request $request, $id)
+    {
+        $worker = Worker::findOrFail($id);
+        
+        if ($request->ajax()) {
+            $payments = \App\Models\WorkerPayment::with(['manufacture.product', 'creator'])
+                        ->where('worker_id', $worker->id)
+                        ->latest();
+
+            return datatables()->of($payments)
+                ->addIndexColumn()
+                ->addColumn('date', function ($row) {
+                    return $row->date ? date('d M Y', strtotime($row->date)) : 'N/A';
+                })
+                ->addColumn('invoice_no', function ($row) {
+                    return $row->manufacture->invoice_no ?? 'N/A';
+                })
+                ->addColumn('product', function ($row) {
+                    return $row->manufacture->product->name ?? 'N/A';
+                })
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 'paid') {
+                        return '<span class="badge badge-light-success">Paid</span>';
+                    } else {
+                        return '<span class="badge badge-light-warning">Pending</span>';
+                    }
+                })
+                ->addColumn('total_amount', function ($row) {
+                    return number_format($row->total_amount, 2);
+                })
+                ->rawColumns(['status'])
+                ->make(true);
+        }
+        
+        $totalOrders = \App\Models\Manufacture::where('worker_id', $id)->count();
+        $completedOrders = \App\Models\Manufacture::where('worker_id', $id)->whereNotNull('collected_by')->count();
+        $pendingOrders = \App\Models\Manufacture::where('worker_id', $id)->whereNull('collected_by')->count();
+
+        $totalAmount = \App\Models\WorkerPayment::where('worker_id', $id)->sum('total_amount');
+        $totalPaid = \App\Models\WorkerPayment::where('worker_id', $id)->where('status', 'paid')->sum('total_amount');
+        $totalDue = \App\Models\WorkerPayment::where('worker_id', $id)->where('status', 'pending')->sum('total_amount');
+
+        return view('admin.worker.show', compact(
+            'worker', 
+            'totalOrders', 'completedOrders', 'pendingOrders',
+            'totalAmount', 'totalPaid', 'totalDue'
+        ));
     }
 
     public function edit($id)
