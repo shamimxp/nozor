@@ -218,8 +218,10 @@ class DealerOrderController extends Controller
 
     public function show($id)
     {
-        $order = DealerOrder::with(['items.product', 'dealer'])->findOrFail($id);
-        return view('admin.dealer-order.show', compact('order'));
+        $order = DealerOrder::with(['items.product.gallery', 'items.product.recipe', 'dealer'])->findOrFail($id);
+        $workers = \App\Models\Worker::where('status', 1)->get();
+        $setting = \App\Models\WebSetting::first();
+        return view('admin.dealer-order.show', compact('order', 'workers', 'setting'));
     }
 
     public function edit($id)
@@ -310,6 +312,47 @@ class DealerOrderController extends Controller
             DB::rollBack();
             toastr()->error('Error: ' . $e->getMessage());
             return back()->withInput();
+        }
+    }
+
+    public function updateItem(Request $request)
+    {
+        $request->validate([
+            'item_id' => 'required|exists:dealer_order_items,id',
+            'confirm_qty' => 'nullable|integer|min:0',
+            'note' => 'nullable|string'
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\DB::beginTransaction();
+
+            $item = DealerOrderItem::findOrFail($request->item_id);
+            $qty = $request->confirm_qty !== null ? $request->confirm_qty : $item->qty;
+            
+            $item->update([
+                'qty' => $qty,
+                'confirm_qty' => $qty,
+                'total' => $item->price * $qty,
+                'note' => $request->note
+            ]);
+
+            // Recalculate Order Totals
+            $order = DealerOrder::findOrFail($item->dealer_order_id);
+            $subTotal = DealerOrderItem::where('dealer_order_id', $order->id)->sum('total');
+            $grandTotal = ($subTotal - $order->discount) + $order->carrying_charge;
+            $due = $grandTotal - $order->paid;
+
+            $order->update([
+                'sub_total' => $subTotal,
+                'grand_total' => $grandTotal,
+                'due' => $due
+            ]);
+
+            \Illuminate\Support\Facades\DB::commit();
+            return response()->json(['success' => true, 'message' => 'Item and order totals updated successfully']);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 

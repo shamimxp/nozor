@@ -24,15 +24,15 @@
             <!-- Invoice Actions -->
             <div class="col-xl-12 col-md-12 col-12 invoice-actions mt-md-0 mt-2">
                 <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route('admin.dealer-order.export-pdf', $order->id) }}" class="btn btn-primary btn-block mb-75">Download PDF</a>
-                        <button class="btn btn-outline-secondary btn-block mb-75" onclick="window.print()">
+                    <div class="card-body d-flex flex-wrap">
+                        <a href="{{ route('admin.dealer-order.export-pdf', $order->id) }}" class="btn btn-primary mr-1 mb-1">Download PDF</a>
+                        <button class="btn btn-outline-secondary mr-1 mb-1" onclick="window.print()">
                             Print
                         </button>
                         @if($order->status != 'delivered' && $order->status != 'cancelled')
-                            <a class="btn btn-outline-secondary btn-block mb-75" href="{{ route('admin.dealer-order.edit', $order->id) }}"> Edit Order </a>
+                            <a class="btn btn-outline-secondary mr-1 mb-1" href="{{ route('admin.dealer-order.edit', $order->id) }}"> Edit Order </a>
                         @endif
-                        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-success btn-block">
+                        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-success mb-1">
                             Back to List
                         </a>
                     </div>
@@ -98,6 +98,8 @@
                                 <th class="py-1">Rate</th>
                                 <th class="py-1 text-center">Qty</th>
                                 <th class="py-1 text-right">Total</th>
+                                <th class="py-1">Note</th>
+                                <th class="py-1 text-center">Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -126,6 +128,32 @@
                                 </td>
                                 <td class="py-1 text-right">
                                     <span class="font-weight-bold">৳{{ number_format($item->total, 2) }}</span>
+                                </td>
+                                <td class="py-1">
+                                    {{ $item->note }}
+                                </td>
+                                <td class="py-1 text-center">
+                                    @if($item->product && $item->product->is_manufacturer == 1)
+                                        @php
+                                            $imgs = [];
+                                            if ($item->product->recipe && !empty($item->product->recipe->manufacture_images)) {
+                                                foreach($item->product->recipe->manufacture_images as $mImg) {
+                                                    $imgs[] = asset($mImg);
+                                                }
+                                            }
+                                            if (empty($imgs)) {
+                                                $imgs[] = asset('images/no-image.png');
+                                            }
+                                        @endphp
+                                        <button class="btn btn-sm btn-danger btn-manufacture mb-25" 
+                                            data-product_id="{{ $item->product_id }}"
+                                            data-product_name="{{ $item->product->name }}"
+                                            data-images="{{ json_encode($imgs) }}"
+                                            data-qty="{{ $item->confirm_qty ?? $item->qty }}">
+                                            Manufac. order
+                                        </button>
+                                    @endif
+                                    <button class="btn btn-sm btn-secondary btn-edit-item mb-25" data-id="{{ $item->id }}" data-qty="{{ $item->confirm_qty ?? $item->qty }}" data-note="{{ $item->note }}">Edit</button>
                                 </td>
                             </tr>
                             @endforeach
@@ -523,6 +551,115 @@
         }
     }
 </style>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="editItemForm">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="item_id" id="edit_item_id">
+                    <div class="form-group">
+                        <label>Confirm Qty</label>
+                        <input type="number" name="confirm_qty" id="edit_confirm_qty" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea name="note" id="edit_note" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Manufacture Order Modal -->
+<div class="modal fade" id="manufactureModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="manufactureForm">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Body Part Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                    <div class="text-center mb-1" id="manufac_images_container" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    </div>
+                    <p class="mb-1">Product Name : <span id="manufac_product_name"></span></p>
+                    
+                    <input type="hidden" name="product_id" id="manufac_product_id">
+                    <input type="hidden" name="dealer_id" value="{{ $order->dealer_id }}">
+                    
+                    <div class="form-group">
+                        <label>Manufacture Part:</label>
+                        <select name="parts[]" id="manufac_part" class="form-control">
+                            <option value="body">body-part</option>
+                            <option value="finishing">finishing-part</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Worker</label>
+                        <select name="worker_id" class="form-control" required>
+                            <option value="">Select Worker</option>
+                            @if(isset($workers))
+                            @foreach($workers as $worker)
+                                <option value="{{ $worker->id }}">{{ $worker->name }}</option>
+                            @endforeach
+                            @endif
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Manufacture Price:</label>
+                        <input type="text" id="manufac_price" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Manufacture Quantity:</label>
+                        <input type="number" name="manufacture_qty" id="manufac_qty" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Price:</label>
+                        <input type="text" id="manufac_total" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Dealer Name</label>
+                        <input type="text" class="form-control" value="{{ $order->dealer->shop_name ?? ($order->dealer->name ?? '') }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Dealer Confirm Invoice Number</label>
+                        <input type="text" name="reff_invoice" class="form-control" value="{{ $order->order_number }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Message:</label>
+                        <textarea name="note" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" name="is_confirm" id="manufac_is_confirm" value="1">
+                        <label class="custom-control-label" for="manufac_is_confirm">Is Confirm</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 @push('scripts')
     <script>
@@ -533,6 +670,88 @@
                     height: 14
                 });
             }
-        })
+        });
+
+        // Edit Item Modal
+        $('.btn-edit-item').on('click', function() {
+            $('#edit_item_id').val($(this).data('id'));
+            $('#edit_confirm_qty').val($(this).data('qty'));
+            $('#edit_note').val($(this).data('note'));
+            $('#editItemModal').modal('show');
+        });
+
+        $('#editItemForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{{ route('admin.dealer-order.item.update') }}",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function(res) {
+                    if (res.success) {
+                        toastr.success(res.message);
+                        location.reload();
+                    }
+                },
+                error: function(err) {
+                    toastr.error('Error updating item.');
+                }
+            });
+        });
+
+        // Manufacture Modal
+        let bodyPrice = {{ isset($setting) && $setting->body_part_price ? $setting->body_part_price : 0 }};
+        let finishingPrice = {{ isset($setting) && $setting->finishing_part_price ? $setting->finishing_part_price : 0 }};
+
+        function calculateManufacTotal() {
+            let qty = parseFloat($('#manufac_qty').val()) || 0;
+            let part = $('#manufac_part').val();
+            let price = part === 'body' ? bodyPrice : finishingPrice;
+            $('#manufac_price').val(price);
+            $('#manufac_total').val(qty * price);
+        }
+
+        $('.btn-manufacture').on('click', function() {
+            $('#manufac_product_id').val($(this).data('product_id'));
+            $('#manufac_product_name').text($(this).data('product_name'));
+            
+            let images = $(this).data('images');
+            let imagesHtml = '';
+            if (images && images.length > 0) {
+                images.forEach(function(imgSrc) {
+                    imagesHtml += '<img src="' + imgSrc + '" style="max-height: 150px; border-radius: 4px; object-fit: contain; border: 1px solid #ddd;">';
+                });
+            }
+            $('#manufac_images_container').html(imagesHtml);
+            
+            $('#manufac_qty').val($(this).data('qty'));
+            calculateManufacTotal();
+            $('#manufactureModal').modal('show');
+        });
+
+        $('#manufac_qty, #manufac_part').on('change keyup', calculateManufacTotal);
+
+        $('#manufactureForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{{ route('admin.manufacture.store') }}",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function(res) {
+                    if (res.success) {
+                        toastr.success(res.success);
+                        $('#manufactureModal').modal('hide');
+                    } else if (res.error) {
+                        toastr.error(res.error);
+                    }
+                },
+                error: function(err) {
+                    let msg = 'Error creating manufacture order.';
+                    if(err.responseJSON && err.responseJSON.errors) {
+                        msg = Object.values(err.responseJSON.errors)[0][0];
+                    }
+                    toastr.error(msg);
+                }
+            });
+        });
     </script>
 @endpush

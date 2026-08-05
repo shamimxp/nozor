@@ -10,7 +10,7 @@ class DealerOrderItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'dealer_order_id', 'product_id', 'qty', 'price', 'total'
+        'dealer_order_id', 'product_id', 'qty', 'price', 'total', 'confirm_qty', 'note'
     ];
 
     public function dealerOrder()

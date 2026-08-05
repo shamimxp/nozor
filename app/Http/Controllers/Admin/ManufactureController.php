@@ -188,6 +188,7 @@ class ManufactureController extends Controller
                     'grand_total' => $body_total + $finishing_total,
                     'note' => $validated['note'] ?? null,
                     'is_confirm' => $request->has('is_confirm') ? 1 : 0,
+                    'status' => $request->has('is_confirm') ? 1 : 0,
                     'created_by' => auth('admin')->id() ?? auth()->id(),
                 ]);
             }
@@ -259,6 +260,7 @@ class ManufactureController extends Controller
                 'grand_total' => $body_total + $finishing_total,
                 'note' => $validated['note'] ?? null,
                 'is_confirm' => $request->has('is_confirm') ? 1 : 0,
+                'status' => $request->has('is_confirm') ? 1 : 0,
                 'updated_by' => auth('admin')->id() ?? auth()->id(),
             ]);
             

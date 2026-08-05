@@ -171,6 +171,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/dealer-order/export-pdf/{id}', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportPdf'])->name('admin.dealer-order.export-pdf');
     Route::post('/dealer-order/status', [\App\Http\Controllers\Admin\DealerOrderController::class, 'updateStatus'])->name('admin.dealer-order.status');
     Route::get('/dealer-order/due-list', [\App\Http\Controllers\Admin\DealerOrderController::class, 'dueList'])->name('admin.dealer-order.due-list');
+    Route::post('/dealer-order/item/update', [\App\Http\Controllers\Admin\DealerOrderController::class, 'updateItem'])->name('admin.dealer-order.item.update');
     Route::resource('dealer-order', \App\Http\Controllers\Admin\DealerOrderController::class, ['as' => 'admin']);
 
     //POS Order module
