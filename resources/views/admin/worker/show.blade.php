@@ -24,6 +24,10 @@
                     <span class="font-weight-bold">Email:</span>
                     <span>{{ $worker->email ?? 'N/A' }}</span>
                 </div>
+                 <div class="d-flex justify-content-between align-items-center mt-1 border-top pt-1">
+                    <span class="font-weight-bold">Address:</span>
+                    <span>{{ $worker->address ?? 'N/A' }}</span>
+                </div>
                 <div class="d-flex justify-content-between align-items-center mt-1 border-top pt-1">
                     <span class="font-weight-bold">Status:</span>
                     <span>
