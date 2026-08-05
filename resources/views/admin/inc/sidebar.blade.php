@@ -242,6 +242,12 @@
                     <span class="menu-title text-truncate">Collection</span>
                 </a>
             </li>
+            <li class="nav-item {{ Route::is('admin.worker-payment*') ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{route('admin.worker-payment.index')}}">
+                    <i data-feather="credit-card"></i>
+                    <span class="menu-title text-truncate">Worker Payments</span>
+                </a>
+            </li>
             <li class="nav-item @if(Route::is('admin.report*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="file-text"></i><span class="menu-title text-truncate">Reports</span></a>
                 <ul class="menu-content">

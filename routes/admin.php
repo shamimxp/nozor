@@ -256,4 +256,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Subscribers
     Route::get('subscribers', [\App\Http\Controllers\Admin\SubscriberController::class, 'index'])->name('admin.subscribers.index');
     Route::delete('subscribers/{id}', [\App\Http\Controllers\Admin\SubscriberController::class, 'destroy'])->name('admin.subscribers.destroy');
+
+    // Worker Payment
+    Route::get('/worker-payment', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'index'])->name('admin.worker-payment.index');
+    Route::post('/worker-payment/change-status', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'changeStatus'])->name('admin.worker-payment.change-status');
+    Route::delete('/worker-payment/{id}', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'destroy'])->name('admin.worker-payment.destroy');
 });
