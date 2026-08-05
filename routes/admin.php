@@ -201,6 +201,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/manufacture/confirm', [\App\Http\Controllers\Admin\ManufactureListController::class, 'confirm'])->name('admin.manufacture.confirm');
     Route::get('/manufacture/complete', [\App\Http\Controllers\Admin\ManufactureListController::class, 'complete'])->name('admin.manufacture.complete');
     Route::get('/manufacture/export', [\App\Http\Controllers\Admin\ManufactureController::class, 'export'])->name('admin.manufacture.export');
+    Route::get('/manufacture/receive', [\App\Http\Controllers\Admin\ManufactureController::class, 'receiveUI'])->name('admin.manufacture.receive');
+    Route::post('/manufacture/receive/process', [\App\Http\Controllers\Admin\ManufactureController::class, 'receiveProcess'])->name('admin.manufacture.receive.process');
     Route::get('/manufacture/get-prices', [\App\Http\Controllers\Admin\ManufactureController::class, 'getPrices'])->name('admin.manufacture.get-prices');
     Route::post('/manufacture/change-status', [\App\Http\Controllers\Admin\ManufactureController::class, 'changeStatus'])->name('admin.manufacture.change-status');
     Route::get('/manufacture/{id}/print', [\App\Http\Controllers\Admin\ManufactureController::class, 'print'])->name('admin.manufacture.print');

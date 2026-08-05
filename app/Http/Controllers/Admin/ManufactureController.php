@@ -336,4 +336,52 @@ class ManufactureController extends Controller
         
         return view('admin.manufacture.print', compact('manufacture', 'setting'));
     }
+
+    public function receiveUI()
+    {
+        // Get all completed orders (status = 2) that haven't been collected yet
+        $pending_orders = \App\Models\Manufacture::with('product')->where('status', 2)->whereNull('collected_by')->get();
+        return view('admin.manufacture.receive', compact('pending_orders'));
+    }
+
+    public function receiveProcess(Request $request)
+    {
+        $request->validate([
+            'manufacture_ids' => 'required|array',
+            'manufacture_ids.*' => 'exists:manufactures,id'
+        ]);
+
+        \DB::beginTransaction();
+        try {
+            $ids = $request->manufacture_ids;
+            $orders = \App\Models\Manufacture::whereIn('id', $ids)->where('status', 2)->whereNull('collected_by')->get();
+
+            if ($orders->isEmpty()) {
+                return response()->json(['error' => 'No valid orders selected. Orders might have already been received or are not completed yet.'], 400);
+            }
+
+            foreach ($orders as $order) {
+                // Update Manufacture Order
+                $order->update([
+                    'collected_by' => auth()->id(),
+                ]);
+
+                // Record in worker_payments table
+                \App\Models\WorkerPayment::create([
+                    'manufacture_order_id' => $order->id,
+                    'date' => date('Y-m-d'),
+                    'worker_id' => $order->worker_id,
+                    'total_amount' => $order->grand_total,
+                    'created_by' => auth()->id(),
+                    'status' => 'pending'
+                ]);
+            }
+
+            \DB::commit();
+            return response()->json(['success' => 'Manufacture orders received and worker payments recorded successfully.']);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
 }

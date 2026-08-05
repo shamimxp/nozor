@@ -76,6 +76,9 @@
                     <li class="{{ Route::is('admin.manufacture.complete') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.manufacture.complete')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Complete List</span></a>
                     </li>
+                    <li class="{{ Route::is('admin.manufacture.receive') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.receive')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Receive Orders</span></a>
+                    </li>
                     <li class="{{ Route::is('admin.manufacture.create') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.manufacture.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Create Order</span></a>
                     </li>
