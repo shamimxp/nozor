@@ -281,6 +281,11 @@ class ManufactureController extends Controller
         return response()->json(['success' => 'Manufacture deleted successfully.']);
     }
 
+    public function export(Request $request)
+    {
+        return (new \App\Exports\ManufactureExport)->export($request);
+    }
+
     public function changeStatus(Request $request)
     {
         $request->validate([

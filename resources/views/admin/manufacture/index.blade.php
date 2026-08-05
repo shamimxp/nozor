@@ -6,7 +6,10 @@
         <div class="card">
             <div class="card-header border-bottom p-1">
                 <h4 class="card-title">Manufacture Order List</h4>
-                <a href="{{ route('admin.manufacture.create') }}" class="btn btn-primary">Create New</a>
+                <div>
+                    <a href="javascript:void(0)" class="btn btn-success" id="exportBtn"><i data-feather="file-text"></i> Export Excel</a>
+                    <a href="{{ route('admin.manufacture.create') }}" class="btn btn-primary">Create New</a>
+                </div>
             </div>
             <div class="card-body mt-2">
                 <div class="row mb-2">
@@ -262,6 +265,33 @@
                     });
                 }
             })
+        });
+        // Export button handler
+        $('#exportBtn').on('click', function(e) {
+            e.preventDefault();
+            
+            // Collect all filters
+            let daterange = $('#daterange').val();
+            let from_date = '';
+            let to_date = '';
+            
+            if (daterange) {
+                let dates = daterange.split(' - ');
+                from_date = dates[0];
+                to_date = dates[1];
+            }
+
+            let params = new URLSearchParams({
+                from_date: from_date,
+                to_date: to_date,
+                worker_id: $('#filter_worker').val(),
+                dealer_id: $('#filter_dealer').val(),
+                part_type: $('#filter_part').val(),
+                status: $('#filter_status').val()
+            });
+
+            // Start download by redirecting to the route with query parameters
+            window.location.href = "{{ route('admin.manufacture.export') }}?" + params.toString();
         });
     });
 </script>

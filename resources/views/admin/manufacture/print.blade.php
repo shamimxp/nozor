@@ -175,7 +175,7 @@
             
             <div class="barcode-wrapper">
                 <img class="barcode" src="https://barcode.tec-it.com/barcode.ashx?data={{ $manufacture->id }}&code=Code128&dpi=96" alt="Barcode">
-                <span class="barcode-text">{{ $manufacture->id }}</span>
+                <!-- <span class="barcode-text">{{ $manufacture->id }}</span> -->
             </div>
 
             <div class="qty-text">Manufacture Quantity: {{ $manufacture->manufacture_qty }}</div>
