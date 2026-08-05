@@ -76,6 +76,12 @@
                     <li class="{{ Route::is('admin.manufacture.complete') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.manufacture.complete')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Complete List</span></a>
                     </li>
+                    <li class="{{ Route::is('admin.manufacture.body-part') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.body-part')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Body Part Orders</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.manufacture.finishing-part') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.finishing-part')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Finishing Part Orders</span></a>
+                    </li>
                     <li class="{{ Route::is('admin.manufacture.receive') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.manufacture.receive')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Receive Orders</span></a>
                     </li>

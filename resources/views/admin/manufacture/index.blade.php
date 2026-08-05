@@ -35,6 +35,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @if(!isset($fixed_part_type))
                     <div class="col-md-2">
                         <label>Part Type</label>
                         <select id="filter_part" class="form-control">
@@ -43,6 +44,9 @@
                             <option value="finishing">Finishing Part</option>
                         </select>
                     </div>
+                    @else
+                        <input type="hidden" id="filter_part" value="{{ $fixed_part_type }}">
+                    @endif
                     @if(!isset($fixed_status))
                     <div class="col-md-2">
                         <label>Status</label>
@@ -207,7 +211,9 @@
             to_date = '';
             $('#filter_worker').val('').trigger('change.select2');
             $('#filter_dealer').val('').trigger('change.select2');
+            @if(!isset($fixed_part_type))
             $('#filter_part').val('');
+            @endif
             @if(!isset($fixed_status))
             $('#filter_status').val('');
             @endif

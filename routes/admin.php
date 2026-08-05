@@ -200,6 +200,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/manufacture/pending', [\App\Http\Controllers\Admin\ManufactureListController::class, 'pending'])->name('admin.manufacture.pending');
     Route::get('/manufacture/confirm', [\App\Http\Controllers\Admin\ManufactureListController::class, 'confirm'])->name('admin.manufacture.confirm');
     Route::get('/manufacture/complete', [\App\Http\Controllers\Admin\ManufactureListController::class, 'complete'])->name('admin.manufacture.complete');
+    Route::get('/manufacture/body-part', [\App\Http\Controllers\Admin\ManufactureListController::class, 'bodyPart'])->name('admin.manufacture.body-part');
+    Route::get('/manufacture/finishing-part', [\App\Http\Controllers\Admin\ManufactureListController::class, 'finishingPart'])->name('admin.manufacture.finishing-part');
     Route::get('/manufacture/export', [\App\Http\Controllers\Admin\ManufactureController::class, 'export'])->name('admin.manufacture.export');
     Route::get('/manufacture/receive', [\App\Http\Controllers\Admin\ManufactureController::class, 'receiveUI'])->name('admin.manufacture.receive');
     Route::post('/manufacture/receive/process', [\App\Http\Controllers\Admin\ManufactureController::class, 'receiveProcess'])->name('admin.manufacture.receive.process');
