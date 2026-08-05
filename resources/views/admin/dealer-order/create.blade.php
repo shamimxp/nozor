@@ -3,40 +3,30 @@
 
 @section('content')
 <style>
-    :root {
-        --primary-color: #6366f1;
-        --primary-hover: #4f46e5;
-        --success-color: #10b981;
-        --dark-text: #1e293b;
-        --muted-text: #64748b;
-        --border-color: #e2e8f0;
-        --bg-light: #f8fafc;
-        --card-radius: 16px;
-        --transition: all 0.3s ease;
-    }
     
-    .page-title { font-weight: 800; color: var(--dark-text); font-size: 1.5rem; letter-spacing: -0.5px; }
+
+    .page-title { font-weight: 800; color: #1e293b; font-size: 1.5rem; letter-spacing: -0.5px; }
     .ref-badge { background: #e0e7ff; color: #4338ca; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; border: 1px solid #c7d2fe; }
-    
+
     /* Modern Cards */
     .card-modern {
         background: #ffffff;
         border: 1px solid rgba(226, 232, 240, 0.8);
-        border-radius: var(--card-radius);
+        border-radius: 16px;
         box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.03);
         margin-bottom: 1.5rem;
         overflow: hidden;
     }
     .card-modern .card-header {
         background: transparent;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid #e2e8f0;
         padding: 1.5rem 1.75rem;
     }
     .card-modern .card-body { padding: 1.75rem; }
-    
+
     .section-title {
         font-weight: 700;
-        color: var(--dark-text);
+        color: #1e293b;
         font-size: 1.15rem;
         display: flex;
         align-items: center;
@@ -44,7 +34,7 @@
     }
     .section-title i {
         margin-right: 12px;
-        color: var(--primary-color);
+        color: #6366f1;
         background: #eef2ff;
         padding: 8px;
         border-radius: 8px;
@@ -55,30 +45,31 @@
     /* Form Controls */
     .form-group label {
         font-weight: 600;
-        color: var(--muted-text);
+        color: #64748b;
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
     }
     .form-control {
-        border: 1px solid var(--border-color) !important;
+        border: 1px solid #e2e8f0 !important;
         border-radius: 8px !important;
         padding: 0.6rem 1rem !important;
         height: 42px !important;
         font-size: 0.95rem;
-        color: var(--dark-text) !important;
-        background-color: var(--bg-light) !important;
-        transition: var(--transition);
+        color: #1e293b !important;
+        background-color: #f8fafc !important;
+        transition: all 0.3s ease;
         box-shadow: none !important;
     }
     textarea.form-control { height: auto !important; }
     .form-control:focus {
-        border-color: var(--primary-color) !important;
+        border-color: #6366f1 !important;
         background-color: #fff !important;
     }
-    
+
     /* Select2 Overrides */
+    /* noinspection CssUnusedSymbol */
     .select2-hidden-accessible {
         border: 0 !important;
         clip: rect(0 0 0 0) !important;
@@ -90,12 +81,13 @@
         width: 1px !important;
         white-space: nowrap !important;
     }
+    /* noinspection CssUnusedSymbol */
     .select2-container { width: 100% !important; }
     .select2-container .select2-selection--single {
         height: 42px !important;
-        border: 1px solid var(--border-color) !important;
+        border: 1px solid #e2e8f0 !important;
         border-radius: 8px !important;
-        background-color: var(--bg-light) !important;
+        background-color: #f8fafc !important;
         display: flex !important;
         align-items: center !important;
         padding: 0 12px !important;
@@ -104,7 +96,7 @@
     }
     .select2-container--default .select2-selection--single .select2-selection__rendered {
         padding-left: 0 !important;
-        color: var(--dark-text) !important;
+        color: #1e293b !important;
         font-weight: 500;
         line-height: normal !important;
     }
@@ -114,25 +106,25 @@
         right: 10px !important;
     }
     .select2-container--open .select2-selection--single {
-        border-color: var(--primary-color) !important;
+        border-color: #6366f1 !important;
         background-color: #fff !important;
     }
 
     /* Select2 Dropdown Drawer Fixes */
     .select2-dropdown {
-        border: 1px solid var(--border-color) !important;
+        border: 1px solid #e2e8f0 !important;
         border-radius: 8px !important;
         box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
         overflow: hidden !important;
         margin-top: 4px !important;
     }
     .select2-container--open .select2-dropdown {
-        border-color: var(--primary-color) !important;
+        border-color: #6366f1 !important;
     }
     /* Fix the search box INSIDE the dropdown - override global .form-control */
     .select2-search--dropdown .select2-search__field {
         height: 36px !important;
-        border: 1px solid var(--border-color) !important;
+        border: 1px solid #e2e8f0 !important;
         border-radius: 6px !important;
         padding: 0.4rem 0.75rem !important;
         font-size: 0.9rem !important;
@@ -141,25 +133,25 @@
         outline: none !important;
         margin: 6px !important;
         width: calc(100% - 12px) !important;
-        color: var(--dark-text) !important;
+        color: #1e293b !important;
     }
     .select2-search--dropdown .select2-search__field:focus {
-        border-color: var(--primary-color) !important;
+        border-color: #6366f1 !important;
         box-shadow: none !important;
     }
     .select2-results__option {
         padding: 8px 14px !important;
         font-size: 0.9rem !important;
-        color: var(--dark-text) !important;
+        color: #1e293b !important;
         font-weight: 500 !important;
     }
     .select2-results__option--highlighted {
-        background-color: var(--primary-color) !important;
+        background-color: #6366f1 !important;
         color: #fff !important;
     }
     .select2-results__option[aria-selected=true] {
         background-color: #eef2ff !important;
-        color: var(--primary-color) !important;
+        color: #6366f1 !important;
     }
 
     /* Input Group Fixes */
@@ -184,7 +176,7 @@
     .table-modern thead th {
         border: none;
         background: transparent;
-        color: var(--muted-text);
+        color: #64748b;
         font-weight: 600;
         font-size: 0.85rem;
         text-transform: uppercase;
@@ -194,25 +186,25 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         border-radius: 10px;
         background: #fff;
-        border: 1px solid var(--border-color);
-        transition: var(--transition);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
     }
     .table-modern tbody tr:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
     .table-modern td {
-        border-top: 1px solid var(--border-color) !important;
-        border-bottom: 1px solid var(--border-color) !important;
+        border-top: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
         padding: 16px 15px !important;
         vertical-align: middle;
         font-weight: 500;
-        color: var(--dark-text);
+        color: #1e293b;
     }
-    .table-modern td:first-child { border-left: 1px solid var(--border-color) !important; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-    .table-modern td:last-child { border-right: 1px solid var(--border-color) !important; border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-    
+    .table-modern td:first-child { border-left: 1px solid #e2e8f0 !important; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+    .table-modern td:last-child { border-right: 1px solid #e2e8f0 !important; border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
     /* Summary Panel */
     .summary-panel {
         background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-        border-radius: var(--card-radius);
+        border-radius: 16px;
         color: white;
         padding: 2rem;
         position: sticky;
@@ -220,8 +212,8 @@
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
     .summary-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; color: #f8fafc; }
-    .summary-title i { color: var(--primary-color); margin-right: 10px; }
-    
+    .summary-title i { color: #6366f1; margin-right: 10px; }
+
     .summary-row {
         display: flex;
         justify-content: space-between;
@@ -237,8 +229,8 @@
         color: white !important;
         width: 110px;
     }
-    .summary-row .form-control:focus { border-color: var(--primary-color) !important; }
-    
+    .summary-row .form-control:focus { border-color: #6366f1 !important; }
+
     .grand-total-box {
         background: rgba(99, 102, 241, 0.15);
         border: 1px solid rgba(99, 102, 241, 0.3);
@@ -253,18 +245,18 @@
     .grand-total-box .amount { color: #fff; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
 
     .btn-submit {
-        background: var(--primary-color);
+        background: #6366f1;
         color: white;
         border: none;
         padding: 1rem;
         font-weight: 700;
         border-radius: 12px;
         font-size: 1.1rem;
-        transition: var(--transition);
+        transition: all 0.3s ease;
         box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
     }
     .btn-submit:hover {
-        background: var(--primary-hover);
+        background: #4f46e5;
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
         color: white;
@@ -334,7 +326,7 @@
                     <h4 class="section-title"><i data-feather="shopping-cart"></i> Cart Items</h4>
                 </div>
                 <div class="card-body">
-                    <div class="form-group mb-4 p-3 rounded" style="background: var(--bg-light); border: 1px dashed var(--border-color);">
+                    <div class="form-group mb-4 p-3 rounded" style="background: #f8fafc; border: 1px dashed #e2e8f0;">
                         <label class="text-primary"><i data-feather="search" width="14" class="mr-1"></i> Search & Add Product</label>
                         <select id="productSelect" class="form-control select2" data-placeholder="Type product name to add...">
                             <option value="" disabled selected>Type product name to add...</option>
@@ -360,7 +352,7 @@
                             <tbody>
                                 <!-- Empty state by default -->
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted" style="border: 2px dashed var(--border-color) !important; background: transparent;">
+                                    <td colspan="5" class="text-center py-4 text-muted" style="border: 2px dashed #e2e8f0 !important; background: transparent;">
                                         <i data-feather="package" width="32" height="32" class="mb-2 text-light"></i><br>
                                         No products added to the cart yet.
                                     </td>
@@ -406,7 +398,7 @@
         <div class="col-lg-4">
             <div class="summary-panel">
                 <h3 class="summary-title"><i data-feather="pie-chart"></i> Order Summary</h3>
-                
+
                 <div class="summary-row">
                     <span>Total Quantity</span>
                     <span id="summaryTotalQty" class="font-weight-bold text-white">0 Pcs</span>
@@ -439,7 +431,7 @@
                             <input type="number" name="paid" id="paidAmount" class="form-control border-left-0 font-weight-bold text-right" value="0" style="font-size: 1.1rem; background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.2) !important; color: #ffffff !important;">
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
                         <span style="color: #f87171; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Amount Due</span>
                         <span id="summaryDue" style="color: #f87171; font-size: 1.25rem; font-weight: 800;">৳0.00</span>
@@ -452,14 +444,14 @@
             </div>
         </div>
     </div>
-    
+
     <div id="cartHiddenInputs"></div>
 </form>
 @endsection
 @push('scripts')
 <script>
     let cart = [];
-    
+
     $(document).ready(function() {
         // Initialize Select2 - no search box for small lists
         $('select[name="status"]').select2({
@@ -473,18 +465,18 @@
         $('#productSelect').on('change', function() {
             let productId = $(this).val();
             let dealerId = $('select[name="dealer_id"]').val();
-            
+
             if (!productId) return;
-            
+
             if (!dealerId) {
                 toastr.error('Please select a dealer first.');
                 $(this).val('').trigger('change.select2');
                 return;
             }
-            
+
             let productName = $(this).find(':selected').text().trim();
             let productImage = $(this).find(':selected').data('image');
-            
+
             // fetch real-time price
             $.ajax({
                 url: "{{ route('admin.product-price-calculator') }}",
@@ -505,16 +497,16 @@
                     toastr.error('Failed to fetch product price');
                 }
             });
-            
+
             // clear selection
             $(this).val('').trigger('change.select2');
         });
-        
+
         $('#discount, #carryingCharge, #paidAmount').on('input', function() {
             updateSummary();
         });
     });
-    
+
     function addToCart(id, name, price, image) {
         let existing = cart.find(i => i.id == id);
         if (existing) {
@@ -527,7 +519,7 @@
                 qty: 1,
                 image: image
             });
-            
+
             // Display image if available
             if (image) {
                 $('#imagePreviewContainer .img-empty-state').remove();
@@ -540,17 +532,17 @@
         }
         renderCart();
     }
-    
+
     function renderCart() {
         let tbody = $('#cartTable tbody');
         tbody.empty();
-        
+
         let hiddenInputs = $('#cartHiddenInputs');
         hiddenInputs.empty();
-        
+
         cart.forEach((item, index) => {
             let itemTotal = item.price * item.qty;
-            
+
             let tr = `
                 <tr>
                     <td>${item.name}</td>
@@ -567,18 +559,18 @@
                 </tr>
             `;
             tbody.append(tr);
-            
+
             hiddenInputs.append(`
                 <input type="hidden" name="items[${index}][product_id]" value="${item.id}">
                 <input type="hidden" name="items[${index}][price]" value="${item.price}">
                 <input type="hidden" name="items[${index}][qty]" value="${item.qty}">
             `);
         });
-        
+
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
-        
+
         let hasImage = cart.some(item => item.image && item.image !== '');
         if (hasImage) {
             $('#designImagesCard').removeClass('d-none');
@@ -586,23 +578,23 @@
             $('#designImagesCard').addClass('d-none');
             //   $('#designImagesCard').removeClass('d-none');
         }
-        
+
         updateSummary();
     }
-    
+
     $(document).on('input', '.item-qty', function() {
         let id = $(this).data('id');
         let qty = $(this).val();
         let item = cart.find(i => i.id == id);
         if (item) {
             item.qty = parseFloat(qty) || 0;
-            
+
             let itemTotal = item.price * item.qty;
             $(this).closest('tr').find('.item-total').text('৳' + itemTotal.toFixed(2));
-            
+
             let itemIndex = cart.indexOf(item);
             $('#cartHiddenInputs input[name="items['+itemIndex+'][qty]"]').val(item.qty);
-            
+
             updateSummary();
         }
     });
@@ -617,21 +609,21 @@
         let item = cart.find(i => i.id == id);
         if (item) {
             item.qty = qty;
-            
+
             let itemTotal = item.price * item.qty;
             $(this).closest('tr').find('.item-total').text('৳' + itemTotal.toFixed(2));
-            
+
             let itemIndex = cart.indexOf(item);
             $('#cartHiddenInputs input[name="items['+itemIndex+'][qty]"]').val(item.qty);
-            
+
             updateSummary();
         }
     });
-    
+
     $(document).on('click', '.remove-item', function() {
         let id = $(this).data('id');
         cart = cart.filter(i => i.id != id);
-        
+
         // Remove image
         $('#imagePreviewContainer .img-prod-' + id).remove();
         if (cart.filter(i => i.image && i.image !== '').length === 0) {
@@ -639,23 +631,23 @@
         }
         renderCart();
     });
-    
+
     function updateSummary() {
         let totalQty = 0;
         let subTotal = 0;
-        
+
         cart.forEach(item => {
             totalQty += parseFloat(item.qty) || 0;
             subTotal += (parseFloat(item.price) || 0) * (parseFloat(item.qty) || 0);
         });
-        
+
         let discount = parseFloat($('#discount').val()) || 0;
         let carryingCharge = parseFloat($('#carryingCharge').val()) || 0;
         let paidAmount = parseFloat($('#paidAmount').val()) || 0;
-        
+
         let grandTotal = (subTotal - discount) + carryingCharge;
         let due = grandTotal - paidAmount;
-        
+
         $('#summaryTotalQty').text(totalQty + ' Pcs');
         $('#summarySubTotal').text('৳' + subTotal.toFixed(2));
         $('#summaryGrandTotal').text('৳' + grandTotal.toFixed(2));

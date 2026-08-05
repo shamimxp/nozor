@@ -85,19 +85,17 @@
                         <div class="col-md-12">
                             <h5 class="border-bottom pb-1">Manufacturing Parts & Prices</h5>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-check custom-control custom-checkbox mb-1">
-                                <input type="checkbox" class="custom-control-input part-checkbox" id="part_body" name="parts[]" value="body" {{ $manufacture->body_total > 0 ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="part_body">Body Part (Price: <span id="display_body_price">0.00</span>)</label>
+                        <div class="col-md-12">
+                            <div class="form-group mb-1">
+                                <label for="parts">Select Part <span class="text-danger">*</span></label>
+                                <select name="parts[]" id="parts" class="form-control select2">
+                                    <option value="">Select Part</option>
+                                    <option value="body" id="opt_body" {{ $manufacture->body_total > 0 ? 'selected' : '' }}>Body Part (Price: 0.00)</option>
+                                    <option value="finishing" id="opt_finishing" {{ $manufacture->finishing_total > 0 ? 'selected' : '' }}>Finishing Part (Price: 0.00)</option>
+                                </select>
+                                <span class="text-danger error-text parts_error"></span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-check custom-control custom-checkbox mb-1">
-                                <input type="checkbox" class="custom-control-input part-checkbox" id="part_finishing" name="parts[]" value="finishing" {{ $manufacture->finishing_total > 0 ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="part_finishing">Finishing Part (Price: <span id="display_finishing_price">0.00</span>)</label>
-                            </div>
-                        </div>
-                        <span class="text-danger error-text parts_error col-12"></span>
                     </div>
 
                     <div class="row mt-2">
@@ -172,10 +170,12 @@
         let bodyTotal = 0;
         let finishingTotal = 0;
 
-        if ($('#part_body').is(':checked')) {
+        let selectedPart = $('#parts').val();
+
+        if (selectedPart === 'body') {
             bodyTotal = bodyPartPrice * qty;
         }
-        if ($('#part_finishing').is(':checked')) {
+        if (selectedPart === 'finishing') {
             finishingTotal = finishingPartPrice * qty;
         }
 
@@ -190,20 +190,23 @@
                 bodyPartPrice = parseFloat(data.body_part_price);
                 finishingPartPrice = parseFloat(data.finishing_part_price);
 
-                $('#display_body_price').text(bodyPartPrice.toFixed(2));
-                $('#display_finishing_price').text(finishingPartPrice.toFixed(2));
+                $('#opt_body').text('Body Part (Price: ' + bodyPartPrice.toFixed(2) + ')');
+                $('#opt_finishing').text('Finishing Part (Price: ' + finishingPartPrice.toFixed(2) + ')');
 
                 if (bodyPartPrice <= 0) {
-                    $('#part_body').prop('disabled', true).prop('checked', false);
+                    $('#opt_body').prop('disabled', true);
                 } else {
-                    $('#part_body').prop('disabled', false);
+                    $('#opt_body').prop('disabled', false);
                 }
 
                 if (finishingPartPrice <= 0) {
-                    $('#part_finishing').prop('disabled', true).prop('checked', false);
+                    $('#opt_finishing').prop('disabled', true);
                 } else {
-                    $('#part_finishing').prop('disabled', false);
+                    $('#opt_finishing').prop('disabled', false);
                 }
+
+                // Update select2 with new disabled states or text
+                $('#parts').select2();
 
                 $('#prices-section').show();
                 calculateTotals();
@@ -238,7 +241,7 @@
         });
 
         $('#manufacture_qty').on('input', calculateTotals);
-        $('.part-checkbox').on('change', calculateTotals);
+        $('#parts').on('change', calculateTotals);
 
         // Load prices and images on page load if product is selected
         if ($('#product_id').val()) {
@@ -256,7 +259,7 @@
             $('#saveBtn').text('Updating...').attr('disabled', true);
             $('.error-text').text('');
 
-            if (!$('#part_body').is(':checked') && !$('#part_finishing').is(':checked')) {
+            if (!$('#parts').val()) {
                 $('.parts_error').text('At least one part (Body or Finishing) must be selected.');
                 $('#saveBtn').text('Update Order').attr('disabled', false);
                 return;

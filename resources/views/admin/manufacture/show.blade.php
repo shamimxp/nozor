@@ -12,6 +12,10 @@
     <div class="col-12 d-flex justify-content-between align-items-center">
         <h2 class="mb-0">
             Manufacture Order: <span class="text-primary">{{ $manufacture->invoice_no }}</span>
+            @if($manufacture->reff_invoice)
+                Reference Order: <span class="text-primary">{{ $manufacture->reff_invoice }}</span>
+            @endif
+
         </h2>
         <div>
             <a href="{{ route('admin.manufacture.index') }}" class="btn btn-outline-secondary mr-1">
@@ -47,7 +51,7 @@
                         <small class="text-muted text-uppercase d-block mb-25">Quantity</small>
                         <h5 class="mb-0 font-weight-bolder text-primary" style="font-size: 1.2rem;">{{ $manufacture->manufacture_qty }} <small class="text-muted">Units</small></h5>
                     </div>
-                    
+
                     <div class="col-sm-6 mb-2">
                         <small class="text-muted text-uppercase d-block mb-25">Assigned Worker</small>
                         <h6 class="mb-0">{{ $manufacture->worker->name ?? 'N/A' }}</h6>
