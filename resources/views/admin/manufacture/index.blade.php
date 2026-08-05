@@ -1,11 +1,11 @@
 @extends('layouts.admin')
-@section('title', 'Manufacture List')
+@section('title', isset($page_title) ? $page_title : 'Manufacture List')
 @section('content')
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header border-bottom p-1">
-                <h4 class="card-title">Manufacture Order List</h4>
+                <h4 class="card-title">{{ isset($page_title) ? $page_title : 'Manufacture Order List' }}</h4>
                 <div>
                     <a href="javascript:void(0)" class="btn btn-success" id="exportBtn"><i data-feather="file-text"></i> Export Excel</a>
                     <a href="{{ route('admin.manufacture.create') }}" class="btn btn-primary">Create New</a>
@@ -43,6 +43,7 @@
                             <option value="finishing">Finishing Part</option>
                         </select>
                     </div>
+                    @if(!isset($fixed_status))
                     <div class="col-md-2">
                         <label>Status</label>
                         <select id="filter_status" class="form-control">
@@ -52,6 +53,9 @@
                             <option value="2">Completed</option>
                         </select>
                     </div>
+                    @else
+                        <input type="hidden" id="filter_status" value="{{ $fixed_status }}">
+                    @endif
                     <div class="col-md-1">
                         <label>&nbsp;</label>
                         <div class="btn-group w-100">
@@ -131,7 +135,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('admin.manufacture.index') }}",
+                url: "{{ isset($fixed_status) ? request()->url() : route('admin.manufacture.index') }}",
                 data: function (d) {
                     d.from_date = from_date;
                     d.to_date = to_date;
@@ -204,7 +208,9 @@
             $('#filter_worker').val('').trigger('change.select2');
             $('#filter_dealer').val('').trigger('change.select2');
             $('#filter_part').val('');
+            @if(!isset($fixed_status))
             $('#filter_status').val('');
+            @endif
             table.draw();
         });
 
