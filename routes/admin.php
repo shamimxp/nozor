@@ -198,6 +198,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Manufacture module
     Route::get('/manufacture/get-prices', [\App\Http\Controllers\Admin\ManufactureController::class, 'getPrices'])->name('admin.manufacture.get-prices');
     Route::post('/manufacture/change-status', [\App\Http\Controllers\Admin\ManufactureController::class, 'changeStatus'])->name('admin.manufacture.change-status');
+    Route::get('/manufacture/{id}/print', [\App\Http\Controllers\Admin\ManufactureController::class, 'print'])->name('admin.manufacture.print');
     Route::resource('manufacture', \App\Http\Controllers\Admin\ManufactureController::class, ['as' => 'admin']);
 
     //Stock Adjustment module

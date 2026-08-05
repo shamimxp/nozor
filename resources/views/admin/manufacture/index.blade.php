@@ -64,7 +64,7 @@
                                 <th>SL</th>
                                 <th>Product Image</th>
                                 <th>Manufacture Image</th>
-                                <th>Invoice No</th>
+                                <th>Manufacture No</th>
                                 <th>Product</th>
                                 <th>Worker</th>
                                 <th>Customer</th>

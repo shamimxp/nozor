@@ -13,7 +13,7 @@ class ManufactureController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = \App\Models\Manufacture::with(['product.recipe', 'dealer', 'worker', 'completedBy', 'collectedBy']);
+            $query = \App\Models\Manufacture::with(['product.recipe', 'dealer', 'worker', 'completedBy', 'collectedBy'])->latest();
 
             if ($request->filled('from_date') && $request->filled('to_date')) {
                 $query->whereDate('created_at', '>=', $request->from_date)
@@ -48,9 +48,14 @@ class ManufactureController extends Controller
                 })
                 ->addColumn('manufacture_image', function ($row) {
                     $recipe = $row->product ? $row->product->recipe : null;
-                    $imgs = $recipe ? $recipe->manufacture_images : [];
+                    $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
                     $img = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
-                    return '<img src="'.$img.'" width="50" height="50" style="object-fit:cover; border-radius:4px;">';
+                    
+                    if ($row->status >= 1) {
+                        return '<a href="'.route('admin.manufacture.print', $row->id).'" target="_blank"><img src="'.$img.'" width="50" height="50" style="object-fit:cover; border-radius:4px;" title="Print"></a>';
+                    } else {
+                        return '<a href="javascript:void(0)" onclick="toastr.error(\'Please confirm this order before printing.\')"><img src="'.$img.'" width="50" height="50" style="object-fit:cover; border-radius:4px;" title="Please confirm to print"></a>';
+                    }
                 })
                 ->addColumn('product_name', function ($row) {
                     return $row->product->name ?? 'N/A';
@@ -310,5 +315,18 @@ class ManufactureController extends Controller
         $manufacture->save();
 
         return response()->json(['success' => 'Status updated successfully.']);
+    }
+
+    public function print($id)
+    {
+        $manufacture = \App\Models\Manufacture::with(['product.recipe', 'worker'])->findOrFail($id);
+        
+        if ($manufacture->status < 1) {
+            return "<script>alert('Please confirm this order before printing.'); window.close();</script>";
+        }
+
+        $setting = \App\Models\WebSetting::first(); 
+        
+        return view('admin.manufacture.print', compact('manufacture', 'setting'));
     }
 }
