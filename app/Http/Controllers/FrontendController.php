@@ -23,6 +23,7 @@ class FrontendController extends Controller
         $banners = Banner::where('status',1)->get();
         $products = Product::with('gallery')
             ->where('status', 1)
+            ->forCustomer()
             ->latest()
             ->take(20)
             ->get();
@@ -49,22 +50,23 @@ class FrontendController extends Controller
 
         $topSellingProducts = collect();
         if (!empty($topProductIds)) {
-            $topSellingProductsResult = Product::with('category')->where('status', 1)->whereIn('id', $topProductIds)->get();
+            $topSellingProductsResult = Product::with('category')->where('status', 1)->forCustomer()->whereIn('id', $topProductIds)->get();
             $topSellingProducts = collect($topProductIds)->map(function ($id) use ($topSellingProductsResult) {
                 return $topSellingProductsResult->where('id', $id)->first();
             })->filter();
         } else {
-            $topSellingProducts = Product::with( 'category')->where('status', 1)->take(3)->get();
+            $topSellingProducts = Product::with( 'category')->where('status', 1)->forCustomer()->take(3)->get();
         }
 
-        $featuredProducts3 = Product::with( 'category')->where('status', 1)->where('is_featured', 1)->inRandomOrder()->take(3)->get();
+        $featuredProducts3 = Product::with( 'category')->where('status', 1)->forCustomer()->where('is_featured', 1)->inRandomOrder()->take(3)->get();
 
-        $recentProducts3 = Product::with( 'category')->where('status', 1)->latest()->take(3)->get();
+        $recentProducts3 = Product::with( 'category')->where('status', 1)->forCustomer()->latest()->take(3)->get();
 
-        $featuredProducts = Product::where('status', 1)->where('is_featured', 1)->latest()->take(20)->get();
+        $featuredProducts = Product::where('status', 1)->forCustomer()->where('is_featured', 1)->latest()->take(20)->get();
 
         $topRatedProducts3 = Product::with('approvedReviews')
             ->where('status', 1)
+            ->forCustomer()
             ->whereHas('approvedReviews', function($q) {
                 $q->where('rating', '>=', 4);
             })
@@ -75,6 +77,7 @@ class FrontendController extends Controller
         if ($topRatedProducts3->count() < 3) {
             $needed = 3 - $topRatedProducts3->count();
             $additional = Product::where('status', 1)
+                ->forCustomer()
                 ->whereNotIn('id', $topRatedProducts3->pluck('id'))
                 ->inRandomOrder()
                 ->take($needed)
@@ -139,7 +142,7 @@ class FrontendController extends Controller
         $query = $request->get('q');
         $categoryId = $request->get('category');
         
-        $productsQuery = \App\Models\Product::where('status', 1)->where('name', 'LIKE', '%' . $query . '%');
+        $productsQuery = \App\Models\Product::where('status', 1)->forCustomer()->where('name', 'LIKE', '%' . $query . '%');
         
         if (!empty($categoryId)) {
             $category = \App\Models\Category::where('slug', $categoryId)->first();
@@ -183,7 +186,7 @@ class FrontendController extends Controller
         return response()->json(['html' => $html]);
     }
     public function shop(Request $request, $slug = null){
-        $query = \App\Models\Product::with('category')->where('status', 1);
+        $query = \App\Models\Product::with('category')->where('status', 1)->forCustomer();
 
         if ($slug) {
             $category = \App\Models\Category::where('slug', $slug)->first();
@@ -252,9 +255,10 @@ class FrontendController extends Controller
     public function details($id){
         $product = Product::with(['gallery','category', 'variations.variationValue', 'variations.variation', 'reviews' => function($q) {
             $q->where('status', 1)->latest();
-        }])->findOrFail(decrypt($id));
+        }])->forCustomer()->findOrFail(decrypt($id));
 
         $relatedProducts = Product::where('status', 1)
+            ->forCustomer()
             ->where('category_id', $product->category_id);
 
         if ($product->sub_category_id) {
@@ -267,6 +271,7 @@ class FrontendController extends Controller
             ->get();
 
         $newProducts = Product::where('status', 1)
+            ->forCustomer()
              ->where('id', '!=', $product->id)
             ->latest()
             ->take(6)

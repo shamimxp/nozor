@@ -144,12 +144,17 @@
                                             if (empty($imgs)) {
                                                 $imgs[] = asset('images/no-image.png');
                                             }
+                                            $partPrices = app(\App\Services\ProductPriceCalculator::class);
+                                            $bodyPartPrice = $partPrices->pricesFromCost((float) (optional($item->product->recipe)->body_charge ?? 0))['retail_price'];
+                                            $finishingPartPrice = $partPrices->pricesFromCost((float) (optional($item->product->recipe)->finishing_charge ?? 0))['retail_price'];
                                         @endphp
                                         <button class="btn btn-sm btn-danger btn-manufacture mb-25" 
                                             data-product_id="{{ $item->product_id }}"
                                             data-product_name="{{ $item->product->name }}"
                                             data-images="{{ json_encode($imgs) }}"
-                                            data-qty="{{ $item->confirm_qty ?? $item->qty }}">
+                                            data-qty="{{ $item->confirm_qty ?? $item->qty }}"
+                                            data-body-price="{{ $bodyPartPrice }}"
+                                            data-finishing-price="{{ $finishingPartPrice }}">
                                             Manufac. order
                                         </button>
                                     @endif
@@ -699,8 +704,8 @@
         });
 
         // Manufacture Modal
-        let bodyPrice = {{ isset($setting) && $setting->body_part_price ? $setting->body_part_price : 0 }};
-        let finishingPrice = {{ isset($setting) && $setting->finishing_part_price ? $setting->finishing_part_price : 0 }};
+        let bodyPrice = 0;
+        let finishingPrice = 0;
 
         function calculateManufacTotal() {
             let qty = parseFloat($('#manufac_qty').val()) || 0;
@@ -711,6 +716,8 @@
         }
 
         $('.btn-manufacture').on('click', function() {
+            bodyPrice = parseFloat($(this).data('body-price')) || 0;
+            finishingPrice = parseFloat($(this).data('finishing-price')) || 0;
             $('#manufac_product_id').val($(this).data('product_id'));
             $('#manufac_product_name').text($(this).data('product_name'));
             

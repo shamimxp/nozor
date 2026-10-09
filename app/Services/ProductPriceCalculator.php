@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\ProductRecipe;
 use App\Models\Dealer;
-use Illuminate\Support\Facades\DB;
+use App\Models\WebSetting;
 
 class ProductPriceCalculator
 {
@@ -60,16 +60,12 @@ class ProductPriceCalculator
         // 3. Total cost price
         $totalCostPrice = round($materialCost + $chargesTotal, 2);
 
-        // 4. Dealer price (profit % depends on dealer type)
-        $profitPercent = ($dealer && $dealer->is_special)
-            ? self::SPECIAL_DEALER_PROFIT_PERCENT
-            : self::NORMAL_DEALER_PROFIT_PERCENT;
-
-        $profitAmount = round($totalCostPrice * ($profitPercent / 100), 2);
-        $dealerPrice  = round($totalCostPrice + $profitAmount, 2);
-
-        // 5. Retail price = dealer_price * 42.85714% + dealer_price
-        $retailPrice = round(($dealerPrice * (self::RETAIL_MULTIPLIER / 100)) + $dealerPrice, 2);
+        // 4–5. Dealer and retail prices use the same formula as a single charge.
+        $priced = $this->pricesFromCost($totalCostPrice, $dealer);
+        $profitPercent = $priced['profit_percent'];
+        $profitAmount = $priced['profit_amount'];
+        $dealerPrice = $priced['dealer_price'];
+        $retailPrice = $priced['retail_price'];
 
         return [
             'product_id'        => $productId,
@@ -84,6 +80,66 @@ class ProductPriceCalculator
             'profit_amount'     => round($profitAmount),
             'dealer_price'      => round($dealerPrice),
             'retail_price'      => round($retailPrice),
+        ];
+    }
+
+    /**
+     * Regular-sale prices from a cost amount.
+     * Manufacture body and finishing prices use Body Charge and Finishing Charge here.
+     */
+    public function pricesFromCost(float $cost, ?Dealer $dealer = null): array
+    {
+        $settings = $this->profitSettings();
+        $profitPercent = ($dealer && $dealer->is_special)
+            ? $settings['special']
+            : $settings['regular'];
+
+        return $this->applyProfit($cost, $profitPercent);
+    }
+
+    /**
+     * Cost, both dealer prices, and the regular retail price for a recipe product.
+     */
+    public function quote(int $productId): array
+    {
+        $result = $this->calculate($productId, null);
+        $settings = $this->profitSettings();
+        $special = $this->applyProfit((float) $result['total_cost_price'], $settings['special']);
+
+        $result['regular_dealer_percent'] = $settings['regular'];
+        $result['regular_dealer_price'] = round($result['dealer_price']);
+        $result['special_dealer_percent'] = $settings['special'];
+        $result['special_dealer_price'] = round($special['dealer_price']);
+        $result['regular_price'] = round($result['retail_price']);
+
+        return $result;
+    }
+
+    public function profitSettings(): array
+    {
+        $setting = WebSetting::first();
+
+        return [
+            'regular' => ($setting && $setting->dealer_profit_percent !== null)
+                ? (float) $setting->dealer_profit_percent
+                : (float) self::NORMAL_DEALER_PROFIT_PERCENT,
+            'special' => ($setting && $setting->special_dealer_profit_percent !== null)
+                ? (float) $setting->special_dealer_profit_percent
+                : (float) self::SPECIAL_DEALER_PROFIT_PERCENT,
+        ];
+    }
+
+    private function applyProfit(float $cost, float $profitPercent): array
+    {
+        $profitAmount = round($cost * ($profitPercent / 100), 2);
+        $dealerPrice = round($cost + $profitAmount, 2);
+        $retailPrice = round(($dealerPrice * (self::RETAIL_MULTIPLIER / 100)) + $dealerPrice, 2);
+
+        return [
+            'profit_percent' => $profitPercent,
+            'profit_amount' => $profitAmount,
+            'dealer_price' => $dealerPrice,
+            'retail_price' => $retailPrice,
         ];
     }
 }

@@ -5,23 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Manufacture Order - {{ $manufacture->invoice_no }}</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        @page {
+            size: A4 portrait;
+            margin: 10mm 8mm 12mm;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+        }
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
             color: #000;
         }
         .print-container {
-            width: 100%;
-            max-width: 800px;
+            width: 194mm;
+            height: 270mm;
             margin: 0 auto;
             background: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
         .header {
             position: relative;
             text-align: center;
-            margin-bottom: 10px;
-            padding: 10px 0;
+            flex: 0 0 auto;
+            margin-bottom: 4px;
+            padding: 2px 0 2px 120px;
         }
         .logo-container {
             position: absolute;
@@ -30,100 +44,122 @@
             transform: translateY(-50%);
         }
         .logo {
-            width: 140px;
+            width: 110px;
             height: auto;
         }
         .company-info {
             width: 100%;
         }
         .company-name {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: normal;
             margin: 0;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
         .company-address, .company-phone {
-            font-size: 14px;
-            margin: 2px 0;
+            font-size: 12px;
+            margin: 1px 0;
         }
         hr {
             border: 0;
             border-top: 1px solid #ccc;
-            margin: 15px 0;
+            margin: 6px 0;
+            flex: 0 0 auto;
         }
         .details-section {
             text-align: center;
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 15px;
+            font-size: 13px;
+            line-height: 1.35;
+            margin-bottom: 4px;
+            flex: 0 0 auto;
         }
         .details-section strong {
             font-weight: bold;
         }
         .barcode-wrapper {
-            margin: 15px 0;
+            margin: 4px 0;
             text-align: center;
         }
         .barcode {
-            height: 40px;
+            height: 28px;
         }
         .barcode-text {
-            font-size: 12px;
+            font-size: 11px;
             display: block;
-            margin-top: 2px;
+            margin-top: 1px;
         }
         .qty-text {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 2px;
         }
         .design-text {
             text-align: right;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin: 2px 0;
+            flex: 0 0 auto;
         }
         .manufacture-image-container {
-            text-align: center;
-            margin: 20px auto;
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 0;
+            margin: 4px auto;
             border: 1px solid #666;
-            padding: 10px;
-            width: 90%;
-            max-width: 700px;
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
         }
         .manufacture-image-container img {
-            max-width: 100%;
-            max-height: 600px;
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            bottom: 6px;
+            left: 6px;
+            width: calc(100% - 12px);
+            height: calc(100% - 12px);
             object-fit: contain;
         }
         .footer-note {
             font-weight: bold;
-            margin-top: 10px;
+            font-size: 13px;
+            margin-top: 2px;
+            flex: 0 0 auto;
         }
         .developed-by {
             text-align: center;
-            font-size: 12px;
-            margin-top: 30px;
+            font-size: 11px;
+            margin-top: 6px;
+            flex: 0 0 auto;
         }
         .developed-by span {
             color: blue;
             font-weight: bold;
         }
-        
+
+        @media screen {
+            body {
+                background: #e9e9e9;
+                padding: 12px 0;
+            }
+            .print-container {
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+            }
+        }
+
         @media print {
             body {
+                background: #fff;
                 padding: 0;
             }
             .print-container {
-                max-width: 100%;
-                border: none;
+                width: auto;
+                height: 270mm;
+                max-height: 270mm;
+                box-shadow: none;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-after: avoid;
+                break-after: avoid;
             }
-            /* Hide print dialog if any UI elements are added later */
             .no-print {
                 display: none !important;
             }

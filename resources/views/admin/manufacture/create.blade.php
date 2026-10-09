@@ -190,6 +190,7 @@
             let selected = $(this).find('option:selected');
             let pimg = selected.data('pimg');
             let mimg = selected.data('mimg');
+            fetchPrices();
 
             if (pimg || mimg) {
                 $('#preview_pimg').attr('src', pimg || '{{ asset("images/no-image.png") }}');
@@ -201,7 +202,7 @@
         });
 
         function fetchPrices() {
-            $.get("{{ route('admin.manufacture.get-prices') }}", function(data) {
+            $.get("{{ route('admin.manufacture.get-prices') }}", { product_id: $('#product_id').val() }, function(data) {
                 bodyPartPrice = parseFloat(data.body_part_price);
                 finishingPartPrice = parseFloat(data.finishing_part_price);
 

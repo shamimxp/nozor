@@ -20,6 +20,9 @@
                             <th>Stock Quantity</th>
                             <th>Price</th>
                             <th>Featured</th>
+                            <th>Model No</th>
+                            <th>Dealer Show</th>
+                            <th>Customer Show</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -80,6 +83,9 @@
                 {data: 'stock', name: 'stock'},
                 {data: 'price', name: 'price'},
                 {data: 'featured', name: 'featured', orderable: false, searchable: false},
+                {data: 'model_no', name: 'model_no'},
+                {data: 'dealer_show', name: 'dealer_show', orderable: false, searchable: false},
+                {data: 'customer_show', name: 'customer_show', orderable: false, searchable: false},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
@@ -134,6 +140,33 @@
                 data: { 'id': id, 'status': status },
                 success: function(data) {
                     toastr.success(data.success);
+                }
+            });
+        });
+
+        $('body').on('click', '.toggleVisibility', function() {
+            var button = $(this);
+            var next = button.data('value') == 1 ? 0 : 1;
+            button.prop('disabled', true);
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.product.visibility') }}",
+                data: {
+                    id: button.data('id'),
+                    field: button.data('field'),
+                    value: next
+                },
+                success: function(data) {
+                    button.data('value', next);
+                    button.text(next === 1 ? 'Active' : 'Disable');
+                    button.toggleClass('badge-success', next === 1);
+                    button.toggleClass('badge-danger', next !== 1);
+                    button.prop('disabled', false);
+                    toastr.success(data.success);
+                },
+                error: function() {
+                    button.prop('disabled', false);
+                    toastr.error('Could not update this status.');
                 }
             });
         });

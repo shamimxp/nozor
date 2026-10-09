@@ -11,11 +11,18 @@
                 <form id="productForm" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="name">Product Name <span class="text-danger">*</span></label>
                                 <input type="text" name="name" id="name" class="form-control" placeholder="Product Name" required>
                                 <span class="text-danger error-text name_error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="model_no">Model No</label>
+                                <input type="text" name="model_no" id="model_no" class="form-control" placeholder="Model No">
+                                <span class="text-danger error-text model_no_error"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -58,8 +65,9 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="selling_price">Selling Price (৳) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" name="selling_price" id="selling_price" class="form-control" value="0" required>
+                                <label for="selling_price">Selling Price (৳) <span class="text-danger selling-price-required">*</span></label>
+                                <input type="number" step="0.01" name="selling_price" id="selling_price" class="form-control" placeholder="Leave empty for a recipe product">
+                                <small class="text-muted">Recipe products can leave this empty. Body and finishing prices are set in the recipe.</small>
                                 <span class="text-danger error-text selling_price_error"></span>
                             </div>
                         </div>
@@ -110,6 +118,24 @@
                                             <label class="custom-control-label" for="is_manufacturer">Is Manufacturer Product?</label>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mt-2 mb-0">
+                                <label class="d-block">Show Dealer</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="dealer_show" id="dealer_show" value="1" checked>
+                                    <label class="custom-control-label" for="dealer_show">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mt-2 mb-0">
+                                <label class="d-block">Show Customer</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="customer_show" id="customer_show" value="1" checked>
+                                    <label class="custom-control-label" for="customer_show">Active</label>
                                 </div>
                             </div>
                         </div>
@@ -182,6 +208,23 @@
                             </div>
                         </div>
 
+                        <div class="col-12 mt-2" id="product-recipe-section" style="display:none;">
+                            <div class="card border">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Product Recipe</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-1">Body Charge and Finishing Charge are used to calculate this product’s manufacture price.</p>
+                                    <div class="row">
+                                        @include('admin.partials.product-recipe-fields', [
+                                            'raw_material' => $raw_material,
+                                            'recipe' => null,
+                                        ])
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-12 mt-3">
                             <button type="submit" class="btn btn-primary" id="saveBtn">Save Product</button>
                             <a href="{{ route('admin.product.index') }}" class="btn btn-outline-secondary">Cancel</a>
@@ -204,22 +247,18 @@
             placeholder: 'Select an option'
         });
 
-        function toggleManufacturer() {
-            let sellingPrice = parseFloat($('#selling_price').val()) || 0;
-            let costPrice = parseFloat($('#cost_price').val()) || 0;
-
-            if (sellingPrice > 0 || costPrice > 0) {
-                $('#is_manufacturer').prop('disabled', true).prop('checked', false);
-            } else {
-                $('#is_manufacturer').prop('disabled', false);
+        function toggleRecipeSection() {
+            let on = $('#is_manufacturer').is(':checked');
+            $('#product-recipe-section').toggle(on);
+            $('#selling_price').prop('required', !on);
+            $('.selling-price-required').toggle(!on);
+            if (on && window.ensureRawMaterialSelect) {
+                window.ensureRawMaterialSelect();
             }
         }
 
-        $('#selling_price, #cost_price').on('keyup change', function() {
-            toggleManufacturer();
-        });
-
-        toggleManufacturer();
+        $('#is_manufacturer').on('change', toggleRecipeSection);
+        toggleRecipeSection();
 
         // Fetch subcategories
         $('#category_id').on('change', function() {

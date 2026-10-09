@@ -145,18 +145,28 @@ class ManufactureController extends Controller
 
     public function getPrices(Request $request)
     {
-        $setting = \App\Models\WebSetting::first();
-        return response()->json([
-            'body_part_price' => $setting ? $setting->body_part_price : 0,
-            'finishing_part_price' => $setting ? $setting->finishing_part_price : 0,
-        ]);
+        return response()->json($this->recipePartPrices($request->product_id));
+    }
+
+    private function recipePartPrices($productId): array
+    {
+        $recipe = $productId
+            ? \App\Models\ProductRecipe::where('product_id', $productId)->first()
+            : null;
+
+        $calculator = app(\App\Services\ProductPriceCalculator::class);
+
+        return [
+            'body_part_price' => (float) $calculator->pricesFromCost((float) ($recipe->body_charge ?? 0))['retail_price'],
+            'finishing_part_price' => (float) $calculator->pricesFromCost((float) ($recipe->finishing_charge ?? 0))['retail_price'],
+        ];
     }
 
     public function store(\App\Http\Requests\StoreManufactureRequest $request)
     {
         $validated = $request->validated();
         
-        $setting = \App\Models\WebSetting::first();
+        $prices = $this->recipePartPrices($validated['product_id']);
         $dealer = \App\Models\Dealer::find($validated['dealer_id']);
         $qty = $validated['manufacture_qty'];
         
@@ -168,8 +178,8 @@ class ManufactureController extends Controller
             $invoice_no = 'MF-' . date('Ymd') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
             foreach ($validated['parts'] as $part) {
-                $body_price = ($part === 'body') ? ($setting->body_part_price ?? 0) : 0;
-                $finishing_price = ($part === 'finishing') ? ($setting->finishing_part_price ?? 0) : 0;
+                $body_price = ($part === 'body') ? $prices['body_part_price'] : 0;
+                $finishing_price = ($part === 'finishing') ? $prices['finishing_part_price'] : 0;
                 
                 $body_total = $body_price * $qty;
                 $finishing_total = $finishing_price * $qty;
@@ -232,11 +242,11 @@ class ManufactureController extends Controller
 
         $validated = $request->validated();
         
-        $setting = \App\Models\WebSetting::first();
+        $prices = $this->recipePartPrices($validated['product_id']);
         $dealer = \App\Models\Dealer::find($validated['dealer_id']);
         
-        $body_price = in_array('body', $validated['parts']) ? ($setting->body_part_price ?? 0) : 0;
-        $finishing_price = in_array('finishing', $validated['parts']) ? ($setting->finishing_part_price ?? 0) : 0;
+        $body_price = in_array('body', $validated['parts']) ? $prices['body_part_price'] : 0;
+        $finishing_price = in_array('finishing', $validated['parts']) ? $prices['finishing_part_price'] : 0;
         
         $qty = $validated['manufacture_qty'];
         $body_total = $body_price * $qty;

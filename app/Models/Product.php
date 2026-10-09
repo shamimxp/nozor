@@ -11,10 +11,11 @@ class Product extends Model
     use HasFactory, UploadAble;
 
     protected $fillable = [
-        'name', 'slug', 'category_id', 'sub_category_id', 'unit_id', 
-        'short_description', 'max_order_qty', 'is_featured', 
-        'status', 'selling_price', 'cost_price', 'featured_image', 
-        'stock', 'discount_type', 'discount_amount', 'is_manufacturer'
+        'name', 'model_no', 'slug', 'category_id', 'sub_category_id', 'unit_id',
+        'short_description', 'max_order_qty', 'is_featured',
+        'status', 'selling_price', 'cost_price', 'featured_image',
+        'stock', 'discount_type', 'discount_amount', 'is_manufacturer',
+        'dealer_show', 'customer_show'
     ];
 
     protected $with = ['approvedReviews'];
@@ -62,5 +63,15 @@ class Product extends Model
     public function recipe()
     {
         return $this->hasOne(ProductRecipe::class);
+    }
+
+    public function scopeForDealer($query)
+    {
+        return $query->where('dealer_show', 1);
+    }
+
+    public function scopeForCustomer($query)
+    {
+        return $query->where('customer_show', 1);
     }
 }

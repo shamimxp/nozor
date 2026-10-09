@@ -21,7 +21,8 @@ class PosController extends Controller
     public function getProducts(Request $request, ProductPriceCalculator $calculator)
     {
         $query = Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
-            ->where('status', 1);
+            ->where('status', 1)
+            ->forDealer();
 
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');

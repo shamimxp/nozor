@@ -186,7 +186,7 @@
 
     function loadPrices(productId) {
         if (productId) {
-            $.get("{{ route('admin.manufacture.get-prices') }}", function(data) {
+            $.get("{{ route('admin.manufacture.get-prices') }}", { product_id: productId }, function(data) {
                 bodyPartPrice = parseFloat(data.body_part_price);
                 finishingPartPrice = parseFloat(data.finishing_part_price);
 

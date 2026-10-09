@@ -65,26 +65,12 @@
                         </div>
 
                         <div class="col-md-12 mt-2">
-                            <h5 class="border-bottom pb-1">Manufacture Price</h5>
+                            <h5 class="border-bottom pb-1">Dealer Profit</h5>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-1">
-                                <label for="body_part_price">Body Part Price</label>
-                                <input type="number" step="0.01" name="body_part_price" id="body_part_price" class="form-control" value="{{ $setting->body_part_price }}" placeholder="Body Part Price">
-                                <span class="text-danger error-text body_part_price_error"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-1">
-                                <label for="finishing_part_price">Finishing Part Price</label>
-                                <input type="number" step="0.01" name="finishing_part_price" id="finishing_part_price" class="form-control" value="{{ $setting->finishing_part_price }}" placeholder="Finishing Part Price">
-                                <span class="text-danger error-text finishing_part_price_error"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-1">
-                                <label for="dealer_profit_percent">Dealer Profit Percent</label>
-                                <input type="number" step="0.01" name="dealer_profit_percent" id="dealer_profit_percent" class="form-control" value="{{ $setting->dealer_profit_percent }}" placeholder="Dealer Profit Percent">
+                                <label for="dealer_profit_percent">Dealer Profit Percent (Regular)</label>
+                                <input type="number" step="0.01" name="dealer_profit_percent" id="dealer_profit_percent" class="form-control" value="{{ $setting->dealer_profit_percent }}" placeholder="Dealer Profit Percent (Regular)">
                                 <span class="text-danger error-text dealer_profit_percent_error"></span>
                             </div>
                         </div>

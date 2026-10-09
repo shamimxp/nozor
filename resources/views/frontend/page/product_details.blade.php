@@ -56,6 +56,9 @@
                                         <span class="stock-status out-stock"> {{ $discount }} Off</span>
                                         @endif
                                         <h2 class="title-detail">{{$product->name ?? ' '}}</h2>
+                                        @if($product->model_no)
+                                            <p class="mb-1 text-muted">Model No: {{ $product->model_no }}</p>
+                                        @endif
                                         <div class="product-detail-rating">
                                             <div class="product-rate-cover text-end">
                                                 @php

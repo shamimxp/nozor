@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\RawMaterialProduct;
+use App\Services\ProductRecipeWriter;
 use Illuminate\Http\Request;
-use Ramsey\Collection\Queue;
 
 class ProductRecipeController extends Controller
 {
@@ -51,53 +51,14 @@ class ProductRecipeController extends Controller
     }
     public function create(){
         $products = Product::where('status',1)->get();
-        $raw_material = RawMaterialProduct::all();
+        $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
         return view('admin.product-recipe.create', compact('products', 'raw_material'));
     }
-    public function store(Request $request){
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'raw_materials' => 'required|array',
-            'raw_material_id' => 'required|array',
-        ]);
+    public function store(Request $request, ProductRecipeWriter $writer){
+        $request->validate($this->recipeRules(true));
 
-        $manufacture_images = [];
-        if ($request->hasFile('manufacture_images')) {
-            foreach ($request->file('manufacture_images') as $file) {
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/product_recipes'), $filename);
-                $manufacture_images[] = 'uploads/product_recipes/' . $filename;
-            }
-        }
-
-        $recipe = \App\Models\ProductRecipe::create([
-            'product_id' => $request->product_id,
-            'body_charge' => $request->body_charge ?? 0,
-            'finishing_charge' => $request->finishing_charge ?? 0,
-            'bearing' => $request->bearing ?? 0,
-            'stone' => $request->stone ?? 0,
-            'electric_bill' => $request->electric_bill ?? 0,
-            'gas_bill' => $request->gas_bill ?? 0,
-            'box_price' => $request->box_price ?? 0,
-            'carrying_charge' => $request->carrying_charge ?? 0,
-            'wire_price' => $request->wire_price ?? 0,
-            'manufacture_images' => $manufacture_images,
-        ]);
-
-        if ($request->has('raw_material_id')) {
-            foreach ($request->raw_material_id as $key => $raw_material_id) {
-                \App\Models\ProductRecipeItem::create([
-                    'product_recipe_id' => $recipe->id,
-                    'raw_material_product_id' => $raw_material_id,
-                    'thickness' => $request->thickness[$key] ?? 0,
-                    'width' => $request->width[$key] ?? 0,
-                    'height' => $request->height[$key] ?? 0,
-                    'area' => $request->area[$key] ?? 0,
-                    'grade_value' => $request->grade_value[$key] ?? 0,
-                    'qty' => $request->qty[$key] ?? 0,
-                ]);
-            }
-        }
+        $product = Product::findOrFail($request->product_id);
+        $writer->sync($product, $request);
 
         toastr()->success('Product Recipe saved successfully.');
         return redirect()->route('admin.product-recipe.index');
@@ -108,73 +69,18 @@ class ProductRecipeController extends Controller
     }
 
     public function edit($id){
-        $recipe = \App\Models\ProductRecipe::with(['items.rawMaterialProduct.materialType'])->findOrFail($id);
+        $recipe = \App\Models\ProductRecipe::with(['items.rawMaterialProduct.materialType', 'items.rawMaterialProduct.unit'])->findOrFail($id);
         $products = Product::where('status',1)->get();
-        $raw_material = RawMaterialProduct::all();
-        $selected_materials = $recipe->items->pluck('raw_material_product_id')->toArray();
-        return view('admin.product-recipe.edit', compact('recipe', 'products', 'raw_material', 'selected_materials'));
+        $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
+        return view('admin.product-recipe.edit', compact('recipe', 'products', 'raw_material'));
     }
 
-    public function update(Request $request, $id){
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'raw_materials' => 'required|array',
-            'raw_material_id' => 'required|array',
-        ]);
+    public function update(Request $request, $id, ProductRecipeWriter $writer){
+        $request->validate($this->recipeRules(true));
 
         $recipe = \App\Models\ProductRecipe::findOrFail($id);
-        $old_images = is_array($recipe->manufacture_images) ? $recipe->manufacture_images : [];
-        $existing_images_from_request = $request->existing_images ?? [];
-        
-        foreach ($old_images as $old_img) {
-            if (!in_array($old_img, $existing_images_from_request)) {
-                if (file_exists(public_path($old_img))) {
-                    @unlink(public_path($old_img));
-                }
-            }
-        }
-
-        $manufacture_images = $existing_images_from_request;
-        
-        if ($request->hasFile('manufacture_images')) {
-            foreach ($request->file('manufacture_images') as $file) {
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/product_recipes'), $filename);
-                $manufacture_images[] = 'uploads/product_recipes/' . $filename;
-            }
-        }
-
-        $recipe->update([
-            'product_id' => $request->product_id,
-            'body_charge' => $request->body_charge ?? 0,
-            'finishing_charge' => $request->finishing_charge ?? 0,
-            'bearing' => $request->bearing ?? 0,
-            'stone' => $request->stone ?? 0,
-            'electric_bill' => $request->electric_bill ?? 0,
-            'gas_bill' => $request->gas_bill ?? 0,
-            'box_price' => $request->box_price ?? 0,
-            'carrying_charge' => $request->carrying_charge ?? 0,
-            'wire_price' => $request->wire_price ?? 0,
-            'manufacture_images' => $manufacture_images,
-        ]);
-
-        // Re-create items
-        $recipe->items()->delete();
-
-        if ($request->has('raw_material_id')) {
-            foreach ($request->raw_material_id as $key => $raw_material_id) {
-                \App\Models\ProductRecipeItem::create([
-                    'product_recipe_id' => $recipe->id,
-                    'raw_material_product_id' => $raw_material_id,
-                    'thickness' => $request->thickness[$key] ?? 0,
-                    'width' => $request->width[$key] ?? 0,
-                    'height' => $request->height[$key] ?? 0,
-                    'area' => $request->area[$key] ?? 0,
-                    'grade_value' => $request->grade_value[$key] ?? 0,
-                    'qty' => $request->qty[$key] ?? 0,
-                ]);
-            }
-        }
+        $product = Product::findOrFail($request->product_id);
+        $writer->sync($product, $request, $recipe);
 
         toastr()->success('Product Recipe updated successfully.');
         return redirect()->route('admin.product-recipe.index');
@@ -193,6 +99,26 @@ class ProductRecipeController extends Controller
         
         $recipe->delete();
         return response()->json(['success' => 'Product Recipe deleted successfully.']);
+    }
+
+    private function recipeRules(bool $requireItems): array
+    {
+        return [
+            'product_id' => 'required|exists:products,id',
+            'raw_materials' => $requireItems ? 'required|array|min:1' : 'nullable|array',
+            'raw_material_id' => $requireItems ? 'required|array|min:1' : 'nullable|array',
+            'raw_material_id.*' => 'exists:raw_material_products,id',
+            'body_charge' => 'nullable|numeric|min:0',
+            'finishing_charge' => 'nullable|numeric|min:0',
+            'bearing' => 'nullable|numeric|min:0',
+            'stone' => 'nullable|numeric|min:0',
+            'electric_bill' => 'nullable|numeric|min:0',
+            'gas_bill' => 'nullable|numeric|min:0',
+            'box_price' => 'nullable|numeric|min:0',
+            'carrying_charge' => 'nullable|numeric|min:0',
+            'wire_price' => 'nullable|numeric|min:0',
+            'manufacture_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+        ];
     }
 
 }
