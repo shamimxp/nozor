@@ -173,9 +173,12 @@
                 </ul>
             </li>
 
-            <li class=" nav-item @if(Route::is('admin.raw-material-product*') || Route::is('admin.material-type*') || Route::is('admin.product-recipe*')) open @endif">
+            <li class=" nav-item @if(Route::is('admin.raw-material-product*') || Route::is('admin.material-type*') || Route::is('admin.product-recipe*') || Route::is('admin.cost-head*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Manufacture Setting</span></a>
                 <ul class="menu-content">
+                    <li class="{{ Route::is('admin.cost-head*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.cost-head.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Cost Head</span></a>
+                    </li>
                     <li class="{{ Route::is('admin.material-type.index') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.material-type.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Material Type</span></a>
                     </li>

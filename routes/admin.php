@@ -130,6 +130,10 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('product-recipe', \App\Http\Controllers\Admin\ProductRecipeController::class, ['as' => 'admin']);
     Route::get('/product-price-calculate', [\App\Http\Controllers\Admin\ProductPriceController::class,'calculate'])->name('admin.product-price-calculator');
 
+    // Cost Head module
+    Route::resource('cost-head', \App\Http\Controllers\Admin\CostHeadController::class, ['as' => 'admin']);
+    Route::post('/cost-head/status', [\App\Http\Controllers\Admin\CostHeadController::class, 'getStatus'])->name('admin.cost-head.status');
+
     // Material Type module
     Route::resource('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, ['as' => 'admin']);
     Route::post('/material-type/status', [\App\Http\Controllers\Admin\MaterialTypeController::class, 'getStatus'])->name('admin.material_type.status');
