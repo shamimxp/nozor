@@ -20,10 +20,15 @@
                 'area' => $item->area,
                 'grade_value' => $item->grade_value,
                 'qty' => $item->qty,
+                'price_per_unit' => optional($material)->price_per_unit ?? 0,
             ];
         }
     }
     $selectedMaterialIds = collect($existingItems)->pluck('raw_material_product_id')->map(fn ($id) => (int) $id)->all();
+    $webSetting = \App\Models\WebSetting::first();
+    $defaultDealerProfit = $webSetting ? $webSetting->dealer_profit_percent : 25;
+    $defaultSpecialDealerProfit = $webSetting ? $webSetting->special_dealer_profit_percent : 15;
+    $defaultCustomerProfit = 40;
 @endphp
 
 @if($showProductSelect)
@@ -89,6 +94,10 @@
     <label>Wire Price</label>
     <input type="number" step="0.01" min="0" name="wire_price" class="form-control" value="{{ $recipe->wire_price ?? 0 }}">
 </div>
+<div class="col-md-3 form-group">
+    <label>Pitol Price</label>
+    <input type="number" step="0.01" min="0" name="pitol_price" class="form-control" value="{{ $recipe->pitol_price ?? 0 }}">
+</div>
 
 <div class="col-md-12 form-group">
     <label>Manufacture Images (Multiple)</label>
@@ -133,11 +142,119 @@
     </div>
 </div>
 
+<div class="col-md-12 mt-2 mb-2">
+    <div class="card border">
+        <div class="card-header bg-light p-2 border-bottom d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Product Pricing & Profit Calculation</h4>
+            <span class="badge badge-light-primary">Real-time Calculation</span>
+        </div>
+        <div class="card-body p-2">
+            <!-- Cost Summary Row -->
+            <div class="row">
+                <div class="col-md-4 col-12 mb-1">
+                    <div class="p-2 border rounded bg-light">
+                        <small class="text-muted d-block font-weight-bold text-uppercase">Total Raw Material Cost</small>
+                        <h4 class="mb-0 text-secondary mt-1">৳ <span id="calc_material_cost">0.00</span></h4>
+                    </div>
+                </div>
+                <div class="col-md-4 col-12 mb-1">
+                    <div class="p-2 border rounded bg-light">
+                        <small class="text-muted d-block font-weight-bold text-uppercase">Total Charges (Fixed + Wire + Pitol)</small>
+                        <h4 class="mb-0 text-secondary mt-1">৳ <span id="calc_charges_total">0.00</span></h4>
+                    </div>
+                </div>
+                <div class="col-md-4 col-12 mb-1">
+                    <div class="p-2 border rounded bg-primary text-white">
+                        <small class="text-white-50 d-block font-weight-bold text-uppercase">Total Product Cost</small>
+                        <h4 class="mb-0 text-white mt-1">৳ <span id="calc_product_cost">0.00</span></h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profit & Price Configuration Row -->
+            <div class="row mt-2">
+                <!-- Dealer Price -->
+                <div class="col-md-4 col-12 mb-2">
+                    <div class="card border mb-0 h-100">
+                        <div class="card-header bg-light py-1 px-2 border-bottom">
+                            <h5 class="card-title mb-0 text-success font-weight-bolder">Dealer Pricing</h5>
+                        </div>
+                        <div class="card-body p-2">
+                            <div class="form-group mb-1">
+                                <label class="font-weight-bold">Dealer Profit (%) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0" name="dealer_profit_percent" id="dealer_profit_percent" class="form-control" value="{{ old('dealer_profit_percent', $recipe->dealer_profit_percent ?? $defaultDealerProfit) }}" required>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                <span class="text-muted font-small-3">Profit Amount:</span>
+                                <span class="font-weight-bold text-dark font-small-3">৳ <span id="calc_dealer_profit_amount">0.00</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-1">
+                                <span class="font-weight-bold text-success">Dealer Price:</span>
+                                <h4 class="mb-0 text-success font-weight-bolder">৳ <span id="calc_dealer_price">0.00</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Dealer Price -->
+                <div class="col-md-4 col-12 mb-2">
+                    <div class="card border mb-0 h-100">
+                        <div class="card-header bg-light py-1 px-2 border-bottom">
+                            <h5 class="card-title mb-0 text-info font-weight-bolder">Special Dealer Pricing</h5>
+                        </div>
+                        <div class="card-body p-2">
+                            <div class="form-group mb-1">
+                                <label class="font-weight-bold">Special Dealer Profit (%) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0" name="special_dealer_profit_percent" id="special_dealer_profit_percent" class="form-control" value="{{ old('special_dealer_profit_percent', $recipe->special_dealer_profit_percent ?? $defaultSpecialDealerProfit) }}" required>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                <span class="text-muted font-small-3">Profit Amount:</span>
+                                <span class="font-weight-bold text-dark font-small-3">৳ <span id="calc_special_dealer_profit_amount">0.00</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-1">
+                                <span class="font-weight-bold text-info">Special Dealer Price:</span>
+                                <h4 class="mb-0 text-info font-weight-bolder">৳ <span id="calc_special_dealer_price">0.00</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Normal Customer Price -->
+                <div class="col-md-4 col-12 mb-2">
+                    <div class="card border mb-0 h-100">
+                        <div class="card-header bg-light py-1 px-2 border-bottom">
+                            <h5 class="card-title mb-0 text-primary font-weight-bolder">Normal Customer Pricing</h5>
+                        </div>
+                        <div class="card-body p-2">
+                            <div class="form-group mb-1">
+                                <label class="font-weight-bold">Normal Customer Profit (%) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0" name="normal_customer_profit_percent" id="normal_customer_profit_percent" class="form-control" value="{{ old('normal_customer_profit_percent', $recipe->normal_customer_profit_percent ?? $defaultCustomerProfit) }}" required>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                <span class="text-muted font-small-3">Profit Amount:</span>
+                                <span class="font-weight-bold text-dark font-small-3">৳ <span id="calc_customer_profit_amount">0.00</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-1">
+                                <span class="font-weight-bold text-primary">Customer Price:</span>
+                                <h4 class="mb-0 text-primary font-weight-bolder">৳ <span id="calc_customer_price">0.00</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info py-1 px-2 mb-0 mt-1" role="alert">
+                <small>Prices are calculated automatically in real time based on Product Cost and Profit %. Only the Profit % values are saved to the recipe.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     window.productRecipeExistingItems = @json($existingItems);
 </script>
 @once
     @push('scripts')
-        <script src="{{ asset('js/product-recipe-form.js') }}?v=2"></script>
+        <script src="{{ asset('js/product-recipe-form.js') }}?v=3"></script>
     @endpush
 @endonce

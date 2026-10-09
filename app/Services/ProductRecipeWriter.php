@@ -45,6 +45,10 @@ class ProductRecipeWriter
             'box_price' => $request->filled('box_price') ? $request->box_price : 0,
             'carrying_charge' => $request->filled('carrying_charge') ? $request->carrying_charge : 0,
             'wire_price' => $request->filled('wire_price') ? $request->wire_price : 0,
+            'pitol_price' => $request->filled('pitol_price') ? $request->pitol_price : 0,
+            'dealer_profit_percent' => $request->filled('dealer_profit_percent') ? $request->dealer_profit_percent : 0,
+            'special_dealer_profit_percent' => $request->filled('special_dealer_profit_percent') ? $request->special_dealer_profit_percent : 0,
+            'normal_customer_profit_percent' => $request->filled('normal_customer_profit_percent') ? $request->normal_customer_profit_percent : 0,
             'manufacture_images' => $manufactureImages,
         ]);
         $recipe->save();

@@ -175,6 +175,7 @@
                     <div><span>Box Price</span><strong>{{ number_format($product->recipe->box_price, 2) }}</strong></div>
                     <div><span>Carrying Charge</span><strong>{{ number_format($product->recipe->carrying_charge, 2) }}</strong></div>
                     <div><span>Wire Price</span><strong>{{ number_format($product->recipe->wire_price, 2) }}</strong></div>
+                    <div><span>Pitol Price</span><strong>{{ number_format($product->recipe->pitol_price ?? 0, 2) }}</strong></div>
                 </div>
 
                 <div class="pd-subhead">

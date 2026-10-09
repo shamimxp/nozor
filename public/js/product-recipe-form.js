@@ -4,7 +4,18 @@
     }
     window.productRecipeFormReady = true;
 
-    function materialRow(id, name, type, grade, values) {
+    function getMaterialPrice(materialId) {
+        var opt = $('#raw_materials_select option[value="' + materialId + '"]');
+        if (opt.length) {
+            var p = parseFloat(opt.data('price'));
+            if (!isNaN(p)) {
+                return p;
+            }
+        }
+        return 0;
+    }
+
+    function materialRow(id, name, type, grade, values, unitPrice) {
         values = values || {};
         var thickness = values.thickness !== undefined ? values.thickness : 2;
         var width = values.width !== undefined ? values.width : '';
@@ -12,11 +23,14 @@
         var area = values.area !== undefined ? values.area : 0;
         var qty = values.qty !== undefined ? values.qty : 0;
         var gradeValue = values.grade_value !== undefined ? values.grade_value : grade;
+        var price = (values.price_per_unit !== undefined && values.price_per_unit !== null)
+            ? values.price_per_unit
+            : (unitPrice !== undefined ? unitPrice : getMaterialPrice(id));
 
         return `
-            <tr data-type="${type || ''}" data-grade="${gradeValue || 0}">
+            <tr data-type="${type || ''}" data-grade="${gradeValue || 0}" data-price="${price || 0}">
                 <td>${name}<input type="hidden" name="raw_material_id[]" value="${id}"></td>
-                <td><input type="number" step="0.01" name="thickness[]" class="form-control form-control-sm text-center row-thickness" value="${thickness}" readonly></td>
+                <td><input type="number" step="0.01" name="thickness[]" class="form-control form-control-sm text-center row-thickness" value="${thickness}"></td>
                 <td><input type="number" step="0.01" name="width[]" placeholder="0" class="form-control form-control-sm text-center row-width" value="${width}"></td>
                 <td><input type="number" step="0.01" name="height[]" placeholder="0" class="form-control form-control-sm text-center row-height" value="${height}"></td>
                 <td><input type="number" step="0.01" name="area[]" class="form-control form-control-sm text-center row-area" value="${area}" readonly></td>
@@ -45,15 +59,77 @@
         }
 
         items.forEach(function (item) {
+            var unitPrice = (item.price_per_unit !== undefined && item.price_per_unit !== null)
+                ? item.price_per_unit
+                : getMaterialPrice(item.raw_material_product_id);
+
             tbody.append(materialRow(
                 item.raw_material_product_id,
                 item.name || '',
                 (item.type || '').toLowerCase(),
                 item.grade_value || 0,
-                item
+                item,
+                unitPrice
             ));
         });
     }
+
+    function calculateProductPricing() {
+        var totalMaterialCost = 0;
+        $('#items_table_body tr').each(function () {
+            var tr = $(this);
+            var area = parseFloat(tr.find('.row-area').val()) || 0;
+            var grade = parseFloat(tr.data('grade')) || 0;
+            var price = parseFloat(tr.data('price')) || 0;
+            var qtyVal = tr.find('.row-qty').val();
+            var qty = parseFloat(qtyVal);
+            if (isNaN(qty)) {
+                qty = Math.round(area * grade);
+            }
+            var cost = qty * price;
+            totalMaterialCost += Math.round(cost);
+        });
+
+        var chargeFields = [
+            'body_charge', 'finishing_charge', 'bearing', 'stone',
+            'electric_bill', 'gas_bill', 'box_price', 'carrying_charge',
+            'wire_price', 'pitol_price'
+        ];
+        var totalCharges = 0;
+        chargeFields.forEach(function (field) {
+            var val = parseFloat($('input[name="' + field + '"]').val()) || 0;
+            totalCharges += val;
+        });
+
+        var totalProductCost = Math.round((totalMaterialCost + totalCharges) * 100) / 100;
+
+        $('#calc_material_cost').text(totalMaterialCost.toFixed(2));
+        $('#calc_charges_total').text(totalCharges.toFixed(2));
+        $('#calc_product_cost').text(totalProductCost.toFixed(2));
+
+        // Dealer pricing
+        var dealerPercent = parseFloat($('#dealer_profit_percent').val()) || 0;
+        var dealerProfitAmount = Math.round((totalProductCost * (dealerPercent / 100)) * 100) / 100;
+        var dealerPrice = Math.round((totalProductCost + dealerProfitAmount) * 100) / 100;
+        $('#calc_dealer_profit_amount').text(dealerProfitAmount.toFixed(2));
+        $('#calc_dealer_price').text(dealerPrice.toFixed(2));
+
+        // Special dealer pricing
+        var specialDealerPercent = parseFloat($('#special_dealer_profit_percent').val()) || 0;
+        var specialDealerProfitAmount = Math.round((totalProductCost * (specialDealerPercent / 100)) * 100) / 100;
+        var specialDealerPrice = Math.round((totalProductCost + specialDealerProfitAmount) * 100) / 100;
+        $('#calc_special_dealer_profit_amount').text(specialDealerProfitAmount.toFixed(2));
+        $('#calc_special_dealer_price').text(specialDealerPrice.toFixed(2));
+
+        // Normal customer pricing
+        var customerPercent = parseFloat($('#normal_customer_profit_percent').val()) || 0;
+        var customerProfitAmount = Math.round((totalProductCost * (customerPercent / 100)) * 100) / 100;
+        var customerPrice = Math.round((totalProductCost + customerProfitAmount) * 100) / 100;
+        $('#calc_customer_profit_amount').text(customerProfitAmount.toFixed(2));
+        $('#calc_customer_price').text(customerPrice.toFixed(2));
+    }
+
+    window.calculateProductPricing = calculateProductPricing;
 
     window.ensureRawMaterialSelect = function () {
         var $el = $('#raw_materials_select');
@@ -110,8 +186,11 @@
             var name = option.text().replace(/\s*\([^)]*\)$/, '');
             var type = (option.data('type') || '').toString().toLowerCase();
             var grade = option.data('grade') || 0;
-            tbody.append(materialRow(id, name, type, grade));
+            var price = option.data('price') || 0;
+            tbody.append(materialRow(id, name, type, grade, {}, price));
         });
+
+        calculateProductPricing();
     });
 
     $(document).on('input', '.row-width, .row-height, .row-thickness', function () {
@@ -131,6 +210,16 @@
 
         tr.find('.row-area').val(area.toFixed(2));
         tr.find('.row-qty').val(Math.round(area * grade));
+
+        calculateProductPricing();
+    });
+
+    $(document).on('input change', 'input[name="body_charge"], input[name="finishing_charge"], input[name="bearing"], input[name="stone"], input[name="electric_bill"], input[name="gas_bill"], input[name="box_price"], input[name="carrying_charge"], input[name="wire_price"], input[name="pitol_price"]', function () {
+        calculateProductPricing();
+    });
+
+    $(document).on('input change', '#dealer_profit_percent, #special_dealer_profit_percent, #normal_customer_profit_percent', function () {
+        calculateProductPricing();
     });
 
     var selectedFiles = new DataTransfer();
@@ -189,5 +278,6 @@
 
     $(function () {
         populateExistingItems();
+        calculateProductPricing();
     });
 })(jQuery);

@@ -54,6 +54,7 @@ class ProductPriceCalculator
             'box_price'        => $recipe->box_price,
             'carrying_charge'  => $recipe->carrying_charge,
             'wire_price'       => $recipe->wire_price,
+            'pitol_price'      => $recipe->pitol_price ?? 0,
         ];
         $chargesTotal = array_sum($charges);
 
@@ -61,7 +62,7 @@ class ProductPriceCalculator
         $totalCostPrice = round($materialCost + $chargesTotal, 2);
 
         // 4–5. Dealer and retail prices use the same formula as a single charge.
-        $priced = $this->pricesFromCost($totalCostPrice, $dealer);
+        $priced = $this->pricesFromCost($totalCostPrice, $dealer, $recipe);
         $profitPercent = $priced['profit_percent'];
         $profitAmount = $priced['profit_amount'];
         $dealerPrice = $priced['dealer_price'];
@@ -87,14 +88,24 @@ class ProductPriceCalculator
      * Regular-sale prices from a cost amount.
      * Manufacture body and finishing prices use Body Charge and Finishing Charge here.
      */
-    public function pricesFromCost(float $cost, ?Dealer $dealer = null): array
+    public function pricesFromCost(float $cost, ?Dealer $dealer = null, ?ProductRecipe $recipe = null): array
     {
         $settings = $this->profitSettings();
-        $profitPercent = ($dealer && $dealer->is_special)
-            ? $settings['special']
-            : $settings['regular'];
+        if ($dealer && $dealer->is_special) {
+            $profitPercent = ($recipe && $recipe->special_dealer_profit_percent > 0)
+                ? (float) $recipe->special_dealer_profit_percent
+                : $settings['special'];
+        } else {
+            $profitPercent = ($recipe && $recipe->dealer_profit_percent > 0)
+                ? (float) $recipe->dealer_profit_percent
+                : $settings['regular'];
+        }
 
-        return $this->applyProfit($cost, $profitPercent);
+        $retailPercent = ($recipe && $recipe->normal_customer_profit_percent > 0)
+            ? (float) $recipe->normal_customer_profit_percent
+            : null;
+
+        return $this->applyProfit($cost, $profitPercent, $retailPercent);
     }
 
     /**
@@ -102,13 +113,27 @@ class ProductPriceCalculator
      */
     public function quote(int $productId): array
     {
+        $recipe = ProductRecipe::where('product_id', $productId)->first();
         $result = $this->calculate($productId, null);
         $settings = $this->profitSettings();
-        $special = $this->applyProfit((float) $result['total_cost_price'], $settings['special']);
 
-        $result['regular_dealer_percent'] = $settings['regular'];
+        $regularDealerPercent = ($recipe && $recipe->dealer_profit_percent > 0)
+            ? (float) $recipe->dealer_profit_percent
+            : $settings['regular'];
+
+        $specialDealerPercent = ($recipe && $recipe->special_dealer_profit_percent > 0)
+            ? (float) $recipe->special_dealer_profit_percent
+            : $settings['special'];
+
+        $retailPercent = ($recipe && $recipe->normal_customer_profit_percent > 0)
+            ? (float) $recipe->normal_customer_profit_percent
+            : null;
+
+        $special = $this->applyProfit((float) $result['total_cost_price'], $specialDealerPercent, $retailPercent);
+
+        $result['regular_dealer_percent'] = $regularDealerPercent;
         $result['regular_dealer_price'] = round($result['dealer_price']);
-        $result['special_dealer_percent'] = $settings['special'];
+        $result['special_dealer_percent'] = $specialDealerPercent;
         $result['special_dealer_price'] = round($special['dealer_price']);
         $result['regular_price'] = round($result['retail_price']);
 
@@ -129,11 +154,15 @@ class ProductPriceCalculator
         ];
     }
 
-    private function applyProfit(float $cost, float $profitPercent): array
+    private function applyProfit(float $cost, float $profitPercent, ?float $retailProfitPercent = null): array
     {
         $profitAmount = round($cost * ($profitPercent / 100), 2);
         $dealerPrice = round($cost + $profitAmount, 2);
-        $retailPrice = round(($dealerPrice * (self::RETAIL_MULTIPLIER / 100)) + $dealerPrice, 2);
+        if ($retailProfitPercent !== null && $retailProfitPercent > 0) {
+            $retailPrice = round($cost + ($cost * ($retailProfitPercent / 100)), 2);
+        } else {
+            $retailPrice = round(($dealerPrice * (self::RETAIL_MULTIPLIER / 100)) + $dealerPrice, 2);
+        }
 
         return [
             'profit_percent' => $profitPercent,

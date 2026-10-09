@@ -20,6 +20,10 @@ class ProductRecipe extends Model
         'box_price',
         'carrying_charge',
         'wire_price',
+        'pitol_price',
+        'dealer_profit_percent',
+        'special_dealer_profit_percent',
+        'normal_customer_profit_percent',
         'manufacture_images',
     ];
 

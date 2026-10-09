@@ -117,6 +117,10 @@ class ProductRecipeController extends Controller
             'box_price' => 'nullable|numeric|min:0',
             'carrying_charge' => 'nullable|numeric|min:0',
             'wire_price' => 'nullable|numeric|min:0',
+            'pitol_price' => 'nullable|numeric|min:0',
+            'dealer_profit_percent' => 'nullable|numeric|min:0',
+            'special_dealer_profit_percent' => 'nullable|numeric|min:0',
+            'normal_customer_profit_percent' => 'nullable|numeric|min:0',
             'manufacture_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
         ];
     }

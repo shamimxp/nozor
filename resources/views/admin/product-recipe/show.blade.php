@@ -19,6 +19,10 @@
                     <div class="col-md-3 mt-2"><strong>Box Price:</strong> {{ $recipe->box_price }}</div>
                     <div class="col-md-3 mt-2"><strong>Carrying Charge:</strong> {{ $recipe->carrying_charge }}</div>
                     <div class="col-md-3 mt-2"><strong>Wire Price:</strong> {{ $recipe->wire_price }}</div>
+                    <div class="col-md-3 mt-2"><strong>Pitol Price:</strong> {{ $recipe->pitol_price }}</div>
+                    <div class="col-md-3 mt-2"><strong>Dealer Profit:</strong> {{ $recipe->dealer_profit_percent }}%</div>
+                    <div class="col-md-3 mt-2"><strong>Special Dealer Profit:</strong> {{ $recipe->special_dealer_profit_percent }}%</div>
+                    <div class="col-md-3 mt-2"><strong>Customer Profit:</strong> {{ $recipe->normal_customer_profit_percent }}%</div>
                 </div>
 
                 @if(is_array($recipe->manufacture_images) && count($recipe->manufacture_images) > 0)
