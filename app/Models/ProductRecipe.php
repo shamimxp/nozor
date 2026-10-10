@@ -11,6 +11,7 @@ class ProductRecipe extends Model
 
     protected $fillable = [
         'product_id',
+        'cost_setting_id',
         'body_charge',
         'finishing_charge',
         'bearing',
@@ -22,8 +23,11 @@ class ProductRecipe extends Model
         'wire_price',
         'pitol_price',
         'dealer_profit_percent',
+        'dealer_profit_type',
         'special_dealer_profit_percent',
+        'special_dealer_profit_type',
         'normal_customer_profit_percent',
+        'normal_customer_profit_type',
         'manufacture_images',
     ];
 
@@ -34,6 +38,11 @@ class ProductRecipe extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function costSetting()
+    {
+        return $this->belongsTo(CostSetting::class, 'cost_setting_id');
     }
 
     public function items()

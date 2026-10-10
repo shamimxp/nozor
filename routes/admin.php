@@ -134,6 +134,12 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('cost-head', \App\Http\Controllers\Admin\CostHeadController::class, ['as' => 'admin']);
     Route::post('/cost-head/status', [\App\Http\Controllers\Admin\CostHeadController::class, 'getStatus'])->name('admin.cost-head.status');
 
+    // Cost Setting module
+    Route::get('/cost-setting/check-title', [\App\Http\Controllers\Admin\CostSettingController::class, 'checkTitle'])->name('admin.cost-setting.check-title');
+    Route::get('/cost-setting/{id}/details', [\App\Http\Controllers\Admin\CostSettingController::class, 'getDetails'])->name('admin.cost-setting.details');
+    Route::resource('cost-setting', \App\Http\Controllers\Admin\CostSettingController::class, ['as' => 'admin']);
+    Route::post('/cost-setting/status', [\App\Http\Controllers\Admin\CostSettingController::class, 'getStatus'])->name('admin.cost-setting.status');
+
     // Material Type module
     Route::resource('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, ['as' => 'admin']);
     Route::post('/material-type/status', [\App\Http\Controllers\Admin\MaterialTypeController::class, 'getStatus'])->name('admin.material_type.status');

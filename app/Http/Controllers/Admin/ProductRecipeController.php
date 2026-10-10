@@ -52,7 +52,8 @@ class ProductRecipeController extends Controller
     public function create(){
         $products = Product::where('status',1)->get();
         $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
-        return view('admin.product-recipe.create', compact('products', 'raw_material'));
+        $cost_settings = \App\Models\CostSetting::where('status', 1)->orderBy('cost_title')->get();
+        return view('admin.product-recipe.create', compact('products', 'raw_material', 'cost_settings'));
     }
     public function store(Request $request, ProductRecipeWriter $writer){
         $request->validate($this->recipeRules(true));
@@ -63,16 +64,23 @@ class ProductRecipeController extends Controller
         toastr()->success('Product Recipe saved successfully.');
         return redirect()->route('admin.product-recipe.index');
     }
-    public function show($id){
-        $recipe = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct'])->findOrFail($id);
-        return view('admin.product-recipe.show', compact('recipe'));
+    public function show($id, \App\Services\ProductPriceCalculator $calculator){
+        $recipe = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct', 'costSetting.items.costHead'])->findOrFail($id);
+        $pricing = null;
+        try {
+            $pricing = $calculator->quote($recipe->product_id);
+        } catch (\Exception $e) {
+            $pricing = null;
+        }
+        return view('admin.product-recipe.show', compact('recipe', 'pricing'));
     }
 
     public function edit($id){
-        $recipe = \App\Models\ProductRecipe::with(['items.rawMaterialProduct.materialType', 'items.rawMaterialProduct.unit'])->findOrFail($id);
+        $recipe = \App\Models\ProductRecipe::with(['items.rawMaterialProduct.materialType', 'items.rawMaterialProduct.unit', 'costSetting.items.costHead'])->findOrFail($id);
         $products = Product::where('status',1)->get();
         $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
-        return view('admin.product-recipe.edit', compact('recipe', 'products', 'raw_material'));
+        $cost_settings = \App\Models\CostSetting::orderBy('cost_title')->get();
+        return view('admin.product-recipe.edit', compact('recipe', 'products', 'raw_material', 'cost_settings'));
     }
 
     public function update(Request $request, $id, ProductRecipeWriter $writer){
@@ -105,6 +113,7 @@ class ProductRecipeController extends Controller
     {
         return [
             'product_id' => 'required|exists:products,id',
+            'cost_setting_id' => 'nullable|exists:cost_settings,id',
             'raw_materials' => $requireItems ? 'required|array|min:1' : 'nullable|array',
             'raw_material_id' => $requireItems ? 'required|array|min:1' : 'nullable|array',
             'raw_material_id.*' => 'exists:raw_material_products,id',
@@ -119,8 +128,11 @@ class ProductRecipeController extends Controller
             'wire_price' => 'nullable|numeric|min:0',
             'pitol_price' => 'nullable|numeric|min:0',
             'dealer_profit_percent' => 'nullable|numeric|min:0',
+            'dealer_profit_type' => 'nullable|in:percentage,fixed',
             'special_dealer_profit_percent' => 'nullable|numeric|min:0',
+            'special_dealer_profit_type' => 'nullable|in:percentage,fixed',
             'normal_customer_profit_percent' => 'nullable|numeric|min:0',
+            'normal_customer_profit_type' => 'nullable|in:percentage,fixed',
             'manufacture_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
         ];
     }

@@ -156,7 +156,8 @@ class ProductController extends Controller
         $variations = \App\Models\Variation::with('variationValues')->get();
         $units = \App\Models\Unit::where('status', 1)->get();
         $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
-        return view('admin.product.create', compact('categories', 'attributes', 'variations', 'units', 'raw_material'));
+        $cost_settings = \App\Models\CostSetting::where('status', 1)->orderBy('cost_title')->get();
+        return view('admin.product.create', compact('categories', 'attributes', 'variations', 'units', 'raw_material', 'cost_settings'));
     }
 
     public function store(Request $request, ProductRecipeWriter $writer)
@@ -236,27 +237,29 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::with(['gallery', 'attributes.attribute', 'variations', 'recipe.items.rawMaterialProduct.materialType', 'recipe.items.rawMaterialProduct.unit'])->findOrFail($id);
+        $product = Product::with(['gallery', 'attributes.attribute', 'variations', 'recipe.items.rawMaterialProduct.materialType', 'recipe.items.rawMaterialProduct.unit', 'recipe.costSetting.items.costHead'])->findOrFail($id);
         $categories = Category::where('status', 1)->get();
         $subcategories = SubCategory::where('category_id', $product->category_id)->get();
         $attributes = ProductAttribute::where('status', 1)->get();
         $variations = \App\Models\Variation::with('variationValues')->get();
         $units = \App\Models\Unit::where('status', 1)->get();
         $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
-        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes', 'variations', 'units', 'raw_material'));
+        $cost_settings = \App\Models\CostSetting::orderBy('cost_title')->get();
+        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'attributes', 'variations', 'units', 'raw_material', 'cost_settings'));
     }
 
     public function duplicate($id)
     {
-        $product = Product::with(['gallery', 'attributes.attribute', 'variations', 'recipe.items.rawMaterialProduct.materialType', 'recipe.items.rawMaterialProduct.unit'])->findOrFail($id);
+        $product = Product::with(['gallery', 'attributes.attribute', 'variations', 'recipe.items.rawMaterialProduct.materialType', 'recipe.items.rawMaterialProduct.unit', 'recipe.costSetting.items.costHead'])->findOrFail($id);
         $categories = Category::where('status', 1)->get();
         $subcategories = SubCategory::where('category_id', $product->category_id)->get();
         $attributes = ProductAttribute::where('status', 1)->get();
         $variations = \App\Models\Variation::with('variationValues')->get();
         $units = \App\Models\Unit::where('status', 1)->get();
         $raw_material = RawMaterialProduct::with(['materialType', 'unit'])->get();
+        $cost_settings = \App\Models\CostSetting::where('status', 1)->orderBy('cost_title')->get();
 
-        return view('admin.product.duplicate', compact('product', 'categories', 'subcategories', 'attributes', 'variations', 'units', 'raw_material'));
+        return view('admin.product.duplicate', compact('product', 'categories', 'subcategories', 'attributes', 'variations', 'units', 'raw_material', 'cost_settings'));
     }
 
     public function duplicateStore(Request $request, $id, ProductRecipeWriter $writer)
@@ -660,6 +663,7 @@ class ProductController extends Controller
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'raw_material_id' => 'nullable|array',
             'raw_material_id.*' => 'exists:raw_material_products,id',
+            'cost_setting_id' => 'nullable|exists:cost_settings,id',
             'body_charge' => 'nullable|numeric|min:0',
             'finishing_charge' => 'nullable|numeric|min:0',
             'bearing' => 'nullable|numeric|min:0',
@@ -671,8 +675,11 @@ class ProductController extends Controller
             'wire_price' => 'nullable|numeric|min:0',
             'pitol_price' => 'nullable|numeric|min:0',
             'dealer_profit_percent' => 'nullable|numeric|min:0',
+            'dealer_profit_type' => 'nullable|in:percentage,fixed',
             'special_dealer_profit_percent' => 'nullable|numeric|min:0',
+            'special_dealer_profit_type' => 'nullable|in:percentage,fixed',
             'normal_customer_profit_percent' => 'nullable|numeric|min:0',
+            'normal_customer_profit_type' => 'nullable|in:percentage,fixed',
             'manufacture_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
         ];
     }

@@ -4,6 +4,9 @@
     }
     window.productRecipeFormReady = true;
 
+    var costSettingChargesTotal = 0;
+    var isCostSettingActive = false;
+
     function getMaterialPrice(materialId) {
         var opt = $('#raw_materials_select option[value="' + materialId + '"]');
         if (opt.length) {
@@ -90,16 +93,20 @@
             totalMaterialCost += Math.round(cost);
         });
 
-        var chargeFields = [
-            'body_charge', 'finishing_charge', 'bearing', 'stone',
-            'electric_bill', 'gas_bill', 'box_price', 'carrying_charge',
-            'wire_price', 'pitol_price'
-        ];
         var totalCharges = 0;
-        chargeFields.forEach(function (field) {
-            var val = parseFloat($('input[name="' + field + '"]').val()) || 0;
-            totalCharges += val;
-        });
+        if (isCostSettingActive) {
+            totalCharges = costSettingChargesTotal;
+        } else {
+            var chargeFields = [
+                'body_charge', 'finishing_charge', 'bearing', 'stone',
+                'electric_bill', 'gas_bill', 'box_price', 'carrying_charge',
+                'wire_price', 'pitol_price'
+            ];
+            chargeFields.forEach(function (field) {
+                var val = parseFloat($('input[name="' + field + '"]').val()) || 0;
+                totalCharges += val;
+            });
+        }
 
         var totalProductCost = Math.round((totalMaterialCost + totalCharges) * 100) / 100;
 
@@ -107,29 +114,111 @@
         $('#calc_charges_total').text(totalCharges.toFixed(2));
         $('#calc_product_cost').text(totalProductCost.toFixed(2));
 
-        // Dealer pricing
-        var dealerPercent = parseFloat($('#dealer_profit_percent').val()) || 0;
-        var dealerProfitAmount = Math.round((totalProductCost * (dealerPercent / 100)) * 100) / 100;
+        // 1. Dealer pricing (% or fixed)
+        var dealerType = $('input[name="dealer_profit_type"]:checked').val() || 'percentage';
+        var dealerVal = parseFloat($('#dealer_profit_percent').val()) || 0;
+        var dealerProfitAmount = 0;
+        if (dealerType === 'fixed') {
+            dealerProfitAmount = dealerVal;
+        } else {
+            dealerProfitAmount = Math.round((totalProductCost * (dealerVal / 100)) * 100) / 100;
+        }
         var dealerPrice = Math.round((totalProductCost + dealerProfitAmount) * 100) / 100;
         $('#calc_dealer_profit_amount').text(dealerProfitAmount.toFixed(2));
         $('#calc_dealer_price').text(dealerPrice.toFixed(2));
 
-        // Special dealer pricing
-        var specialDealerPercent = parseFloat($('#special_dealer_profit_percent').val()) || 0;
-        var specialDealerProfitAmount = Math.round((totalProductCost * (specialDealerPercent / 100)) * 100) / 100;
-        var specialDealerPrice = Math.round((totalProductCost + specialDealerProfitAmount) * 100) / 100;
-        $('#calc_special_dealer_profit_amount').text(specialDealerProfitAmount.toFixed(2));
-        $('#calc_special_dealer_price').text(specialDealerPrice.toFixed(2));
+        // 2. Special dealer pricing (% or fixed)
+        var specialType = $('input[name="special_dealer_profit_type"]:checked').val() || 'percentage';
+        var specialVal = parseFloat($('#special_dealer_profit_percent').val()) || 0;
+        var specialProfitAmount = 0;
+        if (specialType === 'fixed') {
+            specialProfitAmount = specialVal;
+        } else {
+            specialProfitAmount = Math.round((totalProductCost * (specialVal / 100)) * 100) / 100;
+        }
+        var specialPrice = Math.round((totalProductCost + specialProfitAmount) * 100) / 100;
+        $('#calc_special_dealer_profit_amount').text(specialProfitAmount.toFixed(2));
+        $('#calc_special_dealer_price').text(specialPrice.toFixed(2));
 
-        // Normal customer pricing
-        var customerPercent = parseFloat($('#normal_customer_profit_percent').val()) || 0;
-        var customerProfitAmount = Math.round((totalProductCost * (customerPercent / 100)) * 100) / 100;
+        // 3. Normal customer pricing (% or fixed)
+        var customerType = $('input[name="normal_customer_profit_type"]:checked').val() || 'percentage';
+        var customerVal = parseFloat($('#normal_customer_profit_percent').val()) || 0;
+        var customerProfitAmount = 0;
+        if (customerType === 'fixed') {
+            customerProfitAmount = customerVal;
+        } else {
+            customerProfitAmount = Math.round((totalProductCost * (customerVal / 100)) * 100) / 100;
+        }
         var customerPrice = Math.round((totalProductCost + customerProfitAmount) * 100) / 100;
         $('#calc_customer_profit_amount').text(customerProfitAmount.toFixed(2));
         $('#calc_customer_price').text(customerPrice.toFixed(2));
     }
 
     window.calculateProductPricing = calculateProductPricing;
+
+    // Load Cost Setting Details dynamically
+    function loadCostSettingDetails(costSettingId) {
+        if (!costSettingId) {
+            isCostSettingActive = false;
+            costSettingChargesTotal = 0;
+            $('#cost_setting_details_section').hide();
+            $('#cost_setting_heads_container').empty();
+            calculateProductPricing();
+            return;
+        }
+
+        var detailsUrl = '/admin/cost-setting/' + costSettingId + '/details';
+
+        $.ajax({
+            url: detailsUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                if (res.success) {
+                    isCostSettingActive = true;
+                    costSettingChargesTotal = parseFloat(res.total_cost) || 0;
+
+                    $('#cs_display_title').text(res.cost_title);
+                    $('#cs_display_total').text(costSettingChargesTotal.toFixed(2));
+
+                    var html = '';
+                    if (res.items && res.items.length) {
+                        res.items.forEach(function (item) {
+                            html += `
+                                <div class="col-md-3 col-sm-6 mb-1">
+                                    <div class="border rounded p-1 bg-white">
+                                        <small class="text-muted font-weight-bold d-block text-truncate" title="${item.title}">
+                                            ${item.title}
+                                        </small>
+                                        <div class="input-group input-group-sm mt-50">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light">৳</span>
+                                            </div>
+                                            <input type="text" class="form-control bg-light text-right font-weight-bold text-dark" value="${item.cost_price.toFixed(2)}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html = '<div class="col-12"><span class="text-muted">No cost heads found for this cost setting.</span></div>';
+                    }
+
+                    $('#cost_setting_heads_container').html(html);
+                    $('#cost_setting_details_section').slideDown(200);
+
+                    if (typeof feather !== 'undefined') {
+                        feather.replace({ width: 14, height: 14 });
+                    }
+
+                    calculateProductPricing();
+                }
+            },
+            error: function () {
+                toastr.error('Failed to load Cost Setting details.');
+            }
+        });
+    }
 
     window.ensureRawMaterialSelect = function () {
         var $el = $('#raw_materials_select');
@@ -158,6 +247,43 @@
             closeOnSelect: false
         });
     };
+
+    // On Cost Setting dropdown change
+    $(document).on('change', '#cost_setting_select', function () {
+        var csId = $(this).val();
+        loadCostSettingDetails(csId);
+    });
+
+    // Profit type toggle handlers (% vs Fixed)
+    $(document).on('change', 'input[name="dealer_profit_type"]', function () {
+        var type = $(this).val();
+        var symbol = type === 'fixed' ? '৳' : '%';
+        $('input[name="dealer_profit_type"]').closest('label').removeClass('active');
+        $(this).closest('label').addClass('active');
+        $('#dealer_profit_label').html('Dealer Profit (' + symbol + ') <span class="text-danger">*</span>');
+        $('#dealer_profit_unit').text(symbol);
+        calculateProductPricing();
+    });
+
+    $(document).on('change', 'input[name="special_dealer_profit_type"]', function () {
+        var type = $(this).val();
+        var symbol = type === 'fixed' ? '৳' : '%';
+        $('input[name="special_dealer_profit_type"]').closest('label').removeClass('active');
+        $(this).closest('label').addClass('active');
+        $('#special_dealer_profit_label').html('Special Dealer Profit (' + symbol + ') <span class="text-danger">*</span>');
+        $('#special_dealer_profit_unit').text(symbol);
+        calculateProductPricing();
+    });
+
+    $(document).on('change', 'input[name="normal_customer_profit_type"]', function () {
+        var type = $(this).val();
+        var symbol = type === 'fixed' ? '৳' : '%';
+        $('input[name="normal_customer_profit_type"]').closest('label').removeClass('active');
+        $(this).closest('label').addClass('active');
+        $('#normal_customer_profit_label').html('Customer Profit (' + symbol + ') <span class="text-danger">*</span>');
+        $('#normal_customer_profit_unit').text(symbol);
+        calculateProductPricing();
+    });
 
     $(document).on('change', '#raw_materials_select', function () {
         var selectedOptions = $(this).find('option:selected');
@@ -214,7 +340,7 @@
         calculateProductPricing();
     });
 
-    $(document).on('input change', 'input[name="body_charge"], input[name="finishing_charge"], input[name="bearing"], input[name="stone"], input[name="electric_bill"], input[name="gas_bill"], input[name="box_price"], input[name="carrying_charge"], input[name="wire_price"], input[name="pitol_price"]', function () {
+    $(document).on('input change', '.legacy-charge-input', function () {
         calculateProductPricing();
     });
 
@@ -278,6 +404,13 @@
 
     $(function () {
         populateExistingItems();
-        calculateProductPricing();
+        
+        // If a Cost Setting was already selected (e.g. edit mode or old input), load its details
+        var initialCostSettingId = $('#cost_setting_select').val();
+        if (initialCostSettingId) {
+            loadCostSettingDetails(initialCostSettingId);
+        } else {
+            calculateProductPricing();
+        }
     });
 })(jQuery);

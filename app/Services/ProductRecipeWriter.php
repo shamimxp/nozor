@@ -36,6 +36,7 @@ class ProductRecipeWriter
 
         $recipe->fill([
             'product_id' => $product->id,
+            'cost_setting_id' => $request->filled('cost_setting_id') ? $request->cost_setting_id : null,
             'body_charge' => $request->filled('body_charge') ? $request->body_charge : 0,
             'finishing_charge' => $request->filled('finishing_charge') ? $request->finishing_charge : 0,
             'bearing' => $request->filled('bearing') ? $request->bearing : 0,
@@ -47,8 +48,11 @@ class ProductRecipeWriter
             'wire_price' => $request->filled('wire_price') ? $request->wire_price : 0,
             'pitol_price' => $request->filled('pitol_price') ? $request->pitol_price : 0,
             'dealer_profit_percent' => $request->filled('dealer_profit_percent') ? $request->dealer_profit_percent : 0,
+            'dealer_profit_type' => $request->input('dealer_profit_type', 'percentage'),
             'special_dealer_profit_percent' => $request->filled('special_dealer_profit_percent') ? $request->special_dealer_profit_percent : 0,
+            'special_dealer_profit_type' => $request->input('special_dealer_profit_type', 'percentage'),
             'normal_customer_profit_percent' => $request->filled('normal_customer_profit_percent') ? $request->normal_customer_profit_percent : 0,
+            'normal_customer_profit_type' => $request->input('normal_customer_profit_type', 'percentage'),
             'manufacture_images' => $manufactureImages,
         ]);
         $recipe->save();

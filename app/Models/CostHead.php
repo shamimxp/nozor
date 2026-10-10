@@ -19,4 +19,9 @@ class CostHead extends Model
     protected $casts = [
         'status' => 'integer',
     ];
+
+    public function costSettingItems()
+    {
+        return $this->hasMany(CostSettingItem::class, 'cost_head_id');
+    }
 }

@@ -9,20 +9,64 @@
                 <a href="{{ route('admin.product-recipe.index') }}" class="btn btn-secondary"><i data-feather="arrow-left"></i> Back to List</a>
             </div>
             <div class="card-body mt-3">
-                <div class="row mb-4">
-                    <div class="col-md-3"><strong>Body Charge:</strong> {{ $recipe->body_charge }}</div>
-                    <div class="col-md-3"><strong>Finishing Charge:</strong> {{ $recipe->finishing_charge }}</div>
-                    <div class="col-md-3"><strong>Bearing:</strong> {{ $recipe->bearing }}</div>
-                    <div class="col-md-3"><strong>Stone:</strong> {{ $recipe->stone }}</div>
-                    <div class="col-md-3 mt-2"><strong>Electric Bill:</strong> {{ $recipe->electric_bill }}</div>
-                    <div class="col-md-3 mt-2"><strong>Gas Bill:</strong> {{ $recipe->gas_bill }}</div>
-                    <div class="col-md-3 mt-2"><strong>Box Price:</strong> {{ $recipe->box_price }}</div>
-                    <div class="col-md-3 mt-2"><strong>Carrying Charge:</strong> {{ $recipe->carrying_charge }}</div>
-                    <div class="col-md-3 mt-2"><strong>Wire Price:</strong> {{ $recipe->wire_price }}</div>
-                    <div class="col-md-3 mt-2"><strong>Pitol Price:</strong> {{ $recipe->pitol_price }}</div>
-                    <div class="col-md-3 mt-2"><strong>Dealer Profit:</strong> {{ $recipe->dealer_profit_percent }}%</div>
-                    <div class="col-md-3 mt-2"><strong>Special Dealer Profit:</strong> {{ $recipe->special_dealer_profit_percent }}%</div>
-                    <div class="col-md-3 mt-2"><strong>Customer Profit:</strong> {{ $recipe->normal_customer_profit_percent }}%</div>
+                <div class="row mb-3">
+                    @if($recipe->costSetting)
+                        <div class="col-md-12 mb-2">
+                            <div class="alert alert-light border p-2">
+                                <span class="text-muted font-small-3 d-block">Declared Cost Title:</span>
+                                <h4 class="text-primary font-weight-bold mb-1">{{ $recipe->costSetting->cost_title }}</h4>
+                                <div class="row">
+                                    @foreach($recipe->costSetting->items as $headItem)
+                                        <div class="col-md-3 col-sm-6 mb-1">
+                                            <div class="border rounded p-1 bg-white">
+                                                <small class="text-muted d-block">{{ $headItem->costHead->title ?? 'N/A' }}:</small>
+                                                <span class="font-weight-bold text-dark">৳ {{ number_format($headItem->cost_price, 2) }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="col-md-3"><strong>Body Charge:</strong> {{ $recipe->body_charge }}</div>
+                        <div class="col-md-3"><strong>Finishing Charge:</strong> {{ $recipe->finishing_charge }}</div>
+                        <div class="col-md-3"><strong>Bearing:</strong> {{ $recipe->bearing }}</div>
+                        <div class="col-md-3"><strong>Stone:</strong> {{ $recipe->stone }}</div>
+                        <div class="col-md-3 mt-2"><strong>Electric Bill:</strong> {{ $recipe->electric_bill }}</div>
+                        <div class="col-md-3 mt-2"><strong>Gas Bill:</strong> {{ $recipe->gas_bill }}</div>
+                        <div class="col-md-3 mt-2"><strong>Box Price:</strong> {{ $recipe->box_price }}</div>
+                        <div class="col-md-3 mt-2"><strong>Carrying Charge:</strong> {{ $recipe->carrying_charge }}</div>
+                        <div class="col-md-3 mt-2"><strong>Wire Price:</strong> {{ $recipe->wire_price }}</div>
+                        <div class="col-md-3 mt-2"><strong>Pitol Price:</strong> {{ $recipe->pitol_price }}</div>
+                    @endif
+
+                    <div class="col-md-4 mt-2">
+                        <div class="border rounded p-1 bg-light">
+                            <span class="text-success font-weight-bold d-block">Dealer Pricing</span>
+                            <small class="text-muted d-block">Profit: {{ $recipe->dealer_profit_percent }} {{ ($recipe->dealer_profit_type ?? 'percentage') === 'fixed' ? '৳ (Fixed)' : '%' }}</small>
+                            <h4 class="text-success font-weight-bolder mb-0 mt-25">
+                                ৳ {{ number_format($pricing['regular_dealer_price'] ?? 0, 2) }}
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <div class="border rounded p-1 bg-light">
+                            <span class="text-info font-weight-bold d-block">Special Dealer Pricing</span>
+                            <small class="text-muted d-block">Profit: {{ $recipe->special_dealer_profit_percent }} {{ ($recipe->special_dealer_profit_type ?? 'percentage') === 'fixed' ? '৳ (Fixed)' : '%' }}</small>
+                            <h4 class="text-info font-weight-bolder mb-0 mt-25">
+                                ৳ {{ number_format($pricing['special_dealer_price'] ?? 0, 2) }}
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <div class="border rounded p-1 bg-light">
+                            <span class="text-primary font-weight-bold d-block">Normal Customer Pricing</span>
+                            <small class="text-muted d-block">Profit: {{ $recipe->normal_customer_profit_percent }} {{ ($recipe->normal_customer_profit_type ?? 'percentage') === 'fixed' ? '৳ (Fixed)' : '%' }}</small>
+                            <h4 class="text-primary font-weight-bolder mb-0 mt-25">
+                                ৳ {{ number_format($pricing['regular_price'] ?? 0, 2) }}
+                            </h4>
+                        </div>
+                    </div>
                 </div>
 
                 @if(is_array($recipe->manufacture_images) && count($recipe->manufacture_images) > 0)
