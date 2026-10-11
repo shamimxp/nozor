@@ -17,9 +17,9 @@
                     <input type="hidden" id="cost_setting_id" value="{{ $costSetting->id }}">
                     
                     {{-- Header Inputs: Cost Title & Status --}}
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <div class="form-group mb-1">
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-lg-6 col-md-5">
+                            <div class="form-group mb-1 mb-md-0">
                                 <label for="cost_title" class="font-weight-bold">
                                     Cost Title <span class="text-danger">*</span>
                                 </label>
@@ -43,10 +43,10 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label class="font-weight-bold d-block">Status</label>
-                                <div class="custom-control custom-switch custom-switch-success mt-50">
+                        <div class="col-lg-2 col-md-3 text-md-center">
+                            <div class="form-group mb-1 mb-md-0">
+                                <label class="font-weight-bold d-block mb-50">Status</label>
+                                <div class="custom-control custom-switch custom-switch-success d-inline-block">
                                     <input type="checkbox" class="custom-control-input" id="status" name="status" value="1" {{ $costSetting->status == 1 ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="status">
                                         <span class="switch-icon-left"><i data-feather="check"></i></span>
@@ -56,10 +56,13 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3 text-right d-flex flex-column justify-content-center">
-                            <div class="p-1 rounded bg-light border text-center">
-                                <span class="text-muted font-small-3 d-block">Estimated Total Cost</span>
-                                <h3 class="font-weight-bolder text-primary mb-0 mt-25">
+                        <div class="col-lg-4 col-md-4">
+                            <div class="p-1 rounded bg-light border d-flex align-items-center justify-content-between">
+                                <div>
+                                    <span class="text-muted font-small-2 text-uppercase font-weight-bold d-block">Estimated Total Cost</span>
+                                    <span class="font-small-1 text-muted" id="declared_heads_count_badge">0 of {{ $costHeads->count() }} heads declared</span>
+                                </div>
+                                <h3 class="font-weight-bolder text-primary mb-0">
                                     ৳ <span id="total_cost_display">0.00</span>
                                 </h3>
                             </div>
@@ -69,92 +72,110 @@
                     <hr class="my-2">
 
                     {{-- Cost Heads List with Price Inputs --}}
-                    <div style="max-width: 720px;">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <div>
-                                <h5 class="mb-0 font-weight-bolder text-dark">
-                                    <i data-feather="dollar-sign" class="mr-50"></i> Declare Price for Cost Heads
-                                </h5>
-                                <small class="text-muted">Modify unit cost/price against each cost head</small>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="fillZeroBtn">
-                                    Clear All
-                                </button>
-                            </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div>
+                            <h5 class="mb-0 font-weight-bolder text-dark">
+                                <i data-feather="dollar-sign" class="mr-50 text-primary"></i> Declare Price for Cost Heads
+                            </h5>
+                            <small class="text-muted">Modify unit cost/price against each cost head</small>
                         </div>
-
-                        @if($costHeads->isEmpty())
-                            <div class="alert alert-warning p-2">
-                                <h6 class="alert-heading font-weight-bold mb-50">No Cost Heads Found!</h6>
-                                <span>Please create Cost Heads first from the <a href="{{ route('admin.cost-head.index') }}" class="font-weight-bold alert-link">Cost Head</a> menu.</span>
-                            </div>
-                        @else
-                            <div class="table-responsive border rounded">
-                                <table class="table table-hover table-striped mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 50px;" class="text-center">#</th>
-                                            <th>Cost Head Title</th>
-                                            <th style="width: 220px;">Cost Price (৳) <span class="text-danger">*</span></th>
-                                            <th style="width: 100px;" class="text-center">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($costHeads as $index => $head)
-                                            @php
-                                                $price = isset($itemPrices[$head->id]) ? $itemPrices[$head->id] : '0.00';
-                                            @endphp
-                                            <tr>
-                                                <td class="text-center align-middle font-weight-bold">{{ $index + 1 }}</td>
-                                                <td class="align-middle">
-                                                    <input type="hidden" name="heads[{{ $index }}][cost_head_id]" value="{{ $head->id }}">
-                                                    <span class="font-weight-bold text-dark">{{ $head->title }}</span>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text bg-light">৳</span>
-                                                        </div>
-                                                        <input type="number" 
-                                                               step="0.01" 
-                                                               min="0" 
-                                                               name="heads[{{ $index }}][cost_price]" 
-                                                               class="form-control cost-price-input" 
-                                                               placeholder="0.00" 
-                                                               value="{{ old('heads.'.$index.'.cost_price', ($price > 0 ? $price : '')) }}">
-                                                    </div>
-                                                </td>
-                                                <td class="text-center align-middle">
-                                                    @if($head->status == 1)
-                                                        <span class="badge badge-light-success">Active</span>
-                                                    @else
-                                                        <span class="badge badge-light-secondary">Inactive</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot class="table-light font-weight-bold">
-                                        <tr>
-                                            <td colspan="2" class="text-right">Total Declared Cost:</td>
-                                            <td>
-                                                <span class="text-primary font-weight-bolder">৳ <span id="table_total_display">0.00</span></span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        @endif
-
-                        <div class="d-flex justify-content-end mt-2" style="gap: 10px;">
-                            <a href="{{ route('admin.cost-setting.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <i data-feather="save" class="mr-50"></i> Update Cost Setting
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="fillZeroBtn">
+                                <i data-feather="rotate-ccw" class="mr-25"></i> Clear All
                             </button>
                         </div>
                     </div>
+
+                    @if($costHeads->isEmpty())
+                        <div class="alert alert-warning p-2">
+                            <h6 class="alert-heading font-weight-bold mb-50">No Cost Heads Found!</h6>
+                            <span>Please create Cost Heads first from the <a href="{{ route('admin.cost-head.index') }}" class="font-weight-bold alert-link">Cost Head</a> menu.</span>
+                        </div>
+                    @else
+                        @php
+                            $chunkCount = $costHeads->count() >= 4 ? 2 : 1;
+                            $splitHeads = $costHeads->split($chunkCount);
+                            $runningIndex = 0;
+                        @endphp
+                        <div class="row">
+                            @foreach($splitHeads as $chunk)
+                                <div class="col-lg-6 col-12 mb-1">
+                                    <div class="table-responsive border rounded bg-white shadow-none">
+                                        <table class="table table-hover table-striped mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 45px;" class="text-center">#</th>
+                                                    <th>Cost Head Title</th>
+                                                    <th style="width: 175px;">Cost Price (৳) <span class="text-danger">*</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($chunk as $head)
+                                                    @php
+                                                        $index = $runningIndex++;
+                                                        $price = isset($itemPrices[$head->id]) ? $itemPrices[$head->id] : '0.00';
+                                                    @endphp
+                                                    <tr>
+                                                        <td class="text-center align-middle font-weight-bold text-muted">{{ $index + 1 }}</td>
+                                                        <td class="align-middle">
+                                                            <input type="hidden" name="heads[{{ $index }}][cost_head_id]" value="{{ $head->id }}">
+                                                            <div class="d-flex align-items-center justify-content-between pr-1">
+                                                                <span class="font-weight-bold text-dark">{{ $head->title }}</span>
+                                                                @if($head->status == 1)
+                                                                    <span class="badge badge-light-success badge-pill font-small-1">Active</span>
+                                                                @else
+                                                                    <span class="badge badge-light-secondary badge-pill font-small-1">Inactive</span>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text bg-light font-weight-bold">৳</span>
+                                                                </div>
+                                                                <input type="number" 
+                                                                       step="0.01" 
+                                                                       min="0" 
+                                                                       name="heads[{{ $index }}][cost_price]" 
+                                                                       class="form-control cost-price-input" 
+                                                                       placeholder="0.00" 
+                                                                       value="{{ old('heads.'.$index.'.cost_price', ($price > 0 ? $price : '')) }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Bottom Total & Actions Bar --}}
+                        <div class="card border bg-light shadow-none mt-1 mb-1">
+                            <div class="card-body p-1 d-flex flex-wrap justify-content-between align-items-center" style="gap: 15px;">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar bg-light-primary p-50 mr-1 rounded">
+                                        <div class="avatar-content"><i data-feather="check-circle" class="font-medium-3 text-primary"></i></div>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted font-small-2 text-uppercase font-weight-bold d-block">Grand Total Declared Cost</span>
+                                        <h4 class="font-weight-bolder text-primary mb-0">
+                                            ৳ <span id="table_total_display">0.00</span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center" style="gap: 10px;">
+                                    <a href="{{ route('admin.cost-setting.index') }}" class="btn btn-outline-secondary">
+                                        <i data-feather="x" class="mr-25"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                                        <i data-feather="save" class="mr-25"></i> Update Cost Setting
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </form>
             </div>
         </div>
@@ -178,15 +199,19 @@
         // Recalculate total cost
         function calculateTotal() {
             let total = 0;
+            let declaredCount = 0;
+            let totalCount = $('.cost-price-input').length;
             $('.cost-price-input').each(function() {
                 let val = parseFloat($(this).val());
                 if (!isNaN(val) && val > 0) {
                     total += val;
+                    declaredCount++;
                 }
             });
             let formatted = total.toFixed(2);
             $('#total_cost_display').text(formatted);
             $('#table_total_display').text(formatted);
+            $('#declared_heads_count_badge').text(declaredCount + ' of ' + totalCount + ' heads declared');
         }
 
         $(document).on('input', '.cost-price-input', function() {
