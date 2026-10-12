@@ -15,6 +15,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Product</th>
+                                <th>Cost Title</th>
                                 <th>Images</th>
                                 <th>Material Items</th>
                                 <th>Action</th>
@@ -38,6 +39,7 @@
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'product_name', name: 'product.name'},
+                {data: 'cost_title', name: 'costSetting.cost_title'},
                 {data: 'images', name: 'images', orderable: false, searchable: false},
                 {data: 'material_items', name: 'material_items', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},

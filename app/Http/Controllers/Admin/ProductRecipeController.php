@@ -12,11 +12,17 @@ class ProductRecipeController extends Controller
 {
     public function index(Request $request){
         if ($request->ajax()) {
-            $data = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct'])->latest()->get();
+            $data = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct', 'costSetting'])->latest()->get();
             return \Yajra\DataTables\Facades\DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('product_name', function ($row) {
                     return $row->product ? $row->product->name : 'N/A';
+                })
+                ->addColumn('cost_title', function ($row) {
+                    if ($row->costSetting) {
+                        return '<span class="badge badge-light-info font-weight-bold">' . e($row->costSetting->cost_title) . '</span>';
+                    }
+                    return '<span class="badge badge-light-secondary">N/A</span>';
                 })
                 ->addColumn('material_items', function ($row) {
                     return $row->items->map(function ($item) {
@@ -44,7 +50,7 @@ class ProductRecipeController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action', 'material_items', 'images'])
+                ->rawColumns(['action', 'material_items', 'images', 'cost_title'])
                 ->make(true);
         }
         return view('admin.product-recipe.index');
