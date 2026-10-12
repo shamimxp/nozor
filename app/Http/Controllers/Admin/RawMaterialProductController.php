@@ -30,8 +30,11 @@ class RawMaterialProductController extends Controller
                 ->addColumn('material_type', function ($row) {
                     return $row->materialType ? $row->materialType->name : 'N/A';
                 })
+                ->addColumn('cost_price', function ($row) {
+                    return '৳' . number_format($row->cost_price ?? 0, 2);
+                })
                 ->addColumn('price', function ($row) {
-                    return '৳' . $row->price_per_unit;
+                    return '৳' . ($row->price_per_unit ?? 0);
                 })
                 ->addColumn('grade_value', function ($row) {
                     return $row->grade_value ?? 0.00;
@@ -56,24 +59,35 @@ class RawMaterialProductController extends Controller
         }
         $units = Unit::where('status', 1)->get();
         $material_types = \App\Models\MaterialType::where('status', 1)->get();
-        return view('admin.raw_material_product.index', compact('units', 'material_types'));
+        $default_gm_unit = Unit::where('name', 'gm')->first();
+        return view('admin.raw_material_product.index', compact('units', 'material_types', 'default_gm_unit'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|unique:raw_material_products,name|max:255',
+            'cost_price' => 'required|numeric|min:0',
             'unit_id' => 'nullable|integer',
             'material_type_id' => 'nullable|integer',
-            'price_per_unit' => 'required|numeric',
+            'price_per_unit' => 'required|numeric|min:0',
             'grade_value' => 'required|numeric',
         ]);
 
+        $gmUnit = Unit::where('name', 'gm')->first();
+        $unitId = $request->unit_id ?: ($gmUnit ? $gmUnit->id : null);
+        $costPrice = (float) $request->cost_price;
+        $pricePerUnit = (float) $request->price_per_unit;
+        if ($pricePerUnit == 0 && $costPrice > 0) {
+            $pricePerUnit = round($costPrice / 1000, 4);
+        }
+
         RawMaterialProduct::create([
             'name' => $request->name,
-            'unit_id' => $request->unit_id,
+            'unit_id' => $unitId,
             'material_type_id' => $request->material_type_id,
-            'price_per_unit' => $request->price_per_unit,
+            'cost_price' => $costPrice,
+            'price_per_unit' => $pricePerUnit,
             'grade_value' => $request->grade_value,
             'status' => 1,
         ]);
@@ -91,18 +105,28 @@ class RawMaterialProductController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255|unique:raw_material_products,name,' . $id,
+            'cost_price' => 'required|numeric|min:0',
             'unit_id' => 'nullable|integer',
             'material_type_id' => 'nullable|integer',
-            'price_per_unit' => 'required|numeric',
+            'price_per_unit' => 'required|numeric|min:0',
             'grade_value' => 'required|numeric',
         ]);
+
+        $gmUnit = Unit::where('name', 'gm')->first();
+        $unitId = $request->unit_id ?: ($gmUnit ? $gmUnit->id : null);
+        $costPrice = (float) $request->cost_price;
+        $pricePerUnit = (float) $request->price_per_unit;
+        if ($pricePerUnit == 0 && $costPrice > 0) {
+            $pricePerUnit = round($costPrice / 1000, 4);
+        }
 
         $data = RawMaterialProduct::findOrFail($id);
         $data->update([
             'name' => $request->name,
-            'unit_id' => $request->unit_id,
+            'unit_id' => $unitId,
             'material_type_id' => $request->material_type_id,
-            'price_per_unit' => $request->price_per_unit,
+            'cost_price' => $costPrice,
+            'price_per_unit' => $pricePerUnit,
             'grade_value' => $request->grade_value,
         ]);
 

@@ -27,22 +27,30 @@
                         <span class="text-danger error-text material_type_id_error"></span>
                     </div>
                     <div class="form-group">
-                        <label for="unit_id">Unit</label>
-                        <select name="unit_id" id="unit_id" class="form-control select2">
-                            <option value="">Select Unit</option>
+                        <label for="unit_id">Unit <span class="text-danger">*</span></label>
+                        <select name="unit_id" id="unit_id" class="form-control" style="pointer-events: none; background-color: #f8f9fa;" tabindex="-1">
                             @foreach($units as $unit)
-                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                <option value="{{ $unit->id }}" {{ (isset($default_gm_unit) && $default_gm_unit->id == $unit->id) || strtolower($unit->name) === 'gm' ? 'selected' : '' }}>
+                                    {{ $unit->name }}
+                                </option>
                             @endforeach
                         </select>
+                        <small class="text-muted font-small-2">Unit is fixed to gm (gram)</small>
                         <span class="text-danger error-text unit_id_error"></span>
                     </div>
                     <div class="form-group">
-                        <label for="price_per_unit">Price Per Unit (৳) <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" name="price_per_unit" id="price_per_unit" class="form-control" value="0" required>
+                        <label for="cost_price">Cost Price / Kg (৳) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" min="0" name="cost_price" id="cost_price" class="form-control" placeholder="0.00" value="0" required>
+                        <span class="text-danger error-text cost_price_error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="price_per_unit">Price Per Unit (৳/gm) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.0001" min="0" name="price_per_unit" id="price_per_unit" class="form-control bg-light" placeholder="0.00" value="0" readonly required>
+                        <small class="text-muted font-small-2">Auto-calculated: Cost Price per Kg / 1000</small>
                         <span class="text-danger error-text price_per_unit_error"></span>
                     </div>
                     <div class="form-group">
-                        <label for="grade_value">Grade Value<span class="text-danger">*</span></label>
+                        <label for="grade_value">Grade Value <span class="text-danger">*</span></label>
                         <input type="text" name="grade_value" id="grade_value" class="form-control" value="0" required>
                         <span class="text-danger error-text grade_value_error"></span>
                     </div>
@@ -95,7 +103,8 @@
                             <th>Material Type</th>
                             <th>Unit</th>
                             <th>Grade Value</th>
-                            <th>Price</th>
+                            <th>Cost Price (/Kg)</th>
+                            <th>Price (/gm)</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -135,7 +144,8 @@
                 {data: 'material_type', name: 'material_type'},
                 {data: 'unit_name', name: 'unit_name'},
                 {data: 'grade_value', name: 'grade_value'},
-                {data: 'price', name: 'price'},
+                {data: 'cost_price', name: 'cost_price'},
+                {data: 'price', name: 'price_per_unit'},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
@@ -148,6 +158,33 @@
                 }
             }
         });
+
+        function calculatePricePerUnit() {
+            let costPrice = parseFloat($('#cost_price').val()) || 0;
+            if (costPrice > 0) {
+                let perGm = costPrice / 1000;
+                let formatted = Number(perGm.toFixed(4)).toString();
+                $('#price_per_unit').val(formatted);
+            } else {
+                $('#price_per_unit').val('0');
+            }
+        }
+
+        $('#cost_price').on('input keyup change paste', calculatePricePerUnit);
+
+        function resetForm() {
+            $('#dataForm').trigger("reset");
+            $('#unit_id').val('{{ $default_gm_unit->id ?? 3 }}');
+            $('#material_type_id').val('').trigger('change');
+            $('#data_id').val('');
+            $('#cost_price').val('0');
+            $('#price_per_unit').val('0');
+            $('#grade_value').val('0');
+            $('#formTitle').text('Add Raw Material');
+            $('#saveBtn').text('Save').attr('disabled', false);
+            $('#cancelBtn').addClass('d-none');
+            $('.error-text').text('');
+        }
 
         $('#filterBtn').click(function() {
             table.draw();
@@ -180,13 +217,7 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    $('#dataForm').trigger("reset");
-                    $('#unit_id').val('').trigger('change');
-                    $('#material_type_id').val('').trigger('change');
-                    $('#data_id').val('');
-                    $('#formTitle').text('Add Raw Material');
-                    $('#saveBtn').text('Save').attr('disabled', false);
-                    $('#cancelBtn').addClass('d-none');
+                    resetForm();
                     table.draw();
                     toastr.success(data.success);
                 },
@@ -210,22 +241,18 @@
                 $('#cancelBtn').removeClass('d-none');
                 $('#data_id').val(data.id);
                 $('#name').val(data.name);
-                $('#unit_id').val(data.unit_id).trigger('change');
+                $('#unit_id').val(data.unit_id);
                 $('#material_type_id').val(data.material_type_id).trigger('change');
+                let costPrice = data.cost_price !== null && data.cost_price !== undefined ? data.cost_price : (data.price_per_unit ? data.price_per_unit * 1000 : 0);
+                $('#cost_price').val(costPrice);
                 $('#price_per_unit').val(data.price_per_unit);
                 $('#grade_value').val(data.grade_value);
+                $('.error-text').text('');
             })
         });
 
         $('#cancelBtn').on('click', function(){
-            $('#dataForm').trigger("reset");
-            $('#unit_id').val('').trigger('change');
-            $('#material_type_id').val('').trigger('change');
-            $('#data_id').val('');
-            $('#formTitle').text('Add Raw Material');
-            $('#saveBtn').text('Save');
-            $(this).addClass('d-none');
-            $('.error-text').text('');
+            resetForm();
         });
 
         $('body').on('click', '.deleteData', function () {

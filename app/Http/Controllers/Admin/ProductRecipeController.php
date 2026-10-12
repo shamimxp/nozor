@@ -71,14 +71,87 @@ class ProductRecipeController extends Controller
         return redirect()->route('admin.product-recipe.index');
     }
     public function show($id, \App\Services\ProductPriceCalculator $calculator){
-        $recipe = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct', 'costSetting.items.costHead'])->findOrFail($id);
-        $pricing = null;
-        try {
-            $pricing = $calculator->quote($recipe->product_id);
-        } catch (\Exception $e) {
-            $pricing = null;
+        $recipe = \App\Models\ProductRecipe::with([
+            'product',
+            'items.rawMaterialProduct.materialType',
+            'items.rawMaterialProduct.unit',
+            'costSetting.items.costHead'
+        ])->findOrFail($id);
+
+        $totalMaterialCost = 0;
+        $recipeItemsData = [];
+        foreach ($recipe->items as $item) {
+            $material = $item->rawMaterialProduct;
+            $unitPrice = $material ? (float)$material->price_per_unit : 0;
+            $grade = (float)($item->grade_value ?? ($material ? $material->grade_value : 0));
+            $area = (float)$item->area;
+            $qty = (float)$item->qty;
+            if ($qty == 0 && $area > 0 && $grade > 0) {
+                $qty = round($area * $grade);
+            }
+            $cost = round($qty * $unitPrice);
+            $totalMaterialCost += $cost;
+
+            $recipeItemsData[] = [
+                'item' => $item,
+                'unit_price' => $unitPrice,
+                'qty' => $qty,
+                'cost' => $cost,
+            ];
         }
-        return view('admin.product-recipe.show', compact('recipe', 'pricing'));
+
+        $totalCharges = 0;
+        if ($recipe->costSetting && $recipe->costSetting->items->isNotEmpty()) {
+            $totalCharges = (float)$recipe->costSetting->items->sum('cost_price');
+        } else {
+            $totalCharges = (float)(
+                $recipe->body_charge + $recipe->finishing_charge + $recipe->bearing +
+                $recipe->stone + $recipe->electric_bill + $recipe->gas_bill +
+                $recipe->box_price + $recipe->carrying_charge + $recipe->wire_price +
+                $recipe->pitol_price
+            );
+        }
+
+        $totalProductCost = round($totalMaterialCost + $totalCharges, 2);
+
+        // Dealer pricing
+        $dealerType = $recipe->dealer_profit_type ?? 'percentage';
+        $dealerVal = (float)($recipe->dealer_profit_percent ?? 0);
+        $dealerProfit = ($dealerType === 'fixed') ? $dealerVal : round($totalProductCost * ($dealerVal / 100), 2);
+        $dealerPrice = round($totalProductCost + $dealerProfit, 2);
+
+        // Special dealer pricing
+        $specialType = $recipe->special_dealer_profit_type ?? 'percentage';
+        $specialVal = (float)($recipe->special_dealer_profit_percent ?? 0);
+        $specialProfit = ($specialType === 'fixed') ? $specialVal : round($totalProductCost * ($specialVal / 100), 2);
+        $specialPrice = round($totalProductCost + $specialProfit, 2);
+
+        // Normal customer pricing
+        $customerType = $recipe->normal_customer_profit_type ?? 'percentage';
+        $customerVal = (float)($recipe->normal_customer_profit_percent ?? 0);
+        $customerProfit = ($customerType === 'fixed') ? $customerVal : round($totalProductCost * ($customerVal / 100), 2);
+        $customerPrice = round($totalProductCost + $customerProfit, 2);
+
+        $pricingSummary = [
+            'material_cost' => $totalMaterialCost,
+            'charges_total' => $totalCharges,
+            'product_cost' => $totalProductCost,
+            'dealer_profit_type' => $dealerType,
+            'dealer_profit_val' => $dealerVal,
+            'dealer_profit_amount' => $dealerProfit,
+            'dealer_price' => $dealerPrice,
+            'special_profit_type' => $specialType,
+            'special_profit_val' => $specialVal,
+            'special_profit_amount' => $specialProfit,
+            'special_dealer_price' => $specialPrice,
+            'customer_profit_type' => $customerType,
+            'customer_profit_val' => $customerVal,
+            'customer_profit_amount' => $customerProfit,
+            'customer_price' => $customerPrice,
+            'items_data' => $recipeItemsData,
+        ];
+
+        return view('admin.product-recipe.show', compact('recipe', 'pricingSummary'));
     }
 
     public function edit($id){
