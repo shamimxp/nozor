@@ -3,7 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CostSetting;
+use App\Models\Dealer;
+use App\Models\Manufacture;
+use App\Models\ManufactureOrderItem;
+use App\Models\Product;
+use App\Models\WebSetting;
+use App\Models\Worker;
+use App\Models\WorkerPayment;
+use App\Http\Requests\StoreManufactureRequest;
+use App\Http\Requests\UpdateManufactureRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ManufactureController extends Controller
 {
@@ -13,7 +24,15 @@ class ManufactureController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = \App\Models\Manufacture::with(['product.recipe', 'dealer', 'worker', 'completedBy', 'collectedBy'])->latest();
+            $query = ManufactureOrderItem::with([
+                'manufacture.dealer',
+                'manufacture.worker',
+                'manufacture.creator',
+                'manufacture.completedBy',
+                'manufacture.collectedBy',
+                'product.recipe',
+                'costSetting'
+            ])->latest('id');
 
             if ($request->filled('from_date') && $request->filled('to_date')) {
                 $query->whereDate('created_at', '>=', $request->from_date)
@@ -21,71 +40,108 @@ class ManufactureController extends Controller
             }
 
             if ($request->filled('worker_id')) {
-                $query->where('worker_id', $request->worker_id);
+                $query->whereHas('manufacture', function ($q) use ($request) {
+                    $q->where('worker_id', $request->worker_id);
+                });
             }
 
             if ($request->filled('dealer_id')) {
-                $query->where('dealer_id', $request->dealer_id);
+                $query->whereHas('manufacture', function ($q) use ($request) {
+                    $q->where('dealer_id', $request->dealer_id);
+                });
             }
 
             if ($request->filled('status')) {
-                $query->where('status', $request->status);
+                $query->whereHas('manufacture', function ($q) use ($request) {
+                    $q->where('status', $request->status);
+                });
             }
 
             if ($request->filled('part_type')) {
-                if ($request->part_type == 'body') {
-                    $query->where('body_total', '>', 0);
-                } elseif ($request->part_type == 'finishing') {
-                    $query->where('finishing_total', '>', 0);
-                }
+                $partType = $request->part_type;
+                $query->where(function ($q) use ($partType) {
+                    $q->where('part_type', $partType)
+                      ->orWhere('part_type', $partType . ' part')
+                      ->orWhere('part_type', 'both');
+                });
             }
 
             return datatables()->of($query)
                 ->addIndexColumn()
                 ->addColumn('product_image', function ($row) {
-                    $img = $row->product && $row->product->featured_image ? asset(config('imagepath.product') . $row->product->featured_image) : asset('images/no-image.png');
-                    return '<img src="'.$img.'" width="50" height="50" style="object-fit:cover; border-radius:4px;">';
+                    $product = $row->product;
+                    $img = $product && $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png');
+                    return '<div class="d-flex align-items-center"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);"></div>';
                 })
                 ->addColumn('manufacture_image', function ($row) {
-                    $recipe = $row->product ? $row->product->recipe : null;
+                    $product = $row->product;
+                    $recipe = $product ? $product->recipe : null;
                     $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
                     $img = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
-                    
-                    if ($row->status >= 1) {
-                        return '<a href="'.route('admin.manufacture.print', $row->id).'" target="_blank"><img src="'.$img.'" width="50" height="50" style="object-fit:cover; border-radius:4px;" title="Print"></a>';
+                    $m = $row->manufacture;
+
+                    if ($m && $m->status >= 1) {
+                        return '<a href="'.route('admin.manufacture.print', $m->id).'" target="_blank"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" title="Print Blueprint / Order"></a>';
                     } else {
-                        return '<a href="javascript:void(0)" onclick="toastr.error(\'Please confirm this order before printing.\')"><img src="'.$img.'" width="50" height="50" style="object-fit:cover; border-radius:4px;" title="Please confirm to print"></a>';
+                        return '<a href="javascript:void(0)" onclick="toastr.error(\'Please confirm this order before printing.\')"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; opacity:0.75;" title="Please confirm to print"></a>';
                     }
                 })
-                ->addColumn('product_name', function ($row) {
-                    return $row->product->name ?? 'N/A';
+                ->addColumn('invoice_no', function ($row) {
+                    $m = $row->manufacture;
+                    if (!$m) return 'N/A';
+                    return '<a href="'.route('admin.manufacture.show', $m->id).'" class="badge badge-light-primary font-weight-bolder" style="font-size: 11px; letter-spacing: 0.3px;">'.e($m->invoice_no).'</a>';
                 })
-                ->addColumn('dealer_name', function ($row) {
-                    $name = $row->dealer_name ?? ($row->dealer->name ?? 'N/A');
-                    $phone = $row->dealer_phone ?? ($row->dealer->phone ?? '');
-                    return '<div><strong>' . $name . '</strong></div>' . ($phone ? '<small class="text-bold">' . $phone . '</small>' : '');
+                ->addColumn('product_name', function ($row) {
+                    $name = $row->product ? e($row->product->name) : 'N/A';
+                    $html = '<div><strong class="text-dark">' . $name . '</strong>';
+                    if (!empty($row->cost_title)) {
+                        $html .= '<br><small class="text-primary font-weight-bold"><i data-feather="tag" style="width:11px; height:11px;"></i> ' . e($row->cost_title) . '</small>';
+                    }
+                    if (!empty($row->reff_invoice)) {
+                        $html .= '<br><small class="text-muted"><i data-feather="file" style="width:11px; height:11px;"></i> Ref: ' . e($row->reff_invoice) . '</small>';
+                    }
+                    $html .= '</div>';
+                    return $html;
                 })
                 ->addColumn('worker_name', function ($row) {
-                    $name = $row->worker->name ?? 'N/A';
-                    $phone = $row->worker->phone ?? '';
-                    return '<div><strong>' . $name . '</strong></div>' . ($phone ? '<small class="text-bold">' . $phone . '</small>' : '');
+                    $worker = $row->manufacture ? $row->manufacture->worker : null;
+                    $name = $worker->name ?? 'N/A';
+                    $phone = $worker->phone ?? '';
+                    return '<div><strong>' . e($name) . '</strong></div>' . ($phone ? '<small class="text-bold text-muted">' . e($phone) . '</small>' : '');
+                })
+                ->addColumn('dealer_name', function ($row) {
+                    $m = $row->manufacture;
+                    $name = $m->dealer_name ?? ($m->dealer->name ?? 'N/A');
+                    $phone = $m->dealer_phone ?? ($m->dealer->phone ?? '');
+                    return '<div><strong>' . e($name) . '</strong></div>' . ($phone ? '<small class="text-bold text-muted">' . e($phone) . '</small>' : '');
+                })
+                ->addColumn('manufacture_qty', function ($row) {
+                    return '<span class="badge badge-pill badge-light-info font-weight-bolder" style="font-size: 12px;">' . $row->qty . '</span>';
                 })
                 ->addColumn('part_type', function ($row) {
-                    if ($row->body_total > 0 && $row->finishing_total > 0) return 'Both';
-                    return $row->body_total > 0 ? 'Body Part' : 'Finishing Part';
+                    $type = strtolower($row->part_type ?? '');
+                    if ($type === 'body' || $type === 'body part') {
+                        return '<span class="badge badge-light-info">Body Part</span>';
+                    } elseif ($type === 'finishing' || $type === 'finishing part') {
+                        return '<span class="badge badge-light-primary">Finishing Part</span>';
+                    } elseif ($type === 'both') {
+                        return '<span class="badge badge-light-success">Both</span>';
+                    }
+                    return '<span class="badge badge-light-secondary">' . e(ucfirst($row->part_type ?? 'N/A')) . '</span>';
                 })
                 ->addColumn('price', function ($row) {
-                    if ($row->body_total > 0 && $row->finishing_total > 0) return number_format($row->body_part_price + $row->finishing_part_price, 2);
-                    return $row->body_total > 0 ? number_format($row->body_part_price, 2) : number_format($row->finishing_part_price, 2);
+                    return '৳' . number_format($row->unit_price, 2);
                 })
                 ->addColumn('totals', function ($row) {
-                    return number_format($row->grand_total, 2);
+                    return '<strong>৳' . number_format($row->total_price, 2) . '</strong>';
                 })
                 ->addColumn('status', function ($row) {
-                    $checked = ($row->status == 1 || $row->is_confirm == 1 || $row->status == 2) ? 'checked' : '';
-                    $disabled = $row->status == 2 ? 'disabled' : '';
+                    $m = $row->manufacture;
+                    if (!$m) return 'N/A';
+                    $checked = ($m->status == 1 || $m->is_confirm == 1 || $m->status == 2) ? 'checked' : '';
+                    $disabled = $m->status == 2 ? 'disabled' : '';
                     return '<div class="custom-control custom-switch custom-switch-success">
-                                <input type="checkbox" class="custom-control-input change-status" id="status_'.$row->id.'" data-id="'.$row->id.'" data-field="is_confirm" '.$checked.' '.$disabled.'>
+                                <input type="checkbox" class="custom-control-input change-status" id="status_'.$row->id.'" data-id="'.$m->id.'" data-field="is_confirm" '.$checked.' '.$disabled.'>
                                 <label class="custom-control-label" for="status_'.$row->id.'">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
@@ -93,13 +149,15 @@ class ManufactureController extends Controller
                             </div>';
                 })
                 ->addColumn('is_complete', function ($row) {
-                    $checked = ($row->status == 2) ? 'checked' : '';
-                    $disabled = ($row->status == 0 && $row->is_confirm == 0) ? 'disabled' : ''; // Can only complete if confirmed
-                    if ($row->collected_by) {
-                        $disabled = 'disabled'; // Cannot un-complete if already collected
+                    $m = $row->manufacture;
+                    if (!$m) return 'N/A';
+                    $checked = ($m->status == 2) ? 'checked' : '';
+                    $disabled = ($m->status == 0 && $m->is_confirm == 0) ? 'disabled' : '';
+                    if ($m->collected_by) {
+                        $disabled = 'disabled';
                     }
                     return '<div class="custom-control custom-switch custom-switch-primary">
-                                <input type="checkbox" class="custom-control-input change-status" id="complete_'.$row->id.'" data-id="'.$row->id.'" data-field="is_complete" '.$checked.' '.$disabled.'>
+                                <input type="checkbox" class="custom-control-input change-status" id="complete_'.$row->id.'" data-id="'.$m->id.'" data-field="is_complete" '.$checked.' '.$disabled.'>
                                 <label class="custom-control-label" for="complete_'.$row->id.'">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
@@ -113,187 +171,385 @@ class ManufactureController extends Controller
                     return $row->updated_at ? $row->updated_at->format('d M Y h:i A') : 'N/A';
                 })
                 ->addColumn('creaded_by', function ($row) {
-                    return $row->creator->name ?? 'N/A';
+                    return $row->manufacture->creator->name ?? 'N/A';
                 })
                 ->addColumn('collected_by', function ($row) {
-                    return $row->collectedBy->name ?? 'N/A';
+                    return $row->manufacture->collectedBy->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    return view('admin.manufacture.action_button', ['manufacture' => $row])->render();
+                    $m = $row->manufacture;
+                    return $m ? view('admin.manufacture.action_button', ['manufacture' => $m])->render() : '';
                 })
-                ->rawColumns(['product_image', 'manufacture_image', 'worker_name', 'dealer_name', 'totals', 'status', 'is_complete', 'collected_by', 'action'])
+                ->filterColumn('invoice_no', function ($query, $keyword) {
+                    $query->whereHas('manufacture', function ($q) use ($keyword) {
+                        $q->where('invoice_no', 'like', "%{$keyword}%");
+                    })->orWhere('reff_invoice', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('product_name', function ($query, $keyword) {
+                    $query->whereHas('product', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('worker_name', function ($query, $keyword) {
+                    $query->whereHas('manufacture.worker', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%")->orWhere('phone', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('dealer_name', function ($query, $keyword) {
+                    $query->whereHas('manufacture', function ($q) use ($keyword) {
+                        $q->where('dealer_name', 'like', "%{$keyword}%")
+                          ->orWhere('dealer_phone', 'like', "%{$keyword}%")
+                          ->orWhereHas('dealer', function ($sub) use ($keyword) {
+                              $sub->where('name', 'like', "%{$keyword}%")->orWhere('phone', 'like', "%{$keyword}%");
+                          });
+                    });
+                })
+                ->rawColumns(['product_image', 'manufacture_image', 'invoice_no', 'product_name', 'worker_name', 'dealer_name', 'manufacture_qty', 'part_type', 'totals', 'status', 'is_complete', 'collected_by', 'action'])
                 ->make(true);
         }
 
-        $workers = \App\Models\Worker::all();
-        $dealers = \App\Models\Dealer::all();
+        $workers = Worker::all();
+        $dealers = Dealer::all();
         return view('admin.manufacture.index', compact('workers', 'dealers'));
     }
 
     public function create()
     {
-        $products = \App\Models\Product::with('recipe')->where('status', 1)->get();
-        $dealers = \App\Models\Dealer::where('status', 1)->get();
-        $workers = \App\Models\Worker::all(); // Assuming Worker model exists
+        $products = Product::with(['recipe.costSetting.items.costHead'])
+            ->where('is_manufacturer', 1)
+            ->where(function ($query) {
+                $query->where('status', 1)
+                      ->orWhereHas('recipe');
+            })
+            ->get()
+            ->sortByDesc(function ($product) {
+                return ($product->recipe && $product->recipe->cost_setting_id) ? 1 : 0;
+            })
+            ->values();
+
+        $costSettings = CostSetting::with(['items.costHead'])
+            ->where('status', 1)
+            ->get();
+
+        $dealers = Dealer::where('status', 1)->get();
+        $workers = Worker::all();
+
         // Generate unique invoice number
-        $lastManufacture = \App\Models\Manufacture::orderBy('id', 'desc')->first();
+        $lastManufacture = Manufacture::orderBy('id', 'desc')->first();
         $nextId = $lastManufacture ? $lastManufacture->id + 1 : 1;
         $invoice_no = 'MF-' . date('Ymd') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-        return view('admin.manufacture.create', compact('products', 'dealers', 'workers', 'invoice_no'));
+        return view('admin.manufacture.create', compact('products', 'costSettings', 'dealers', 'workers', 'invoice_no'));
     }
 
     public function getPrices(Request $request)
     {
-        return response()->json($this->recipePartPrices($request->product_id));
+        if ($request->filled('cost_setting_id')) {
+            $costSetting = CostSetting::with(['items.costHead'])->find($request->cost_setting_id);
+            if ($costSetting) {
+                return response()->json([
+                    'cost_setting_id' => $costSetting->id,
+                    'cost_title' => $costSetting->cost_title,
+                    'body_part_price' => $costSetting->body_charge,
+                    'finishing_part_price' => $costSetting->finishing_charge,
+                ]);
+            }
+        }
+
+        if ($request->filled('product_id')) {
+            $product = Product::with(['recipe.costSetting.items.costHead'])->find($request->product_id);
+            $recipe = $product ? $product->recipe : null;
+            $costSetting = $recipe && $recipe->costSetting ? $recipe->costSetting : null;
+
+            $bodyPrice = 0;
+            $finishingPrice = 0;
+            $costSettingId = null;
+            $costTitle = null;
+
+            if ($costSetting) {
+                $bodyPrice = $costSetting->body_charge;
+                $finishingPrice = $costSetting->finishing_charge;
+                $costSettingId = $costSetting->id;
+                $costTitle = $costSetting->cost_title;
+            } elseif ($recipe) {
+                $bodyPrice = (float) ($recipe->body_charge ?? 0);
+                $finishingPrice = (float) ($recipe->finishing_charge ?? 0);
+            }
+
+            return response()->json([
+                'product_id' => $request->product_id,
+                'cost_setting_id' => $costSettingId,
+                'cost_title' => $costTitle,
+                'body_part_price' => $bodyPrice,
+                'finishing_part_price' => $finishingPrice,
+            ]);
+        }
+
+        return response()->json(['body_part_price' => 0, 'finishing_part_price' => 0]);
     }
 
-    private function recipePartPrices($productId): array
-    {
-        $recipe = $productId
-            ? \App\Models\ProductRecipe::where('product_id', $productId)->first()
-            : null;
-
-        $calculator = app(\App\Services\ProductPriceCalculator::class);
-
-        return [
-            'body_part_price' => (float) $calculator->pricesFromCost((float) ($recipe->body_charge ?? 0))['retail_price'],
-            'finishing_part_price' => (float) $calculator->pricesFromCost((float) ($recipe->finishing_charge ?? 0))['retail_price'],
-        ];
-    }
-
-    public function store(\App\Http\Requests\StoreManufactureRequest $request)
+    public function store(StoreManufactureRequest $request)
     {
         $validated = $request->validated();
-        
-        $prices = $this->recipePartPrices($validated['product_id']);
-        $dealer = \App\Models\Dealer::find($validated['dealer_id']);
-        $qty = $validated['manufacture_qty'];
-        
-        \DB::beginTransaction();
+        $dealer = Dealer::find($validated['dealer_id']);
+
+        DB::beginTransaction();
         try {
-          
-            $lastManufacture = \App\Models\Manufacture::orderBy('id', 'desc')->first();
+            $lastManufacture = Manufacture::orderBy('id', 'desc')->first();
             $nextId = $lastManufacture ? $lastManufacture->id + 1 : 1;
             $invoice_no = 'MF-' . date('Ymd') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-            foreach ($validated['parts'] as $part) {
-                $body_price = ($part === 'body') ? $prices['body_part_price'] : 0;
-                $finishing_price = ($part === 'finishing') ? $prices['finishing_part_price'] : 0;
-                
-                $body_total = $body_price * $qty;
-                $finishing_total = $finishing_price * $qty;
+            $items = array_values($validated['items']);
+            $firstItem = $items[0] ?? null;
 
-                \App\Models\Manufacture::create([
-                    'product_id' => $validated['product_id'],
-                    'invoice_no' => $invoice_no,
-                    'reff_invoice' => $validated['reff_invoice'] ?? null,
-                    'dealer_id' => $validated['dealer_id'],
-                    'dealer_name' => $dealer->name ?? null,
-                    'dealer_phone' => $dealer->phone ?? null,
-                    'dealer_address' => $dealer->address ?? null,
-                    'worker_id' => $validated['worker_id'],
-                    'manufacture_qty' => $qty,
-                    'body_part_price' => $body_price,
-                    'finishing_part_price' => $finishing_price,
-                    'body_total' => $body_total,
-                    'finishing_total' => $finishing_total,
-                    'grand_total' => $body_total + $finishing_total,
-                    'note' => $validated['note'] ?? null,
-                    'is_confirm' => $request->has('is_confirm') ? 1 : 0,
-                    'status' => $request->has('is_confirm') ? 1 : 0,
-                    'created_by' => auth('admin')->id() ?? auth()->id(),
+            $totalQty = 0;
+            $bodyTotal = 0;
+            $finishingTotal = 0;
+            $grandTotal = 0;
+
+            foreach ($items as $item) {
+                $qty = (int) $item['qty'];
+                $unitPrice = (float) $item['unit_price'];
+                $itemTotal = $qty * $unitPrice;
+                $partType = $item['part_type'];
+
+                $bodyPrice = isset($item['body_part_price']) ? (float) $item['body_part_price'] : 0;
+                $finishingPrice = isset($item['finishing_part_price']) ? (float) $item['finishing_part_price'] : 0;
+
+                if ($partType === 'body') {
+                    $bodyTotal += $itemTotal;
+                } elseif ($partType === 'finishing') {
+                    $finishingTotal += $itemTotal;
+                } elseif ($partType === 'both') {
+                    $bodyTotal += ($bodyPrice * $qty);
+                    $finishingTotal += ($finishingPrice * $qty);
+                }
+
+                $totalQty += $qty;
+                $grandTotal += $itemTotal;
+            }
+
+            $isConfirm = $request->has('is_confirm') && $request->is_confirm ? 1 : 0;
+
+            $manufacture = Manufacture::create([
+                'product_id' => $firstItem['product_id'] ?? null,
+                'invoice_no' => $invoice_no,
+                'reff_invoice' => $firstItem['reff_invoice'] ?? null,
+                'dealer_id' => $validated['dealer_id'],
+                'dealer_name' => $dealer->name ?? null,
+                'dealer_phone' => $dealer->phone ?? null,
+                'dealer_address' => $dealer->address ?? null,
+                'worker_id' => $validated['worker_id'],
+                'manufacture_qty' => $totalQty,
+                'body_part_price' => $firstItem['body_part_price'] ?? 0,
+                'finishing_part_price' => $firstItem['finishing_part_price'] ?? 0,
+                'body_total' => $bodyTotal,
+                'finishing_total' => $finishingTotal,
+                'grand_total' => $grandTotal,
+                'note' => $validated['note'] ?? null,
+                'is_confirm' => $isConfirm,
+                'status' => $isConfirm,
+                'created_by' => auth('admin')->id() ?? auth()->id(),
+            ]);
+
+            foreach ($items as $item) {
+                $costSetting = !empty($item['cost_setting_id']) ? CostSetting::find($item['cost_setting_id']) : null;
+                $costTitle = $costSetting ? $costSetting->cost_title : ($item['cost_title'] ?? null);
+
+                $qty = (int) $item['qty'];
+                $unitPrice = (float) $item['unit_price'];
+
+                ManufactureOrderItem::create([
+                    'manufacture_id' => $manufacture->id,
+                    'product_id' => $item['product_id'],
+                    'reff_invoice' => $item['reff_invoice'] ?? null,
+                    'cost_setting_id' => $item['cost_setting_id'] ?? null,
+                    'cost_title' => $costTitle,
+                    'part_type' => $item['part_type'],
+                    'body_part_price' => $item['body_part_price'] ?? 0,
+                    'finishing_part_price' => $item['finishing_part_price'] ?? 0,
+                    'unit_price' => $unitPrice,
+                    'qty' => $qty,
+                    'total_price' => $qty * $unitPrice,
+                    'note' => $item['note'] ?? null,
                 ]);
             }
-            
-            \DB::commit();
-            return response()->json(['success' => 'Manufacture created successfully.']);
+
+            DB::commit();
+            return response()->json([
+                'success' => 'Manufacture order created successfully.',
+                'redirect' => route('admin.manufacture.show', $manufacture->id)
+            ]);
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function show(string $id)
     {
-        $manufacture = \App\Models\Manufacture::with(['product', 'dealer', 'creator'])->findOrFail($id);
+        $manufacture = Manufacture::with([
+            'items.product.recipe',
+            'items.costSetting',
+            'product.recipe',
+            'dealer',
+            'worker',
+            'creator',
+            'completedBy',
+            'collectedBy'
+        ])->findOrFail($id);
+
         return view('admin.manufacture.show', compact('manufacture'));
     }
 
     public function edit(string $id)
     {
-        $manufacture = \App\Models\Manufacture::findOrFail($id);
+        $manufacture = Manufacture::with(['items.product.recipe', 'items.costSetting'])->findOrFail($id);
         if ($manufacture->is_confirm) {
             return redirect()->route('admin.manufacture.index')->with('error', 'Confirmed records cannot be edited.');
         }
 
-        $products = \App\Models\Product::with('recipe')->where('status', 1)->get();
-        $dealers = \App\Models\Dealer::where('status', 1)->get();
-        $workers = \App\Models\Worker::all();
-        return view('admin.manufacture.edit', compact('manufacture', 'products', 'dealers', 'workers'));
+        $existingProductIds = $manufacture->items->pluck('product_id')->filter()->toArray();
+        $products = Product::with(['recipe.costSetting.items.costHead'])
+            ->where(function ($q) use ($existingProductIds) {
+                $q->where(function ($sub) {
+                    $sub->where('is_manufacturer', 1)
+                        ->where(function ($nested) {
+                            $nested->where('status', 1)
+                                   ->orWhereHas('recipe');
+                        });
+                });
+                if (!empty($existingProductIds)) {
+                    $q->orWhereIn('id', $existingProductIds);
+                }
+            })
+            ->get()
+            ->sortByDesc(function ($product) {
+                return ($product->recipe && $product->recipe->cost_setting_id) ? 1 : 0;
+            })
+            ->values();
+
+        $costSettings = CostSetting::with(['items.costHead'])
+            ->where('status', 1)
+            ->get();
+
+        $dealers = Dealer::where('status', 1)->get();
+        $workers = Worker::all();
+
+        return view('admin.manufacture.edit', compact('manufacture', 'products', 'costSettings', 'dealers', 'workers'));
     }
 
-    public function update(\App\Http\Requests\UpdateManufactureRequest $request, string $id)
+    public function update(UpdateManufactureRequest $request, string $id)
     {
-        $manufacture = \App\Models\Manufacture::findOrFail($id);
+        $manufacture = Manufacture::findOrFail($id);
         if ($manufacture->is_confirm) {
             return response()->json(['error' => 'Confirmed records cannot be edited.'], 403);
         }
 
         $validated = $request->validated();
-        
-        $prices = $this->recipePartPrices($validated['product_id']);
-        $dealer = \App\Models\Dealer::find($validated['dealer_id']);
-        
-        $body_price = in_array('body', $validated['parts']) ? $prices['body_part_price'] : 0;
-        $finishing_price = in_array('finishing', $validated['parts']) ? $prices['finishing_part_price'] : 0;
-        
-        $qty = $validated['manufacture_qty'];
-        $body_total = $body_price * $qty;
-        $finishing_total = $finishing_price * $qty;
-        
-        \DB::beginTransaction();
+        $dealer = Dealer::find($validated['dealer_id']);
+
+        DB::beginTransaction();
         try {
-            // For update, we will update the existing single record
-            // If they modify parts, we update the prices accordingly
+            $items = array_values($validated['items']);
+            $firstItem = $items[0] ?? null;
+
+            $totalQty = 0;
+            $bodyTotal = 0;
+            $finishingTotal = 0;
+            $grandTotal = 0;
+
+            foreach ($items as $item) {
+                $qty = (int) $item['qty'];
+                $unitPrice = (float) $item['unit_price'];
+                $itemTotal = $qty * $unitPrice;
+                $partType = $item['part_type'];
+
+                $bodyPrice = isset($item['body_part_price']) ? (float) $item['body_part_price'] : 0;
+                $finishingPrice = isset($item['finishing_part_price']) ? (float) $item['finishing_part_price'] : 0;
+
+                if ($partType === 'body') {
+                    $bodyTotal += $itemTotal;
+                } elseif ($partType === 'finishing') {
+                    $finishingTotal += $itemTotal;
+                } elseif ($partType === 'both') {
+                    $bodyTotal += ($bodyPrice * $qty);
+                    $finishingTotal += ($finishingPrice * $qty);
+                }
+
+                $totalQty += $qty;
+                $grandTotal += $itemTotal;
+            }
+
+            $isConfirm = $request->has('is_confirm') && $request->is_confirm ? 1 : 0;
+
             $manufacture->update([
+                'product_id' => $firstItem['product_id'] ?? null,
                 'invoice_no' => $validated['invoice_no'] ?? $manufacture->invoice_no,
-                'reff_invoice' => $validated['reff_invoice'] ?? null,
-                'product_id' => $validated['product_id'],
+                'reff_invoice' => $firstItem['reff_invoice'] ?? null,
                 'dealer_id' => $validated['dealer_id'],
                 'dealer_name' => $dealer->name ?? null,
                 'dealer_phone' => $dealer->phone ?? null,
                 'dealer_address' => $dealer->address ?? null,
                 'worker_id' => $validated['worker_id'],
-                'manufacture_qty' => $qty,
-                'body_part_price' => $body_price,
-                'finishing_part_price' => $finishing_price,
-                'body_total' => $body_total,
-                'finishing_total' => $finishing_total,
-                'grand_total' => $body_total + $finishing_total,
+                'manufacture_qty' => $totalQty,
+                'body_part_price' => $firstItem['body_part_price'] ?? 0,
+                'finishing_part_price' => $firstItem['finishing_part_price'] ?? 0,
+                'body_total' => $bodyTotal,
+                'finishing_total' => $finishingTotal,
+                'grand_total' => $grandTotal,
                 'note' => $validated['note'] ?? null,
-                'is_confirm' => $request->has('is_confirm') ? 1 : 0,
-                'status' => $request->has('is_confirm') ? 1 : 0,
+                'is_confirm' => $isConfirm,
+                'status' => $isConfirm,
                 'updated_by' => auth('admin')->id() ?? auth()->id(),
             ]);
-            
-            \DB::commit();
-            return response()->json(['success' => 'Manufacture updated successfully.']);
+
+            // Delete old items and re-create
+            $manufacture->items()->delete();
+
+            foreach ($items as $item) {
+                $costSetting = !empty($item['cost_setting_id']) ? CostSetting::find($item['cost_setting_id']) : null;
+                $costTitle = $costSetting ? $costSetting->cost_title : ($item['cost_title'] ?? null);
+
+                $qty = (int) $item['qty'];
+                $unitPrice = (float) $item['unit_price'];
+
+                ManufactureOrderItem::create([
+                    'manufacture_id' => $manufacture->id,
+                    'product_id' => $item['product_id'],
+                    'reff_invoice' => $item['reff_invoice'] ?? null,
+                    'cost_setting_id' => $item['cost_setting_id'] ?? null,
+                    'cost_title' => $costTitle,
+                    'part_type' => $item['part_type'],
+                    'body_part_price' => $item['body_part_price'] ?? 0,
+                    'finishing_part_price' => $item['finishing_part_price'] ?? 0,
+                    'unit_price' => $unitPrice,
+                    'qty' => $qty,
+                    'total_price' => $qty * $unitPrice,
+                    'note' => $item['note'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => 'Manufacture order updated successfully.',
+                'redirect' => route('admin.manufacture.show', $manufacture->id)
+            ]);
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function destroy(string $id)
     {
-        $manufacture = \App\Models\Manufacture::findOrFail($id);
+        $manufacture = Manufacture::findOrFail($id);
         if ($manufacture->is_confirm) {
             return response()->json(['error' => 'Confirmed records cannot be deleted.'], 403);
         }
-        
+
         $manufacture->delete();
-        return response()->json(['success' => 'Manufacture deleted successfully.']);
+        return response()->json(['success' => 'Manufacture order deleted successfully.']);
     }
 
     public function export(Request $request)
@@ -309,8 +565,8 @@ class ManufactureController extends Controller
             'value' => 'nullable'
         ]);
 
-        $manufacture = \App\Models\Manufacture::findOrFail($request->id);
-        
+        $manufacture = Manufacture::findOrFail($request->id);
+
         if ($request->field === 'is_confirm') {
             $manufacture->is_confirm = $request->value;
             if ($request->value == 1 && $manufacture->status == 0) {
@@ -325,8 +581,7 @@ class ManufactureController extends Controller
             if ($request->value == 1) {
                 $manufacture->status = 2;
                 $manufacture->completed_by = auth()->id();
-                // Ensure it's marked as confirmed if not already
-                $manufacture->is_confirm = 1; 
+                $manufacture->is_confirm = 1;
             } else {
                 $manufacture->status = $manufacture->is_confirm ? 1 : 0;
                 $manufacture->completed_by = null;
@@ -334,7 +589,7 @@ class ManufactureController extends Controller
         } elseif ($request->field === 'collected_by') {
             $manufacture->collected_by = $request->value;
         }
-        
+
         $manufacture->save();
 
         return response()->json(['success' => 'Status updated successfully.']);
@@ -342,21 +597,20 @@ class ManufactureController extends Controller
 
     public function print($id)
     {
-        $manufacture = \App\Models\Manufacture::with(['product.recipe', 'worker'])->findOrFail($id);
-        
+        $manufacture = Manufacture::with(['items.product.recipe', 'items.costSetting', 'product.recipe', 'worker'])->findOrFail($id);
+
         if ($manufacture->status < 1) {
             return "<script>alert('Please confirm this order before printing.'); window.close();</script>";
         }
 
-        $setting = \App\Models\WebSetting::first(); 
-        
+        $setting = WebSetting::first();
+
         return view('admin.manufacture.print', compact('manufacture', 'setting'));
     }
 
     public function receiveUI()
     {
-        // Get all completed orders (status = 2) that haven't been collected yet
-        $pending_orders = \App\Models\Manufacture::with('product')->where('status', 2)->whereNull('collected_by')->get();
+        $pending_orders = Manufacture::with(['items.product', 'product'])->where('status', 2)->whereNull('collected_by')->get();
         return view('admin.manufacture.receive', compact('pending_orders'));
     }
 
@@ -367,23 +621,21 @@ class ManufactureController extends Controller
             'manufacture_ids.*' => 'exists:manufactures,id'
         ]);
 
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $ids = $request->manufacture_ids;
-            $orders = \App\Models\Manufacture::whereIn('id', $ids)->where('status', 2)->whereNull('collected_by')->get();
+            $orders = Manufacture::whereIn('id', $ids)->where('status', 2)->whereNull('collected_by')->get();
 
             if ($orders->isEmpty()) {
                 return response()->json(['error' => 'No valid orders selected. Orders might have already been received or are not completed yet.'], 400);
             }
 
             foreach ($orders as $order) {
-                // Update Manufacture Order
                 $order->update([
                     'collected_by' => auth()->id(),
                 ]);
 
-                // Record in worker_payments table
-                \App\Models\WorkerPayment::create([
+                WorkerPayment::create([
                     'manufacture_order_id' => $order->id,
                     'date' => date('Y-m-d'),
                     'worker_id' => $order->worker_id,
@@ -393,10 +645,10 @@ class ManufactureController extends Controller
                 ]);
             }
 
-            \DB::commit();
+            DB::commit();
             return response()->json(['success' => 'Manufacture orders received and worker payments recorded successfully.']);
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }

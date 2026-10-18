@@ -32,6 +32,11 @@ class Manufacture extends Model
         'updated_by',
     ];
 
+    public function items()
+    {
+        return $this->hasMany(ManufactureOrderItem::class, 'manufacture_id');
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

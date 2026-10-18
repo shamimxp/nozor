@@ -24,11 +24,18 @@
         .print-container {
             width: 194mm;
             height: 270mm;
-            margin: 0 auto;
+            margin: 0 auto 20px;
             background: #fff;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            page-break-after: always;
+            break-after: page;
+        }
+        .print-container:last-child {
+            page-break-after: auto;
+            break-after: auto;
+            margin-bottom: 0;
         }
         .header {
             position: relative;
@@ -157,8 +164,6 @@
                 box-shadow: none;
                 page-break-inside: avoid;
                 break-inside: avoid;
-                page-break-after: avoid;
-                break-after: avoid;
             }
             .no-print {
                 display: none !important;
@@ -167,75 +172,87 @@
     </style>
 </head>
 <body onload="window.print()">
-    <div class="print-container">
+    @php
+        $itemsToPrint = $manufacture->items->isNotEmpty() ? $manufacture->items : collect([null]);
+    @endphp
+
+    @foreach($itemsToPrint as $item)
         @php
-            // Extract type
-            $part_type = '';
-            if ($manufacture->body_total > 0 && $manufacture->finishing_total > 0) {
-                $part_type = 'body-part, finishing-part';
-            } elseif ($manufacture->body_total > 0) {
-                $part_type = 'body-part';
+            $product = $item ? $item->product : $manufacture->product;
+            $recipe = $product ? $product->recipe : null;
+            $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+            $manufacture_image = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : ($product && $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png'));
+
+            $partType = $item ? $item->part_type : '';
+            if ($partType === 'body') {
+                $partTypeLabel = 'Body Part';
+            } elseif ($partType === 'finishing') {
+                $partTypeLabel = 'Finishing Part';
+            } elseif ($partType === 'both') {
+                $partTypeLabel = 'Body Part & Finishing Part';
             } else {
-                $part_type = 'finishing-part';
+                $partTypeLabel = ($manufacture->body_total > 0 && $manufacture->finishing_total > 0) ? 'Body Part & Finishing Part' : ($manufacture->body_total > 0 ? 'Body Part' : 'Finishing Part');
             }
 
-            // Extract image
-            $recipe = $manufacture->product ? $manufacture->product->recipe : null;
-            $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
-            $manufacture_image = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+            $itemQty = $item ? $item->qty : $manufacture->manufacture_qty;
+            $refInvoice = $item ? $item->reff_invoice : $manufacture->reff_invoice;
+            $costTitle = $item ? ($item->cost_title ?: ($item->costSetting->cost_title ?? '')) : '';
         @endphp
 
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-container">
-                @if(isset($setting) && $setting->logo)
-                    <img src="{{ asset('images/logo/'.$setting->logo) }}" class="logo" alt="Logo" onerror="this.src='{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}'">
-                @else
-                    <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" class="logo" alt="Logo">
-                @endif
+        <div class="print-container">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo-container">
+                    @if(isset($setting) && $setting->logo)
+                        <img src="{{ asset('images/logo/'.$setting->logo) }}" class="logo" alt="Logo" onerror="this.src='{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}'">
+                    @else
+                        <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" class="logo" alt="Logo">
+                    @endif
+                </div>
+                <div class="company-info">
+                    <h1 class="company-name">{{ $setting->name ?? 'Wood Machinery' }}</h1>
+                    <p class="company-address">{{ $setting->address ?? 'Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212' }}</p>
+                    <p class="company-phone">Phone: {{ $setting->phone ?? '01674-088383' }}</p>
+                </div>
             </div>
-            <div class="company-info">
-                <h1 class="company-name">{{ $setting->name ?? 'Wood Machinery' }}</h1>
-                <p class="company-address">{{ $setting->address ?? 'Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212' }}</p>
-                <p class="company-phone">Phone: {{ $setting->phone ?? '01674-088383' }}</p>
-            </div>
-        </div>
-        
-        <hr>
-
-        <!-- Details -->
-        <div class="details-section">
-            <div><strong>Name:</strong> {{ $manufacture->product->name ?? 'N/A' }}</div>
-            <div><strong>Manufacturing Part:</strong> {{ $part_type }}</div>
-            <div><strong>Assaign By:</strong> {{ $manufacture->worker->name ?? 'N/A' }} => {{ $manufacture->worker->phone ?? 'N/A' }}</div>
             
-            <div class="barcode-wrapper">
-                <img class="barcode" src="https://barcode.tec-it.com/barcode.ashx?data={{ $manufacture->id }}&code=Code128&dpi=96" alt="Barcode">
-                <!-- <span class="barcode-text">{{ $manufacture->id }}</span> -->
+            <hr>
+
+            <!-- Details -->
+            <div class="details-section">
+                <div><strong>Order No:</strong> {{ $manufacture->invoice_no }} @if($refInvoice) (Ref: {{ $refInvoice }}) @endif</div>
+                <div><strong>Product:</strong> {{ $product->name ?? 'N/A' }}</div>
+                <div><strong>Cost Title:</strong> {{ $costTitle ?: 'Standard' }} | <strong>Type:</strong> {{ $partTypeLabel }}</div>
+                <div><strong>Assigned Worker:</strong> {{ $manufacture->worker->name ?? 'N/A' }} => {{ $manufacture->worker->phone ?? 'N/A' }}</div>
+                <div><strong>Customer:</strong> {{ $manufacture->dealer_name ?? ($manufacture->dealer->name ?? 'N/A') }}</div>
+                
+                <div class="barcode-wrapper">
+                    <img class="barcode" src="https://barcode.tec-it.com/barcode.ashx?data={{ $manufacture->id }}&code=Code128&dpi=96" alt="Barcode">
+                </div>
+
+                <div class="qty-text">Manufacture Quantity: {{ $itemQty }} Units</div>
             </div>
 
-            <div class="qty-text">Manufacture Quantity: {{ $manufacture->manufacture_qty }}</div>
-        </div>
+            <div class="design-text">
+                Design Code: {{ $product->id ?? '' }}
+            </div>
 
-        <div class="design-text">
-            Design {{ $manufacture->product->id ?? '' }}
-        </div>
+            <!-- Image -->
+            <div class="manufacture-image-container">
+                <img src="{{ $manufacture_image }}" alt="Manufacture Blueprint">
+            </div>
 
-        <!-- Image -->
-        <div class="manufacture-image-container">
-            <img src="{{ $manufacture_image }}" alt="Manufacture Image">
-        </div>
+            <hr>
 
-        <hr>
+            <!-- Footer -->
+            <div class="footer-note">
+                Note: {{ $item && $item->note ? $item->note : ($manufacture->note ?: 'N/A') }}
+            </div>
 
-        <!-- Footer -->
-        <div class="footer-note">
-            Note:
+            <div class="developed-by">
+                Printed: {{ date('d M Y, h:i A') }} | Developed By : <span>Wood Machinery</span>
+            </div>
         </div>
-
-        <div class="developed-by">
-            Developed By : <span>Wood Machinery</span>
-        </div>
-    </div>
+    @endforeach
 </body>
 </html>

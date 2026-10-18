@@ -29,4 +29,20 @@ class CostSetting extends Model
     {
         return $this->hasMany(ProductRecipe::class, 'cost_setting_id');
     }
+
+    public function getBodyChargeAttribute(): float
+    {
+        $item = $this->items->first(function ($it) {
+            return $it->cost_head_id == 1 || (isset($it->costHead) && stripos($it->costHead->title, 'Body') !== false);
+        });
+        return $item ? (float) $item->cost_price : 0.0;
+    }
+
+    public function getFinishingChargeAttribute(): float
+    {
+        $item = $this->items->first(function ($it) {
+            return $it->cost_head_id == 2 || (isset($it->costHead) && stripos($it->costHead->title, 'Finishing') !== false);
+        });
+        return $item ? (float) $item->cost_price : 0.0;
+    }
 }
