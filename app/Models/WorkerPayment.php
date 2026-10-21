@@ -13,6 +13,8 @@ class WorkerPayment extends Model
         'manufacture_order_id',
         'date',
         'worker_id',
+        'received_qty',
+        'unit_price',
         'total_amount',
         'created_by',
         'status',

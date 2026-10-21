@@ -116,7 +116,20 @@ class ManufactureController extends Controller
                     return '<div><strong>' . e($name) . '</strong></div>' . ($phone ? '<small class="text-bold text-muted">' . e($phone) . '</small>' : '');
                 })
                 ->addColumn('manufacture_qty', function ($row) {
-                    return '<span class="badge badge-pill badge-light-info font-weight-bolder" style="font-size: 12px;">' . $row->qty . '</span>';
+                    $orderQty = (int) ($row->qty ?? ($row->manufacture->manufacture_qty ?? 0));
+                    $receivedQty = (int) ($row->received_qty ?? ($row->manufacture->received_qty ?? 0));
+                    $pendingQty = max(0, $orderQty - $receivedQty);
+
+                    $html = '<div class="text-center" style="min-width: 95px;">';
+                    $html .= '<span class="badge badge-light-primary font-weight-bolder" style="font-size: 11px;" title="Total Order Quantity">Total: ' . $orderQty . '</span><br>';
+                    $html .= '<span class="badge badge-light-success font-weight-bold mt-25 mr-25" style="font-size: 10px;" title="Received Quantity"><i data-feather="check" style="width:10px;height:10px;"></i> ' . $receivedQty . '</span>';
+                    if ($pendingQty > 0) {
+                        $html .= '<span class="badge badge-light-danger font-weight-bold mt-25" style="font-size: 10px;" title="Pending Quantity to Receive"><i data-feather="clock" style="width:10px;height:10px;"></i> ' . $pendingQty . '</span>';
+                    } else {
+                        $html .= '<span class="badge badge-light-secondary font-weight-normal mt-25" style="font-size: 10px;" title="Fully Received">Done</span>';
+                    }
+                    $html .= '</div>';
+                    return $html;
                 })
                 ->addColumn('part_type', function ($row) {
                     $type = strtolower($row->part_type ?? '');
@@ -174,7 +187,18 @@ class ManufactureController extends Controller
                     return $row->manufacture->creator->name ?? 'N/A';
                 })
                 ->addColumn('collected_by', function ($row) {
-                    return $row->manufacture->collectedBy->name ?? 'N/A';
+                    $m = $row->manufacture;
+                    $orderQty = (int) ($row->qty ?? ($m->manufacture_qty ?? 0));
+                    $receivedQty = (int) ($row->received_qty ?? ($m->received_qty ?? 0));
+
+                    if ($receivedQty <= 0) {
+                        return '<span class="badge badge-light-warning" title="No quantity received yet"><i data-feather="clock" style="width:11px;height:11px;" class="mr-25"></i> Receive Pending</span>';
+                    } elseif ($receivedQty < $orderQty) {
+                        return '<span class="badge badge-light-info" title="Partially received"><i data-feather="package" style="width:11px;height:11px;" class="mr-25"></i> Partial (' . $receivedQty . '/' . $orderQty . ')</span>';
+                    } else {
+                        $name = $m && $m->collectedBy ? $m->collectedBy->name : 'Received';
+                        return '<span class="badge badge-light-success" title="Fully received and collected"><i data-feather="check-circle" style="width:11px;height:11px;" class="mr-25"></i> ' . e($name) . '</span>';
+                    }
                 })
                 ->addColumn('action', function ($row) {
                     $m = $row->manufacture;
@@ -292,22 +316,24 @@ class ManufactureController extends Controller
     {
         $validated = $request->validated();
         $dealer = Dealer::find($validated['dealer_id']);
+        $items = array_values($validated['items']);
+        $isConfirm = $request->has('is_confirm') && $request->is_confirm ? 1 : 0;
 
         DB::beginTransaction();
         try {
-            $lastManufacture = Manufacture::orderBy('id', 'desc')->first();
-            $nextId = $lastManufacture ? $lastManufacture->id + 1 : 1;
-            $invoice_no = 'MF-' . date('Ymd') . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            $createdOrders = [];
+            $lastManufacture = Manufacture::orderBy('id', 'desc')->lockForUpdate()->first();
+            $baseId = $lastManufacture ? $lastManufacture->id : 0;
 
-            $items = array_values($validated['items']);
-            $firstItem = $items[0] ?? null;
+            foreach ($items as $index => $item) {
+                $orderSeq = $baseId + $index + 1;
+                $invoice_no = 'MF-' . date('Ymd') . '-' . str_pad($orderSeq, 5, '0', STR_PAD_LEFT);
 
-            $totalQty = 0;
-            $bodyTotal = 0;
-            $finishingTotal = 0;
-            $grandTotal = 0;
+                while (Manufacture::where('invoice_no', $invoice_no)->exists()) {
+                    $orderSeq++;
+                    $invoice_no = 'MF-' . date('Ymd') . '-' . str_pad($orderSeq, 5, '0', STR_PAD_LEFT);
+                }
 
-            foreach ($items as $item) {
                 $qty = (int) $item['qty'];
                 $unitPrice = (float) $item['unit_price'];
                 $itemTotal = $qty * $unitPrice;
@@ -316,48 +342,41 @@ class ManufactureController extends Controller
                 $bodyPrice = isset($item['body_part_price']) ? (float) $item['body_part_price'] : 0;
                 $finishingPrice = isset($item['finishing_part_price']) ? (float) $item['finishing_part_price'] : 0;
 
+                $bodyTotal = 0;
+                $finishingTotal = 0;
                 if ($partType === 'body') {
-                    $bodyTotal += $itemTotal;
+                    $bodyTotal = $itemTotal;
                 } elseif ($partType === 'finishing') {
-                    $finishingTotal += $itemTotal;
+                    $finishingTotal = $itemTotal;
                 } elseif ($partType === 'both') {
-                    $bodyTotal += ($bodyPrice * $qty);
-                    $finishingTotal += ($finishingPrice * $qty);
+                    $bodyTotal = ($bodyPrice * $qty);
+                    $finishingTotal = ($finishingPrice * $qty);
                 }
 
-                $totalQty += $qty;
-                $grandTotal += $itemTotal;
-            }
+                $manufacture = Manufacture::create([
+                    'product_id' => $item['product_id'],
+                    'invoice_no' => $invoice_no,
+                    'reff_invoice' => $item['reff_invoice'] ?? null,
+                    'dealer_id' => $validated['dealer_id'],
+                    'dealer_name' => $dealer->name ?? null,
+                    'dealer_phone' => $dealer->phone ?? null,
+                    'dealer_address' => $dealer->address ?? null,
+                    'worker_id' => $validated['worker_id'],
+                    'manufacture_qty' => $qty,
+                    'received_qty' => 0,
+                    'body_part_price' => $bodyPrice,
+                    'finishing_part_price' => $finishingPrice,
+                    'body_total' => $bodyTotal,
+                    'finishing_total' => $finishingTotal,
+                    'grand_total' => $itemTotal,
+                    'note' => $item['note'] ?? ($validated['note'] ?? null),
+                    'is_confirm' => $isConfirm,
+                    'status' => $isConfirm,
+                    'created_by' => auth('admin')->id() ?? auth()->id(),
+                ]);
 
-            $isConfirm = $request->has('is_confirm') && $request->is_confirm ? 1 : 0;
-
-            $manufacture = Manufacture::create([
-                'product_id' => $firstItem['product_id'] ?? null,
-                'invoice_no' => $invoice_no,
-                'reff_invoice' => $firstItem['reff_invoice'] ?? null,
-                'dealer_id' => $validated['dealer_id'],
-                'dealer_name' => $dealer->name ?? null,
-                'dealer_phone' => $dealer->phone ?? null,
-                'dealer_address' => $dealer->address ?? null,
-                'worker_id' => $validated['worker_id'],
-                'manufacture_qty' => $totalQty,
-                'body_part_price' => $firstItem['body_part_price'] ?? 0,
-                'finishing_part_price' => $firstItem['finishing_part_price'] ?? 0,
-                'body_total' => $bodyTotal,
-                'finishing_total' => $finishingTotal,
-                'grand_total' => $grandTotal,
-                'note' => $validated['note'] ?? null,
-                'is_confirm' => $isConfirm,
-                'status' => $isConfirm,
-                'created_by' => auth('admin')->id() ?? auth()->id(),
-            ]);
-
-            foreach ($items as $item) {
                 $costSetting = !empty($item['cost_setting_id']) ? CostSetting::find($item['cost_setting_id']) : null;
                 $costTitle = $costSetting ? $costSetting->cost_title : ($item['cost_title'] ?? null);
-
-                $qty = (int) $item['qty'];
-                $unitPrice = (float) $item['unit_price'];
 
                 ManufactureOrderItem::create([
                     'manufacture_id' => $manufacture->id,
@@ -365,20 +384,33 @@ class ManufactureController extends Controller
                     'reff_invoice' => $item['reff_invoice'] ?? null,
                     'cost_setting_id' => $item['cost_setting_id'] ?? null,
                     'cost_title' => $costTitle,
-                    'part_type' => $item['part_type'],
-                    'body_part_price' => $item['body_part_price'] ?? 0,
-                    'finishing_part_price' => $item['finishing_part_price'] ?? 0,
+                    'part_type' => $partType,
+                    'body_part_price' => $bodyPrice,
+                    'finishing_part_price' => $finishingPrice,
                     'unit_price' => $unitPrice,
                     'qty' => $qty,
-                    'total_price' => $qty * $unitPrice,
+                    'received_qty' => 0,
+                    'total_price' => $itemTotal,
                     'note' => $item['note'] ?? null,
                 ]);
+
+                $createdOrders[] = $manufacture;
             }
 
             DB::commit();
+
+            $firstOrder = $createdOrders[0] ?? null;
+            $redirectUrl = count($createdOrders) === 1 && $firstOrder 
+                ? route('admin.manufacture.show', $firstOrder->id) 
+                : route('admin.manufacture.index');
+
+            $msg = count($createdOrders) === 1
+                ? 'Manufacture order created successfully with Invoice No: ' . $firstOrder->invoice_no
+                : count($createdOrders) . ' individual manufacture orders created successfully with unique invoice numbers.';
+
             return response()->json([
-                'success' => 'Manufacture order created successfully.',
-                'redirect' => route('admin.manufacture.show', $manufacture->id)
+                'success' => $msg,
+                'redirect' => $redirectUrl
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -575,14 +607,20 @@ class ManufactureController extends Controller
                 $manufacture->status = 0;
             }
         } elseif ($request->field === 'is_complete') {
-            if ($manufacture->collected_by) {
-                return response()->json(['error' => 'Cannot change complete status because the order has already been collected.'], 403);
-            }
             if ($request->value == 1) {
+                $pending = $manufacture->manufacture_qty - ($manufacture->received_qty ?? 0);
+                if ($pending > 0) {
+                    return response()->json([
+                        'error' => "Cannot mark as Complete: {$pending} unit(s) are still pending to be received. Please receive all items from the Receive Order page first."
+                    ], 422);
+                }
                 $manufacture->status = 2;
                 $manufacture->completed_by = auth()->id();
                 $manufacture->is_confirm = 1;
             } else {
+                if ($manufacture->collected_by) {
+                    return response()->json(['error' => 'Cannot change complete status because the order has already been received/collected.'], 403);
+                }
                 $manufacture->status = $manufacture->is_confirm ? 1 : 0;
                 $manufacture->completed_by = null;
             }
@@ -610,43 +648,120 @@ class ManufactureController extends Controller
 
     public function receiveUI()
     {
-        $pending_orders = Manufacture::with(['items.product', 'product'])->where('status', 2)->whereNull('collected_by')->get();
+        $pending_orders = Manufacture::with(['items.product.recipe', 'items.costSetting', 'product', 'worker'])
+            ->where(function ($q) {
+                $q->where('is_confirm', 1)->orWhere('status', '>=', 1);
+            })
+            ->where(function ($q) {
+                $q->whereColumn('received_qty', '<', 'manufacture_qty')
+                  ->orWhereNull('received_qty');
+            })
+            ->latest('id')
+            ->get();
+
         return view('admin.manufacture.receive', compact('pending_orders'));
     }
 
     public function receiveProcess(Request $request)
     {
-        $request->validate([
-            'manufacture_ids' => 'required|array',
-            'manufacture_ids.*' => 'exists:manufactures,id'
-        ]);
+        $ordersInput = [];
+
+        if ($request->has('orders') && is_array($request->orders)) {
+            $ordersInput = $request->orders;
+        } elseif ($request->has('manufacture_ids') && is_array($request->manufacture_ids)) {
+            foreach ($request->manufacture_ids as $mId) {
+                $m = Manufacture::find($mId);
+                if ($m) {
+                    $pending = max(1, $m->manufacture_qty - ($m->received_qty ?? 0));
+                    $ordersInput[] = [
+                        'id' => $mId,
+                        'receive_qty' => $pending
+                    ];
+                }
+            }
+        }
+
+        if (empty($ordersInput)) {
+            return response()->json(['error' => 'No orders selected to receive.'], 400);
+        }
 
         DB::beginTransaction();
         try {
-            $ids = $request->manufacture_ids;
-            $orders = Manufacture::whereIn('id', $ids)->where('status', 2)->whereNull('collected_by')->get();
+            $processedCount = 0;
+            $totalReceivedUnits = 0;
+            $totalWorkerPayment = 0;
 
-            if ($orders->isEmpty()) {
-                return response()->json(['error' => 'No valid orders selected. Orders might have already been received or are not completed yet.'], 400);
-            }
+            foreach ($ordersInput as $item) {
+                $orderId = $item['id'] ?? null;
+                $receiveQty = isset($item['receive_qty']) ? (int) $item['receive_qty'] : 0;
 
-            foreach ($orders as $order) {
-                $order->update([
-                    'collected_by' => auth()->id(),
-                ]);
+                if (!$orderId || $receiveQty <= 0) {
+                    continue;
+                }
 
-                WorkerPayment::create([
-                    'manufacture_order_id' => $order->id,
-                    'date' => date('Y-m-d'),
-                    'worker_id' => $order->worker_id,
-                    'total_amount' => $order->grand_total,
-                    'created_by' => auth()->id(),
-                    'status' => 'pending'
-                ]);
+                $order = Manufacture::with(['items', 'worker'])->lockForUpdate()->find($orderId);
+                if (!$order) {
+                    continue;
+                }
+
+                $pendingQty = max(0, $order->manufacture_qty - ($order->received_qty ?? 0));
+                if ($receiveQty > $pendingQty) {
+                    return response()->json([
+                        'error' => "Receive quantity ({$receiveQty}) exceeds pending quantity ({$pendingQty}) for order {$order->invoice_no}."
+                    ], 422);
+                }
+
+                // Increment received quantities
+                $newReceivedQty = ($order->received_qty ?? 0) + $receiveQty;
+                $order->received_qty = $newReceivedQty;
+
+                // Also update the item(s)
+                foreach ($order->items as $orderItem) {
+                    $orderItem->received_qty = ($orderItem->received_qty ?? 0) + $receiveQty;
+                    $orderItem->save();
+                }
+
+                // Check if all pending products received
+                if ($newReceivedQty >= $order->manufacture_qty) {
+                    $order->status = 2; // Is Complete!
+                    $order->completed_by = auth()->id();
+                    $order->collected_by = auth()->id();
+                } else {
+                    if ($order->status < 1) {
+                        $order->status = 1;
+                    }
+                }
+                $order->save();
+
+                // Determine unit price for worker payment
+                $firstItem = $order->items->first();
+                $unitPrice = $firstItem ? (float) $firstItem->unit_price : (float) ($order->body_part_price > 0 ? $order->body_part_price : $order->finishing_part_price);
+                $paymentAmount = $receiveQty * $unitPrice;
+
+                // Task 4: Create Worker Payment record based on the received quantity!
+                if ($order->worker_id && $paymentAmount > 0) {
+                    WorkerPayment::create([
+                        'manufacture_order_id' => $order->id,
+                        'date' => date('Y-m-d'),
+                        'worker_id' => $order->worker_id,
+                        'received_qty' => $receiveQty,
+                        'unit_price' => $unitPrice,
+                        'total_amount' => $paymentAmount,
+                        'created_by' => auth()->id(),
+                        'status' => 'pending'
+                    ]);
+                    $totalWorkerPayment += $paymentAmount;
+                }
+
+                $processedCount++;
+                $totalReceivedUnits += $receiveQty;
             }
 
             DB::commit();
-            return response()->json(['success' => 'Manufacture orders received and worker payments recorded successfully.']);
+
+            return response()->json([
+                'success' => "Successfully received {$totalReceivedUnits} unit(s) across {$processedCount} order(s). Worker payment of ৳ " . number_format($totalWorkerPayment, 2) . " created in pending status."
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);

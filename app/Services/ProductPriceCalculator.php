@@ -85,6 +85,8 @@ class ProductPriceCalculator
             'dealer_id'         => $dealerId,
             'dealer_type'       => ($dealer && $dealer->is_special) ? 'special' : 'normal',
             'items'             => $itemBreakdown,
+            'material_cost'     => round($materialCost),
+            'charges_total'     => round($chargesTotal),
             'total_cost_price'  => round($totalCostPrice),
             'profit_percent'    => round($profitPercent),
             'profit_amount'     => round($profitAmount),
@@ -147,10 +149,17 @@ class ProductPriceCalculator
 
         $result['regular_dealer_percent'] = $regularDealerVal;
         $result['regular_dealer_type'] = $regularDealerType;
+        $result['regular_dealer_profit_amount'] = round($result['profit_amount']);
         $result['regular_dealer_price'] = round($result['dealer_price']);
+
         $result['special_dealer_percent'] = $specialDealerVal;
         $result['special_dealer_type'] = $specialDealerType;
+        $result['special_dealer_profit_amount'] = round($special['profit_amount']);
         $result['special_dealer_price'] = round($special['dealer_price']);
+
+        $result['customer_profit_percent'] = $retailVal;
+        $result['customer_profit_type'] = $retailType;
+        $result['customer_profit_amount'] = round($result['retail_price'] - $result['total_cost_price']);
         $result['regular_price'] = round($result['retail_price']);
 
         return $result;

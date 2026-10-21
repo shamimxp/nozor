@@ -48,7 +48,7 @@
                                 <th>Product</th>
                                 <th>Worker</th>
                                 <th>Total Amount</th>
-                                <th>Payment Status</th>
+                                <th>Is Paid</th>
                                 <th>Created By</th>
                                 <th>Actions</th>
                             </tr>
@@ -158,26 +158,37 @@
         });
 
         $(document).on('change', '.change-status', function() {
-            let id = $(this).data('id');
-            let field = $(this).data('field');
-            let value = $(this).is(':checked') ? 1 : 0;
+            let chk = $(this);
+            let id = chk.data('id');
 
-            $.ajax({
-                url: "{{ route('admin.worker-payment.change-status') }}",
-                type: 'POST',
-                data: {
-                    id: id,
-                    field: field,
-                    value: value,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success(response.success);
-                    table.draw(false);
-                },
-                error: function(xhr) {
-                    toastr.error(xhr.responseJSON.error || 'Something went wrong.');
-                    table.draw(false);
+            Swal.fire({
+                title: 'Confirm Payment',
+                text: "Mark this worker payment as Paid? Once marked as Paid, it cannot be changed back to Pending.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28c76f',
+                cancelButtonColor: '#82868b',
+                confirmButtonText: 'Yes, Mark as Paid'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.worker-payment.change-status') }}",
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            toastr.success(response.success);
+                            table.draw(false);
+                        },
+                        error: function(xhr) {
+                            toastr.error(xhr.responseJSON.error || 'Something went wrong.');
+                            table.draw(false);
+                        }
+                    });
+                } else {
+                    chk.prop('checked', false);
                 }
             });
         });

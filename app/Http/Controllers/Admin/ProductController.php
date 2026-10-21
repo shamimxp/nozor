@@ -428,6 +428,7 @@ class ProductController extends Controller
             'variations.variationValue',
             'recipe.items.rawMaterialProduct.materialType',
             'recipe.items.rawMaterialProduct.unit',
+            'recipe.costSetting.items.costHead',
         ])->findOrFail($id);
 
         $pricing = $this->productPricing($product, $calculator);
@@ -612,10 +613,20 @@ class ProductController extends Controller
                 'type' => 'manufacture',
                 'available' => true,
                 'cost_price' => $quote['total_cost_price'],
+                'material_cost' => $quote['material_cost'] ?? 0,
+                'charges_total' => $quote['charges_total'] ?? 0,
+                'items' => $quote['items'] ?? [],
                 'regular_dealer_percent' => $quote['regular_dealer_percent'],
+                'regular_dealer_type' => $quote['regular_dealer_type'] ?? 'percentage',
+                'regular_dealer_profit_amount' => $quote['regular_dealer_profit_amount'] ?? $quote['profit_amount'],
                 'regular_dealer_price' => $quote['regular_dealer_price'],
                 'special_dealer_percent' => $quote['special_dealer_percent'],
+                'special_dealer_type' => $quote['special_dealer_type'] ?? 'percentage',
+                'special_dealer_profit_amount' => $quote['special_dealer_profit_amount'] ?? 0,
                 'special_dealer_price' => $quote['special_dealer_price'],
+                'customer_profit_percent' => $quote['customer_profit_percent'] ?? 0,
+                'customer_profit_type' => $quote['customer_profit_type'] ?? 'percentage',
+                'customer_profit_amount' => $quote['customer_profit_amount'] ?? 0,
                 'regular_price' => $quote['regular_price'],
                 'discount_price' => $this->discountedPrice($quote['regular_price'], $product),
             ];

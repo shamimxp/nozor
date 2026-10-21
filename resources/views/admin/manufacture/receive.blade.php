@@ -1,104 +1,362 @@
 @extends('layouts.admin')
 @section('title', 'Receive Manufacture Orders')
+
+@push('styles')
+<style>
+    .custom-dark-btn {
+        background-color: #283046 !important;
+        border-color: #283046 !important;
+        color: #fff !important;
+        transition: all 0.2s ease;
+    }
+    .custom-dark-btn:hover {
+        background-color: #1a233a !important;
+        border-color: #1a233a !important;
+        color: #fff !important;
+    }
+    .input-select-group {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        position: relative;
+    }
+    /* Select Container Box */
+    .select-container {
+        flex: 1 1 auto;
+        min-width: 0 !important;
+        max-width: 100%;
+        position: relative !important;
+    }
+    .select-container .select2-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: block !important;
+    }
+    .select-container .select2-container .select2-selection--single {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        height: 40px !important; 
+        display: flex !important;
+        align-items: center !important;
+        border: 1px solid #d8d6de !important;
+        background-color: #fff !important;
+        padding-left: 10px !important;
+    }
+    .select-container .select2-container--open .select2-selection--single {
+        border-color: #7367f0 !important;
+        box-shadow: 0 2px 8px rgba(115, 103, 240, 0.15) !important;
+    }
+    .select-container .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 38px !important;
+        padding-left: 0 !important;
+        padding-right: 28px !important;
+        display: flex !important;
+        align-items: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        width: 100% !important;
+        color: #5e5873 !important;
+        font-size: 0.9rem !important;
+    }
+    .select-container .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+        right: 8px !important;
+    }
+    /* Select2 Dropdown Styling - Contained strictly within the card */
+    .select-container .select2-dropdown {
+        border: 1px solid #7367f0 !important;
+        border-radius: 0.357rem !important;
+        box-shadow: 0 8px 25px rgba(47, 43, 61, 0.15) !important;
+        z-index: 1060 !important;
+        background-color: #fff !important;
+        overflow: hidden !important;
+        margin-top: 2px !important;
+        min-width: 100% !important;
+        width: 100% !important;
+        left: 0 !important;
+    }
+    .select-container .select2-search--dropdown {
+        padding: 8px 10px !important;
+        background-color: #f8f8fb !important;
+        border-bottom: 1px solid #ebe9f1 !important;
+    }
+    .select-container .select2-search--dropdown .select2-search__field {
+        height: 36px !important;
+        border: 1px solid #d8d6de !important;
+        border-radius: 0.357rem !important;
+        padding: 6px 12px !important;
+        font-size: 0.88rem !important;
+        background-color: #fff !important;
+        outline: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        color: #5e5873 !important;
+    }
+    .select-container .select2-search--dropdown .select2-search__field:focus {
+        border-color: #7367f0 !important;
+        box-shadow: 0 0 0 2px rgba(115, 103, 240, 0.2) !important;
+    }
+    .select-container .select2-results__options {
+        max-height: 280px !important;
+        overflow-y: auto !important;
+        padding: 6px !important;
+    }
+    .select-container .select2-results__option {
+        padding: 8px 12px !important;
+        border-radius: 0.25rem !important;
+        margin-bottom: 2px !important;
+        font-size: 0.88rem !important;
+        color: #5e5873 !important;
+        border-bottom: 1px solid #f8f8fb !important;
+    }
+    .select-container .select2-results__option--highlighted {
+        background-color: #7367f0 !important;
+        color: #fff !important;
+    }
+    .select-container .select2-results__option--highlighted strong,
+    .select-container .select2-results__option--highlighted small {
+        color: #fff !important;
+    }
+    .select-container .select2-results__option--highlighted .badge-light-primary {
+        background-color: #fff !important;
+        color: #7367f0 !important;
+    }
+    .select-container .select2-results__option--highlighted .badge-light-danger {
+        background-color: #ea5455 !important;
+        color: #fff !important;
+    }
+    .select-container .select2-results__option[aria-selected=true] {
+        background-color: #f3f2fe !important;
+        color: #7367f0 !important;
+    }
+
+    /* Buttons & Barcode Input */
+    #btn-add-manual, #btn-add-barcode {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        height: 40px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 16px !important;
+        font-weight: 600;
+    }
+    .barcode-input-group .form-control {
+        height: 40px !important;
+    }
+    .barcode-input-group .input-group-text {
+        height: 40px !important;
+    }
+
+    /* Table Styling */
+    .receive-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #ebe9f1;
+        border-radius: 0.428rem;
+        background: #fff;
+        width: 100%;
+    }
+    .receive-table {
+        width: 100%;
+        margin-bottom: 0;
+    }
+    .receive-table th {
+        background-color: #f8f8fb !important;
+        color: #5e5873;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        vertical-align: middle !important;
+        padding: 0.75rem 0.6rem !important;
+        border-bottom: 2px solid #ebe9f1;
+    }
+    .receive-table td {
+        vertical-align: middle !important;
+        padding: 0.75rem 0.6rem !important;
+    }
+    .input-receive-qty {
+        font-weight: 700;
+        text-align: center;
+        width: 85px;
+        max-width: 95px;
+        margin: 0 auto;
+        border-radius: 0.357rem;
+    }
+    .receive-scan-card {
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .receive-scan-card:hover {
+        border-color: #7367f0 !important;
+    }
+    @media (max-width: 767.98px) {
+        .receive-table th, .receive-table td {
+            padding: 0.5rem 0.4rem !important;
+            font-size: 0.85rem;
+        }
+        .input-receive-qty {
+            width: 75px;
+        }
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="row">
-    <style>
-        .custom-dark-btn {
-            background-color: #283046 !important;
-            border-color: #283046 !important;
-            color: #fff !important;
-        }
-        .custom-dark-btn:hover {
-            background-color: #1a233a !important;
-        }
-        .select-container .select2-container {
-            width: 100% !important;
-        }
-        .select-container .select2-container .select2-selection--single {
-            border-top-right-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
-            height: 38px !important; 
-        }
-        .select-container .select2-container .select2-selection--single .select2-selection__rendered {
-            line-height: 36px !important;
-        }
-        .select-container .select2-container .select2-selection--single .select2-selection__arrow {
-            height: 36px !important;
-        }
-    </style>
     <div class="col-12">
-        <div class="card">
-            <div class="card-header border-bottom p-1">
-                <h4 class="card-title">Receive Manufacture Orders</h4>
+        <div class="card shadow-sm mb-2">
+            <div class="card-header border-bottom py-1 d-flex justify-content-between align-items-center flex-wrap" style="gap: 10px;">
+                <div>
+                    <h4 class="card-title mb-25 font-weight-bolder">Receive Manufacture Orders</h4>
+                    <small class="text-muted">Receive partial or full quantities from workers and auto-generate worker payments</small>
+                </div>
+                <a href="{{ route('admin.manufacture.index') }}" class="btn btn-outline-secondary btn-sm">
+                    <i data-feather="arrow-left" class="mr-25"></i> Back to Orders
+                </a>
             </div>
+
             <div class="card-body mt-2">
-                
-                <div class="row mb-2 align-items-end">
-                    <div class="col-md-5">
-                        <label>Scan Barcode (Manufacture ID)</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i data-feather="maximize"></i></span>
+                <!-- Top Scan & Manual Selection Toolbar -->
+                <div class="row align-items-stretch">
+                    <!-- Scan Barcode Box -->
+                    <div class="col-12 col-lg-6 mb-1 mb-lg-0">
+                        <div class="p-1 p-md-2 border rounded bg-light h-100 d-flex flex-column justify-content-between shadow-none receive-scan-card">
+                            <div>
+                                <label class="font-weight-bold text-dark d-flex align-items-center mb-50">
+                                    <i data-feather="maximize" class="mr-50 text-primary"></i> Scan Barcode / Enter Invoice No
+                                </label>
+                                <div class="input-group barcode-input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-white"><i data-feather="camera"></i></span>
+                                    </div>
+                                    <input type="text" id="barcode_input" class="form-control" placeholder="Scan or type Invoice No..." autofocus>
+                                    <div class="input-group-append">
+                                        <button class="btn custom-dark-btn px-2" type="button" id="btn-add-barcode">
+                                            <i data-feather="plus" class="mr-25"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <input type="text" id="barcode_input" class="form-control" placeholder="Scan Barcode Here..." autofocus>
-                            <div class="input-group-append">
-                                <button class="btn custom-dark-btn" type="button" id="btn-add-barcode">Add</button>
-                            </div>
+                            <small class="text-muted mt-50 d-block">
+                                <i data-feather="corner-down-right" style="width: 13px; height: 13px;" class="mr-25"></i> Press <strong>Enter</strong> or click <strong>Add</strong> to scan barcode directly.
+                            </small>
                         </div>
                     </div>
-                    
-                    <div class="col-md-2 text-center">
-                        <h4 class="mb-0">OR</h4>
-                    </div>
 
-                    <div class="col-md-5">
-                        <label>Manual Selection</label>
-                        <div class="d-flex">
-                            <div class="select-container" style="flex-grow: 1;">
-                                <select id="manual_select" class="form-control select2">
-                                    <option value="">Select a Completed Order...</option>
-                                    @foreach($pending_orders as $order)
-                                        <option value="{{ $order->id }}" 
-                                            data-invoice="{{ $order->invoice_no }}" 
-                                            data-product="{{ $order->product->name ?? 'N/A' }}" 
-                                            data-worker="{{ $order->worker->name ?? 'N/A' }}"
-                                            data-qty="{{ $order->manufacture_qty }}"
-                                            data-total="{{ number_format($order->grand_total, 2) }}">
-                                            {{ $order->invoice_no }} - {{ $order->product->name ?? 'N/A' }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                    <!-- Manual Selection Box -->
+                    <div class="col-12 col-lg-6">
+                        <div class="p-1 p-md-2 border rounded bg-light h-100 d-flex flex-column justify-content-between shadow-none receive-scan-card">
+                            <div>
+                                <label class="font-weight-bold text-dark d-flex align-items-center mb-50">
+                                    <i data-feather="list" class="mr-50 text-primary"></i> Select Confirmed Order to Receive
+                                </label>
+                                <div class="input-select-group">
+                                    <div class="select-container" id="manual_select_container">
+                                        <select id="manual_select" class="form-control select2">
+                                            <option value="">-- Choose a Confirmed Order with Pending Qty --</option>
+                                            @foreach($pending_orders as $order)
+                                                @php
+                                                    $prod = $order->items->first() ? $order->items->first()->product : $order->product;
+                                                    $prodName = $prod ? $prod->name : 'N/A';
+                                                    $workerName = $order->worker ? $order->worker->name : 'Not Assigned';
+                                                    $orderQty = (int) $order->manufacture_qty;
+                                                    $receivedQty = (int) ($order->received_qty ?? 0);
+                                                    $pendingQty = max(0, $orderQty - $receivedQty);
+                                                    $firstItem = $order->items->first();
+                                                    $unitPrice = $firstItem ? (float) $firstItem->unit_price : (float) ($order->body_part_price > 0 ? $order->body_part_price : $order->finishing_part_price);
+                                                @endphp
+                                                <option value="{{ $order->id }}" 
+                                                    data-invoice="{{ $order->invoice_no }}" 
+                                                    data-product="{{ $prodName }}" 
+                                                    data-worker="{{ $workerName }}"
+                                                    data-order-qty="{{ $orderQty }}"
+                                                    data-received-qty="{{ $receivedQty }}"
+                                                    data-pending-qty="{{ $pendingQty }}"
+                                                    data-unit-price="{{ $unitPrice }}">
+                                                    {{ $order->invoice_no }} - {{ $prodName }} [Pending: {{ $pendingQty }} pcs | Worker: {{ $workerName }}]
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button class="btn custom-dark-btn px-2" type="button" id="btn-add-manual" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                        <i data-feather="plus" class="mr-25"></i> Add
+                                    </button>
+                                </div>
                             </div>
-                            <button class="btn custom-dark-btn" type="button" id="btn-add-manual" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">Add</button>
+                            <small class="text-muted mt-50 d-block">
+                                <i data-feather="check-circle" style="width: 13px; height: 13px;" class="mr-25 text-success"></i> Only confirmed orders with uncollected pending units are listed.
+                            </small>
                         </div>
                     </div>
                 </div>
 
-                <hr>
+                <hr class="my-2">
 
-                <h5 class="mb-1">Items to Receive</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="receive-table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Invoice No</th>
-                                <th>Product</th>
-                                <th>Worker</th>
-                                <th>Quantity</th>
-                                <th>Total Amount</th>
-                                <th>Action</th>
+                <!-- Receiving Items Table Section -->
+                <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap" style="gap: 8px;">
+                    <div>
+                        <h5 class="mb-0 font-weight-bold text-dark">
+                            <i data-feather="inbox" class="mr-50 text-primary"></i> Orders to Receive in this Batch
+                        </h5>
+                    </div>
+                    <div>
+                        <span class="badge badge-light-secondary font-weight-normal">
+                            Edit <strong class="text-primary font-weight-bold">Receive Qty</strong> to record partial deliveries
+                        </span>
+                    </div>
+                </div>
+
+                <div class="receive-table-container">
+                    <table class="table table-hover table-bordered receive-table" id="receive-table">
+                        <thead>
+                            <tr class="text-center font-weight-bold text-uppercase">
+                                <th style="min-width: 130px;">Invoice No</th>
+                                <th class="text-left" style="min-width: 160px;">Product</th>
+                                <th class="text-left" style="min-width: 140px;">Worker</th>
+                                <th style="min-width: 80px;">Order Qty</th>
+                                <th style="min-width: 85px;">Already Recv</th>
+                                <th style="min-width: 80px;">Pending</th>
+                                <th style="min-width: 110px;">Receive Qty</th>
+                                <th style="min-width: 95px;" class="text-right">Unit Rate</th>
+                                <th style="min-width: 120px;" class="text-right">Worker Payable</th>
+                                <th style="min-width: 55px; width: 55px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Items will be appended here -->
+                            <tr id="emptyReceiveRow">
+                                <td colspan="10" class="text-center py-4 text-muted">
+                                    <i data-feather="package" style="width: 38px; height: 38px;" class="text-secondary mb-50"></i>
+                                    <h6 class="text-muted font-weight-bold mb-25">No orders added to receive list yet</h6>
+                                    <small>Scan barcode or select confirmed orders above to begin receiving.</small>
+                                </td>
+                            </tr>
                         </tbody>
+                        <tfoot class="bg-light font-weight-bold d-none" id="receiveTableFooter">
+                            <tr>
+                                <td colspan="6" class="text-right text-uppercase small font-weight-bold">Batch Totals:</td>
+                                <td class="text-center text-primary font-weight-bolder" id="batchTotalUnits" style="font-size: 15px;">0</td>
+                                <td class="text-right small text-muted font-weight-bold">Total Payment:</td>
+                                <td class="text-right text-success font-weight-bolder" id="batchTotalPayment" style="font-size: 15px;">৳ 0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
-                <div class="text-right mt-2">
-                    <button type="button" class="btn btn-success" id="btn-process-receive" disabled>
-                        <i data-feather="check-circle"></i> Process Receiving
-                    </button>
+                <!-- Footer Action Bar -->
+                <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap" style="gap: 12px;">
+                    <div class="text-muted small">
+                        <i data-feather="info" style="width: 14px; height: 14px;" class="mr-25 text-primary align-middle"></i>
+                        When all pending products are received, order status automatically transitions to <span class="badge badge-light-success">Complete</span>.
+                    </div>
+                    <div class="w-100 w-md-auto text-md-right text-center">
+                        <button type="button" class="btn btn-success btn-lg font-weight-bold shadow w-100 w-md-auto px-2" id="btn-process-receive" disabled>
+                            <i data-feather="check-circle" class="mr-50"></i> Process Receiving & Generate Payments
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -109,9 +367,55 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        if ($('.select2').length > 0) {
-            $('.select2').select2();
-        }
+        // Initialize Select2 with strict container attachment and custom templates
+        $('#manual_select').select2({
+            width: '100%',
+            dropdownParent: $('#manual_select_container'),
+            placeholder: '-- Choose a Confirmed Order with Pending Qty --',
+            allowClear: true,
+            escapeMarkup: function(m) { return m; },
+            templateResult: function(data) {
+                if (!data.id) return data.text;
+                var opt = $(data.element);
+                var invoice = opt.data('invoice') || '';
+                var product = opt.data('product') || '';
+                var worker = opt.data('worker') || '';
+                var pending = opt.data('pending-qty') || 0;
+                var rate = opt.data('unit-price') || 0;
+
+                return `
+                    <div class="d-flex justify-content-between align-items-center py-25">
+                        <div class="text-truncate mr-1">
+                            <div class="d-flex align-items-center text-truncate">
+                                <span class="badge badge-light-primary mr-50 font-weight-bold flex-shrink-0">${invoice}</span>
+                                <strong class="text-dark text-truncate">${product}</strong>
+                            </div>
+                            <small class="text-muted d-block mt-25">
+                                Worker: <strong>${worker}</strong> &bull; Rate: ৳ ${parseFloat(rate).toFixed(2)}
+                            </small>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="badge badge-light-danger font-weight-bold px-50 py-25" style="font-size: 11px;">
+                                ${pending} pcs pending
+                            </span>
+                        </div>
+                    </div>
+                `;
+            },
+            templateSelection: function(data) {
+                if (!data.id) return data.text;
+                var opt = $(data.element);
+                var invoice = opt.data('invoice') || '';
+                var product = opt.data('product') || '';
+                var pending = opt.data('pending-qty') || 0;
+
+                return `
+                    <span class="badge badge-light-primary mr-50 font-weight-bold flex-shrink-0">${invoice}</span>
+                    <span class="text-dark font-weight-bold text-truncate mr-50">${product}</span>
+                    <span class="badge badge-light-danger flex-shrink-0" style="font-size: 11px;">${pending} pending</span>
+                `;
+            }
+        });
 
         let addedIds = [];
 
@@ -121,23 +425,77 @@
             }
         }
 
-        function addOrderToTable(id, invoice, product, worker, qty, total) {
+        function calculateTotals() {
+            let totalUnits = 0;
+            let totalPayment = 0;
+
+            $('.input-receive-qty').each(function() {
+                let qty = parseInt($(this).val()) || 0;
+                let rate = parseFloat($(this).data('rate')) || 0;
+                let rowPayment = qty * rate;
+
+                let rowId = $(this).data('id');
+                $('#payment-val-' + rowId).text('৳ ' + rowPayment.toFixed(2));
+
+                totalUnits += qty;
+                totalPayment += rowPayment;
+            });
+
+            $('#batchTotalUnits').text(totalUnits);
+            $('#batchTotalPayment').text('৳ ' + totalPayment.toFixed(2));
+
+            if (addedIds.length > 0 && totalUnits > 0) {
+                $('#receiveTableFooter').removeClass('d-none');
+                $('#btn-process-receive').prop('disabled', false);
+            } else {
+                $('#receiveTableFooter').addClass('d-none');
+                $('#btn-process-receive').prop('disabled', true);
+            }
+        }
+
+        function addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice) {
+            id = id.toString();
             if (addedIds.includes(id)) {
-                toastr.warning('This order is already added to the list.');
+                toastr.warning('Order #' + invoice + ' is already added to the batch list.');
                 return;
             }
 
+            if (pendingQty <= 0) {
+                toastr.info('Order #' + invoice + ' is already fully received.');
+                return;
+            }
+
+            $('#emptyReceiveRow').hide();
             addedIds.push(id);
-            
+
+            let initialPayable = (pendingQty * unitPrice).toFixed(2);
+
             let tr = `
                 <tr id="row-${id}">
-                    <td>${invoice}</td>
-                    <td>${product}</td>
-                    <td>${worker}</td>
-                    <td>${qty}</td>
-                    <td>${total}</td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-danger btn-remove" data-id="${id}">
+                    <td class="text-center font-weight-bold">
+                        <span class="badge badge-light-primary font-weight-bold">${invoice}</span>
+                    </td>
+                    <td><strong class="text-dark">${product}</strong></td>
+                    <td><strong>${worker}</strong></td>
+                    <td class="text-center font-weight-bold">${orderQty}</td>
+                    <td class="text-center text-success font-weight-bold">${receivedQty}</td>
+                    <td class="text-center text-danger font-weight-bold">${pendingQty}</td>
+                    <td class="text-center">
+                        <input type="number" 
+                               class="form-control form-control-sm input-receive-qty shadow-none" 
+                               data-id="${id}" 
+                               data-rate="${unitPrice}" 
+                               data-pending="${pendingQty}" 
+                               min="1" 
+                               max="${pendingQty}" 
+                               value="${pendingQty}">
+                    </td>
+                    <td class="text-right font-weight-bold">৳ ${unitPrice.toFixed(2)}</td>
+                    <td class="text-right text-success font-weight-bolder" id="payment-val-${id}">
+                        ৳ ${initialPayable}
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-remove p-50 rounded" data-id="${id}" title="Remove order from batch">
                             <i data-feather="trash-2"></i>
                         </button>
                     </td>
@@ -146,115 +504,163 @@
 
             $('#receive-table tbody').append(tr);
             renderFeather();
-            updateProcessButton();
+            calculateTotals();
         }
 
-        function updateProcessButton() {
-            if (addedIds.length > 0) {
-                $('#btn-process-receive').prop('disabled', false);
-            } else {
-                $('#btn-process-receive').prop('disabled', true);
-            }
-        }
-
-        // Add from manual selection
+        // Add from manual select
         $('#btn-add-manual').click(function() {
-            let selectedOption = $('#manual_select').find(':selected');
-            let id = selectedOption.val();
+            let option = $('#manual_select').find(':selected');
+            let id = option.val();
             
             if (!id) {
-                toastr.error('Please select an order first.');
+                toastr.error('Please select an order from the list first.');
                 return;
             }
 
-            let invoice = selectedOption.data('invoice');
-            let product = selectedOption.data('product');
-            let worker = selectedOption.data('worker');
-            let qty = selectedOption.data('qty');
-            let total = selectedOption.data('total');
+            let invoice = option.data('invoice');
+            let product = option.data('product');
+            let worker = option.data('worker');
+            let orderQty = parseInt(option.data('order-qty')) || 0;
+            let receivedQty = parseInt(option.data('received-qty')) || 0;
+            let pendingQty = parseInt(option.data('pending-qty')) || 0;
+            let unitPrice = parseFloat(option.data('unit-price')) || 0;
 
-            addOrderToTable(id, invoice, product, worker, qty, total);
-            
-            // Reset dropdown
+            addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice);
             $('#manual_select').val('').trigger('change');
         });
 
-        // Add from barcode scanner
+        // Add from barcode input
         $('#barcode_input').on('keypress', function(e) {
-            if (e.which == 13) { // Enter key
+            if (e.which === 13) {
                 e.preventDefault();
                 $('#btn-add-barcode').click();
             }
         });
 
         $('#btn-add-barcode').click(function() {
-            let id = $('#barcode_input').val().trim();
-            if (!id) {
-                return;
-            }
+            let query = $('#barcode_input').val().trim();
+            if (!query) return;
 
-            // Find if this ID exists in our pre-loaded select options to grab the details quickly
-            let option = $('#manual_select option[value="'+id+'"]');
-            
-            if (option.length > 0) {
-                let invoice = option.data('invoice');
-                let product = option.data('product');
-                let worker = option.data('worker');
-                let qty = option.data('qty');
-                let total = option.data('total');
+            let matchedOption = null;
+            $('#manual_select option').each(function() {
+                let optVal = $(this).val();
+                let optInvoice = $(this).data('invoice');
+                if (optVal == query || (optInvoice && optInvoice.toLowerCase() === query.toLowerCase())) {
+                    matchedOption = $(this);
+                    return false;
+                }
+            });
 
-                addOrderToTable(id, invoice, product, worker, qty, total);
+            if (matchedOption && matchedOption.val()) {
+                let id = matchedOption.val();
+                let invoice = matchedOption.data('invoice');
+                let product = matchedOption.data('product');
+                let worker = matchedOption.data('worker');
+                let orderQty = parseInt(matchedOption.data('order-qty')) || 0;
+                let receivedQty = parseInt(matchedOption.data('received-qty')) || 0;
+                let pendingQty = parseInt(matchedOption.data('pending-qty')) || 0;
+                let unitPrice = parseFloat(matchedOption.data('unit-price')) || 0;
+
+                addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice);
                 $('#barcode_input').val('').focus();
             } else {
-                toastr.error('Order ID ' + id + ' not found or it is not completed yet.');
+                toastr.error('Order "' + query + '" not found or has no pending units to receive.');
                 $('#barcode_input').val('').focus();
             }
         });
 
-        // Remove from table
+        // Quantity change recalculation
+        $(document).on('input change', '.input-receive-qty', function() {
+            let val = parseInt($(this).val()) || 0;
+            let max = parseInt($(this).data('pending')) || 1;
+
+            if (val > max) {
+                toastr.warning('Quantity cannot exceed pending quantity of ' + max);
+                $(this).val(max);
+                val = max;
+            } else if (val < 1) {
+                $(this).val(1);
+                val = 1;
+            }
+
+            calculateTotals();
+        });
+
+        // Remove row
         $(document).on('click', '.btn-remove', function() {
             let id = $(this).data('id').toString();
             addedIds = addedIds.filter(item => item !== id);
             $('#row-' + id).remove();
-            updateProcessButton();
+
+            if (addedIds.length === 0) {
+                $('#emptyReceiveRow').show();
+            }
+
+            calculateTotals();
         });
 
         // Process Receiving
         $('#btn-process-receive').click(function() {
             if (addedIds.length === 0) return;
 
+            let ordersPayload = [];
+            let hasError = false;
+
+            $('.input-receive-qty').each(function() {
+                let id = $(this).data('id');
+                let qty = parseInt($(this).val()) || 0;
+                let max = parseInt($(this).data('pending')) || 1;
+
+                if (qty <= 0 || qty > max) {
+                    hasError = true;
+                    toastr.error('Invalid quantity entered for one of the orders.');
+                    return false;
+                }
+
+                ordersPayload.push({
+                    id: id,
+                    receive_qty: qty
+                });
+            });
+
+            if (hasError || ordersPayload.length === 0) return;
+
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You are about to receive " + addedIds.length + " order(s).",
-                icon: 'warning',
+                title: 'Confirm Order Receiving',
+                text: "Process receiving for " + ordersPayload.length + " order(s)? Worker payments will be generated automatically.",
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28c76f',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, process it!'
+                cancelButtonColor: '#82868b',
+                confirmButtonText: 'Yes, receive now!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    
-                    // Show loading
-                    let btn = $(this);
+                    let btn = $('#btn-process-receive');
                     let originalHtml = btn.html();
-                    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+                    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing Receiving...');
 
                     $.ajax({
                         url: "{{ route('admin.manufacture.receive.process') }}",
                         type: 'POST',
                         data: {
                             _token: "{{ csrf_token() }}",
-                            manufacture_ids: addedIds
+                            orders: ordersPayload
                         },
                         success: function(response) {
-                            toastr.success(response.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Received Successfully!',
+                                text: response.success,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
                             setTimeout(function() {
                                 window.location.reload();
-                            }, 1000);
+                            }, 1500);
                         },
                         error: function(xhr) {
                             btn.prop('disabled', false).html(originalHtml);
-                            toastr.error(xhr.responseJSON.error || 'Something went wrong.');
+                            toastr.error(xhr.responseJSON.error || 'An error occurred while processing receiving.');
                         }
                     });
                 }

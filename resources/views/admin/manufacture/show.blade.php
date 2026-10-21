@@ -165,47 +165,52 @@
 </div>
 
 <!-- Key Metrics Row -->
+@php
+    $totalOrderQty = (int) $manufacture->manufacture_qty;
+    $totalRecvQty = (int) ($manufacture->received_qty ?? 0);
+    $totalPendingQty = max(0, $totalOrderQty - $totalRecvQty);
+@endphp
 <div class="row mb-2">
-    <!-- Metric 1: Total Items -->
+    <!-- Metric 1: Order Quantity -->
     <div class="col-xl-3 col-sm-6 mb-1 mb-xl-0">
         <div class="card kpi-card h-100 bg-white">
             <div class="card-body p-1 d-flex align-items-center">
                 <div class="kpi-icon bg-light-primary text-primary mr-1">
-                    <i data-feather="layers"></i>
-                </div>
-                <div>
-                    <h4 class="font-weight-bolder mb-0 text-dark">{{ $manufacture->items->count() }}</h4>
-                    <span class="text-muted small">Distinct Order Items</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Metric 2: Total Units -->
-    <div class="col-xl-3 col-sm-6 mb-1 mb-xl-0">
-        <div class="card kpi-card h-100 bg-white">
-            <div class="card-body p-1 d-flex align-items-center">
-                <div class="kpi-icon bg-light-info text-info mr-1">
                     <i data-feather="package"></i>
                 </div>
                 <div>
-                    <h4 class="font-weight-bolder mb-0 text-info">{{ $manufacture->manufacture_qty }}</h4>
-                    <span class="text-muted small">Total Manufacture Units</span>
+                    <h4 class="font-weight-bolder mb-0 text-primary">{{ $totalOrderQty }}</h4>
+                    <span class="text-muted small">Total Ordered Quantity</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Metric 3: Body Parts Cost -->
+    <!-- Metric 2: Received Quantity -->
+    <div class="col-xl-3 col-sm-6 mb-1 mb-xl-0">
+        <div class="card kpi-card h-100 bg-white">
+            <div class="card-body p-1 d-flex align-items-center">
+                <div class="kpi-icon bg-light-success text-success mr-1">
+                    <i data-feather="check-circle"></i>
+                </div>
+                <div>
+                    <h4 class="font-weight-bolder mb-0 text-success">{{ $totalRecvQty }}</h4>
+                    <span class="text-muted small">Received by Admin</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric 3: Pending Quantity -->
     <div class="col-xl-3 col-sm-6 mb-1 mb-sm-0">
         <div class="card kpi-card h-100 bg-white">
             <div class="card-body p-1 d-flex align-items-center">
-                <div class="kpi-icon bg-light-warning text-warning mr-1">
-                    <i data-feather="cpu"></i>
+                <div class="kpi-icon bg-light-{{ $totalPendingQty > 0 ? 'danger' : 'secondary' }} text-{{ $totalPendingQty > 0 ? 'danger' : 'secondary' }} mr-1">
+                    <i data-feather="clock"></i>
                 </div>
                 <div>
-                    <h4 class="font-weight-bolder mb-0 text-dark">৳ {{ number_format($manufacture->body_total, 2) }}</h4>
-                    <span class="text-muted small">Body Parts Cost</span>
+                    <h4 class="font-weight-bolder mb-0 text-{{ $totalPendingQty > 0 ? 'danger' : 'muted' }}">{{ $totalPendingQty }}</h4>
+                    <span class="text-muted small">Pending to Receive</span>
                 </div>
             </div>
         </div>
@@ -215,12 +220,12 @@
     <div class="col-xl-3 col-sm-6">
         <div class="card kpi-card h-100 bg-white">
             <div class="card-body p-1 d-flex align-items-center">
-                <div class="kpi-icon bg-light-success text-success mr-1">
+                <div class="kpi-icon bg-light-info text-info mr-1">
                     <i data-feather="credit-card"></i>
                 </div>
                 <div>
-                    <h4 class="font-weight-bolder mb-0 text-success">৳ {{ number_format($manufacture->grand_total, 2) }}</h4>
-                    <span class="text-muted small">Grand Total Payable</span>
+                    <h4 class="font-weight-bolder mb-0 text-dark">৳ {{ number_format($manufacture->grand_total, 2) }}</h4>
+                    <span class="text-muted small">Order Total Amount</span>
                 </div>
             </div>
         </div>
@@ -311,7 +316,7 @@
         <div class="card table-items-card mb-2">
             <div class="card-header bg-light py-1 border-bottom d-flex justify-content-between align-items-center flex-wrap">
                 <h5 class="card-title mb-0 font-weight-bold text-dark">
-                    <i data-feather="package" class="mr-50 text-primary"></i> Order Products & Specifications ({{ $manufacture->items->count() }})
+                    <i data-feather="package" class="mr-50 text-primary"></i> Order Product & Specifications
                 </h5>
                 <span class="badge badge-pill badge-primary font-weight-bolder">Total Units: {{ $manufacture->manufacture_qty }}</span>
             </div>
@@ -320,14 +325,16 @@
                     <thead class="thead-light">
                         <tr class="text-center font-weight-bold text-uppercase small">
                             <th style="width: 45px;">#</th>
-                            <th class="text-left" style="min-width: 220px;">Product & Blueprint</th>
-                            <th style="min-width: 110px;">Ref Invoice</th>
-                            <th style="min-width: 130px;">Cost Title</th>
-                            <th style="min-width: 110px;">Part Type</th>
-                            <th style="width: 80px;">Quantity</th>
-                            <th style="width: 110px;" class="text-right">Unit Price</th>
-                            <th style="width: 120px;" class="text-right">Total Price</th>
-                            <th style="min-width: 130px;">Note</th>
+                            <th class="text-left" style="min-width: 200px;">Product & Blueprint</th>
+                            <th style="min-width: 100px;">Ref Invoice</th>
+                            <th style="min-width: 120px;">Cost Title</th>
+                            <th style="min-width: 100px;">Part Type</th>
+                            <th style="width: 75px;">Order Qty</th>
+                            <th style="width: 75px;">Received</th>
+                            <th style="width: 75px;">Pending</th>
+                            <th style="width: 100px;" class="text-right">Unit Price</th>
+                            <th style="width: 110px;" class="text-right">Total Price</th>
+                            <th style="min-width: 120px;">Note</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -337,6 +344,9 @@
                                 $recipe = $prod ? $prod->recipe : null;
                                 $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
                                 $mimg = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : ($prod && $prod->featured_image ? asset(config('imagepath.product') . $prod->featured_image) : asset('images/no-image.png'));
+                                $itemOrderQty = (int) $item->qty;
+                                $itemRecvQty = (int) ($item->received_qty ?? ($manufacture->received_qty ?? 0));
+                                $itemPendQty = max(0, $itemOrderQty - $itemRecvQty);
                             @endphp
                             <tr>
                                 <td class="text-center font-weight-bold text-muted">{{ $idx + 1 }}</td>
@@ -379,8 +389,14 @@
                                         <span class="badge badge-light-secondary">{{ ucfirst($item->part_type) }}</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
-                                    <span class="badge badge-pill badge-light-dark font-weight-bolder" style="font-size: 13px;">{{ $item->qty }}</span>
+                                <td class="text-center font-weight-bold text-dark">
+                                    {{ $itemOrderQty }}
+                                </td>
+                                <td class="text-center font-weight-bolder text-success">
+                                    {{ $itemRecvQty }}
+                                </td>
+                                <td class="text-center font-weight-bolder text-{{ $itemPendQty > 0 ? 'danger' : 'muted' }}">
+                                    {{ $itemPendQty }}
                                 </td>
                                 <td class="text-right font-weight-bold text-dark">
                                     ৳ {{ number_format($item->unit_price, 2) }}
@@ -394,14 +410,16 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4 text-muted">No items recorded for this order.</td>
+                                <td colspan="11" class="text-center py-4 text-muted">No items recorded for this order.</td>
                             </tr>
                         @endforelse
                     </tbody>
                     <tfoot class="bg-light font-weight-bold">
                         <tr>
                             <td colspan="5" class="text-right text-uppercase small font-weight-bolder">Summary Totals:</td>
-                            <td class="text-center text-primary font-weight-bolder" style="font-size: 14px;">{{ $manufacture->manufacture_qty }}</td>
+                            <td class="text-center text-primary font-weight-bolder" style="font-size: 13px;">{{ $totalOrderQty }}</td>
+                            <td class="text-center text-success font-weight-bolder" style="font-size: 13px;">{{ $totalRecvQty }}</td>
+                            <td class="text-center text-danger font-weight-bolder" style="font-size: 13px;">{{ $totalPendingQty }}</td>
                             <td class="text-right text-muted small">Grand Total:</td>
                             <td class="text-right text-success font-weight-bolder" style="font-size: 14px;">৳ {{ number_format($manufacture->grand_total, 2) }}</td>
                             <td></td>

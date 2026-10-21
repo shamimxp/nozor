@@ -18,6 +18,7 @@ class Manufacture extends Model
         'dealer_address',
         'worker_id',
         'manufacture_qty',
+        'received_qty',
         'body_part_price',
         'finishing_part_price',
         'body_total',

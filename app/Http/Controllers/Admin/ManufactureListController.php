@@ -66,7 +66,20 @@ class ManufactureListController extends Controller
                 return '<div><strong>' . e($name) . '</strong></div>' . ($phone ? '<small class="text-bold text-muted">' . e($phone) . '</small>' : '');
             })
             ->addColumn('manufacture_qty', function ($row) {
-                return '<span class="badge badge-pill badge-light-info font-weight-bolder" style="font-size: 12px;">' . $row->qty . '</span>';
+                $orderQty = (int) ($row->qty ?? ($row->manufacture->manufacture_qty ?? 0));
+                $receivedQty = (int) ($row->received_qty ?? ($row->manufacture->received_qty ?? 0));
+                $pendingQty = max(0, $orderQty - $receivedQty);
+
+                $html = '<div class="text-center" style="min-width: 95px;">';
+                $html .= '<span class="badge badge-light-primary font-weight-bolder" style="font-size: 11px;" title="Total Order Quantity">Total: ' . $orderQty . '</span><br>';
+                $html .= '<span class="badge badge-light-success font-weight-bold mt-25 mr-25" style="font-size: 10px;" title="Received Quantity"><i data-feather="check" style="width:10px;height:10px;"></i> ' . $receivedQty . '</span>';
+                if ($pendingQty > 0) {
+                    $html .= '<span class="badge badge-light-danger font-weight-bold mt-25" style="font-size: 10px;" title="Pending Quantity to Receive"><i data-feather="clock" style="width:10px;height:10px;"></i> ' . $pendingQty . '</span>';
+                } else {
+                    $html .= '<span class="badge badge-light-secondary font-weight-normal mt-25" style="font-size: 10px;" title="Fully Received">Done</span>';
+                }
+                $html .= '</div>';
+                return $html;
             })
             ->addColumn('part_type', function ($row) {
                 $type = strtolower($row->part_type ?? '');
@@ -124,7 +137,18 @@ class ManufactureListController extends Controller
                 return $row->manufacture->creator->name ?? 'N/A';
             })
             ->addColumn('collected_by', function ($row) {
-                return $row->manufacture->collectedBy->name ?? 'N/A';
+                $m = $row->manufacture;
+                $orderQty = (int) ($row->qty ?? ($m->manufacture_qty ?? 0));
+                $receivedQty = (int) ($row->received_qty ?? ($m->received_qty ?? 0));
+
+                if ($receivedQty <= 0) {
+                    return '<span class="badge badge-light-warning" title="No quantity received yet"><i data-feather="clock" style="width:11px;height:11px;" class="mr-25"></i> Receive Pending</span>';
+                } elseif ($receivedQty < $orderQty) {
+                    return '<span class="badge badge-light-info" title="Partially received"><i data-feather="package" style="width:11px;height:11px;" class="mr-25"></i> Partial (' . $receivedQty . '/' . $orderQty . ')</span>';
+                } else {
+                    $name = $m && $m->collectedBy ? $m->collectedBy->name : 'Received';
+                    return '<span class="badge badge-light-success" title="Fully received and collected"><i data-feather="check-circle" style="width:11px;height:11px;" class="mr-25"></i> ' . e($name) . '</span>';
+                }
             })
             ->addColumn('action', function ($row) {
                 $m = $row->manufacture;

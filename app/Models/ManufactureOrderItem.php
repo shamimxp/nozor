@@ -22,6 +22,7 @@ class ManufactureOrderItem extends Model
         'finishing_part_price',
         'unit_price',
         'qty',
+        'received_qty',
         'total_price',
         'note',
     ];
