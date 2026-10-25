@@ -13,7 +13,7 @@ class WorkerPaymentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = WorkerPayment::with(['worker', 'manufacture.items.product', 'manufacture.product', 'creator'])->latest('id');
+            $query = WorkerPayment::with(['worker', 'manufacture.items.product.recipe', 'manufacture.product.recipe', 'creator'])->latest('id');
 
             if ($request->filled('from_date') && $request->filled('to_date')) {
                 $query->whereDate('date', '>=', $request->from_date)
@@ -33,6 +33,31 @@ class WorkerPaymentController extends Controller
                 ->addColumn('date', function ($row) {
                     return $row->date ? date('d M Y', strtotime($row->date)) : 'N/A';
                 })
+                ->addColumn('manufacture_image', function ($row) {
+                    $m = $row->manufacture;
+                    $firstItem = $m ? $m->items->first() : null;
+                    $p = $firstItem ? $firstItem->product : ($m ? $m->product : null);
+                    $recipe = $p ? $p->recipe : null;
+                    $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+                    $img = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+                    $allImgs = !empty($imgs) ? array_map(function($im) { return asset($im); }, $imgs) : [$img];
+                    $title = $p ? $p->name : 'Manufacture Blueprint';
+                    $invoice = $m ? $m->invoice_no : '';
+                    $printUrl = ($m && $m->status >= 1) ? route('admin.manufacture.print', $m->id) : '';
+
+                    return '<div class="btn-preview-mfg-img"
+                                 data-img="'.$img.'"
+                                 data-all-images="'.e(json_encode($allImgs)).'"
+                                 data-title="'.e($title).'"
+                                 data-invoice="'.e($invoice).'"
+                                 data-print-url="'.$printUrl.'"
+                                 title="Click to view full blueprint">
+                                <img src="'.$img.'" alt="Blueprint">
+                                <div class="mfg-zoom-badge">
+                                    <i data-feather="zoom-in" style="width: 10px; height: 10px;"></i>
+                                </div>
+                            </div>';
+                })
                 ->addColumn('worker_name', function ($row) {
                     $name = $row->worker->name ?? 'N/A';
                     $phone = $row->worker->phone ?? '';
@@ -48,12 +73,38 @@ class WorkerPaymentController extends Controller
                     $p = $firstItem ? $firstItem->product : ($m ? $m->product : null);
                     return $p ? '<strong class="text-dark">' . e($p->name) . '</strong>' : 'N/A';
                 })
-                ->addColumn('total_amount', function ($row) {
-                    $details = '';
-                    if ($row->received_qty) {
-                        $details = '<br><small class="text-muted font-weight-bold">' . $row->received_qty . ' pcs @ ৳ ' . number_format($row->unit_price, 2) . '</small>';
+                ->addColumn('part_type', function ($row) {
+                    $m = $row->manufacture;
+                    $firstItem = $m ? $m->items->first() : null;
+                    $type = strtolower($firstItem ? ($firstItem->part_type ?? '') : '');
+                    if (!$type && $m) {
+                        if ($m->body_total > 0 && $m->finishing_total > 0) $type = 'both';
+                        elseif ($m->body_total > 0) $type = 'body';
+                        elseif ($m->finishing_total > 0) $type = 'finishing';
                     }
-                    return '<strong class="text-primary">৳ ' . number_format($row->total_amount, 2) . '</strong>' . $details;
+                    if ($type === 'body' || $type === 'body part') {
+                        return '<span class="badge badge-light-info font-weight-bold">Body Part</span>';
+                    } elseif ($type === 'finishing' || $type === 'finishing part') {
+                        return '<span class="badge badge-light-primary font-weight-bold">Finishing Part</span>';
+                    } elseif ($type === 'both') {
+                        return '<span class="badge badge-light-success font-weight-bold">Both</span>';
+                    }
+                    return '<span class="badge badge-light-secondary font-weight-bold">' . e(ucfirst($type ?: 'N/A')) . '</span>';
+                })
+                ->addColumn('quantity', function ($row) {
+                    $qty = $row->received_qty ?? ($row->manufacture ? $row->manufacture->manufacture_qty : null);
+                    if ($qty !== null && $qty !== '') {
+                        $html = '<div class="text-center"><span class="badge badge-light-primary font-weight-bolder" style="font-size: 12px; padding: 4px 8px;">' . (int)$qty . ' pcs</span>';
+                        if ($row->unit_price) {
+                            $html .= '<br><small class="text-muted font-weight-bold">@ ৳ ' . number_format($row->unit_price, 2) . '</small>';
+                        }
+                        $html .= '</div>';
+                        return $html;
+                    }
+                    return '<span class="text-muted">—</span>';
+                })
+                ->addColumn('total_amount', function ($row) {
+                    return '<strong class="text-success" style="font-size: 13px;">৳ ' . number_format($row->total_amount, 2) . '</strong>';
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->status === 'paid') {
@@ -74,15 +125,20 @@ class WorkerPaymentController extends Controller
                     $btn = '<div class="btn-group">';
                     $btn .= '<button type="button" class="btn btn-sm btn-danger delete-record" data-id="'.$row->id.'" title="Delete"><i data-feather="trash-2"></i></button>';
                     $btn .= '</div>';
-                    return $btn;
+                    if($row->status === 'paid') {
+                        return '<span class="badge badge-light-success font-weight-bolder" style="font-size: 11px; padding: 6px 12px;"><i data-feather="check-circle" style="width: 12px; height: 12px;" class="mr-25"></i> Paid</span>';
+                    }else{
+                        return $btn;
+                    }
+
                 })
-                ->rawColumns(['worker_name', 'invoice_no', 'product', 'total_amount', 'status', 'action'])
+                ->rawColumns(['worker_name', 'manufacture_image', 'invoice_no', 'product', 'part_type', 'quantity', 'total_amount', 'status', 'action'])
                 ->make(true);
         }
 
         $workers = Worker::all();
         $page_title = 'Worker Payments';
-        
+
         return view('admin.worker_payment.index', compact('workers', 'page_title'));
     }
 
@@ -93,7 +149,7 @@ class WorkerPaymentController extends Controller
         ]);
 
         $payment = WorkerPayment::findOrFail($request->id);
-        
+
         if ($payment->status === 'paid') {
             return response()->json(['error' => 'This payment is already paid and cannot be changed back to pending.'], 403);
         }
@@ -108,7 +164,7 @@ class WorkerPaymentController extends Controller
     {
         $payment = WorkerPayment::findOrFail($id);
         $payment->delete();
-        
+
         return response()->json(['success' => 'Worker payment record deleted successfully']);
     }
 }

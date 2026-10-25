@@ -149,9 +149,9 @@
 
 .product__table {
     min-height: 25vh;
-    max-height: 25vh;
+    max-height: 37vh;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .product__table table thead tr th,

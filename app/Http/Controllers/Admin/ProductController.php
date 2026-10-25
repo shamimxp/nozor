@@ -24,7 +24,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Product::with(['category', 'subCategory'])->latest();
+            $query = Product::with(['category', 'subCategory', 'recipe'])->latest();
 
             if ($request->name) {
                 $query->where('name', 'LIKE', '%' . $request->name . '%');
@@ -48,7 +48,7 @@ class ProductController extends Controller
     public function outOfStock(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::with(['category', 'subCategory'])
+            $products = Product::with(['category', 'subCategory', 'recipe'])
                                ->where('stock', '<=', 0)
                                ->where('is_manufacturer', 0)
                                ->latest()
@@ -75,6 +75,24 @@ class ProductController extends Controller
                             </div>
                         </div>';
             })
+            ->addColumn('manufacture_image', function ($row) {
+                $recipe = $row->recipe;
+                $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+                $img = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+                $allImgs = !empty($imgs) ? array_map(function($im) { return asset($im); }, $imgs) : [$img];
+                $title = $row->name;
+
+                return '<div class="btn-preview-mfg-img" 
+                             data-img="'.$img.'" 
+                             data-all-images="'.e(json_encode($allImgs)).'" 
+                             data-title="'.e($title).'" 
+                             title="Click to view full blueprint">
+                            <img src="'.$img.'" alt="Blueprint">
+                            <div class="mfg-zoom-badge">
+                                <i data-feather="zoom-in" style="width: 10px; height: 10px;"></i>
+                            </div>
+                        </div>';
+            })
             ->addColumn('category', function ($row) {
                 $cat = $row->category ? $row->category->name : 'N/A';
                 $sub = $row->subCategory ? ' > ' . $row->subCategory->name : '';
@@ -88,7 +106,7 @@ class ProductController extends Controller
                         $price = $row->selling_price;
                     }
 
-                    return '৳' . number_format($price, 2);
+                    return '৳' . number_format((float) $price, 2);
                 }
 
                 $editBtn = ' <a href="javascript:void(0)" class="btn btn-primary p-0 px-25 editPriceStock" data-id="'.$row->id.'" data-type="price" data-value="'.$row->selling_price.'"><i data-feather="edit"></i></a>';
@@ -139,13 +157,31 @@ class ProductController extends Controller
                         </div>';
             })
             ->addColumn('action', function ($row) {
-                $btn = '<a href="' . route('admin.product.show', $row->id) . '" class="btn btn-info btn-sm mr-1" title="View"><i data-feather="eye"></i></a>';
-                $btn .= '<a href="' . route('admin.product.edit', $row->id) . '" class="btn btn-primary btn-sm mr-1" title="Edit"><i data-feather="edit"></i></a>';
-                $btn .= '<a href="' . route('admin.product.duplicate', $row->id) . '" class="btn btn-warning btn-sm mr-1" title="Duplicate"><i data-feather="copy"></i></a>';
-                $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteProduct" title="Delete"><i data-feather="trash"></i></a>';
-                return $btn;
+                return '<div class="dropdown">
+                    <button type="button" class="btn btn-sm dropdown-toggle hide-arrow py-0" data-toggle="dropdown">
+                        <i data-feather="more-vertical"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="' . route('admin.product.show', $row->id) . '">
+                            <i data-feather="eye" class="mr-50"></i>
+                            <span>View</span>
+                        </a>
+                        <a class="dropdown-item" href="' . route('admin.product.edit', $row->id) . '">
+                            <i data-feather="edit-2" class="mr-50"></i>
+                            <span>Edit</span>
+                        </a>
+                        <a class="dropdown-item" href="' . route('admin.product.duplicate', $row->id) . '">
+                            <i data-feather="copy" class="mr-50"></i>
+                            <span>Duplicate</span>
+                        </a>
+                        <a class="dropdown-item deleteProduct" href="javascript:void(0)" data-id="' . $row->id . '">
+                            <i data-feather="trash" class="mr-50"></i>
+                            <span>Delete</span>
+                        </a>
+                    </div>
+                </div>';
             })
-            ->rawColumns(['product', 'price', 'stock', 'featured', 'manufacturer', 'dealer_show', 'customer_show', 'status', 'action'])
+            ->rawColumns(['product', 'manufacture_image', 'price', 'stock', 'featured', 'manufacturer', 'dealer_show', 'customer_show', 'status', 'action'])
             ->make(true);
     }
 

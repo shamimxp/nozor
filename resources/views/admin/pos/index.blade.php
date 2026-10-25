@@ -2087,10 +2087,16 @@ $(document).ready(function() {
     $(document).on('click', '.product__box:not(.stock__out)', function() {
         const id = $(this).data('id');
         const name = $(this).data('name');
+        const image = $(this).data('image') || $(this).find('.product_thumb img').attr('src') || $(this).find('img').attr('src') || "{{ asset('images/no-image.png') }}";
         const price = parseFloat($(this).data('price'));
         const stock = parseInt($(this).data('stock'));
         const discountType = $(this).data('discount-type');
         const discountAmount = parseFloat($(this).data('discount-amount')) || 0;
+
+        if (isNaN(price) || price <= 0) {
+            toastr.warning('This product cannot be sold because its price is 0 or invalid.');
+            return;
+        }
 
         if (cart[id]) {
             if (cart[id].quantity < stock) {
@@ -2102,6 +2108,7 @@ $(document).ready(function() {
             cart[id] = {
                 id: id,
                 name: name,
+                image: image,
                 price: price,
                 quantity: 1,
                 stock: stock,
@@ -2136,14 +2143,19 @@ $(document).ready(function() {
 
             html += `
                 <tr class="cart__product" data-id="${item.id}">
-                    <td style="width: 35%;">
-                        <h4 class="cart__product_title">${item.name}</h4>
-                        <p class="product_cart_price">
-                            <span class="product_price_amount text-success"> ৳ ${item.price.toFixed(2)}</span>
-                            ${item.discountAmount > 0 ? `<small class="text-danger ms-1">(-${item.discountType === 'percentage' ? item.discountAmount+'%' : '৳'+item.discountAmount})</small>` : ''}
-                        </p>
+                    <td style="width: 40%;">
+                        <div class="d-flex align-items-center">
+                            <img src="${item.image || "{{ asset('images/no-image.png') }}"}" alt="${item.name}" style="width: 42px; height: 42px; object-fit: cover; border-radius: 6px; margin-right: 10px; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                            <div class="overflow-hidden">
+                                <h4 class="cart__product_title text-truncate mb-0" style="font-size: 13px; font-weight: 600;" title="${item.name}">${item.name}</h4>
+                                <p class="product_cart_price mb-0">
+                                    <span class="product_price_amount text-success font-weight-bold">৳ ${item.price.toFixed(2)}</span>
+                                    ${item.discountAmount > 0 ? `<small class="text-danger ms-1">(-${item.discountType === 'percentage' ? item.discountAmount+'%' : '৳'+item.discountAmount})</small>` : ''}
+                                </p>
+                            </div>
+                        </div>
                     </td>
-                    <td style="width: 30%;">
+                    <td style="width: 27%;">
                         <div class="input-group">
                             <button class="input-group-text rounded-0 bg-navy add_btn decress_quantity" data-id="${item.id}">
                                 <i class="fa-solid fa-minus text-white"></i>
@@ -2154,8 +2166,8 @@ $(document).ready(function() {
                             </button>
                         </div>
                     </td>
-                    <td style="width:25%">
-                        <p class="product_item_subtotal text-center">
+                    <td style="width: 23%;">
+                        <p class="product_item_subtotal text-center mb-0">
                           ৳ <span class="subtotal__amount">${itemOriginalTotal.toFixed(2)}</span>
                         </p>
                     </td>

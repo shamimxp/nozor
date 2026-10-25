@@ -20,9 +20,22 @@ class PosController extends Controller
 
     public function getProducts(Request $request, ProductPriceCalculator $calculator)
     {
-        $query = Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
+        $query = Product::with(['recipe.costSetting'])
+            ->select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
             ->where('status', 1)
             ->forDealer();
+
+        // Pre-filter: non-manufacturer products must have positive price, manufacturer products must have a recipe
+        $query->where(function ($q) {
+            $q->where(function ($sub) {
+                $sub->where('is_manufacturer', 0)
+                    ->whereNotNull('selling_price')
+                    ->where('selling_price', '>', 0);
+            })->orWhere(function ($sub) {
+                $sub->where('is_manufacturer', 1)
+                    ->whereHas('recipe');
+            });
+        });
 
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -34,42 +47,46 @@ class PosController extends Controller
             $query->where('sub_category_id', $request->subcategory_id);
         }
 
-        $totalCount = $query->count();
-        
-        $offset = (int) $request->input('offset', 0);
-        $limit = (int) $request->input('limit', 36);
-
-        $products = $query->orderBy('id', 'desc')
-                          ->offset($offset)
-                          ->limit($limit)
-                          ->get();
-                          
-        $remainingCount = max(0, $totalCount - ($offset + $limit));
-        $hasMore = $remainingCount > 0;
-        
         $dealerId = auth('dealer')->id();
-        
-        // Process prices and stock
-        foreach ($products as $product) {
+
+        // Process prices and filter out products with price <= 0 or not set
+        $allProducts = $query->orderBy('id', 'desc')->get()->map(function ($product) use ($calculator, $dealerId) {
             $product->is_out_of_stock = (!$product->is_manufacturer && $product->stock <= 0);
-            
+
+            $posPrice = 0;
+            $posOriginalPrice = null;
+
             if ($product->is_manufacturer) {
                 try {
                     $calc = $calculator->calculate($product->id, $dealerId);
-                    $product->pos_price = $calc['dealer_price'];
-                    $product->pos_original_price = $calc['retail_price'];
+                    $posPrice = (float) ($calc['dealer_price'] ?? 0);
+                    $posOriginalPrice = (float) ($calc['retail_price'] ?? 0);
                 } catch (\Exception $e) {
-                    $product->pos_price = $product->selling_price;
-                    $product->pos_original_price = $product->discount_price > 0 ? $product->selling_price : null;
-                    if($product->discount_price > 0) {
-                        $product->pos_price = $product->discount_price;
+                    $posPrice = (float) ($product->selling_price ?? 0);
+                    $posOriginalPrice = $product->discount_price > 0 ? (float) $product->selling_price : null;
+                    if ($product->discount_price > 0) {
+                        $posPrice = (float) $product->discount_price;
                     }
                 }
             } else {
-                $product->pos_original_price = $product->discount_price > 0 ? $product->selling_price : null;
-                $product->pos_price = $product->discount_price > 0 ? $product->discount_price : $product->selling_price;
+                $posOriginalPrice = $product->discount_price > 0 ? (float) $product->selling_price : null;
+                $posPrice = (float) ($product->discount_price > 0 ? $product->discount_price : ($product->selling_price ?? 0));
             }
-        }
+
+            $product->pos_price = $posPrice;
+            $product->pos_original_price = $posOriginalPrice;
+            return $product;
+        })->filter(function ($product) {
+            return (float) $product->pos_price > 0;
+        })->values();
+
+        $totalCount = $allProducts->count();
+        $offset = (int) $request->input('offset', 0);
+        $limit = (int) $request->input('limit', 35);
+
+        $products = $allProducts->slice($offset, $limit);
+        $remainingCount = max(0, $totalCount - ($offset + $limit));
+        $hasMore = $remainingCount > 0;
 
         $html = view('dealer.pos.partials.product_grid', compact('products'))->render();
 

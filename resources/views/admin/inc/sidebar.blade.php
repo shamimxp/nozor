@@ -155,17 +155,20 @@
                     </li>
                 </ul>
             </li>
-            <li class=" nav-item @if(Route::is('admin.product-attribute*') || Route::is('admin.variations*')) open @endif">
+            <li class=" nav-item @if(Route::is('admin.product-attribute*') || Route::is('admin.variations*') || Route::is('admin.product*') || Route::is('admin.unit*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Product Setup</span></a>
                 <ul class="menu-content">
+                    <li class="{{ Route::is('admin.product.create') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.product.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Product</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.product.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product List</span></a>
+                    </li>
                     <li class="{{ Route::is('admin.product-attribute*')?'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Attribute</span></a>
                     </li>
                     <li class="{{ Route::is('admin.variations*')?'active':'' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.variations.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Variation</span></a>
-                    </li>
-                    <li class="{{ Route::is('admin.product.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.product.out-of-stock') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product.out-of-stock')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Out of Stock</span></a>

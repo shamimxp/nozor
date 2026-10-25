@@ -336,6 +336,27 @@
                                                     $pendingQty = max(0, $orderQty - $receivedQty);
                                                     $unitPrice = $firstItem ? (float) $firstItem->unit_price : (float) ($order->body_part_price > 0 ? $order->body_part_price : $order->finishing_part_price);
 
+                                                    $rawPartType = strtolower($firstItem ? ($firstItem->part_type ?? '') : '');
+                                                    if (!$rawPartType) {
+                                                        if ($order->body_total > 0 && $order->finishing_total > 0) $rawPartType = 'both';
+                                                        elseif ($order->body_total > 0) $rawPartType = 'body';
+                                                        elseif ($order->finishing_total > 0) $rawPartType = 'finishing';
+                                                    }
+
+                                                    if ($rawPartType === 'body' || $rawPartType === 'body part') {
+                                                        $partTypeBadge = '<span class="badge badge-light-info font-weight-bold">Body Part</span>';
+                                                        $partTypeText = 'Body Part';
+                                                    } elseif ($rawPartType === 'finishing' || $rawPartType === 'finishing part') {
+                                                        $partTypeBadge = '<span class="badge badge-light-primary font-weight-bold">Finishing Part</span>';
+                                                        $partTypeText = 'Finishing Part';
+                                                    } elseif ($rawPartType === 'both') {
+                                                        $partTypeBadge = '<span class="badge badge-light-success font-weight-bold">Both</span>';
+                                                        $partTypeText = 'Both';
+                                                    } else {
+                                                        $partTypeBadge = '<span class="badge badge-light-secondary font-weight-bold">' . e(ucfirst($rawPartType ?: 'N/A')) . '</span>';
+                                                        $partTypeText = ucfirst($rawPartType ?: 'N/A');
+                                                    }
+
                                                     $recipe = $prod ? $prod->recipe : null;
                                                     $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
                                                     $mfgImg = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : ($prod && $prod->featured_image ? asset(config('imagepath.product') . $prod->featured_image) : asset('images/no-image.png'));
@@ -350,10 +371,12 @@
                                                     data-received-qty="{{ $receivedQty }}"
                                                     data-pending-qty="{{ $pendingQty }}"
                                                     data-unit-price="{{ $unitPrice }}"
+                                                    data-part-type="{{ $rawPartType }}"
+                                                    data-part-type-text="{{ $partTypeText }}"
                                                     data-mfg-img="{{ $mfgImg }}"
                                                     data-all-images="{{ json_encode($allMfgImgs) }}"
                                                     data-print-url="{{ $printUrl }}">
-                                                    {{ $order->invoice_no }} - {{ $prodName }} [Pending: {{ $pendingQty }} pcs | Worker: {{ $workerName }}]
+                                                    {{ $order->invoice_no }} - {{ $prodName }} [Pending: {{ $pendingQty }} pcs | Worker: {{ $workerName }} | Type: {{ $partTypeText }}]
                                                 </option>
                                             @endforeach
                                         </select>
@@ -394,6 +417,7 @@
                                 <th class="text-center" style="width: 110px; min-width: 110px;">Manufacture Image</th>
                                 <th class="text-left" style="min-width: 160px;">Product</th>
                                 <th class="text-left" style="min-width: 140px;">Worker</th>
+                                <th class="text-center" style="min-width: 110px;">Order Type</th>
                                 <th style="min-width: 80px;">Order Qty</th>
                                 <th style="min-width: 85px;">Already Recv</th>
                                 <th style="min-width: 80px;">Pending</th>
@@ -405,7 +429,7 @@
                         </thead>
                         <tbody>
                             <tr id="emptyReceiveRow">
-                                <td colspan="11" class="text-center py-4 text-muted">
+                                <td colspan="12" class="text-center py-4 text-muted">
                                     <i data-feather="package" style="width: 38px; height: 38px;" class="text-secondary mb-50"></i>
                                     <h6 class="text-muted font-weight-bold mb-25">No orders added to receive list yet</h6>
                                     <small>Scan barcode or select confirmed orders above to begin receiving.</small>
@@ -414,7 +438,7 @@
                         </tbody>
                         <tfoot class="bg-light font-weight-bold d-none" id="receiveTableFooter">
                             <tr>
-                                <td colspan="7" class="text-right text-uppercase small font-weight-bold">Batch Totals:</td>
+                                <td colspan="8" class="text-right text-uppercase small font-weight-bold">Batch Totals:</td>
                                 <td class="text-center text-primary font-weight-bolder" id="batchTotalUnits" style="font-size: 15px;">0</td>
                                 <td class="text-right small text-muted font-weight-bold">Total Payment:</td>
                                 <td class="text-right text-success font-weight-bolder" id="batchTotalPayment" style="font-size: 15px;">৳ 0.00</td>
@@ -498,6 +522,7 @@
                 var pending = opt.data('pending-qty') || 0;
                 var rate = opt.data('unit-price') || 0;
                 var mfgImg = opt.data('mfg-img') || '';
+                var partTypeText = opt.data('part-type-text') || opt.data('part-type') || '';
 
                 return `
                     <div class="d-flex justify-content-between align-items-center py-25">
@@ -509,7 +534,7 @@
                                     <strong class="text-dark text-truncate">${product}</strong>
                                 </div>
                                 <small class="text-muted d-block mt-25">
-                                    Worker: <strong>${worker}</strong> &bull; Rate: ৳ ${parseFloat(rate).toFixed(2)}
+                                    Worker: <strong>${worker}</strong> &bull; Type: <strong>${partTypeText}</strong> &bull; Rate: ৳ ${parseFloat(rate).toFixed(2)}
                                 </small>
                             </div>
                         </div>
@@ -572,7 +597,20 @@
             }
         }
 
-        function addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl) {
+        function getPartTypeBadge(type) {
+            type = (type || '').toLowerCase().trim();
+            if (type === 'body' || type === 'body part') {
+                return '<span class="badge badge-light-info font-weight-bold">Body Part</span>';
+            } else if (type === 'finishing' || type === 'finishing part') {
+                return '<span class="badge badge-light-primary font-weight-bold">Finishing Part</span>';
+            } else if (type === 'both') {
+                return '<span class="badge badge-light-success font-weight-bold">Both</span>';
+            }
+            let label = type ? (type.charAt(0).toUpperCase() + type.slice(1)) : 'N/A';
+            return '<span class="badge badge-light-secondary font-weight-bold">' + label + '</span>';
+        }
+
+        function addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl, partType) {
             id = id.toString();
             if (addedIds.includes(id)) {
                 toastr.warning('Order #' + invoice + ' is already added to the batch list.');
@@ -592,6 +630,7 @@
             addedIds.push(id);
 
             let initialPayable = (pendingQty * unitPrice).toFixed(2);
+            let partTypeBadge = getPartTypeBadge(partType);
 
             let tr = `
                 <tr id="row-${id}">
@@ -614,6 +653,7 @@
                     </td>
                     <td><strong class="text-dark">${product}</strong></td>
                     <td><strong>${worker}</strong></td>
+                    <td class="text-center">${partTypeBadge}</td>
                     <td class="text-center font-weight-bold">${orderQty}</td>
                     <td class="text-center text-success font-weight-bold">${receivedQty}</td>
                     <td class="text-center text-danger font-weight-bold">${pendingQty}</td>
@@ -664,8 +704,9 @@
             let mfgImg = option.data('mfg-img');
             let allImages = option.data('all-images');
             let printUrl = option.data('print-url');
+            let partType = option.data('part-type') || '';
 
-            addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl);
+            addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl, partType);
             $('#manual_select').val('').trigger('change');
         });
 
@@ -703,8 +744,9 @@
                 let mfgImg = matchedOption.data('mfg-img');
                 let allImages = matchedOption.data('all-images');
                 let printUrl = matchedOption.data('print-url');
+                let partType = matchedOption.data('part-type') || '';
 
-                addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl);
+                addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl, partType);
                 $('#barcode_input').val('').focus();
             } else {
                 toastr.error('Order "' + query + '" not found or has no pending units to receive.');

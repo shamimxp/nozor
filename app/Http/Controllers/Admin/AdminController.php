@@ -256,8 +256,21 @@ class AdminController extends Controller
 
     public function getPosProducts(Request $request, \App\Services\ProductPriceCalculator $calculator)
     {
-        $query = \App\Models\Product::select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
+        $query = \App\Models\Product::with(['recipe.costSetting'])
+            ->select('id', 'name', 'category_id', 'sub_category_id', 'featured_image', 'selling_price', 'stock', 'discount_type', 'discount_amount', 'is_manufacturer', 'status')
             ->where('status', 1);
+
+        // Filter out non-manufacturer products without a valid positive selling price, and manufacturer products without a recipe
+        $query->where(function ($q) {
+            $q->where(function ($sub) {
+                $sub->where('is_manufacturer', 0)
+                    ->whereNotNull('selling_price')
+                    ->where('selling_price', '>', 0);
+            })->orWhere(function ($sub) {
+                $sub->where('is_manufacturer', 1)
+                    ->whereHas('recipe');
+            });
+        });
 
         if ($request->category_id) {
             $query->where('category_id', $request->category_id);
@@ -271,13 +284,30 @@ class AdminController extends Controller
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 
-        $totalCount = $query->count();
-        
+        // Calculate prices and filter out products with price <= 0
+        $allProducts = $query->orderBy('id', 'desc')->get()->map(function ($product) use ($calculator) {
+            $displayPrice = 0;
+            if ($product->is_manufacturer) {
+                try {
+                    $calc = $calculator->calculate($product->id, null);
+                    $displayPrice = (float) ($calc['retail_price'] ?? 0);
+                } catch (\Exception $e) {
+                    $displayPrice = (float) ($product->selling_price ?? 0);
+                }
+            } else {
+                $displayPrice = (float) ($product->selling_price ?? 0);
+            }
+            $product->display_price = $displayPrice;
+            return $product;
+        })->filter(function ($product) {
+            return $product->display_price > 0;
+        })->values();
+
+        $totalCount = $allProducts->count();
         $offset = (int) $request->input('offset', 0);
         $limit = (int) $request->input('limit', 36);
 
-        $products = $query->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
-        
+        $products = $allProducts->slice($offset, $limit);
         $remainingCount = max(0, $totalCount - ($offset + $limit));
         $hasMore = $remainingCount > 0;
 
@@ -297,16 +327,7 @@ class AdminController extends Controller
 
         $html = '';
         foreach ($products as $product) {
-            $displayPrice = $product->selling_price;
-            
-            if ($product->is_manufacturer) {
-                try {
-                    $calc = $calculator->calculate($product->id, null);
-                    $displayPrice = $calc['retail_price'];
-                } catch (\Exception $e) {
-                    $displayPrice = $product->selling_price;
-                }
-            }
+            $displayPrice = $product->display_price;
 
             // Manufacturer products always bypass stock check (made to order)
             $isOutOfStock = (!$product->is_manufacturer && $product->stock <= 0);
@@ -318,9 +339,10 @@ class AdminController extends Controller
             
             $imageUrl = $product->featured_image ? asset(config('imagepath.product') . '/' . $product->featured_image) : asset('images/no-image.png');
 
-            $html .= '<div class="product__box ' . $stockOut . '" title="' . $product->name . '"
+            $html .= '<div class="product__box ' . $stockOut . '" title="' . e($product->name) . '"
                         data-id="' . $product->id . '"
-                        data-name="' . $product->name . '"
+                        data-name="' . e($product->name) . '"
+                        data-image="' . $imageUrl . '"
                         data-price="' . $displayPrice . '"
                         data-stock="' . ($product->is_manufacturer ? 999999 : $product->stock) . '"
                         data-discount-type="' . $product->discount_type . '"
@@ -328,9 +350,9 @@ class AdminController extends Controller
                         ' . $stockOverlay . '
                         ' . $stockText . '
                         <div class="product_thumb">
-                            <img src="' . $imageUrl . '" alt="' . $product->name . '">
+                            <img src="' . $imageUrl . '" alt="' . e($product->name) . '">
                         </div>
-                        <h4 class="product_title">' . $product->name . '</h4>
+                        <h4 class="product_title">' . e($product->name) . '</h4>
                         <div class="product_price" style="color: #f5365c; font-weight: 700; font-size: 14px; margin-top: auto;">' . $displayPrice . ' ৳</div>
                       </div>';
         }

@@ -7,7 +7,7 @@
 <div class="content-body">
     <div class="row">
         <!-- Main POS Area (Products) -->
-        <div class="col-xl-8 col-lg-7">
+        <div class="col-xl-7 col-lg-7">
             <div class="card shadow-sm" style="border-radius: 10px; min-height: 85vh;">
                 <div class="card-body p-2">
                     <!-- Search & Filter -->
@@ -29,7 +29,7 @@
                             </select>
                         </div>
                     </form>
-                    
+
                     <hr class="mt-1 mb-2">
 
                     <!-- Product Grid -->
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Cart Area -->
-        <div class="col-xl-4 col-lg-5">
+        <div class="col-xl-5 col-lg-5">
             <div class="card shadow-sm" style="border-radius: 10px; min-height: 85vh; display: flex; flex-direction: column;">
                 <div class="card-header bg-light p-2 border-bottom d-flex justify-content-between align-items-center" style="border-radius: 10px 10px 0 0;">
                     <h5 class="mb-0 text-dark font-weight-bolder">
@@ -58,7 +58,7 @@
                         <i data-feather="trash-2" style="width: 14px; margin-right: 4px;"></i> Clear
                     </button>
                 </div>
-                
+
                 <div class="card-body p-0 d-flex flex-column" style="flex: 1; overflow: hidden;">
                     <div class="table-responsive" style="flex: 1; overflow-y: auto; max-height: calc(85vh - 280px);">
                         <table class="table table-borderless table-striped text-center align-middle mb-0" id="cart-table">
@@ -80,7 +80,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Order Summary Area -->
                     <div class="bg-light p-2 border-top" style="border-radius: 0 0 10px 10px;">
                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -110,6 +110,30 @@
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
+/* 5 products per row on desktop */
+.col-pos-5 {
+    position: relative;
+    width: 100%;
+}
+@media (min-width: 992px) {
+    .col-pos-5 {
+        flex: 0 0 20% !important;
+        max-width: 20% !important;
+    }
+}
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .col-pos-5 {
+        flex: 0 0 33.333333% !important;
+        max-width: 33.333333% !important;
+    }
+}
+@media (max-width: 767.98px) {
+    .col-pos-5 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+}
+
 .product-card:hover {
     border-color: #0F172A !important;
     box-shadow: 0 4px 15px 0 rgba(15, 23, 42, 0.15) !important;
@@ -173,14 +197,14 @@
     height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #f1f1f1;
 }
 ::-webkit-scrollbar-thumb {
-    background: #c1c1c1; 
+    background: #c1c1c1;
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8; 
+    background: #a8a8a8;
 }
 </style>
 @endpush
@@ -190,7 +214,7 @@
 <script>
     let cart = [];
     let currentOffset = 0;
-    let currentLimit = 36;
+    let currentLimit = 35;
     let isLoading = false;
 
     function loadProducts(append = false) {
@@ -199,7 +223,7 @@
 
         if (!append) {
             currentOffset = 0;
-            currentLimit = 36;
+            currentLimit = 35;
             $('#product-grid').html('<div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;"><div class="spinner-border" style="color: #0F172A; width: 2.5rem; height: 2.5rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
             $('#load-more-btn-container').hide();
         } else {
@@ -224,7 +248,7 @@
                 } else {
                     $('#product-grid').append(response.html);
                 }
-                
+
                 if (feather) {
                     feather.replace({ width: 14, height: 14 });
                 }
@@ -233,11 +257,11 @@
                     $('#load-more-btn-container').show();
                     $('#load-more-btn').html('Load More').prop('disabled', false);
                     currentOffset += currentLimit;
-                    currentLimit = 12; // Subsequent loads
+                    currentLimit = 15; // Subsequent loads (3 rows of 5)
                 } else {
                     $('#load-more-btn-container').hide();
                 }
-                
+
                 isLoading = false;
             },
             error: function() {
@@ -271,9 +295,9 @@
         $('#category-select').on('change', function() {
             let catId = $(this).val();
             let subSelect = $('#subcategory-select');
-            
+
             subSelect.html('<option value="">All Subcategories</option>');
-            
+
             if(catId) {
                 $.ajax({
                     url: '{{ url("dealer/pos/subcategories") }}/' + catId,
@@ -303,7 +327,13 @@
         let id = $(element).data('id');
         let title = $(element).data('title');
         let price = parseFloat($(element).data('price'));
-        let image = $(element).data('image');
+        let image = $(element).data('image') || $(element).find('img').attr('src') || '';
+
+        if (isNaN(price) || price <= 0) {
+            if (typeof toastr !== 'undefined') toastr.warning('This product cannot be ordered because price is not set.');
+            else alert('This product cannot be ordered because price is not set.');
+            return;
+        }
 
         let existing = cart.find(item => item.id === id);
         if (existing) {
@@ -311,7 +341,7 @@
         } else {
             cart.push({ id, title, price, image, qty: 1 });
         }
-        
+
         // Add active class animation
         $(element).addClass('active');
         setTimeout(() => $(element).removeClass('active'), 200);
@@ -335,7 +365,7 @@
         cart = cart.filter(item => item.id !== id);
         renderCart();
     }
-    
+
     function clearCart() {
         cart = [];
         renderCart();
@@ -344,7 +374,7 @@
     function renderCart() {
         const tbody = $('#cart-items');
         tbody.empty();
-        
+
         let subtotal = 0;
 
         if (cart.length === 0) {
@@ -354,13 +384,24 @@
                 let total = item.qty * item.price;
                 subtotal += total;
 
+                let imgHtml = item.image ?
+                    `<img src="${item.image}" alt="${item.title}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin-right: 10px; border: 1px solid #e2e8f0; flex-shrink: 0;">` :
+                    `<div style="width: 40px; height: 40px; background: #f1f2f6; border-radius: 6px; margin-right: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #e2e8f0;">
+                        <i data-feather="image" style="width: 18px; height: 18px; opacity: 0.4;"></i>
+                    </div>`;
+
                 tbody.append(`
                     <tr class="border-bottom">
                         <td class="text-left py-2">
-                            <div class="font-weight-bolder text-dark text-truncate" style="font-size: 0.9rem; max-width: 150px;" title="${item.title}">
-                                ${item.title}
+                            <div class="d-flex align-items-center">
+                                ${imgHtml}
+                                <div class="overflow-hidden" style="max-width: 140px;">
+                                    <div class="font-weight-bolder text-dark text-truncate" style="font-size: 0.85rem;" title="${item.title}">
+                                        ${item.title}
+                                    </div>
+                                    <div class="font-weight-bold text-primary" style="font-size: 0.8rem;">৳${item.price.toFixed(2)}</div>
+                                </div>
                             </div>
-                            <div class="font-weight-bold text-primary" style="font-size: 0.85rem;">৳${item.price.toFixed(2)}</div>
                         </td>
                         <td class="py-2">
                             <div class="input-group input-group-sm mx-auto" style="width: 85px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 4px;">
@@ -383,13 +424,13 @@
                 `);
             });
         }
-        
+
         if (feather) { feather.replace({ width: 14, height: 14 }); }
 
         $('#cart-subtotal').text('৳ ' + subtotal.toFixed(2));
         $('#cart-total').text('৳ ' + subtotal.toFixed(2));
     }
-    
+
     function setQty(id, value) {
         let qty = parseInt(value);
         if (isNaN(qty) || qty < 1) {
@@ -408,7 +449,7 @@
             else alert('Cart is empty!');
             return;
         }
-        
+
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 title: 'Place Order?',
@@ -437,7 +478,7 @@
             requested_qty: item.qty
         }));
         const note = $('#cart-notes').val();
-        
+
         $.ajax({
             url: '{{ route("dealer.pos.order-request") }}',
             type: 'POST',
@@ -450,7 +491,7 @@
                 if (response.status === 'success') {
                     if (typeof toastr !== 'undefined') toastr.success(response.message);
                     else alert(response.message);
-                    
+
                     cart = [];
                     $('#cart-notes').val('');
                     renderCart();
