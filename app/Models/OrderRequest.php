@@ -27,4 +27,9 @@ class OrderRequest extends Model
     {
         return $this->belongsTo(Dealer::class, 'dealer_id'); 
     }
+
+    public function draftOrders()
+    {
+        return $this->hasMany(DraftOrder::class, 'order_request_id');
+    }
 }

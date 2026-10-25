@@ -218,7 +218,7 @@ class DealerOrderController extends Controller
 
     public function show($id)
     {
-        $order = DealerOrder::with(['items.product.gallery', 'items.product.recipe', 'dealer'])->findOrFail($id);
+        $order = DealerOrder::with(['items.product.gallery', 'items.product.recipe.costSetting.items.costHead', 'dealer'])->findOrFail($id);
         $workers = \App\Models\Worker::where('status', 1)->get();
         $setting = \App\Models\WebSetting::first();
         return view('admin.dealer-order.show', compact('order', 'workers', 'setting'));

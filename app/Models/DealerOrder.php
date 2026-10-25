@@ -45,4 +45,9 @@ class DealerOrder extends Model
     {
         return $this->hasMany(DealerOrderItem::class);
     }
+
+    public function draftOrder()
+    {
+        return $this->hasOne(DraftOrder::class, 'dealer_order_id');
+    }
 }

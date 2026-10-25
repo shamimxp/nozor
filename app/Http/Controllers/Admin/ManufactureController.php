@@ -78,13 +78,24 @@ class ManufactureController extends Controller
                     $recipe = $product ? $product->recipe : null;
                     $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
                     $img = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+                    $allImgs = !empty($imgs) ? array_map(function($im) { return asset($im); }, $imgs) : [$img];
                     $m = $row->manufacture;
+                    $title = $product ? $product->name : 'Manufacture Blueprint';
+                    $invoice = $m ? $m->invoice_no : '';
+                    $printUrl = ($m && $m->status >= 1) ? route('admin.manufacture.print', $m->id) : '';
 
-                    if ($m && $m->status >= 1) {
-                        return '<a href="'.route('admin.manufacture.print', $m->id).'" target="_blank"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" title="Print Blueprint / Order"></a>';
-                    } else {
-                        return '<a href="javascript:void(0)" onclick="toastr.error(\'Please confirm this order before printing.\')"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; opacity:0.75;" title="Please confirm to print"></a>';
-                    }
+                    return '<div class="btn-preview-mfg-img"
+                                 data-img="'.$img.'"
+                                 data-all-images="'.e(json_encode($allImgs)).'"
+                                 data-title="'.e($title).'"
+                                 data-invoice="'.e($invoice).'"
+                                 data-print-url="'.$printUrl.'"
+                                 title="Click to view full blueprint">
+                                <img src="'.$img.'" alt="Blueprint">
+                                <div class="mfg-zoom-badge">
+                                    <i data-feather="zoom-in" style="width: 10px; height: 10px;"></i>
+                                </div>
+                            </div>';
                 })
                 ->addColumn('invoice_no', function ($row) {
                     $m = $row->manufacture;
@@ -400,8 +411,8 @@ class ManufactureController extends Controller
             DB::commit();
 
             $firstOrder = $createdOrders[0] ?? null;
-            $redirectUrl = count($createdOrders) === 1 && $firstOrder 
-                ? route('admin.manufacture.show', $firstOrder->id) 
+            $redirectUrl = count($createdOrders) === 1 && $firstOrder
+                ? route('admin.manufacture.show', $firstOrder->id)
                 : route('admin.manufacture.index');
 
             $msg = count($createdOrders) === 1
@@ -648,7 +659,7 @@ class ManufactureController extends Controller
 
     public function receiveUI()
     {
-        $pending_orders = Manufacture::with(['items.product.recipe', 'items.costSetting', 'product', 'worker'])
+        $pending_orders = Manufacture::with(['items.product.recipe', 'items.costSetting', 'product.recipe', 'worker'])
             ->where(function ($q) {
                 $q->where('is_confirm', 1)->orWhere('status', '>=', 1);
             })

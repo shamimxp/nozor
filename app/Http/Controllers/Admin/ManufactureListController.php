@@ -28,13 +28,24 @@ class ManufactureListController extends Controller
                 $recipe = $product ? $product->recipe : null;
                 $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
                 $img = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : asset('images/no-image.png');
+                $allImgs = !empty($imgs) ? array_map(function($im) { return asset($im); }, $imgs) : [$img];
                 $m = $row->manufacture;
-                
-                if ($m && $m->status >= 1) {
-                    return '<a href="'.route('admin.manufacture.print', $m->id).'" target="_blank"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);" title="Print Blueprint / Order"></a>';
-                } else {
-                    return '<a href="javascript:void(0)" onclick="toastr.error(\'Please confirm this order before printing.\')"><img src="'.$img.'" width="44" height="44" style="object-fit:cover; border-radius:6px; opacity:0.75;" title="Please confirm to print"></a>';
-                }
+                $title = $product ? $product->name : 'Manufacture Blueprint';
+                $invoice = $m ? $m->invoice_no : '';
+                $printUrl = ($m && $m->status >= 1) ? route('admin.manufacture.print', $m->id) : '';
+
+                return '<div class="btn-preview-mfg-img" 
+                             data-img="'.$img.'" 
+                             data-all-images="'.e(json_encode($allImgs)).'" 
+                             data-title="'.e($title).'" 
+                             data-invoice="'.e($invoice).'" 
+                             data-print-url="'.$printUrl.'" 
+                             title="Click to view full blueprint">
+                            <img src="'.$img.'" alt="Blueprint">
+                            <div class="mfg-zoom-badge">
+                                <i data-feather="zoom-in" style="width: 10px; height: 10px;"></i>
+                            </div>
+                        </div>';
             })
             ->addColumn('invoice_no', function ($row) {
                 $m = $row->manufacture;

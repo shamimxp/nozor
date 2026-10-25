@@ -144,9 +144,23 @@
                                             if (empty($imgs)) {
                                                 $imgs[] = asset('images/no-image.png');
                                             }
-                                            $partPrices = app(\App\Services\ProductPriceCalculator::class);
-                                            $bodyPartPrice = $partPrices->pricesFromCost((float) (optional($item->product->recipe)->body_charge ?? 0))['retail_price'];
-                                            $finishingPartPrice = $partPrices->pricesFromCost((float) (optional($item->product->recipe)->finishing_charge ?? 0))['retail_price'];
+                                            $recipe = $item->product ? $item->product->recipe : null;
+                                            $costSetting = $recipe && $recipe->costSetting ? $recipe->costSetting : null;
+                                            
+                                            $bodyPartPrice = 0;
+                                            $finishingPartPrice = 0;
+                                            $costSettingId = null;
+                                            $costTitle = null;
+
+                                            if ($costSetting) {
+                                                $bodyPartPrice = (float) $costSetting->body_charge;
+                                                $finishingPartPrice = (float) $costSetting->finishing_charge;
+                                                $costSettingId = $costSetting->id;
+                                                $costTitle = $costSetting->cost_title;
+                                            } elseif ($recipe) {
+                                                $bodyPartPrice = (float) ($recipe->body_charge ?? 0);
+                                                $finishingPartPrice = (float) ($recipe->finishing_charge ?? 0);
+                                            }
                                         @endphp
                                         <button class="btn btn-sm btn-danger btn-manufacture mb-25" 
                                             data-product_id="{{ $item->product_id }}"
@@ -154,7 +168,9 @@
                                             data-images="{{ json_encode($imgs) }}"
                                             data-qty="{{ $item->confirm_qty ?? $item->qty }}"
                                             data-body-price="{{ $bodyPartPrice }}"
-                                            data-finishing-price="{{ $finishingPartPrice }}">
+                                            data-finishing-price="{{ $finishingPartPrice }}"
+                                            data-cost-setting-id="{{ $costSettingId }}"
+                                            data-cost-title="{{ $costTitle }}">
                                             Manufac. order
                                         </button>
                                     @endif
@@ -596,7 +612,7 @@
             <form id="manufactureForm">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Body Part Order</h5>
+                    <h5 class="modal-title" id="manufac_modal_title">Body Part Order</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -604,20 +620,27 @@
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <div class="text-center mb-1" id="manufac_images_container" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     </div>
-                    <p class="mb-1">Product Name : <span id="manufac_product_name"></span></p>
+                    <p class="mb-1 font-weight-bold">Product Name : <span id="manufac_product_name" class="text-primary"></span></p>
                     
-                    <input type="hidden" name="product_id" id="manufac_product_id">
                     <input type="hidden" name="dealer_id" value="{{ $order->dealer_id }}">
+                    <input type="hidden" name="items[0][product_id]" id="manufac_product_id">
+                    <input type="hidden" name="items[0][cost_setting_id]" id="manufac_cost_setting_id">
+                    <input type="hidden" name="items[0][cost_title]" id="manufac_cost_title">
+                    <input type="hidden" name="items[0][unit_price]" id="manufac_unit_price">
+                    <input type="hidden" name="items[0][body_part_price]" id="manufac_body_price">
+                    <input type="hidden" name="items[0][finishing_part_price]" id="manufac_finishing_price">
+                    <input type="hidden" name="items[0][reff_invoice]" id="manufac_reff_invoice" value="{{ $order->order_number }}">
+                    <input type="hidden" name="items[0][note]" id="manufac_item_note">
                     
                     <div class="form-group">
-                        <label>Manufacture Part:</label>
-                        <select name="parts[]" id="manufac_part" class="form-control">
+                        <label class="font-weight-bold">Manufacture Part:</label>
+                        <select name="items[0][part_type]" id="manufac_part" class="form-control">
                             <option value="body">body-part</option>
                             <option value="finishing">finishing-part</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Select Worker</label>
+                        <label class="font-weight-bold">Select Worker <span class="text-danger">*</span></label>
                         <select name="worker_id" class="form-control" required>
                             <option value="">Select Worker</option>
                             @if(isset($workers))
@@ -628,37 +651,37 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Manufacture Price:</label>
-                        <input type="text" id="manufac_price" class="form-control" readonly>
+                        <label class="font-weight-bold">Manufacture Price (per pc):</label>
+                        <input type="text" id="manufac_price" class="form-control font-weight-bold text-dark bg-light" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Manufacture Quantity:</label>
-                        <input type="number" name="manufacture_qty" id="manufac_qty" class="form-control" required>
+                        <label class="font-weight-bold">Manufacture Quantity <span class="text-danger">*</span>:</label>
+                        <input type="number" name="items[0][qty]" id="manufac_qty" class="form-control font-weight-bold" required min="1">
                     </div>
                     <div class="form-group">
-                        <label>Total Price:</label>
-                        <input type="text" id="manufac_total" class="form-control" readonly>
+                        <label class="font-weight-bold">Total Price:</label>
+                        <input type="text" id="manufac_total" class="form-control font-weight-bolder text-primary bg-light" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Dealer Name</label>
+                        <label class="font-weight-bold">Dealer Name</label>
                         <input type="text" class="form-control" value="{{ $order->dealer->shop_name ?? ($order->dealer->name ?? '') }}" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Dealer Confirm Invoice Number</label>
-                        <input type="text" name="reff_invoice" class="form-control" value="{{ $order->order_number }}">
+                        <label class="font-weight-bold">Dealer Confirm Invoice Number</label>
+                        <input type="text" class="form-control" value="{{ $order->order_number }}" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Message:</label>
-                        <textarea name="note" class="form-control" rows="3"></textarea>
+                        <label class="font-weight-bold">Message / Note:</label>
+                        <textarea name="note" id="manufac_note" class="form-control" rows="3" placeholder="Optional notes..."></textarea>
                     </div>
                     <div class="form-group custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" name="is_confirm" id="manufac_is_confirm" value="1">
-                        <label class="custom-control-label" for="manufac_is_confirm">Is Confirm</label>
+                        <input type="checkbox" class="custom-control-input" name="is_confirm" id="manufac_is_confirm" value="1" checked>
+                        <label class="custom-control-label font-weight-bold" for="manufac_is_confirm">Is Confirm</label>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Save changes</button>
                 </div>
             </form>
         </div>
@@ -711,16 +734,33 @@
             let qty = parseFloat($('#manufac_qty').val()) || 0;
             let part = $('#manufac_part').val();
             let price = part === 'body' ? bodyPrice : finishingPrice;
+            
             $('#manufac_price').val(price);
-            $('#manufac_total').val(qty * price);
+            $('#manufac_unit_price').val(price);
+            $('#manufac_total').val((qty * price).toFixed(2));
+
+            if (part === 'body') {
+                $('#manufac_modal_title').text('Body Part Order');
+            } else if (part === 'finishing') {
+                $('#manufac_modal_title').text('Finishing Part Order');
+            } else {
+                $('#manufac_modal_title').text('Manufacture Order');
+            }
         }
 
         $('.btn-manufacture').on('click', function() {
+            let prodId = $(this).data('product_id');
             bodyPrice = parseFloat($(this).data('body-price')) || 0;
             finishingPrice = parseFloat($(this).data('finishing-price')) || 0;
-            $('#manufac_product_id').val($(this).data('product_id'));
+
+            $('#manufac_product_id').val(prodId);
             $('#manufac_product_name').text($(this).data('product_name'));
-            
+            $('#manufac_cost_setting_id').val($(this).data('cost-setting-id'));
+            $('#manufac_cost_title').val($(this).data('cost-title'));
+            $('#manufac_body_price').val(bodyPrice);
+            $('#manufac_finishing_price').val(finishingPrice);
+            $('#manufac_qty').val($(this).data('qty'));
+
             let images = $(this).data('images');
             let imagesHtml = '';
             if (images && images.length > 0) {
@@ -729,34 +769,65 @@
                 });
             }
             $('#manufac_images_container').html(imagesHtml);
-            
-            $('#manufac_qty').val($(this).data('qty'));
+
+            // If prices are 0, fetch live from server as fallback
+            if (bodyPrice === 0 && finishingPrice === 0) {
+                $.get("{{ route('admin.manufacture.get-prices') }}", { product_id: prodId }, function(res) {
+                    if (res) {
+                        bodyPrice = parseFloat(res.body_part_price) || 0;
+                        finishingPrice = parseFloat(res.finishing_part_price) || 0;
+                        if (res.cost_setting_id) $('#manufac_cost_setting_id').val(res.cost_setting_id);
+                        if (res.cost_title) $('#manufac_cost_title').val(res.cost_title);
+                        $('#manufac_body_price').val(bodyPrice);
+                        $('#manufac_finishing_price').val(finishingPrice);
+                        calculateManufacTotal();
+                    }
+                });
+            }
+
             calculateManufacTotal();
             $('#manufactureModal').modal('show');
         });
 
-        $('#manufac_qty, #manufac_part').on('change keyup', calculateManufacTotal);
+        $('#manufac_qty, #manufac_part').on('change keyup input', calculateManufacTotal);
 
         $('#manufactureForm').on('submit', function(e) {
             e.preventDefault();
+            calculateManufacTotal();
+            $('#manufac_item_note').val($('#manufac_note').val());
+
+            const $btn = $(this).find('button[type="submit"]');
+            const originalText = $btn.text();
+            $btn.prop('disabled', true).text('Saving...');
+
             $.ajax({
                 url: "{{ route('admin.manufacture.store') }}",
                 type: "POST",
                 data: $(this).serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
+                },
                 success: function(res) {
                     if (res.success) {
                         toastr.success(res.success);
                         $('#manufactureModal').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
                     } else if (res.error) {
                         toastr.error(res.error);
+                        $btn.prop('disabled', false).text(originalText);
                     }
                 },
                 error: function(err) {
                     let msg = 'Error creating manufacture order.';
                     if(err.responseJSON && err.responseJSON.errors) {
                         msg = Object.values(err.responseJSON.errors)[0][0];
+                    } else if(err.responseJSON && err.responseJSON.message) {
+                        msg = err.responseJSON.message;
                     }
                     toastr.error(msg);
+                    $btn.prop('disabled', false).text(originalText);
                 }
             });
         });

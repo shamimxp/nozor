@@ -7,14 +7,16 @@
     <style>
         * {
             box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         @page {
             size: A4 portrait;
-            margin: 10mm 8mm 12mm;
+            margin: 5mm 6mm;
         }
         html, body {
-            margin: 0;
-            padding: 0;
+            margin: 0 !important;
+            padding: 0 !important;
             background: #fff;
         }
         body {
@@ -22,20 +24,22 @@
             color: #000;
         }
         .print-container {
-            width: 194mm;
-            height: 270mm;
-            margin: 0 auto 20px;
+            width: 100%;
+            max-width: 194mm;
+            height: 260mm;
+            max-height: 260mm;
+            margin: 0 auto;
             background: #fff;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            page-break-after: always;
-            break-after: page;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
-        .print-container:last-child {
-            page-break-after: auto;
-            break-after: auto;
-            margin-bottom: 0;
+        .print-container + .print-container {
+            page-break-before: always;
+            break-before: page;
         }
         .header {
             position: relative;
@@ -149,21 +153,37 @@
             }
             .print-container {
                 box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+                margin: 0 auto 20px;
+            }
+            .print-container:last-child {
+                margin-bottom: 0;
             }
         }
 
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
+            html, body {
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                overflow: hidden !important;
             }
             .print-container {
-                width: auto;
-                height: 270mm;
-                max-height: 270mm;
-                box-shadow: none;
-                page-break-inside: avoid;
-                break-inside: avoid;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 260mm !important;
+                max-height: 260mm !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                overflow: hidden !important;
+            }
+            .print-container + .print-container {
+                page-break-before: always !important;
+                break-before: page !important;
             }
             .no-print {
                 display: none !important;

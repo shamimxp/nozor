@@ -177,6 +177,14 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('order-requests', [\App\Http\Controllers\OrderRequestController::class, 'index'])->name('admin.order-requests.index');
     Route::get('order-requests/{id}', [\App\Http\Controllers\OrderRequestController::class, 'show'])->name('admin.order-requests.show');
     Route::post('order-requests/{id}/confirm', [\App\Http\Controllers\OrderRequestController::class, 'confirm'])->name('admin.order-requests.confirm');
+    Route::post('order-requests/{id}/draft', [\App\Http\Controllers\OrderRequestController::class, 'createDraft'])->name('admin.order-requests.draft');
+
+    // Draft Orders module
+    Route::get('/draft-orders/{id}/export-pdf', [\App\Http\Controllers\Admin\DraftOrderController::class, 'exportPdf'])->name('admin.draft-orders.export-pdf');
+    Route::get('/draft-orders/{id}/print', [\App\Http\Controllers\Admin\DraftOrderController::class, 'print'])->name('admin.draft-orders.print');
+    Route::post('/draft-orders/{id}/convert', [\App\Http\Controllers\Admin\DraftOrderController::class, 'convertToOrder'])->name('admin.draft-orders.convert');
+    Route::delete('/draft-orders/{id}/items/{itemId}', [\App\Http\Controllers\Admin\DraftOrderController::class, 'deleteItem'])->name('admin.draft-orders.delete-item');
+    Route::resource('draft-orders', \App\Http\Controllers\Admin\DraftOrderController::class, ['as' => 'admin']);
 
     // Dealer Order module
     Route::get('/dealer-order/export-list-excel', [\App\Http\Controllers\Admin\DealerOrderController::class, 'exportExcel'])->name('admin.dealer-order.export-list-excel');

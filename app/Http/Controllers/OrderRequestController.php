@@ -122,4 +122,40 @@ class OrderRequestController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    /**
+     * Create a Draft Order from selected items & quantities.
+     */
+    public function createDraft(Request $request, $id)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.order_request_item_id' => 'required|exists:order_request_items,id',
+            'items.*.confirm_qty' => 'required|integer|min:0',
+            'order_note' => 'nullable|string',
+            'admin_note' => 'nullable|string',
+        ]);
+
+        try {
+            $draftOrder = $this->orderRequestService->createDraftOrder(
+                $id,
+                $request->items,
+                $request->order_note,
+                $request->admin_note
+            );
+
+            return response()->json([
+                'success'      => true,
+                'message'      => 'Draft order created successfully!',
+                'draft_id'     => $draftOrder->id,
+                'draft_number' => $draftOrder->draft_number,
+                'download_url' => route('admin.draft-orders.export-pdf', $draftOrder->id),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
 }

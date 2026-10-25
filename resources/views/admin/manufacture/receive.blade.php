@@ -201,6 +201,74 @@
             width: 75px;
         }
     }
+
+    /* Manufacture Image Table Cell */
+    .receive-table td.mfg-image-cell {
+        padding: 0 !important;
+        margin: 0 !important;
+        vertical-align: middle !important;
+        text-align: center !important;
+        height: 1px !important;
+        width: 110px !important;
+        min-width: 110px !important;
+        position: relative !important;
+    }
+
+    .btn-preview-mfg-img {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 75px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        display: block !important;
+        position: relative !important;
+        overflow: hidden !important;
+        cursor: pointer !important;
+        background: #f1f2f6 !important;
+    }
+
+    .btn-preview-mfg-img img {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        transition: transform 0.25s ease, filter 0.2s ease;
+    }
+
+    .btn-preview-mfg-img:hover img {
+        transform: scale(1.06);
+        filter: brightness(0.92);
+    }
+
+    .btn-preview-mfg-img .mfg-zoom-badge {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        background: rgba(0, 0, 0, 0.65);
+        color: #ffffff;
+        border-radius: 3px;
+        padding: 2px 5px;
+        font-size: 9px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+        z-index: 2;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-preview-mfg-img:hover .mfg-zoom-badge {
+        background: #7367f0;
+    }
 </style>
 @endpush
 
@@ -259,14 +327,20 @@
                                             <option value="">-- Choose a Confirmed Order with Pending Qty --</option>
                                             @foreach($pending_orders as $order)
                                                 @php
-                                                    $prod = $order->items->first() ? $order->items->first()->product : $order->product;
+                                                    $firstItem = $order->items->first();
+                                                    $prod = $firstItem ? $firstItem->product : $order->product;
                                                     $prodName = $prod ? $prod->name : 'N/A';
                                                     $workerName = $order->worker ? $order->worker->name : 'Not Assigned';
                                                     $orderQty = (int) $order->manufacture_qty;
                                                     $receivedQty = (int) ($order->received_qty ?? 0);
                                                     $pendingQty = max(0, $orderQty - $receivedQty);
-                                                    $firstItem = $order->items->first();
                                                     $unitPrice = $firstItem ? (float) $firstItem->unit_price : (float) ($order->body_part_price > 0 ? $order->body_part_price : $order->finishing_part_price);
+
+                                                    $recipe = $prod ? $prod->recipe : null;
+                                                    $imgs = $recipe && !empty($recipe->manufacture_images) ? $recipe->manufacture_images : [];
+                                                    $mfgImg = !empty($imgs) && isset($imgs[0]) ? asset($imgs[0]) : ($prod && $prod->featured_image ? asset(config('imagepath.product') . $prod->featured_image) : asset('images/no-image.png'));
+                                                    $allMfgImgs = !empty($imgs) ? array_map(function($im) { return asset($im); }, $imgs) : [$mfgImg];
+                                                    $printUrl = ($order->status >= 1) ? route('admin.manufacture.print', $order->id) : '';
                                                 @endphp
                                                 <option value="{{ $order->id }}" 
                                                     data-invoice="{{ $order->invoice_no }}" 
@@ -275,7 +349,10 @@
                                                     data-order-qty="{{ $orderQty }}"
                                                     data-received-qty="{{ $receivedQty }}"
                                                     data-pending-qty="{{ $pendingQty }}"
-                                                    data-unit-price="{{ $unitPrice }}">
+                                                    data-unit-price="{{ $unitPrice }}"
+                                                    data-mfg-img="{{ $mfgImg }}"
+                                                    data-all-images="{{ json_encode($allMfgImgs) }}"
+                                                    data-print-url="{{ $printUrl }}">
                                                     {{ $order->invoice_no }} - {{ $prodName }} [Pending: {{ $pendingQty }} pcs | Worker: {{ $workerName }}]
                                                 </option>
                                             @endforeach
@@ -314,6 +391,7 @@
                         <thead>
                             <tr class="text-center font-weight-bold text-uppercase">
                                 <th style="min-width: 130px;">Invoice No</th>
+                                <th class="text-center" style="width: 110px; min-width: 110px;">Manufacture Image</th>
                                 <th class="text-left" style="min-width: 160px;">Product</th>
                                 <th class="text-left" style="min-width: 140px;">Worker</th>
                                 <th style="min-width: 80px;">Order Qty</th>
@@ -327,7 +405,7 @@
                         </thead>
                         <tbody>
                             <tr id="emptyReceiveRow">
-                                <td colspan="10" class="text-center py-4 text-muted">
+                                <td colspan="11" class="text-center py-4 text-muted">
                                     <i data-feather="package" style="width: 38px; height: 38px;" class="text-secondary mb-50"></i>
                                     <h6 class="text-muted font-weight-bold mb-25">No orders added to receive list yet</h6>
                                     <small>Scan barcode or select confirmed orders above to begin receiving.</small>
@@ -336,7 +414,7 @@
                         </tbody>
                         <tfoot class="bg-light font-weight-bold d-none" id="receiveTableFooter">
                             <tr>
-                                <td colspan="6" class="text-right text-uppercase small font-weight-bold">Batch Totals:</td>
+                                <td colspan="7" class="text-right text-uppercase small font-weight-bold">Batch Totals:</td>
                                 <td class="text-center text-primary font-weight-bolder" id="batchTotalUnits" style="font-size: 15px;">0</td>
                                 <td class="text-right small text-muted font-weight-bold">Total Payment:</td>
                                 <td class="text-right text-success font-weight-bolder" id="batchTotalPayment" style="font-size: 15px;">৳ 0.00</td>
@@ -362,6 +440,43 @@
         </div>
     </div>
 </div>
+
+<!-- Manufacture Blueprint Preview Modal -->
+<div class="modal fade" id="manufactureImageModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content shadow-lg border-0" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header bg-light py-1">
+                <div>
+                    <h5 class="modal-title font-weight-bolder text-primary mb-25" id="mfgModalTitleText">
+                        Manufacture Blueprint
+                    </h5>
+                    <span class="small text-muted font-weight-bold" id="mfgModalInvoice"></span>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center p-2" style="background: #f8fafc; max-height: 75vh; overflow-y: auto;">
+                <div class="d-inline-block p-1 bg-white shadow-sm rounded" style="border: 1px solid #e2e8f0; max-width: 100%;">
+                    <img id="mfgModalImage" src="" alt="Manufacture Blueprint" style="max-width: 100%; max-height: 60vh; object-fit: contain; border-radius: 4px; display: block; margin: 0 auto;">
+                </div>
+                <div id="mfgModalThumbs" class="mt-1 d-flex justify-content-center align-items-center flex-wrap" style="display: none; gap: 8px;"></div>
+            </div>
+            <div class="modal-footer py-1 d-flex justify-content-between align-items-center">
+                <span class="small text-muted"><i data-feather="info" style="width: 13px; height: 13px;"></i> Click thumbnails to switch images</span>
+                <div>
+                    <a id="mfgModalPrintBtn" href="#" target="_blank" class="btn btn-sm btn-outline-primary mr-50" style="display: none;">
+                        <i data-feather="printer" style="width: 13px; height: 13px;" class="mr-25"></i> Print Order
+                    </a>
+                    <a id="mfgModalDownloadBtn" href="#" download class="btn btn-sm btn-primary mr-50" target="_blank">
+                        <i data-feather="download" style="width: 13px; height: 13px;" class="mr-25"></i> Open Full Image
+                    </a>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -382,17 +497,21 @@
                 var worker = opt.data('worker') || '';
                 var pending = opt.data('pending-qty') || 0;
                 var rate = opt.data('unit-price') || 0;
+                var mfgImg = opt.data('mfg-img') || '';
 
                 return `
                     <div class="d-flex justify-content-between align-items-center py-25">
-                        <div class="text-truncate mr-1">
-                            <div class="d-flex align-items-center text-truncate">
-                                <span class="badge badge-light-primary mr-50 font-weight-bold flex-shrink-0">${invoice}</span>
-                                <strong class="text-dark text-truncate">${product}</strong>
+                        <div class="d-flex align-items-center text-truncate mr-1">
+                            ${mfgImg ? `<img src="${mfgImg}" style="width: 34px; height: 34px; object-fit: cover; border-radius: 4px; margin-right: 8px; flex-shrink: 0; border: 1px solid #ebe9f1;">` : ''}
+                            <div class="text-truncate">
+                                <div class="d-flex align-items-center text-truncate">
+                                    <span class="badge badge-light-primary mr-50 font-weight-bold flex-shrink-0">${invoice}</span>
+                                    <strong class="text-dark text-truncate">${product}</strong>
+                                </div>
+                                <small class="text-muted d-block mt-25">
+                                    Worker: <strong>${worker}</strong> &bull; Rate: ৳ ${parseFloat(rate).toFixed(2)}
+                                </small>
                             </div>
-                            <small class="text-muted d-block mt-25">
-                                Worker: <strong>${worker}</strong> &bull; Rate: ৳ ${parseFloat(rate).toFixed(2)}
-                            </small>
                         </div>
                         <div class="text-right flex-shrink-0">
                             <span class="badge badge-light-danger font-weight-bold px-50 py-25" style="font-size: 11px;">
@@ -453,7 +572,7 @@
             }
         }
 
-        function addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice) {
+        function addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl) {
             id = id.toString();
             if (addedIds.includes(id)) {
                 toastr.warning('Order #' + invoice + ' is already added to the batch list.');
@@ -465,6 +584,10 @@
                 return;
             }
 
+            mfgImg = mfgImg || "{{ asset('images/no-image.png') }}";
+            allImages = allImages || [mfgImg];
+            let allImagesJson = typeof allImages === 'string' ? allImages : JSON.stringify(allImages);
+
             $('#emptyReceiveRow').hide();
             addedIds.push(id);
 
@@ -474,6 +597,20 @@
                 <tr id="row-${id}">
                     <td class="text-center font-weight-bold">
                         <span class="badge badge-light-primary font-weight-bold">${invoice}</span>
+                    </td>
+                    <td class="mfg-image-cell p-0 text-center">
+                        <div class="btn-preview-mfg-img" 
+                             data-img="${mfgImg}" 
+                             data-all-images='${allImagesJson}' 
+                             data-title="${$('<div>').text(product).html()}" 
+                             data-invoice="${$('<div>').text(invoice).html()}" 
+                             data-print-url="${printUrl || ''}" 
+                             title="Click to view full blueprint">
+                            <img src="${mfgImg}" alt="Blueprint">
+                            <div class="mfg-zoom-badge">
+                                <i data-feather="zoom-in" style="width: 10px; height: 10px;"></i>
+                            </div>
+                        </div>
                     </td>
                     <td><strong class="text-dark">${product}</strong></td>
                     <td><strong>${worker}</strong></td>
@@ -524,8 +661,11 @@
             let receivedQty = parseInt(option.data('received-qty')) || 0;
             let pendingQty = parseInt(option.data('pending-qty')) || 0;
             let unitPrice = parseFloat(option.data('unit-price')) || 0;
+            let mfgImg = option.data('mfg-img');
+            let allImages = option.data('all-images');
+            let printUrl = option.data('print-url');
 
-            addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice);
+            addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl);
             $('#manual_select').val('').trigger('change');
         });
 
@@ -560,13 +700,70 @@
                 let receivedQty = parseInt(matchedOption.data('received-qty')) || 0;
                 let pendingQty = parseInt(matchedOption.data('pending-qty')) || 0;
                 let unitPrice = parseFloat(matchedOption.data('unit-price')) || 0;
+                let mfgImg = matchedOption.data('mfg-img');
+                let allImages = matchedOption.data('all-images');
+                let printUrl = matchedOption.data('print-url');
 
-                addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice);
+                addOrderToTable(id, invoice, product, worker, orderQty, receivedQty, pendingQty, unitPrice, mfgImg, allImages, printUrl);
                 $('#barcode_input').val('').focus();
             } else {
                 toastr.error('Order "' + query + '" not found or has no pending units to receive.');
                 $('#barcode_input').val('').focus();
             }
+        });
+
+        // Manufacture Image Popup Preview
+        $(document).on('click', '.btn-preview-mfg-img', function(e) {
+            e.preventDefault();
+            let mainImg = $(this).data('img');
+            let title = $(this).data('title');
+            let invoice = $(this).data('invoice');
+            let printUrl = $(this).data('print-url');
+            let allImages = $(this).data('all-images');
+
+            if (typeof allImages === 'string') {
+                try {
+                    allImages = JSON.parse(allImages);
+                } catch(e) {
+                    allImages = [mainImg];
+                }
+            }
+
+            $('#mfgModalTitleText').text(title || 'Manufacture Blueprint');
+            $('#mfgModalInvoice').text(invoice ? 'Invoice No: ' + invoice : '');
+            $('#mfgModalImage').attr('src', mainImg);
+            $('#mfgModalDownloadBtn').attr('href', mainImg);
+
+            if (printUrl) {
+                $('#mfgModalPrintBtn').attr('href', printUrl).show();
+            } else {
+                $('#mfgModalPrintBtn').hide();
+            }
+
+            let thumbsContainer = $('#mfgModalThumbs');
+            thumbsContainer.empty();
+
+            if (Array.isArray(allImages) && allImages.length > 1) {
+                allImages.forEach(function(imgSrc) {
+                    let activeClass = (imgSrc === mainImg) ? 'border-primary' : 'border-secondary';
+                    let thumb = $('<img src="' + imgSrc + '" class="mfg-thumb-nav ' + activeClass + '" style="width: 52px; height: 52px; object-fit: contain; cursor: pointer; border: 2px solid; border-radius: 6px; background: #fff; padding: 2px;">');
+                    thumbsContainer.append(thumb);
+                });
+                thumbsContainer.show();
+            } else {
+                thumbsContainer.hide();
+            }
+
+            renderFeather();
+            $('#manufactureImageModal').modal('show');
+        });
+
+        $(document).on('click', '.mfg-thumb-nav', function() {
+            let src = $(this).attr('src');
+            $('#mfgModalImage').attr('src', src);
+            $('#mfgModalDownloadBtn').attr('href', src);
+            $('.mfg-thumb-nav').removeClass('border-primary').addClass('border-secondary');
+            $(this).removeClass('border-secondary').addClass('border-primary');
         });
 
         // Quantity change recalculation

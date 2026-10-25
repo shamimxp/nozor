@@ -368,7 +368,11 @@
                         <span class="s-value primary" id="summarySelectedTotalAmount">0 <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small></span>
                     </div>
                 </div>
-                <div class="text-right mt-3">
+                <div class="d-flex justify-content-end align-items-center mt-3" style="gap: 10px;">
+                    <button type="button" class="btn btn-warning" id="btnCreateDraftPdf" style="display:inline-flex; align-items:center; gap:8px; font-weight:700; padding:0.6rem 1.4rem; border-radius:8px; box-shadow:0 4px 12px rgba(245,158,11,0.35);">
+                        <i data-feather="file-text" style="width:16px;height:16px;"></i>
+                        Download PDF
+                    </button>
                     <button type="submit" class="btn-confirm">
                         <i data-feather="check-circle" style="width:16px;height:16px;"></i>
                         Confirm Order
@@ -440,6 +444,72 @@ $(document).ready(function () {
         $('.item-checkbox:not(:checked)').each(function () {
             const index = $(this).data('index');
             $('input[name="items[' + index + '][confirm_qty]"]').val(0);
+        });
+    });
+
+    $('#btnCreateDraftPdf').on('click', function (e) {
+        e.preventDefault();
+        const selectedCheckboxes = $('.item-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            toastr.error('Please select at least one item to create a draft order and download PDF.');
+            return;
+        }
+
+        let hasValidQty = false;
+        selectedCheckboxes.each(function () {
+            const index = $(this).data('index');
+            const qty = parseInt($('input[name="items[' + index + '][confirm_qty]"]').val()) || 0;
+            if (qty > 0) hasValidQty = true;
+        });
+
+        if (!hasValidQty) {
+            toastr.error('Selected items must have a quantity greater than 0.');
+            return;
+        }
+
+        // Set unselected items confirm_qty to 0 in form
+        $('.item-checkbox:not(:checked)').each(function () {
+            const index = $(this).data('index');
+            $('input[name="items[' + index + '][confirm_qty]"]').val(0);
+        });
+
+        const $btn = $(this);
+        const originalHtml = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-1"></span> Creating Draft...');
+
+        const formData = new FormData($('#confirmForm')[0]);
+
+        $.ajax({
+            url: '{{ route("admin.order-requests.draft", $orderRequest->id) }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
+            },
+            success: function (res) {
+                if (res.success) {
+                    toastr.success(res.message || 'Draft order created! Downloading PDF...');
+                    if (res.download_url) {
+                        window.location.href = res.download_url;
+                    }
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1200);
+                } else {
+                    toastr.error(res.message || 'Failed to create draft order.');
+                    $btn.prop('disabled', false).html(originalHtml);
+                }
+            },
+            error: function (xhr) {
+                let msg = 'Error creating draft order.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                toastr.error(msg);
+                $btn.prop('disabled', false).html(originalHtml);
+            }
         });
     });
 
