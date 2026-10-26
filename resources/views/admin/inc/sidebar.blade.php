@@ -254,10 +254,22 @@
                     <span class="menu-title text-truncate">Collection</span>
                 </a>
             </li>
-            <li class="nav-item {{ Route::is('admin.worker-payment*') ? 'active' : '' }}">
-                <a class="d-flex align-items-center" href="{{route('admin.worker-payment.index')}}">
+            <li class="nav-item {{ Route::is('admin.worker-balance-sheet*') ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{route('admin.worker-balance-sheet.index')}}">
+                    <i data-feather="users"></i>
+                    <span class="menu-title text-truncate">Worker Balance Sheet</span>
+                </a>
+            </li>
+            <li class="nav-item {{ Route::is('admin.worker-payouts*') ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{route('admin.worker-payouts.index')}}">
                     <i data-feather="credit-card"></i>
-                    <span class="menu-title text-truncate">Worker Payments</span>
+                    <span class="menu-title text-truncate">Worker Payment List</span>
+                </a>
+            </li>
+            <li class="nav-item {{ (Route::is('admin.worker-invoices*') || Route::is('admin.worker-payment*')) ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{route('admin.worker-invoices.index')}}">
+                    <i data-feather="file-text"></i>
+                    <span class="menu-title text-truncate">Worker Invoice List</span>
                 </a>
             </li>
             <li class="nav-item @if(Route::is('admin.report*')) open @endif">

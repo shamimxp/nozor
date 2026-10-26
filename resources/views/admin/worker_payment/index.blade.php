@@ -1,11 +1,11 @@
 @extends('layouts.admin')
-@section('title', isset($page_title) ? $page_title : 'Worker Payments')
+@section('title', isset($page_title) ? $page_title : 'Worker Invoice List')
 @section('content')
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header border-bottom p-1">
-                <h4 class="card-title">{{ isset($page_title) ? $page_title : 'Worker Payments' }}</h4>
+                <h4 class="card-title">{{ isset($page_title) ? $page_title : 'Worker Invoice List' }}</h4>
             </div>
             <div class="card-body mt-2">
                 <div class="row mb-2">
@@ -27,6 +27,7 @@
                         <select id="filter_status" class="form-control">
                             <option value="">All Status</option>
                             <option value="pending">Pending</option>
+                            <option value="partially_paid">Partially Paid</option>
                             <option value="paid">Paid</option>
                         </select>
                     </div>
@@ -51,7 +52,7 @@
                                 <th class="text-center" style="min-width: 110px;">Order Type</th>
                                 <th class="text-center">Quantity</th>
                                 <th class="text-right">Total Amount</th>
-                                <th>Is Paid</th>
+                                <th>Status</th>
                                 <th>Created By</th>
                                 <th>Actions</th>
                             </tr>
@@ -210,7 +211,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('admin.worker-payment.index') }}",
+                url: "{{ route('admin.worker-invoices.index') }}",
                 data: function (d) {
                     d.from_date = from_date;
                     d.to_date = to_date;
@@ -270,42 +271,6 @@
             table.draw();
         });
 
-        $(document).on('change', '.change-status', function() {
-            let chk = $(this);
-            let id = chk.data('id');
-
-            Swal.fire({
-                title: 'Confirm Payment',
-                text: "Mark this worker payment as Paid? Once marked as Paid, it cannot be changed back to Pending.",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#28c76f',
-                cancelButtonColor: '#82868b',
-                confirmButtonText: 'Yes, Mark as Paid'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('admin.worker-payment.change-status') }}",
-                        type: 'POST',
-                        data: {
-                            id: id,
-                            _token: $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(response) {
-                            toastr.success(response.success);
-                            table.draw(false);
-                        },
-                        error: function(xhr) {
-                            toastr.error(xhr.responseJSON.error || 'Something went wrong.');
-                            table.draw(false);
-                        }
-                    });
-                } else {
-                    chk.prop('checked', false);
-                }
-            });
-        });
-
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -325,7 +290,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ url('admin/worker-payment') }}/" + id,
+                        url: "{{ url('admin/worker-invoices') }}/" + id,
                         type: 'DELETE',
                         success: function(response) {
                             toastr.success(response.success);

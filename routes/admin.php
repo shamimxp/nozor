@@ -278,8 +278,19 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('subscribers', [\App\Http\Controllers\Admin\SubscriberController::class, 'index'])->name('admin.subscribers.index');
     Route::delete('subscribers/{id}', [\App\Http\Controllers\Admin\SubscriberController::class, 'destroy'])->name('admin.subscribers.destroy');
 
-    // Worker Payment
-    Route::get('/worker-payment', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'index'])->name('admin.worker-payment.index');
-    Route::post('/worker-payment/change-status', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'changeStatus'])->name('admin.worker-payment.change-status');
+    // Worker Invoice List (Renamed from worker-payment)
+    Route::get('/worker-invoices', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'index'])->name('admin.worker-invoices.index');
+    Route::delete('/worker-invoices/{id}', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'destroy'])->name('admin.worker-invoices.destroy');
+
+    // Worker Balance Sheet & Worker Payment List
+    Route::get('/worker-balance-sheet', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'balanceSheet'])->name('admin.worker-balance-sheet.index');
+    Route::get('/worker-payments', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'paymentList'])->name('admin.worker-payouts.index');
+    Route::post('/worker-payouts', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'storePayout'])->name('admin.worker-payouts.store');
+    Route::get('/worker-payments/{id}/download', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'downloadTokenPdf'])->name('admin.worker-payouts.download');
+    Route::get('/worker-payments/{id}', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'showPayout'])->name('admin.worker-payouts.show');
+    Route::delete('/worker-payments/{id}', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'destroyPayout'])->name('admin.worker-payouts.destroy');
+
+    // Backwards-compatible aliases
+    Route::get('/worker-payment', fn() => redirect()->route('admin.worker-invoices.index'))->name('admin.worker-payment.index');
     Route::delete('/worker-payment/{id}', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'destroy'])->name('admin.worker-payment.destroy');
 });

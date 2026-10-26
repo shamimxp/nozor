@@ -248,14 +248,14 @@ class OrderRequestService
                 }
             }
 
-            // 3. Update order request status
+            // 3. Update order request status or remove if no items remain
             $remainingCount = OrderRequestItem::where('order_request_id', $orderRequest->id)->count();
             if ($remainingCount == 0) {
-                $orderRequest->status = 'drafted';
+                $orderRequest->delete();
             } else {
                 $orderRequest->status = 'partially_drafted';
+                $orderRequest->save();
             }
-            $orderRequest->save();
 
             return $draftOrder;
         });

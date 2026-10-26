@@ -19,8 +19,11 @@ class OrderRequestController extends Controller
      */
     public function index(Request $request)
     {
+        // Clean up any empty requests where items count is 0
+        \App\Models\OrderRequest::doesntHave('items')->delete();
+
         if ($request->ajax()) {
-            $query = \App\Models\OrderRequest::with('dealer')->latest();
+            $query = \App\Models\OrderRequest::has('items')->with('dealer')->latest();
 
             // Filter logic
             if ($request->filled('request_number')) {
@@ -98,7 +101,13 @@ class OrderRequestController extends Controller
      */
     public function show($id)
     {
-        $orderRequest = \App\Models\OrderRequest::with(['dealer', 'items.product'])->findOrFail($id);
+        $orderRequest = \App\Models\OrderRequest::with(['dealer', 'items.product'])->find($id);
+        if (!$orderRequest || $orderRequest->items->count() === 0) {
+            if ($orderRequest) {
+                $orderRequest->delete();
+            }
+            return redirect()->route('admin.order-requests.index')->with('warning', 'Order request has no items and was removed.');
+        }
         return view('admin.order-requests.show', compact('orderRequest'));
     }
 
@@ -144,12 +153,17 @@ class OrderRequestController extends Controller
                 $request->admin_note
             );
 
+            $orderRequestExists = \App\Models\OrderRequest::where('id', $id)->exists();
+
             return response()->json([
                 'success'      => true,
                 'message'      => 'Draft order created successfully!',
                 'draft_id'     => $draftOrder->id,
                 'draft_number' => $draftOrder->draft_number,
+                'print_url'    => route('admin.draft-orders.print', $draftOrder->id),
                 'download_url' => route('admin.draft-orders.export-pdf', $draftOrder->id),
+                'all_drafted'  => !$orderRequestExists,
+                'redirect_url' => route('admin.order-requests.index'),
             ]);
         } catch (\Exception $e) {
             return response()->json([

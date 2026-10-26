@@ -370,8 +370,8 @@
                 </div>
                 <div class="d-flex justify-content-end align-items-center mt-3" style="gap: 10px;">
                     <button type="button" class="btn btn-warning" id="btnCreateDraftPdf" style="display:inline-flex; align-items:center; gap:8px; font-weight:700; padding:0.6rem 1.4rem; border-radius:8px; box-shadow:0 4px 12px rgba(245,158,11,0.35);">
-                        <i data-feather="file-text" style="width:16px;height:16px;"></i>
-                        Download PDF
+                        <i data-feather="printer" style="width:16px;height:16px;"></i>
+                        Print and Make Draft Order
                     </button>
                     <button type="submit" class="btn-confirm">
                         <i data-feather="check-circle" style="width:16px;height:16px;"></i>
@@ -451,7 +451,7 @@ $(document).ready(function () {
         e.preventDefault();
         const selectedCheckboxes = $('.item-checkbox:checked');
         if (selectedCheckboxes.length === 0) {
-            toastr.error('Please select at least one item to create a draft order and download PDF.');
+            toastr.error('Please select at least one item to create a draft order and print.');
             return;
         }
 
@@ -473,9 +473,16 @@ $(document).ready(function () {
             $('input[name="items[' + index + '][confirm_qty]"]').val(0);
         });
 
+        let printWindow = window.open('about:blank', '_blank');
+        if (printWindow) {
+            try {
+                printWindow.document.write('<div style="font-family:sans-serif;padding:50px;text-align:center;color:#333;"><h3>Generating Draft Order for Print...</h3><p>Please wait...</p></div>');
+            } catch(e) {}
+        }
+
         const $btn = $(this);
         const originalHtml = $btn.html();
-        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-1"></span> Creating Draft...');
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-1"></span> Processing...');
 
         const formData = new FormData($('#confirmForm')[0]);
 
@@ -490,25 +497,40 @@ $(document).ready(function () {
             },
             success: function (res) {
                 if (res.success) {
-                    toastr.success(res.message || 'Draft order created! Downloading PDF...');
-                    if (res.download_url) {
-                        window.location.href = res.download_url;
+                    toastr.success(res.message || 'Draft order created! Opening print view...');
+                    if (res.print_url) {
+                        if (printWindow && !printWindow.closed) {
+                            printWindow.location.href = res.print_url;
+                        } else {
+                            window.open(res.print_url, '_blank');
+                        }
+                    } else if (printWindow && !printWindow.closed) {
+                        printWindow.close();
                     }
+
                     setTimeout(function () {
-                        window.location.reload();
+                        if (res.all_drafted && res.redirect_url) {
+                            window.location.href = res.redirect_url;
+                        } else {
+                            window.location.reload();
+                        }
                     }, 1200);
                 } else {
+                    if (printWindow && !printWindow.closed) printWindow.close();
                     toastr.error(res.message || 'Failed to create draft order.');
                     $btn.prop('disabled', false).html(originalHtml);
+                    if (typeof feather !== 'undefined') feather.replace();
                 }
             },
             error: function (xhr) {
+                if (printWindow && !printWindow.closed) printWindow.close();
                 let msg = 'Error creating draft order.';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     msg = xhr.responseJSON.message;
                 }
                 toastr.error(msg);
                 $btn.prop('disabled', false).html(originalHtml);
+                if (typeof feather !== 'undefined') feather.replace();
             }
         });
     });

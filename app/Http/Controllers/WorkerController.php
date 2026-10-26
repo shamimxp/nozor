@@ -236,8 +236,10 @@ class WorkerController extends Controller
                     return '<span class="badge badge-light-secondary font-weight-bold">' . e(ucfirst($type ?: 'N/A')) . '</span>';
                 })
                 ->addColumn('status', function ($row) {
-                    if ($row->status == 'paid') {
+                    if ($row->status == 'paid' || $row->due_amount <= 0) {
                         return '<span class="badge badge-light-success font-weight-bold">Paid</span>';
+                    } elseif ($row->status == 'partially_paid' || ($row->paid_amount > 0 && $row->due_amount > 0)) {
+                        return '<span class="badge badge-light-info font-weight-bold">Partially Paid</span>';
                     } else {
                         return '<span class="badge badge-light-warning font-weight-bold">Pending</span>';
                     }

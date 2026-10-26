@@ -107,64 +107,44 @@ class WorkerPaymentController extends Controller
                     return '<strong class="text-success" style="font-size: 13px;">৳ ' . number_format($row->total_amount, 2) . '</strong>';
                 })
                 ->addColumn('status', function ($row) {
-                    if ($row->status === 'paid') {
+                    if ($row->status === 'paid' || $row->due_amount <= 0) {
                         return '<span class="badge badge-pill badge-light-success font-weight-bolder" style="font-size: 11px; padding: 6px 12px;"><i data-feather="check-circle" style="width: 12px; height: 12px;" class="mr-25"></i> Paid</span>';
+                    } elseif ($row->status === 'partially_paid' || ($row->paid_amount > 0 && $row->due_amount > 0)) {
+                        return '<span class="badge badge-pill badge-light-info font-weight-bolder" style="font-size: 11px; padding: 6px 12px;"><i data-feather="clock" style="width: 12px; height: 12px;" class="mr-25"></i> Partially Paid</span>'
+                            . '<div class="small mt-25"><span class="text-success font-weight-bold">Paid: ৳' . number_format($row->paid_amount, 2) . '</span><br><span class="text-danger font-weight-bold">Due: ৳' . number_format($row->due_amount, 2) . '</span></div>';
                     }
 
-                    return '<div class="custom-control custom-switch custom-switch-success">
-                                <input type="checkbox" class="custom-control-input change-status" id="status_'.$row->id.'" data-id="'.$row->id.'" data-field="status">
-                                <label class="custom-control-label font-weight-bold cursor-pointer" for="status_'.$row->id.'">
-                                    <span class="badge badge-light-warning">Pending</span>
-                                </label>
-                            </div>';
+                    return '<span class="badge badge-pill badge-light-warning font-weight-bolder" style="font-size: 11px; padding: 6px 12px;"><i data-feather="alert-circle" style="width: 12px; height: 12px;" class="mr-25"></i> Pending</span>';
                 })
                 ->addColumn('created_by', function ($row) {
                     return $row->creator->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<div class="btn-group">';
-                    $btn .= '<button type="button" class="btn btn-sm btn-danger delete-record" data-id="'.$row->id.'" title="Delete"><i data-feather="trash-2"></i></button>';
-                    $btn .= '</div>';
-                    if($row->status === 'paid') {
-                        return '<span class="badge badge-light-success font-weight-bolder" style="font-size: 11px; padding: 6px 12px;"><i data-feather="check-circle" style="width: 12px; height: 12px;" class="mr-25"></i> Paid</span>';
-                    }else{
-                        return $btn;
+                    if ($row->status === 'pending') {
+                        return '<button type="button" class="btn btn-sm btn-danger delete-record" data-id="'.$row->id.'" title="Delete"><i data-feather="trash-2"></i></button>';
                     }
-
+                    return '<span class="text-muted font-weight-bold" title="Cannot delete paid or partially paid invoice">—</span>';
                 })
                 ->rawColumns(['worker_name', 'manufacture_image', 'invoice_no', 'product', 'part_type', 'quantity', 'total_amount', 'status', 'action'])
                 ->make(true);
         }
 
         $workers = Worker::all();
-        $page_title = 'Worker Payments';
+        $page_title = 'Worker Invoice List';
 
         return view('admin.worker_payment.index', compact('workers', 'page_title'));
-    }
-
-    public function changeStatus(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:worker_payments,id',
-        ]);
-
-        $payment = WorkerPayment::findOrFail($request->id);
-
-        if ($payment->status === 'paid') {
-            return response()->json(['error' => 'This payment is already paid and cannot be changed back to pending.'], 403);
-        }
-
-        $payment->status = 'paid';
-        $payment->save();
-
-        return response()->json(['success' => 'Worker payment status changed to Paid successfully.']);
     }
 
     public function destroy($id)
     {
         $payment = WorkerPayment::findOrFail($id);
+
+        if ($payment->status !== 'pending') {
+            return response()->json(['error' => 'Only pending invoices can be deleted.'], 403);
+        }
+
         $payment->delete();
 
-        return response()->json(['success' => 'Worker payment record deleted successfully']);
+        return response()->json(['success' => 'Worker invoice record deleted successfully']);
     }
 }

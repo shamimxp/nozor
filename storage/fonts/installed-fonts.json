@@ -1,0 +1,10 @@
+{
+    "notosansbengali": {
+        "normal": "\/var\/www\/projects\/nozor \/storage\/fonts\/notosansbengali_normal_ca2121a34e0613f13a36460fcc9ae78e",
+        "bold": "notosansbengali_bold_a70efa9016349218a39b2dd629d06ed5"
+    },
+    "bangla": {
+        "normal": "\/var\/www\/projects\/nozor \/storage\/fonts\/bangla_normal_ca2121a34e0613f13a36460fcc9ae78e",
+        "bold": "bangla_bold_a70efa9016349218a39b2dd629d06ed5"
+    }
+}

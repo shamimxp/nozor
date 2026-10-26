@@ -14,7 +14,7 @@ class OrderRequestController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = OrderRequest::with('items')->where('dealer_id', auth('dealer')->id())->latest();
+            $query = OrderRequest::has('items')->with('items')->where('dealer_id', auth('dealer')->id())->latest();
             
             return datatables()->of($query)
                 ->addColumn('total_items', function ($row) {
@@ -43,7 +43,13 @@ class OrderRequestController extends Controller
 
     public function show($id, ProductPriceCalculator $calculator)
     {
-        $orderRequest = OrderRequest::with(['items.product'])->where('dealer_id', auth('dealer')->id())->findOrFail($id);
+        $orderRequest = OrderRequest::with(['items.product'])->where('dealer_id', auth('dealer')->id())->find($id);
+        if (!$orderRequest || $orderRequest->items->count() === 0) {
+            if ($orderRequest) {
+                $orderRequest->delete();
+            }
+            return redirect()->route('dealer.order-requests.index')->with('warning', 'Order request has no items and was removed.');
+        }
         $dealerId = auth('dealer')->id();
         
         $totalAmount = 0;

@@ -758,6 +758,8 @@ class ManufactureController extends Controller
                         'received_qty' => $receiveQty,
                         'unit_price' => $unitPrice,
                         'total_amount' => $paymentAmount,
+                        'paid_amount' => 0,
+                        'due_amount' => $paymentAmount,
                         'created_by' => auth()->id(),
                         'status' => 'pending'
                     ]);

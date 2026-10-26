@@ -16,8 +16,18 @@ class WorkerPayment extends Model
         'received_qty',
         'unit_price',
         'total_amount',
+        'paid_amount',
+        'due_amount',
         'created_by',
         'status',
+    ];
+
+    protected $casts = [
+        'date'         => 'date',
+        'unit_price'   => 'decimal:2',
+        'total_amount' => 'decimal:2',
+        'paid_amount'  => 'decimal:2',
+        'due_amount'   => 'decimal:2',
     ];
 
     public function manufacture()
@@ -33,5 +43,10 @@ class WorkerPayment extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by'); // Admin user typically
+    }
+
+    public function payoutItems()
+    {
+        return $this->hasMany(WorkerPayoutItem::class, 'worker_payment_id');
     }
 }
