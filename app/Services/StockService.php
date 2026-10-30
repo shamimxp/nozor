@@ -89,7 +89,7 @@ class StockService
             $stockType = match ($sourceType) {
                 'manufacture_receive' => 'production',
                 'purchase' => 'purchase',
-                'stock_adjustment' => 'adjustment',
+                'stock_adjustment', 'stock_adjustment_reversal' => 'adjustment',
                 default => 'other',
             };
 
@@ -144,12 +144,17 @@ class StockService
             $product->stock = $afterStock;
             $product->save();
 
+            $stockType = match ($sourceType) {
+                'stock_adjustment', 'stock_adjustment_reversal' => 'adjustment',
+                default => 'order',
+            };
+
             return Stock::create([
                 'product_id'   => $product->id,
                 'quantity'     => $quantity,
                 'type'         => 'out',
                 'purchase_id'  => null,
-                'stock_type'   => 'order',
+                'stock_type'   => $stockType,
                 'before_stock' => $beforeStock,
                 'after_stock'  => $afterStock,
                 'source_type'  => $sourceType,
