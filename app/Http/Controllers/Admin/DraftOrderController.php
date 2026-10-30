@@ -118,7 +118,7 @@ class DraftOrderController extends Controller
      */
     public function show($id)
     {
-        $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product', 'dealerOrder'])->findOrFail($id);
+        $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product.recipe', 'dealerOrder'])->findOrFail($id);
         return view('admin.draft_order.show', compact('draftOrder'));
     }
 
@@ -127,7 +127,7 @@ class DraftOrderController extends Controller
      */
     public function edit($id)
     {
-        $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product'])->findOrFail($id);
+        $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product.recipe'])->findOrFail($id);
 
         if ($draftOrder->status === 'converted') {
             return redirect()->route('admin.draft-orders.show', $draftOrder->id)

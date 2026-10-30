@@ -141,8 +141,68 @@ class DealerOrderController extends Controller
     {
         $orderNumber = DealerOrder::generateOrderNumber();
         $dealers     = Dealer::orderBy('shop_name')->get();
-        $products    = Product::where('is_manufacturer', 1)->where('status', 1)->get();
-        return view('admin.dealer-order.create', compact('orderNumber', 'dealers', 'products'));
+        $categories  = \App\Models\Category::orderBy('name')->get();
+
+        $calculator  = app(\App\Services\ProductPriceCalculator::class);
+        $rawProducts = Product::with(['recipe.items.rawMaterialProduct', 'recipe.costSetting.items', 'category'])
+            ->where('status', 1)
+            ->orderBy('name')
+            ->get();
+
+        $products = [];
+        foreach ($rawProducts as $p) {
+            $regularPrice = 0;
+            $specialPrice = 0;
+
+            if ($p->is_manufacturer && $p->recipe) {
+                try {
+                    $quote = $calculator->quote($p->id);
+                    $regularPrice = (float) ($quote['regular_dealer_price'] ?? 0);
+                    $specialPrice = (float) ($quote['special_dealer_price'] ?? 0);
+                } catch (\Exception $e) {
+                    $regularPrice = 0;
+                    $specialPrice = 0;
+                }
+            } else {
+                $basePrice = (float) ($p->selling_price ?? 0);
+                $regularPrice = $basePrice;
+                $specialPrice = $basePrice;
+            }
+
+            // Exclude products where price is 0 or less
+            if ($regularPrice <= 0 && $specialPrice <= 0) {
+                continue;
+            }
+
+            $pImg = $p->featured_image ? asset(config('imagepath.product') . $p->featured_image) : null;
+            $mfgImg = null;
+            if ($p->is_manufacturer && $p->recipe) {
+                $mImgs = $p->recipe->manufacture_images;
+                if (is_string($mImgs)) {
+                    $mImgs = json_decode($mImgs, true);
+                }
+                if (is_array($mImgs) && count($mImgs) > 0 && !empty($mImgs[0])) {
+                    $mfgImg = asset($mImgs[0]);
+                }
+            }
+
+            $products[] = [
+                'id'                   => $p->id,
+                'name'                 => $p->name,
+                'model_no'             => $p->model_no,
+                'category_id'          => $p->category_id,
+                'category_name'        => $p->category ? $p->category->name : 'General',
+                'is_manufacturer'      => $p->is_manufacturer ? 1 : 0,
+                'featured_image'       => $pImg,
+                'manufacture_image'    => $mfgImg,
+                'regular_dealer_price' => $regularPrice,
+                'special_dealer_price' => $specialPrice,
+                'stock'                => $p->is_manufacturer ? 'Made to Order' : ($p->stock ?? 0),
+                'stock_qty'            => (int) ($p->stock ?? 0),
+            ];
+        }
+
+        return view('admin.dealer-order.create', compact('orderNumber', 'dealers', 'categories', 'products'));
     }
 
     public function store(Request $request)
@@ -221,22 +281,96 @@ class DealerOrderController extends Controller
         $order = DealerOrder::with(['items.product.gallery', 'items.product.recipe.costSetting.items.costHead', 'dealer'])->findOrFail($id);
         $workers = \App\Models\Worker::where('status', 1)->get();
         $setting = \App\Models\WebSetting::first();
-        return view('admin.dealer-order.show', compact('order', 'workers', 'setting'));
+
+        $refNumber = trim($order->order_number ?? '');
+        $refVariants = array_unique(array_filter([$refNumber, '#' . ltrim($refNumber, '#'), ltrim($refNumber, '#')]));
+        $assignedProductIds = !empty($refVariants) ? \App\Models\ManufactureOrderItem::whereIn('reff_invoice', $refVariants)
+            ->pluck('product_id')
+            ->merge(
+                \App\Models\Manufacture::whereIn('reff_invoice', $refVariants)
+                    ->whereNotNull('product_id')
+                    ->pluck('product_id')
+            )
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray() : [];
+
+        return view('admin.dealer-order.show', compact('order', 'workers', 'setting', 'assignedProductIds'));
     }
 
     public function edit($id)
     {
-        $order = DealerOrder::with(['items.product', 'dealer'])->findOrFail($id);
+        $order = DealerOrder::with(['items.product.recipe', 'dealer'])->findOrFail($id);
 
         if ($order->status == 'delivered') {
             toastr()->warning('Delivered orders cannot be modified.');
             return redirect()->route('admin.dealer-order.index');
         }
 
-        $dealers  = Dealer::orderBy('shop_name')->get();
-        $products = Product::where('is_manufacturer', 1)->where('status', 1)->get();
+        $dealers     = Dealer::orderBy('shop_name')->get();
+        $categories  = \App\Models\Category::orderBy('name')->get();
+        $calculator  = app(\App\Services\ProductPriceCalculator::class);
 
-        return view('admin.dealer-order.edit', compact('order', 'dealers', 'products'));
+        $rawProducts = Product::with(['recipe.items.rawMaterialProduct', 'recipe.costSetting.items', 'category'])
+            ->where('status', 1)
+            ->orderBy('name')
+            ->get();
+
+        $products = [];
+        foreach ($rawProducts as $p) {
+            $regularPrice = 0;
+            $specialPrice = 0;
+
+            if ($p->is_manufacturer && $p->recipe) {
+                try {
+                    $quote = $calculator->quote($p->id);
+                    $regularPrice = (float) ($quote['regular_dealer_price'] ?? 0);
+                    $specialPrice = (float) ($quote['special_dealer_price'] ?? 0);
+                } catch (\Exception $e) {
+                    $regularPrice = 0;
+                    $specialPrice = 0;
+                }
+            } else {
+                $basePrice = (float) ($p->selling_price ?? 0);
+                $regularPrice = $basePrice;
+                $specialPrice = $basePrice;
+            }
+
+            // Exclude products where price is 0 or less
+            if ($regularPrice <= 0 && $specialPrice <= 0) {
+                continue;
+            }
+
+            $pImg = $p->featured_image ? asset(config('imagepath.product') . $p->featured_image) : null;
+            $mfgImg = null;
+            if ($p->is_manufacturer && $p->recipe) {
+                $mImgs = $p->recipe->manufacture_images;
+                if (is_string($mImgs)) {
+                    $mImgs = json_decode($mImgs, true);
+                }
+                if (is_array($mImgs) && count($mImgs) > 0 && !empty($mImgs[0])) {
+                    $mfgImg = asset($mImgs[0]);
+                }
+            }
+
+            $products[] = [
+                'id'                   => $p->id,
+                'name'                 => $p->name,
+                'model_no'             => $p->model_no,
+                'category_id'          => $p->category_id,
+                'category_name'        => $p->category ? $p->category->name : 'General',
+                'is_manufacturer'      => $p->is_manufacturer ? 1 : 0,
+                'featured_image'       => $pImg,
+                'manufacture_image'    => $mfgImg,
+                'regular_dealer_price' => $regularPrice,
+                'special_dealer_price' => $specialPrice,
+                'stock'                => $p->is_manufacturer ? 'Made to Order' : ($p->stock ?? 0),
+                'stock_qty'            => (int) ($p->stock ?? 0),
+            ];
+        }
+
+        return view('admin.dealer-order.edit', compact('order', 'dealers', 'categories', 'products'));
     }
 
     public function update(Request $request, $id)

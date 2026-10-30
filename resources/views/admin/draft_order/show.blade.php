@@ -118,25 +118,55 @@
                                 <thead class="bg-light">
                                     <tr>
                                         <th style="width: 50px;">#</th>
-                                        <th style="width: 60px;">Image</th>
+                                        <th style="width: 80px;">Product Image</th>
+                                        <th style="width: 80px;">Manufacture Image</th>
                                         <th>Product Name</th>
                                         <th class="text-right">Unit Price</th>
                                         <th class="text-center">Quantity</th>
                                         <th class="text-right">Total</th>
-                                        @if($draftOrder->status === 'draft')
-                                            <th class="text-center" style="width: 80px;">Action</th>
-                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($draftOrder->items as $index => $item)
+                                        @php
+                                            $prodImg = ($item->product && $item->product->featured_image) ? asset(config('imagepath.product') . $item->product->featured_image) : null;
+                                            $mfgImg = null;
+                                            if ($item->product && $item->product->is_manufacturer == 1 && $item->product->recipe) {
+                                                $mImages = $item->product->recipe->manufacture_images;
+                                                if (is_string($mImages)) {
+                                                    $mImages = json_decode($mImages, true);
+                                                }
+                                                if (is_array($mImages) && count($mImages) > 0 && !empty($mImages[0])) {
+                                                    $mfgImg = asset($mImages[0]);
+                                                }
+                                            }
+                                        @endphp
                                         <tr id="row-item-{{ $item->id }}">
                                             <td>{{ $index + 1 }}</td>
                                             <td>
-                                                @if($item->product && $item->product->featured_image)
-                                                    <img src="{{ asset(config('imagepath.product') . $item->product->featured_image) }}" width="42" height="42" style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;" onerror="this.src='{{ asset('images/no-image.png') }}'">
+                                                @if($prodImg)
+                                                    <img src="{{ $prodImg }}" width="42" height="42" 
+                                                        class="img-preview-trigger" 
+                                                        data-preview-url="{{ $prodImg }}"
+                                                        data-preview-title="{{ $item->product->name ?? 'Product' }} (Product Image)"
+                                                        title="Click to zoom image"
+                                                        style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;" 
+                                                        onerror="this.src='{{ asset('images/no-image.png') }}'">
                                                 @else
                                                     <img src="{{ asset('images/no-image.png') }}" width="42" height="42" style="border-radius:6px;object-fit:cover;">
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($mfgImg)
+                                                    <img src="{{ $mfgImg }}" width="42" height="42" 
+                                                        class="img-preview-trigger" 
+                                                        data-preview-url="{{ $mfgImg }}"
+                                                        data-preview-title="{{ $item->product->name ?? 'Product' }} (Manufacture Image)"
+                                                        title="Click to zoom image"
+                                                        style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;" 
+                                                        onerror="this.src='{{ asset('images/no-image.png') }}'">
+                                                @else
+                                                    <span class="badge badge-light-secondary font-weight-normal" style="font-size:0.75rem;">N/A</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -146,21 +176,8 @@
                                                 @endif
                                             </td>
                                             <td class="text-right font-weight-bold">৳{{ number_format($item->unit_price, 2) }}</td>
-                                            <td class="text-center">
-                                                <span class="badge badge-light-primary font-weight-bold" style="font-size:0.85rem;">{{ $item->qty }}</span>
-                                            </td>
+                                            <td class="text-center font-weight-bold">{{ $item->qty }}</td>
                                             <td class="text-right font-weight-bolder text-primary">৳{{ number_format($item->total, 2) }}</td>
-                                            @if($draftOrder->status === 'draft')
-                                                <td class="text-center">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm p-25 btnDeleteItem"
-                                                        data-id="{{ $item->id }}"
-                                                        data-product="{{ $item->product->name ?? 'Product' }}"
-                                                        data-qty="{{ $item->qty }}"
-                                                        title="Remove product and restore quantity to original Order Request">
-                                                        <i data-feather="trash" style="width:14px;height:14px;"></i>
-                                                    </button>
-                                                </td>
-                                            @endif
                                         </tr>
                                     @empty
                                         <tr>
@@ -218,6 +235,8 @@
         </div>
     </section>
 </div>
+
+@include('admin.partials.image-preview-modal')
 @endsection
 
 @push('scripts')

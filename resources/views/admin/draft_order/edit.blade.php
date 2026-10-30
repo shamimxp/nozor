@@ -62,7 +62,8 @@
                         <thead class="bg-light">
                             <tr>
                                 <th style="width: 50px;">#</th>
-                                <th style="width: 60px;">Image</th>
+                                <th style="width: 80px;">Product Image</th>
+                                <th style="width: 80px;">Manufacture Image</th>
                                 <th>Product Name</th>
                                 <th class="text-right" style="width: 130px;">Unit Price (৳)</th>
                                 <th class="text-center" style="width: 140px;">Quantity</th>
@@ -72,16 +73,48 @@
                         </thead>
                         <tbody>
                             @foreach($draftOrder->items as $index => $item)
+                                @php
+                                    $prodImg = ($item->product && $item->product->featured_image) ? asset(config('imagepath.product') . $item->product->featured_image) : null;
+                                    $mfgImg = null;
+                                    if ($item->product && $item->product->is_manufacturer == 1 && $item->product->recipe) {
+                                        $mImages = $item->product->recipe->manufacture_images;
+                                        if (is_string($mImages)) {
+                                            $mImages = json_decode($mImages, true);
+                                        }
+                                        if (is_array($mImages) && count($mImages) > 0 && !empty($mImages[0])) {
+                                            $mfgImg = asset($mImages[0]);
+                                        }
+                                    }
+                                @endphp
                                 <tr>
                                     <td>
                                         {{ $index + 1 }}
                                         <input type="hidden" name="items[{{ $index }}][id]" value="{{ $item->id }}">
                                     </td>
                                     <td>
-                                        @if($item->product && $item->product->featured_image)
-                                            <img src="{{ asset(config('imagepath.product') . $item->product->featured_image) }}" width="40" height="40" style="border-radius:6px;object-fit:cover;" onerror="this.src='{{ asset('images/no-image.png') }}'">
+                                        @if($prodImg)
+                                            <img src="{{ $prodImg }}" width="40" height="40" 
+                                                class="img-preview-trigger" 
+                                                data-preview-url="{{ $prodImg }}"
+                                                data-preview-title="{{ $item->product->name ?? 'Product' }} (Product Image)"
+                                                title="Click to zoom image"
+                                                style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;" 
+                                                onerror="this.src='{{ asset('images/no-image.png') }}'">
                                         @else
                                             <img src="{{ asset('images/no-image.png') }}" width="40" height="40" style="border-radius:6px;object-fit:cover;">
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($mfgImg)
+                                            <img src="{{ $mfgImg }}" width="40" height="40" 
+                                                class="img-preview-trigger" 
+                                                data-preview-url="{{ $mfgImg }}"
+                                                data-preview-title="{{ $item->product->name ?? 'Product' }} (Manufacture Image)"
+                                                title="Click to zoom image"
+                                                style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;" 
+                                                onerror="this.src='{{ asset('images/no-image.png') }}'">
+                                        @else
+                                            <span class="badge badge-light-secondary font-weight-normal" style="font-size:0.75rem;">N/A</span>
                                         @endif
                                     </td>
                                     <td class="font-weight-bold text-dark">
@@ -157,6 +190,8 @@
         </div>
     </form>
 </div>
+
+@include('admin.partials.image-preview-modal')
 @endsection
 
 @push('scripts')

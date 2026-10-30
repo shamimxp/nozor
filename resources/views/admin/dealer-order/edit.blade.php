@@ -3,91 +3,48 @@
 
 @section('content')
 <style>
-    :root {
-        --primary-color: #6366f1;
-        --primary-hover: #4f46e5;
-        --success-color: #10b981;
-        --dark-text: #1e293b;
-        --muted-text: #64748b;
-        --border-color: #e2e8f0;
-        --bg-light: #f8fafc;
-        --card-radius: 16px;
-        --transition: all 0.3s ease;
+    .invoice-preview-card {
+        border-radius: 12px;
     }
-
-    .page-title { font-weight: 800; color: var(--dark-text); font-size: 1.5rem; letter-spacing: -0.5px; }
-    .ref-badge { background: #e0e7ff; color: #4338ca; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; border: 1px solid #c7d2fe; }
-
-    .card-modern { background: #ffffff; border: 1px solid rgba(226,232,240,0.8); border-radius: var(--card-radius); box-shadow: 0 4px 20px -4px rgba(0,0,0,0.03); margin-bottom: 1.5rem; overflow: hidden; }
-    .card-modern .card-header { background: transparent; border-bottom: 1px solid var(--border-color); padding: 1.5rem 1.75rem; }
-    .card-modern .card-body { padding: 1.75rem; }
-
-    .section-title { font-weight: 700; color: var(--dark-text); font-size: 1.15rem; display: flex; align-items: center; margin: 0; }
-    .section-title i { margin-right: 12px; color: var(--primary-color); background: #eef2ff; padding: 8px; border-radius: 8px; width: 34px; height: 34px; }
-
-    .form-group label { font-weight: 600; color: var(--muted-text); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-    .form-control { border: 1px solid var(--border-color) !important; border-radius: 8px !important; padding: 0.6rem 1rem !important; height: 42px !important; font-size: 0.95rem; color: var(--dark-text) !important; background-color: var(--bg-light) !important; transition: var(--transition); box-shadow: none !important; }
-    textarea.form-control { height: auto !important; }
-    .form-control:focus { border-color: var(--primary-color) !important; background-color: #fff !important; }
-
-    /* Select2 */
-    .select2-hidden-accessible { border: 0 !important; clip: rect(0 0 0 0) !important; height: 1px !important; margin: -1px !important; overflow: hidden !important; padding: 0 !important; position: absolute !important; width: 1px !important; white-space: nowrap !important; }
-    .select2-container { width: 100% !important; }
-    .select2-container .select2-selection--single { height: 42px !important; border: 1px solid var(--border-color) !important; border-radius: 8px !important; background-color: var(--bg-light) !important; display: flex !important; align-items: center !important; padding: 0 12px !important; outline: none !important; box-shadow: none !important; }
-    .select2-container--default .select2-selection--single .select2-selection__rendered { padding-left: 0 !important; color: var(--dark-text) !important; font-weight: 500; line-height: normal !important; }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 42px !important; top: 0 !important; right: 10px !important; }
-    .select2-container--open .select2-selection--single { border-color: var(--primary-color) !important; background-color: #fff !important; }
-    .select2-dropdown { border: 1px solid var(--border-color) !important; border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; overflow: hidden !important; margin-top: 4px !important; }
-    .select2-container--open .select2-dropdown { border-color: var(--primary-color) !important; }
-    .select2-search--dropdown .select2-search__field { height: 36px !important; border: 1px solid var(--border-color) !important; border-radius: 6px !important; padding: 0.4rem 0.75rem !important; font-size: 0.9rem !important; background-color: #fff !important; box-shadow: none !important; outline: none !important; margin: 6px !important; width: calc(100% - 12px) !important; color: var(--dark-text) !important; }
-    .select2-search--dropdown .select2-search__field:focus { border-color: var(--primary-color) !important; }
-    .select2-results__option { padding: 8px 14px !important; font-size: 0.9rem !important; color: var(--dark-text) !important; font-weight: 500 !important; }
-    .select2-results__option--highlighted { background-color: var(--primary-color) !important; color: #fff !important; }
-    .select2-results__option[aria-selected=true] { background-color: #eef2ff !important; color: var(--primary-color) !important; }
-
-    /* Table */
-    .table-modern { border-collapse: separate; border-spacing: 0 8px; margin-top: -8px; }
-    .table-modern thead th { border: none; background: transparent; color: var(--muted-text); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; padding: 10px 15px; }
-    .table-modern tbody tr { box-shadow: 0 2px 8px rgba(0,0,0,0.02); border-radius: 10px; background: #fff; border: 1px solid var(--border-color); transition: var(--transition); }
-    .table-modern tbody tr:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
-    .table-modern td { border-top: 1px solid var(--border-color) !important; border-bottom: 1px solid var(--border-color) !important; padding: 16px 15px !important; vertical-align: middle; font-weight: 500; color: var(--dark-text); }
-    .table-modern td:first-child { border-left: 1px solid var(--border-color) !important; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-    .table-modern td:last-child { border-right: 1px solid var(--border-color) !important; border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-
-    /* Summary Panel */
-    .summary-panel { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border-radius: var(--card-radius); color: white; padding: 2rem; position: sticky; top: 90px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
-    .summary-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; color: #f8fafc; }
-    .summary-title i { color: var(--primary-color); margin-right: 10px; }
-    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 500; }
-    .summary-row .form-control { background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2) !important; color: white !important; width: 110px; }
-    .grand-total-box { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; display: flex; justify-content: space-between; align-items: center; }
-    .grand-total-box .title { color: #e0e7ff; font-weight: 600; font-size: 1.1rem; }
-    .grand-total-box .amount { color: #fff; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
-    .btn-submit { background: var(--primary-color); color: white; border: none; padding: 1rem; font-weight: 700; border-radius: 12px; font-size: 1.1rem; transition: var(--transition); box-shadow: 0 4px 14px rgba(99,102,241,0.4); }
-    .btn-submit:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.6); color: white; }
-    .input-group { display: flex; align-items: stretch; width: 100%; border-radius: 8px; overflow: hidden; }
-    .input-group-prepend { display: flex; }
-    .input-group-text { display: flex; align-items: center; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 8px 0 0 8px !important; border-right: 0 !important; }
-    .input-group .form-control { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
+    .select2-container--default .select2-selection--single {
+        height: 38px !important;
+        border: 1px solid #d8d6de !important;
+        border-radius: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: normal !important;
+        padding-left: 8px !important;
+        font-weight: 500;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+        top: 0 !important;
+    }
 </style>
 
-<div class="content-header mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h2 class="page-title mb-1">Edit Dealer Order</h2>
-            <div class="d-flex align-items-center">
-                <span class="text-muted mr-2">Reference ID:</span>
-                <span class="ref-badge">{{ $order->order_number }}</span>
+<div class="content-header row">
+    <div class="content-header-left col-md-8 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+            <div class="col-12">
+                <h2 class="content-header-title float-left mb-0">Edit Dealer Order</h2>
+                <div class="breadcrumb-wrapper">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dealer-order.index') }}">Dealer Orders</a></li>
+                        <li class="breadcrumb-item active">{{ $order->order_number }}</li>
+                    </ol>
+                </div>
             </div>
         </div>
-        <div>
-            <a href="{{ route('admin.dealer-order.show', $order->id) }}" class="btn btn-outline-secondary mr-1" style="border-radius: 8px; font-weight: 600;">
-                <i data-feather="eye" class="mr-1"></i> View Order
-            </a>
-            <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-outline-secondary" style="border-radius: 8px; font-weight: 600;">
-                <i data-feather="arrow-left" class="mr-1"></i> Back to List
-            </a>
-        </div>
+    </div>
+    <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
+        <a href="{{ route('admin.dealer-order.show', $order->id) }}" class="btn btn-outline-info mr-50">
+            <i data-feather="eye" class="mr-50"></i> View Order
+        </a>
+        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-outline-secondary">
+            <i data-feather="arrow-left" class="mr-50"></i> Back to Orders
+        </a>
     </div>
 </div>
 
@@ -96,351 +53,638 @@
     @method('PUT')
 
     <div class="row">
-        <div class="col-lg-8">
-            <!-- Order Details -->
-            <div class="card-modern">
-                <div class="card-header">
-                    <h4 class="section-title"><i data-feather="info"></i> Order Details</h4>
-                </div>
+        <!-- Full-Width Main Invoice Card -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 invoice-preview-card">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 form-group">
-                            <label>Order Number</label>
-                            <input type="text" name="order_number" class="form-control" value="{{ $order->order_number }}" readonly style="background: #f1f5f9 !important; font-weight: 700; color: #475569 !important; cursor: not-allowed;">
+
+                    <!-- 1. Header Meta (Invoice Style) -->
+                    <div class="d-flex justify-content-between flex-md-row flex-column pb-2 border-bottom">
+                        <div>
+                            <div class="d-flex align-items-center mb-1">
+                                <h3 class="text-primary font-weight-bolder mb-0 mr-1">
+                                    <i data-feather="file-text" class="mr-50"></i> EDIT DEALER ORDER
+                                </h3>
+                                <span class="badge badge-light-primary font-weight-bold" style="font-size: 0.9rem;">{{ $order->order_number }}</span>
+                                <input type="hidden" name="order_number" value="{{ $order->order_number }}">
+                            </div>
+                            <p class="mb-0 text-muted small">Update wholesale dealer order with live tier pricing</p>
                         </div>
-                        <div class="col-md-4 form-group">
-                            <label>Order Date <span class="text-danger">*</span></label>
-                            <input type="date" name="order_date" class="form-control" value="{{ $order->order_date->format('Y-m-d') }}" required>
+                        <div class="mt-md-0 mt-2 text-md-right">
+                            <div class="d-flex align-items-center justify-content-md-end mb-50">
+                                <span class="font-weight-bold mr-1 text-dark">Status:</span>
+                                <select name="status" id="orderStatus" class="form-control form-control-sm select2" style="width: 140px;">
+                                    <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="confirm" {{ $order->status == 'confirm' ? 'selected' : '' }}>Confirm</option>
+                                    <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-md-end">
+                                <span class="font-weight-bold mr-1 text-dark">Order Date:</span>
+                                <input type="date" name="order_date" class="form-control form-control-sm font-weight-bold" value="{{ $order->order_date ? $order->order_date->format('Y-m-d') : date('Y-m-d') }}" style="width: 150px;" required>
+                            </div>
                         </div>
-                        <div class="col-md-4 form-group">
-                            <label>Order Status</label>
-                            <select name="status" id="orderStatus" class="form-control select2">
-                                <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="confirm" {{ $order->status == 'confirm' ? 'selected' : '' }}>Confirm</option>
-                                <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
+                    </div>
+
+                    <!-- 2. Order Details: Full Width Section (Bill To & Delivery/Address) -->
+                    <div class="row py-2 border-bottom">
+                        <div class="col-md-6 col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="text-uppercase text-muted font-weight-bold mb-0" style="font-size:0.8rem; letter-spacing:0.5px;">
+                                    Dealer Information <span class="text-danger">*</span>
+                                </h6>
+                                <span id="dealerTierBadge" class="badge badge-light-secondary font-weight-bold">
+                                    {{ optional($order->dealer)->is_special ? '⭐ Special Dealer (Tier Rate)' : 'Regular Dealer' }}
+                                </span>
+                            </div>
+                            <div class="form-group mb-1">
+                                <select name="dealer_id" id="dealerSelect" class="form-control select2" required data-placeholder="-- Choose a Dealer --">
+                                    <option value="" disabled>-- Choose a Dealer --</option>
+                                    @foreach($dealers as $c)
+                                        <option value="{{ $c->id }}" 
+                                            {{ $order->dealer_id == $c->id ? 'selected' : '' }}
+                                            data-name="{{ $c->name }}"
+                                            data-shop="{{ $c->shop_name }}"
+                                            data-phone="{{ $c->phone }}"
+                                            data-address="{{ $c->address }}"
+                                            data-is-special="{{ $c->is_special ? '1' : '0' }}">
+                                            {{ $c->shop_name }} ({{ $c->name ?? '' }} - {{ $c->phone }}) {{ $c->is_special ? '⭐ [Special Dealer]' : '[Regular Dealer]' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Dynamic Dealer Detail Box -->
+                            <div id="dealerDetailBox" class="p-1 rounded bg-light border {{ $order->dealer ? '' : 'd-none' }}">
+                                <p class="mb-25 font-weight-bolder text-dark" id="dispShopName" style="font-size:1.05rem;">{{ $order->dealer->shop_name ?? '' }}</p>
+                                <p class="mb-25"><strong>Contact Person:</strong> <span id="dispContactName">{{ $order->dealer->name ?? 'N/A' }}</span></p>
+                                <p class="mb-0"><strong>Phone:</strong> <span id="dispPhone">{{ $order->dealer->phone ?? 'N/A' }}</span></p>
+                            </div>
                         </div>
-                        <div class="col-md-12 form-group mt-2 mb-0">
-                            <label>Select Dealer <span class="text-danger">*</span></label>
-                            <select name="dealer_id" class="form-control select2" required>
-                                <option value="">-- Choose a Dealer --</option>
-                                @foreach($dealers as $c)
-                                    <option value="{{ $c->id }}" {{ $order->dealer_id == $c->id ? 'selected' : '' }}>{{ $c->shop_name }} ({{ $c->phone }})</option>
+
+                        <div class="col-md-6 col-12 mt-md-0 mt-1 border-left-md">
+                            <h6 class="text-uppercase text-muted font-weight-bold mb-1" style="font-size:0.8rem; letter-spacing:0.5px;">Delivery & Address</h6>
+                            <div class="p-1 rounded bg-light border" style="min-height: 105px;">
+                                <p class="mb-25"><strong>Address:</strong> <span id="dispAddress" class="text-muted">{{ $order->dealer->address ?? 'N/A' }}</span></p>
+                                <p class="mb-0"><strong>Pricing Tier:</strong> <span id="dispTierText" class="text-primary font-weight-bold">
+                                    {{ optional($order->dealer)->is_special ? 'Special Dealer Tier Active (Discounted material calculation)' : 'Regular Dealer Tier Active (Standard material calculation)' }}
+                                </span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Cart Items: Full Width Section -->
+                    <div class="my-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap" style="gap: 10px;">
+                            <h5 class="font-weight-bolder text-dark mb-0">
+                                <i data-feather="shopping-cart" class="mr-50 text-primary"></i> Order Items & Products
+                            </h5>
+                            <span class="badge badge-light-primary font-weight-bold" id="cartItemCountBadge">{{ count($order->items) }} Products</span>
+                        </div>
+
+                        <!-- Search & Add Product Dropdown Bar -->
+                        <div class="p-1 rounded bg-light border mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-50">
+                                <label class="text-primary font-weight-bold mb-0">
+                                    <i data-feather="search" style="width:14px;height:14px;" class="mr-25"></i> Search & Select Product To Add
+                                </label>
+                                <small class="text-muted font-weight-bold" id="dropdownTierIndicator">
+                                    Tier: {{ optional($order->dealer)->is_special ? 'Special Rate' : 'Regular Rate' }}
+                                </small>
+                            </div>
+                            <select id="productSelect" class="form-control select2" data-placeholder="Type product name to search and add...">
+                                <option value="" disabled selected>Type product name to search and add...</option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product['id'] }}" 
+                                        data-name="{{ $product['name'] }}"
+                                        data-regular-price="{{ $product['regular_dealer_price'] }}"
+                                        data-special-price="{{ $product['special_dealer_price'] }}"
+                                        data-image="{{ $product['featured_image'] ?? asset('images/no-image.png') }}"
+                                        data-has-image="{{ $product['featured_image'] ? '1' : '0' }}"
+                                        data-mfg-image="{{ $product['manufacture_image'] ?? '' }}"
+                                        data-is-mfg="{{ $product['is_manufacturer'] }}"
+                                        data-stock="{{ $product['stock'] }}">
+                                        {{ $product['name'] }}
+                                    </option>
                                 @endforeach
                             </select>
+                            <small class="text-muted font-italic mt-25 d-block">
+                                <i data-feather="info" style="width:12px;height:12px;"></i>
+                                Products with ৳0 or no price are excluded. For manufacture products, rate is calculative according to materials and dealer tier.
+                            </small>
                         </div>
-                        <div class="col-md-4 form-group mt-2">
-                            <label>Delivery Status</label>
-                            <select name="delivery_status" class="form-control select2">
-                                <option value="">Pending / Not Shipped</option>
-                                <option value="processing" {{ $order->delivery_status == 'processing' ? 'selected' : '' }}>Processing</option>
-                                <option value="shipped" {{ $order->delivery_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                                <option value="delivered" {{ $order->delivery_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                            </select>
+
+                        <!-- Full Width Items Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="cartTable">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th style="width: 80px;">Product Img</th>
+                                        <th style="width: 80px;">Manufacture Img</th>
+                                        <th>Product Name</th>
+                                        <th class="text-right" style="width: 140px;">Unit Price (৳)</th>
+                                        <th class="text-center" style="width: 130px;">Quantity</th>
+                                        <th class="text-right" style="width: 140px;">Total (৳)</th>
+                                        <th class="text-center" style="width: 60px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="emptyCartRow">
+                                        <td colspan="8" class="text-center py-4 text-muted">
+                                            <i data-feather="package" style="width:36px;height:36px;opacity:0.3;" class="mb-1"></i><br>
+                                            <strong>No products added to this invoice yet.</strong><br>
+                                            <small>Select a dealer above and search products in the dropdown to add them here.</small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-md-8 form-group mt-2 mb-0">
-                            <label>Delivery Details / Courier Info</label>
-                            <input type="text" name="delivery_details" class="form-control" placeholder="E.g. Sundarban Courier, Tracking #123456" value="{{ $order->delivery_details }}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cart Items -->
-            <div class="card-modern">
-                <div class="card-header d-flex justify-content-between align-items-center border-0 pb-0">
-                    <h4 class="section-title"><i data-feather="shopping-cart"></i> Cart Items</h4>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mb-4 p-3 rounded" style="background: var(--bg-light); border: 1px dashed var(--border-color);">
-                        <label class="text-primary"><i data-feather="search" width="14" class="mr-1"></i> Search & Add Product</label>
-                        <select id="productSelect" class="form-control select2" data-placeholder="Type product name to add...">
-                            <option value="" disabled selected>Type product name to add...</option>
-                            @foreach($products as $product)
-                                <option value="{{ $product->id }}" data-image="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : '' }}">
-                                    {{ $product->name ?? '-' }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table w-100 table-modern" id="cartTable">
-                            <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th class="text-right">Unit Price</th>
-                                    <th class="text-center" style="width: 140px;">Quantity</th>
-                                    <th class="text-right">Line Total</th>
-                                    <th class="text-center" style="width: 60px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Attachments -->
-            <div class="card-modern d-none" id="designImagesCard">
-                <div class="card-header">
-                    <h4 class="section-title"><i data-feather="image"></i> Product Attachments</h4>
-                </div>
-                <div class="card-body">
-                    <div id="imagePreviewContainer" class="row">
-                        <div class="col-12 text-center text-muted py-3 img-empty-state">No images available.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="card-modern mb-xl-0 mb-3">
-                <div class="card-header border-bottom">
-                    <h4 class="section-title"><i data-feather="file-text"></i> Additional Notes</h4>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mb-3">
-                        <label>Order Note</label>
-                        <textarea name="note" class="form-control" rows="3" placeholder="Enter any special instructions or order notes here...">{{ $order->note }}</textarea>
-                    </div>
-                    <div class="form-group mb-0">
-                        <label>Admin Note</label>
-                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Enter admin specific notes here...">{{ $order->admin_notes }}</textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Summary Panel -->
-        <div class="col-lg-4">
-            <div class="summary-panel">
-                <h3 class="summary-title"><i data-feather="pie-chart"></i> Order Summary</h3>
-
-                <div class="summary-row">
-                    <span>Total Quantity</span>
-                    <span id="summaryTotalQty" class="font-weight-bold text-white">0 Pcs</span>
-                </div>
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span id="summarySubTotal" class="font-weight-bold text-white">৳0.00</span>
-                </div>
-                <div class="summary-row border-0 pb-0">
-                    <span>Discount</span>
-                    <input type="number" name="discount" id="discount" class="form-control text-right" placeholder="0.00" value="{{ $order->discount }}">
-                </div>
-                <div class="summary-row mt-2">
-                    <span>Carrying Charge</span>
-                    <input type="number" name="carrying_charge" id="carryingCharge" class="form-control text-right" placeholder="0.00" value="{{ $order->carrying_charge }}">
-                </div>
-
-                <div class="grand-total-box">
-                    <span class="title">Grand Total</span>
-                    <span class="amount" id="summaryGrandTotal">৳0.00</span>
-                </div>
-
-                <div class="mt-4 p-3 rounded" style="background: rgba(0,0,0,0.2);">
-                    <div class="form-group mb-2">
-                        <label class="text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px; color: #94a3b8 !important;">Payment Received</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text bg-transparent border-right-0" style="border-color: rgba(255,255,255,0.2); color: #10b981;">৳</span>
+                    <!-- 4. Notes & Financial Summary (Invoice Style Bottom Row) -->
+                    <div class="row mt-2 pt-2 border-top">
+                        <!-- Left Side: Notes -->
+                        <div class="col-md-7 col-12">
+                            <div class="form-group mb-2">
+                                <label class="font-weight-bold text-muted small text-uppercase">Customer / Delivery Note</label>
+                                <textarea name="note" class="form-control" rows="3" placeholder="Special delivery instructions or order note...">{{ $order->note }}</textarea>
                             </div>
-                            <input type="number" name="paid" id="paidAmount" class="form-control border-left-0 font-weight-bold text-right" value="{{ $order->paid }}" style="font-size: 1.1rem; background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.2) !important; color: #ffffff !important;">
+                            <div class="form-group mb-2">
+                                <label class="font-weight-bold text-muted small text-uppercase">Internal Admin Note</label>
+                                <textarea name="admin_notes" class="form-control" rows="3" placeholder="Internal staff remarks...">{{ $order->admin_notes }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Invoice Financial Summary Table -->
+                        <div class="col-md-5 col-12">
+                            <div class="card bg-light border-0">
+                                <div class="card-body p-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted font-weight-bold">Total Items / Qty:</span>
+                                        <span class="font-weight-bold text-dark" id="summaryTotalQty">0 Pcs</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted font-weight-bold">Sub Total:</span>
+                                        <span class="font-weight-bold text-dark" id="summarySubTotal" style="font-size:1.05rem;">৳{{ number_format($order->sub_total, 2) }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted font-weight-bold">Discount (৳):</span>
+                                        <input type="number" step="0.01" name="discount" id="discount" class="form-control form-control-sm text-right font-weight-bold text-danger" style="width: 130px;" value="{{ $order->discount ?? 0 }}">
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted font-weight-bold">Carrying Charge (৳):</span>
+                                        <input type="number" step="0.01" name="carrying_charge" id="carryingCharge" class="form-control form-control-sm text-right font-weight-bold text-success" style="width: 130px;" value="{{ $order->carrying_charge ?? 0 }}">
+                                    </div>
+
+                                    <hr class="my-1">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="font-weight-bolder text-dark" style="font-size:1.15rem;">Grand Total:</span>
+                                        <span class="font-weight-bolder text-primary" id="summaryGrandTotal" style="font-size:1.35rem;">৳{{ number_format($order->grand_total, 2) }}</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted font-weight-bold">Payment Received (৳):</span>
+                                        <input type="number" step="0.01" name="paid" id="paidAmount" class="form-control form-control-sm text-right font-weight-bold text-dark" style="width: 130px;" value="{{ $order->paid ?? 0 }}">
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-1 border-top">
+                                        <span class="font-weight-bold text-dark" style="font-size:1rem;">Balance Due:</span>
+                                        <span class="font-weight-bolder" id="summaryDue" style="font-size:1.2rem; color: #ea5455;">৳{{ number_format($order->due, 2) }}</span>
+                                    </div>
+
+                                    <!-- Action Submit Button -->
+                                    <div class="mt-2">
+                                        <button type="submit" class="btn btn-primary btn-block shadow font-weight-bold py-1" id="btnSubmitOrder" style="font-size: 1.05rem;">
+                                            <i data-feather="check-circle" class="mr-50"></i> UPDATE DEALER ORDER
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
-                        <span style="color: #f87171; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;">Amount Due</span>
-                        <span id="summaryDue" style="color: #f87171; font-size: 1.25rem; font-weight: 800;">৳0.00</span>
-                    </div>
                 </div>
-
-                <button type="submit" class="btn btn-submit btn-block mt-4 w-100">
-                    <i data-feather="save" class="mr-2"></i> UPDATE ORDER
-                </button>
             </div>
         </div>
     </div>
 
+    <!-- Hidden Inputs for Form Submission -->
     <div id="cartHiddenInputs"></div>
 </form>
+
+@include('admin.partials.image-preview-modal')
 @endsection
+
 @push('scripts')
 <script>
     let cart = [];
+    let isSpecialDealer = {{ optional($order->dealer)->is_special ? 'true' : 'false' }};
 
-    $(document).ready(function() {
-        // Pre-load existing cart items
-        @foreach($order->items as $item)
+    // Pre-populate existing order items
+    @foreach($order->items as $item)
+        @php
+            $prodImg = ($item->product && $item->product->featured_image) 
+                ? asset(config('imagepath.product') . $item->product->featured_image) 
+                : asset('images/no-image.png');
+            $mfgImg = '';
+            if ($item->product && $item->product->is_manufacturer && $item->product->recipe) {
+                $mImages = $item->product->recipe->manufacture_images;
+                if (is_string($mImages)) {
+                    $mImages = json_decode($mImages, true);
+                }
+                if (is_array($mImages) && count($mImages) > 0 && !empty($mImages[0])) {
+                    $mfgImg = asset($mImages[0]);
+                }
+            }
+        @endphp
         cart.push({
             id: {{ $item->product_id }},
             name: "{!! addslashes($item->product ? $item->product->name : '-') !!}",
-            price: {{ $item->price }},
-            qty: {{ $item->qty }},
-            image: "{!! ($item->product && $item->product->featured_image) ? asset(config('imagepath.product') . $item->product->featured_image) : '' !!}"
+            price: {{ (float) $item->price }},
+            qty: {{ (int) $item->qty }},
+            image: "{!! $prodImg !!}",
+            mfg_image: "{!! $mfgImg !!}",
+            is_mfg: {{ ($item->product && $item->product->is_manufacturer) ? 1 : 0 }}
         });
-        @endforeach
+    @endforeach
 
-        renderCart();
+    // Custom Select2 formatters for products in dropdown
+    function formatProductOption(product) {
+        if (!product.id) {
+            return product.text;
+        }
+        let el = $(product.element);
+        let img = el.data('image');
+        let mfgImg = el.data('mfg-image');
+        let isMfg = el.data('is-mfg') == '1';
+        let stock = el.data('stock');
+        let hasImg = el.data('has-image') == '1';
+        let regPrice = parseFloat(el.data('regular-price')) || 0;
+        let specPrice = parseFloat(el.data('special-price')) || 0;
+        let currentPrice = isSpecialDealer ? specPrice : regPrice;
 
+        // Do not show products whose price is 0 or less
+        if (currentPrice <= 0) {
+            return null;
+        }
+
+        let pImgHtml = hasImg 
+            ? `<img src="${img}" style="width:34px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0;margin-right:8px;" onerror="this.src='/images/no-image.png'">`
+            : `<img src="/images/no-image.png" style="width:34px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0;margin-right:8px;">`;
+
+        let mfgImgHtml = (isMfg && mfgImg)
+            ? `<span title="Manufacture Blueprint"><img src="${mfgImg}" style="width:34px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #c7d2fe;margin-right:8px;" onerror="this.src='/images/no-image.png'"></span>`
+            : '';
+
+        let badgeHtml = isMfg 
+            ? `<span class="badge badge-light-primary ml-1" style="font-size:0.68rem; padding: 2px 6px;">Manufacture</span>`
+            : `<span class="badge badge-light-secondary ml-1" style="font-size:0.68rem; padding: 2px 6px;">Stock: ${stock}</span>`;
+
+        return $(`
+            <div class="d-flex align-items-center justify-content-between py-25">
+                <div class="d-flex align-items-center">
+                    ${pImgHtml}
+                    ${mfgImgHtml}
+                    <div style="line-height:1.2;">
+                        <div class="font-weight-bold text-dark" style="font-size:0.9rem;">${el.data('name') || product.text} ${badgeHtml}</div>
+                        <div class="small text-muted" style="font-size:0.75rem;">${isMfg ? 'Dynamic Material Recipe' : 'Catalog Stock: ' + stock}</div>
+                    </div>
+                </div>
+                <div class="text-right ml-2">
+                    <span class="font-weight-bolder text-primary" style="font-size:0.95rem;">৳${currentPrice.toFixed(2)}</span>
+                    <div class="small text-muted" style="font-size:0.68rem;">${isSpecialDealer ? 'Special Rate' : 'Regular Rate'}</div>
+                </div>
+            </div>
+        `);
+    }
+
+    function formatProductSelection(product) {
+        if (!product.id) return product.text;
+        let el = $(product.element);
+        return el.data('name') || product.text;
+    }
+
+    $(document).ready(function() {
         // Initialize Select2
         $('select[name="status"]').select2({ minimumResultsForSearch: Infinity });
-        $('select[name="dealer_id"], #productSelect').select2({
-            placeholder: function() { return $(this).data('placeholder') || '-- Select --'; },
+
+        $('#dealerSelect').select2({
+            placeholder: '-- Choose a Dealer --',
+            allowClear: false
         });
 
+        $('#productSelect').select2({
+            placeholder: 'Type product name to search and add...',
+            templateResult: formatProductOption,
+            templateSelection: formatProductSelection,
+            escapeMarkup: function(m) { return m; }
+        });
+
+        // Dealer Selection Handler
+        $('#dealerSelect').on('change', function() {
+            let option = $(this).find(':selected');
+            let dealerId = $(this).val();
+
+            if (!dealerId) {
+                $('#dealerDetailBox').addClass('d-none');
+                $('#dealerTierBadge').removeClass('badge-success badge-secondary').addClass('badge-light-secondary').text('Select dealer');
+                $('#dispAddress').text('Select a dealer above to view address details');
+                $('#dispTierText').text('Rates adjust according to selected dealer tier');
+                return;
+            }
+
+            let name = option.data('name');
+            let shop = option.data('shop');
+            let phone = option.data('phone');
+            let address = option.data('address');
+            isSpecialDealer = option.data('is-special') == '1';
+
+            $('#dispShopName').text(shop || 'Dealer Information');
+            $('#dispContactName').text(name || 'N/A');
+            $('#dispPhone').text(phone || 'N/A');
+            $('#dispAddress').text(address || 'N/A');
+            $('#dealerDetailBox').removeClass('d-none');
+
+            if (isSpecialDealer) {
+                $('#dealerTierBadge').removeClass('badge-secondary badge-light-secondary')
+                    .addClass('badge-success')
+                    .html('⭐ Special Dealer (Tier Rate)');
+                $('#dispTierText').text('Special Dealer Tier Active (Discounted material calculation)');
+                $('#dropdownTierIndicator').text('Tier: Special Rate');
+            } else {
+                $('#dealerTierBadge').removeClass('badge-success badge-light-secondary')
+                    .addClass('badge-secondary')
+                    .text('Regular Dealer Tier Active');
+                $('#dispTierText').text('Regular Dealer Tier Active (Standard material calculation)');
+                $('#dropdownTierIndicator').text('Tier: Regular Rate');
+            }
+
+            // Re-render select2 options to update tier rates
+            $('#productSelect').select2('destroy').select2({
+                placeholder: 'Type product name to search and add...',
+                templateResult: formatProductOption,
+                templateSelection: formatProductSelection,
+                escapeMarkup: function(m) { return m; }
+            });
+
+            // Update cart items prices to match newly selected dealer tier
+            if (cart.length > 0) {
+                updateCartPricesToDealerTier();
+            }
+        });
+
+        // Product Selection Handler: Add to cart when selected from dropdown
         $('#productSelect').on('change', function() {
             let productId = $(this).val();
-            let dealerId = $('select[name="dealer_id"]').val();
+            let dealerId = $('#dealerSelect').val();
 
             if (!productId) return;
 
             if (!dealerId) {
-                toastr.error('Please select a dealer first.');
+                toastr.warning('Please select a dealer first to calculate the correct pricing tier.');
                 $(this).val('').trigger('change.select2');
                 return;
             }
 
-            let productName = $(this).find(':selected').text().trim();
-            let productImage = $(this).find(':selected').data('image');
+            let option = $(this).find(':selected');
+            let productName = option.data('name') || option.text().trim();
+            let productImage = option.data('image') || '';
+            let productMfgImage = option.data('mfg-image') || '';
+            let isMfg = option.data('is-mfg') == '1';
+            let regPrice = parseFloat(option.data('regular-price')) || 0;
+            let specPrice = parseFloat(option.data('special-price')) || 0;
+            let finalPrice = isSpecialDealer ? specPrice : regPrice;
 
-            $.ajax({
-                url: "{{ route('admin.product-price-calculator') }}",
-                type: "GET",
-                data: { product_id: productId, dealer_id: dealerId },
-                success: function(res) {
-                    if (res.success && res.data) {
-                        addToCart(productId, productName, res.data.dealer_price, productImage);
-                    } else {
-                        toastr.error('Error fetching product price calculation');
-                    }
-                },
-                error: function() { toastr.error('Failed to fetch product price'); }
-            });
+            if (finalPrice <= 0) {
+                toastr.error('This product does not have a valid price.');
+                $(this).val('').trigger('change.select2');
+                return;
+            }
 
+            addToCart(productId, productName, finalPrice, productImage, productMfgImage, isMfg);
+
+            // Clear selection so user can immediately add the next product
             $(this).val('').trigger('change.select2');
         });
 
-        $('#discount, #carryingCharge, #paidAmount').on('input', updateSummary);
+        // Inputs triggering financial summary update
+        $('#discount, #carryingCharge, #paidAmount').on('input change', function() {
+            updateSummary();
+        });
+
+        // Form submit validation
+        $('#dealerOrderForm').on('submit', function(e) {
+            if (!$('#dealerSelect').val()) {
+                e.preventDefault();
+                toastr.error('Please select a dealer.');
+                return false;
+            }
+            if (cart.length === 0) {
+                e.preventDefault();
+                toastr.error('Please add at least one product to the order.');
+                return false;
+            }
+            $('#btnSubmitOrder').prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-50"></span> Updating Order...');
+        });
+
+        // Initial render of cart
+        renderCart();
     });
 
-    function addToCart(id, name, price, image) {
+    // Add item to cart
+    function addToCart(id, name, price, image, mfgImage, isMfg) {
         let existing = cart.find(i => i.id == id);
         if (existing) {
             existing.qty += 1;
+            toastr.info(`Increased quantity for ${name}.`);
         } else {
-            cart.push({ id, name, price, qty: 1, image });
+            cart.push({
+                id: id,
+                name: name,
+                price: parseFloat(price) || 0,
+                qty: 1,
+                image: image,
+                mfg_image: mfgImage,
+                is_mfg: isMfg
+            });
+            toastr.success(`Added ${name} to order.`);
         }
         renderCart();
     }
 
+    // Update cart item prices when dealer tier changes
+    function updateCartPricesToDealerTier() {
+        let updated = false;
+        cart.forEach(item => {
+            let option = $(`#productSelect option[value="${item.id}"]`);
+            if (option.length) {
+                let regPrice = parseFloat(option.data('regular-price')) || 0;
+                let specPrice = parseFloat(option.data('special-price')) || 0;
+                let newPrice = isSpecialDealer ? specPrice : regPrice;
+                if (item.price !== newPrice && newPrice > 0) {
+                    item.price = newPrice;
+                    updated = true;
+                }
+            }
+        });
+        if (updated) {
+            renderCart();
+            toastr.info('Cart item prices updated to match dealer tier.');
+        }
+    }
+
+    // Render cart items table
     function renderCart() {
         let tbody = $('#cartTable tbody');
-        tbody.empty();
         let hiddenInputs = $('#cartHiddenInputs');
+
+        tbody.empty();
         hiddenInputs.empty();
-        let previewContainer = $('#imagePreviewContainer');
-        previewContainer.empty();
 
         if (cart.length === 0) {
-            tbody.html(`<tr><td colspan="5" class="text-center py-4 text-muted" style="border: 2px dashed var(--border-color) !important; background: transparent;"><i data-feather="package" width="32" height="32" class="mb-2 text-light"></i><br>No products added to the cart yet.</td></tr>`);
-            previewContainer.html('<div class="col-12 text-center text-muted py-3 img-empty-state">No images available.</div>');
-            $('#designImagesCard').addClass('d-none');
+            tbody.html(`
+                <tr id="emptyCartRow">
+                    <td colspan="8" class="text-center py-4 text-muted">
+                        <i data-feather="package" style="width:36px;height:36px;opacity:0.3;" class="mb-1"></i><br>
+                        <strong>No products added to this invoice yet.</strong><br>
+                        <small>Select a dealer above and search products in the dropdown to add them here.</small>
+                    </td>
+                </tr>
+            `);
+            $('#cartItemCountBadge').text('0 Products');
             updateSummary();
-            feather && feather.replace();
+            feather && feather.replace({ width: 14, height: 14 });
             return;
         }
 
-        let hasImage = false;
         cart.forEach((item, index) => {
-            let itemTotal = item.price * item.qty;
+            let itemTotal = (parseFloat(item.price) || 0) * (parseInt(item.qty) || 0);
+
+            // Product Image Cell (with click to zoom trigger)
+            let prodImgHtml = (item.image && !item.image.includes('no-image.png'))
+                ? `<img src="${item.image}" width="42" height="42" 
+                        class="img-preview-trigger" 
+                        data-preview-url="${item.image}" 
+                        data-preview-title="${item.name} (Product Image)"
+                        title="Click to zoom image"
+                        style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;cursor:pointer;" 
+                        onerror="this.src='/images/no-image.png'">`
+                : `<img src="/images/no-image.png" width="42" height="42" style="border-radius:6px;object-fit:cover;border:1px solid #e5e7eb;">`;
+
+            // Manufacture Image Cell (with click to zoom trigger)
+            let mfgImgHtml = (item.mfg_image && item.mfg_image !== '')
+                ? `<img src="${item.mfg_image}" width="42" height="42" 
+                        class="img-preview-trigger" 
+                        data-preview-url="${item.mfg_image}" 
+                        data-preview-title="${item.name} (Manufacture Blueprint)"
+                        title="Click to zoom blueprint"
+                        style="border-radius:6px;object-fit:cover;border:1px solid #c7d2fe;cursor:pointer;" 
+                        onerror="this.src='/images/no-image.png'">`
+                : `<span class="badge badge-light-secondary font-weight-normal" style="font-size:0.75rem;">N/A</span>`;
+
+            let badgeHtml = item.is_mfg 
+                ? `<span class="badge badge-light-primary ml-50" style="font-size: 0.7rem; padding: 2px 5px;">Manufacturer</span>` 
+                : '';
+
             tbody.append(`
-                <tr>
-                    <td>${item.name}</td>
-                    <td class="text-right align-middle">৳${parseFloat(item.price).toFixed(2)}</td>
-                    <td class="text-center align-middle">
-                        <input type="number" class="form-control text-center item-qty mx-auto" style="min-width: 100px;" data-id="${item.id}" value="${item.qty}" min="1">
+                <tr id="cartRow_${item.id}">
+                    <td class="text-center font-weight-bold text-muted">${index + 1}</td>
+                    <td>${prodImgHtml}</td>
+                    <td>${mfgImgHtml}</td>
+                    <td>
+                        <div class="font-weight-bold text-dark">${item.name} ${badgeHtml}</div>
                     </td>
-                    <td class="text-right item-total align-middle">৳${itemTotal.toFixed(2)}</td>
+                    <td class="text-right">
+                        <span class="font-weight-bold text-dark" style="font-size:0.95rem;">৳${parseFloat(item.price).toFixed(2)}</span>
+                    </td>
                     <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-danger remove-item" data-id="${item.id}">
-                            <i data-feather="trash-2"></i>
+                        <input type="number" min="1" step="1" class="form-control form-control-sm text-center item-qty font-weight-bold" 
+                            data-id="${item.id}" value="${item.qty}" style="width:80px; display:inline-block;">
+                    </td>
+                    <td class="text-right font-weight-bolder text-primary" style="font-size:0.95rem;">
+                        ৳<span class="row-total">${itemTotal.toFixed(2)}</span>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm p-25 remove-item" data-id="${item.id}" title="Remove item">
+                            <i data-feather="trash-2" style="width:14px;height:14px;"></i>
                         </button>
                     </td>
                 </tr>
             `);
+
             hiddenInputs.append(`
                 <input type="hidden" name="items[${index}][product_id]" value="${item.id}">
-                <input type="hidden" name="items[${index}][price]" value="${item.price}">
-                <input type="hidden" name="items[${index}][qty]" value="${item.qty}">
+                <input type="hidden" name="items[${index}][price]" class="hidden-price-${item.id}" value="${item.price}">
+                <input type="hidden" name="items[${index}][qty]" class="hidden-qty-${item.id}" value="${item.qty}">
             `);
-            if (item.image) {
-                hasImage = true;
-                previewContainer.append(`
-                    <div class="col-auto mb-2 text-center img-prod-${item.id}">
-                        <img src="${item.image}" class="img-thumbnail" style="height:100px;width:100px;object-fit:cover;">
-                    </div>
-                `);
-            }
         });
 
-        if (hasImage) {
-            $('#designImagesCard').removeClass('d-none');
-        } else {
-            previewContainer.html('<div class="col-12 text-center text-muted py-3 img-empty-state">No images available.</div>');
-            $('#designImagesCard').addClass('d-none');
-        }
-
-        feather && feather.replace();
+        $('#cartItemCountBadge').text(`${cart.length} ${cart.length === 1 ? 'Product' : 'Products'}`);
+        feather && feather.replace({ width: 14, height: 14 });
         updateSummary();
     }
 
-    $(document).on('input', '.item-qty', function() {
+    // Handle Quantity Changes
+    $(document).on('input change', '.item-qty', function() {
         let id = $(this).data('id');
-        let item = cart.find(i => i.id == id);
-        if (item) {
-            item.qty = parseFloat($(this).val()) || 0;
-            $(this).closest('tr').find('.item-total').text('৳' + (item.price * item.qty).toFixed(2));
-            let idx = cart.indexOf(item);
-            $('#cartHiddenInputs input[name="items['+idx+'][qty]"]').val(item.qty);
-            updateSummary();
+        let qty = parseInt($(this).val()) || 1;
+        if (qty < 1) {
+            qty = 1;
+            $(this).val(1);
         }
-    });
-
-    $(document).on('change', '.item-qty', function() {
-        let qty = parseFloat($(this).val());
-        if (!qty || qty < 1) { qty = 1; $(this).val(qty); }
-        let id = $(this).data('id');
         let item = cart.find(i => i.id == id);
         if (item) {
             item.qty = qty;
-            $(this).closest('tr').find('.item-total').text('৳' + (item.price * item.qty).toFixed(2));
-            let idx = cart.indexOf(item);
-            $('#cartHiddenInputs input[name="items['+idx+'][qty]"]').val(item.qty);
+            let total = (parseFloat(item.price) || 0) * item.qty;
+            $(this).closest('tr').find('.row-total').text(total.toFixed(2));
+            $(`.hidden-qty-${id}`).val(item.qty);
             updateSummary();
         }
     });
 
+    // Handle Remove Item
     $(document).on('click', '.remove-item', function() {
-        cart = cart.filter(i => i.id != $(this).data('id'));
+        let id = $(this).data('id');
+        let item = cart.find(i => i.id == id);
+        let name = item ? item.name : 'item';
+        cart = cart.filter(i => i.id != id);
         renderCart();
+        toastr.info(`Removed ${name} from order.`);
     });
 
+    // Update Financial Totals
     function updateSummary() {
-        let totalQty = 0, subTotal = 0;
+        let totalQty = 0;
+        let subTotal = 0;
+
         cart.forEach(item => {
-            totalQty += parseFloat(item.qty) || 0;
-            subTotal += (parseFloat(item.price) || 0) * (parseFloat(item.qty) || 0);
+            let q = parseInt(item.qty) || 0;
+            let p = parseFloat(item.price) || 0;
+            totalQty += q;
+            subTotal += (q * p);
         });
+
         let discount = parseFloat($('#discount').val()) || 0;
-        let carrying = parseFloat($('#carryingCharge').val()) || 0;
+        let carryingCharge = parseFloat($('#carryingCharge').val()) || 0;
         let paid = parseFloat($('#paidAmount').val()) || 0;
-        let grand = (subTotal - discount) + carrying;
-        $('#summaryTotalQty').text(totalQty + ' Pcs');
-        $('#summarySubTotal').text('৳' + subTotal.toFixed(2));
-        $('#summaryGrandTotal').text('৳' + grand.toFixed(2));
-        $('#summaryDue').text('৳' + (grand - paid).toFixed(2));
+
+        let grandTotal = (subTotal - discount) + carryingCharge;
+        if (grandTotal < 0) grandTotal = 0;
+        let due = grandTotal - paid;
+
+        $('#summaryTotalQty').text(`${totalQty} Pcs`);
+        $('#summarySubTotal').text(`৳${subTotal.toFixed(2)}`);
+        $('#summaryGrandTotal').text(`৳${grandTotal.toFixed(2)}`);
+        $('#summaryDue').text(`৳${due.toFixed(2)}`);
+
+        if (due <= 0) {
+            $('#summaryDue').css('color', '#28c76f');
+        } else {
+            $('#summaryDue').css('color', '#ea5455');
+        }
     }
 </script>
 @endpush

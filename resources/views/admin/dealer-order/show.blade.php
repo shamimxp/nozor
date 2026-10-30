@@ -93,7 +93,8 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th class="py-1" style="width: 60px;">Image</th>
+                                <th class="py-1" style="width: 75px;">Product Image</th>
+                                <th class="py-1" style="width: 75px;">Manufacture Image</th>
                                 <th class="py-1">Product</th>
                                 <th class="py-1">Rate</th>
                                 <th class="py-1 text-center">Qty</th>
@@ -103,13 +104,62 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @php
+                                if (!isset($assignedProductIds)) {
+                                    $refNumber = trim($order->order_number ?? '');
+                                    $refVariants = array_unique(array_filter([$refNumber, '#' . ltrim($refNumber, '#'), ltrim($refNumber, '#')]));
+                                    $assignedProductIds = !empty($refVariants) ? \App\Models\ManufactureOrderItem::whereIn('reff_invoice', $refVariants)
+                                        ->pluck('product_id')
+                                        ->merge(
+                                            \App\Models\Manufacture::whereIn('reff_invoice', $refVariants)
+                                                ->whereNotNull('product_id')
+                                                ->pluck('product_id')
+                                        )
+                                        ->filter()
+                                        ->unique()
+                                        ->values()
+                                        ->toArray() : [];
+                                }
+                            @endphp
                             @foreach($order->items as $item)
                             <tr>
                                 <td class="py-1">
                                     @if($item->product && $item->product->featured_image)
-                                        <img src="{{ asset(config('imagepath.product') . $item->product->featured_image) }}" alt="Image" width="40" height="40" style="border-radius: 4px; object-fit: cover; border: 1px solid #e5e7eb;" onerror="this.src='{{ asset('images/no-image.png') }}'">
+                                        @php $pImg = asset(config('imagepath.product') . $item->product->featured_image); @endphp
+                                        <img src="{{ $pImg }}" alt="Product Image" width="40" height="40" 
+                                            class="img-preview-trigger"
+                                            data-preview-url="{{ $pImg }}"
+                                            data-preview-title="{{ $item->product->name ?? 'Product' }} (Product Image)"
+                                            title="Click to zoom image"
+                                            style="border-radius: 4px; object-fit: cover; border: 1px solid #e5e7eb;" 
+                                            onerror="this.src='{{ asset('images/no-image.png') }}'">
                                     @else
                                         <img src="{{ asset('images/no-image.png') }}" alt="No Image" width="40" height="40" style="border-radius: 4px; object-fit: cover;">
+                                    @endif
+                                </td>
+                                <td class="py-1">
+                                    @php
+                                        $mfgImg = null;
+                                        if ($item->product && $item->product->is_manufacturer == 1 && $item->product->recipe) {
+                                            $mImages = $item->product->recipe->manufacture_images;
+                                            if (is_string($mImages)) {
+                                                $mImages = json_decode($mImages, true);
+                                            }
+                                            if (is_array($mImages) && count($mImages) > 0 && !empty($mImages[0])) {
+                                                $mfgImg = asset($mImages[0]);
+                                            }
+                                        }
+                                    @endphp
+                                    @if($mfgImg)
+                                        <img src="{{ $mfgImg }}" alt="Manufacture Image" width="40" height="40" 
+                                            class="img-preview-trigger"
+                                            data-preview-url="{{ $mfgImg }}"
+                                            data-preview-title="{{ $item->product->name ?? 'Product' }} (Manufacture Image)"
+                                            title="Click to zoom image"
+                                            style="border-radius: 4px; object-fit: cover; border: 1px solid #e5e7eb;" 
+                                            onerror="this.src='{{ asset('images/no-image.png') }}'">
+                                    @else
+                                        <span class="badge badge-light-secondary font-weight-normal" style="font-size:0.75rem;">N/A</span>
                                     @endif
                                 </td>
                                 <td class="py-1">
@@ -133,7 +183,10 @@
                                     {{ $item->note }}
                                 </td>
                                 <td class="py-1 text-center">
-                                    @if($item->product && $item->product->is_manufacturer == 1)
+                                    @php
+                                        $isAssigned = in_array($item->product_id, $assignedProductIds ?? []);
+                                    @endphp
+                                    @if($item->product && $item->product->is_manufacturer == 1 && !$isAssigned)
                                         @php
                                             $imgs = [];
                                             if ($item->product->recipe && !empty($item->product->recipe->manufacture_images)) {
@@ -688,6 +741,7 @@
     </div>
 </div>
 
+@include('admin.partials.image-preview-modal')
 @endsection
 @push('scripts')
     <script>
