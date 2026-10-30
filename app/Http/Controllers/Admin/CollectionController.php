@@ -22,6 +22,10 @@ class CollectionController extends Controller
         if ($request->ajax()) {
             $query = Collection::with(['creator'])->latest('id');
 
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
             if ($request->filled('collection_type')) {
                 $query->where('collection_type', $request->collection_type);
             }
@@ -105,14 +109,25 @@ class CollectionController extends Controller
                     }
                     return $info;
                 })
+                ->addColumn('status_badge', function ($r) {
+                    if ($r->status === 'pending') {
+                        return '<span class="badge badge-pill badge-light-warning font-weight-bold"><i data-feather="clock" class="mr-25"></i> Pending</span>';
+                    } elseif ($r->status === 'accepted') {
+                        return '<span class="badge badge-pill badge-light-success font-weight-bold"><i data-feather="check-circle" class="mr-25"></i> Accepted</span>';
+                    } elseif ($r->status === 'rejected') {
+                        return '<span class="badge badge-pill badge-light-danger font-weight-bold"><i data-feather="x-circle" class="mr-25"></i> Rejected</span>';
+                    }
+                    return '<span class="badge badge-pill badge-light-secondary">' . e($r->status) . '</span>';
+                })
                 ->addColumn('date', fn($r) => $r->payment_date ? $r->payment_date->format('d M, Y') : '-')
                 ->addColumn('creator', fn($r) => $r->creator->name ?? 'Admin')
                 ->addColumn('action', function ($r) {
-                    return '<button type="button" class="btn btn-sm btn-outline-info viewCollectionBtn"
+                    $viewBtn = '<button type="button" class="btn btn-sm btn-outline-info mr-50 viewCollectionBtn"
                         data-id="' . $r->id . '"
                         data-no="' . e($r->collection_no) . '"
                         data-amount="৳ ' . number_format($r->amount, 2) . '"
                         data-method="' . e($r->payment_method) . '"
+                        data-status="' . e($r->status) . '"
                         data-date="' . ($r->payment_date ? $r->payment_date->format('d M, Y') : '-') . '"
                         data-note="' . e($r->note ?? '-') . '"
                         data-trx="' . e($r->transaction_id ?? '-') . '"
@@ -121,19 +136,43 @@ class CollectionController extends Controller
                         title="View Details">
                         <i data-feather="eye"></i>
                     </button>';
+
+                    $actionBtns = $viewBtn;
+                    if ($r->status === 'pending') {
+                        $actionBtns .= '<button type="button" class="btn btn-sm btn-success mr-50 acceptCollectionBtn"
+                            data-id="' . $r->id . '"
+                            data-no="' . e($r->collection_no) . '"
+                            data-amount="৳ ' . number_format($r->amount, 2) . '"
+                            title="Accept Collection">
+                            <i data-feather="check"></i> Accept
+                        </button>';
+
+                        $actionBtns .= '<button type="button" class="btn btn-sm btn-outline-danger rejectCollectionBtn"
+                            data-id="' . $r->id . '"
+                            data-no="' . e($r->collection_no) . '"
+                            title="Reject Collection">
+                            <i data-feather="x"></i>
+                        </button>';
+                    }
+
+                    return '<div class="d-flex align-items-center">' . $actionBtns . '</div>';
                 })
-                ->rawColumns(['collection_no', 'party_info', 'type_badge', 'amount', 'method_badge', 'action'])
+                ->rawColumns(['collection_no', 'party_info', 'type_badge', 'amount', 'method_badge', 'status_badge', 'action'])
                 ->make(true);
         }
 
         // Metrics for top cards
-        $totalCollected = (float) Collection::sum('amount');
-        $dealerCollected = (float) Collection::where('collection_type', 'dealer')->sum('amount');
-        $posCollected = (float) Collection::where('collection_type', 'pos_order')->sum('amount');
-        $webCollected = (float) Collection::where('collection_type', 'web_order')->sum('amount');
+        $totalCollected  = (float) Collection::where('status', 'accepted')->sum('amount');
+        $pendingCount    = (int) Collection::where('status', 'pending')->count();
+        $pendingAmount   = (float) Collection::where('status', 'pending')->sum('amount');
+        $dealerCollected = (float) Collection::where('status', 'accepted')->where('collection_type', 'dealer')->sum('amount');
+        $posCollected    = (float) Collection::where('status', 'accepted')->where('collection_type', 'pos_order')->sum('amount');
+        $webCollected    = (float) Collection::where('status', 'accepted')->where('collection_type', 'web_order')->sum('amount');
 
         return view('admin.collections.index', compact(
             'totalCollected',
+            'pendingCount',
+            'pendingAmount',
             'dealerCollected',
             'posCollected',
             'webCollected'
@@ -162,6 +201,7 @@ class CollectionController extends Controller
             'amount'          => 'required|numeric|min:0.01',
             'payment_method'  => 'required|in:Cash,Bank,bKash,Nagad,Rocket',
             'payment_date'    => 'required|date',
+            'status'          => 'nullable|in:pending,accepted',
             'transaction_id'  => 'nullable|string|max:191',
             'bank_name'       => 'nullable|string|max:191',
             'account_no'      => 'nullable|string|max:191',
@@ -172,6 +212,7 @@ class CollectionController extends Controller
             DB::beginTransaction();
 
             $adminId = auth('admin')->id() ?? auth()->id();
+            $status = $request->input('status', 'pending');
 
             // 1. DEALER WALLET DEPOSIT
             if ($request->collection_type === 'dealer') {
@@ -183,6 +224,7 @@ class CollectionController extends Controller
                     (float) $request->amount,
                     $request->payment_method,
                     [
+                        'status'         => $status,
                         'payment_date'   => $request->payment_date,
                         'transaction_id' => $request->transaction_id,
                         'bank_name'      => $request->bank_name,
@@ -193,6 +235,13 @@ class CollectionController extends Controller
                 );
 
                 DB::commit();
+
+                if ($status === 'pending') {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Collection #' . $result['collection']->collection_no . ' (৳ ' . number_format($request->amount, 2) . ') recorded as Pending. It can be accepted from the Collections ledger.',
+                    ]);
+                }
 
                 $settledCount = count($result['settled_orders'] ?? []);
                 $msg = '৳ ' . number_format($request->amount, 2) . ' credited to dealer wallet.';
@@ -228,6 +277,9 @@ class CollectionController extends Controller
                     'source_id'       => $order->id,
                     'amount'          => $request->amount,
                     'payment_method'  => $request->payment_method,
+                    'status'          => $status,
+                    'accepted_at'     => $status === 'accepted' ? now() : null,
+                    'accepted_by'     => $status === 'accepted' ? $adminId : null,
                     'transaction_id'  => $request->transaction_id,
                     'bank_name'       => $request->bank_name,
                     'account_no'      => $request->account_no,
@@ -236,20 +288,27 @@ class CollectionController extends Controller
                     'created_by'      => $adminId,
                 ]);
 
-                $order->paid_amount += $request->amount;
-                $order->due_amount  -= $request->amount;
-                if ($order->due_amount <= 0.001) {
-                    $order->due_amount = 0.00;
-                    $order->payment_status = 'paid';
-                } else {
-                    $order->payment_status = 'partial';
+                if ($status === 'accepted') {
+                    $order->paid_amount += $request->amount;
+                    $order->due_amount  -= $request->amount;
+                    if ($order->due_amount <= 0.001) {
+                        $order->due_amount = 0.00;
+                        $order->payment_status = 'paid';
+                    } else {
+                        $order->payment_status = 'partial';
+                    }
+                    $order->save();
                 }
-                $order->save();
 
                 DB::commit();
+
+                $msg = ($status === 'pending')
+                    ? 'Collection #' . $collection->collection_no . ' recorded as Pending. Will apply to order upon acceptance.'
+                    : 'Payment of ৳ ' . number_format($request->amount, 2) . ' recorded for POS Order #' . $order->order_number . ' successfully!';
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'Payment of ৳ ' . number_format($request->amount, 2) . ' recorded for POS Order #' . $order->order_number . ' successfully!'
+                    'message' => $msg
                 ]);
             }
 
@@ -267,6 +326,9 @@ class CollectionController extends Controller
                     'source_id'       => $order->id,
                     'amount'          => $request->amount,
                     'payment_method'  => $request->payment_method,
+                    'status'          => $status,
+                    'accepted_at'     => $status === 'accepted' ? now() : null,
+                    'accepted_by'     => $status === 'accepted' ? $adminId : null,
                     'transaction_id'  => $request->transaction_id,
                     'bank_name'       => $request->bank_name,
                     'account_no'      => $request->account_no,
@@ -275,10 +337,19 @@ class CollectionController extends Controller
                     'created_by'      => $adminId,
                 ]);
 
+                if ($status === 'accepted') {
+                    $order->payment_status = 'paid';
+                    $order->save();
+                }
+
                 DB::commit();
+                $msg = ($status === 'pending')
+                    ? 'Collection #' . $collection->collection_no . ' recorded as Pending.'
+                    : 'Payment of ৳ ' . number_format($request->amount, 2) . ' recorded for Web Order #' . $order->invoice_no . ' successfully!';
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'Payment of ৳ ' . number_format($request->amount, 2) . ' recorded for Web Order #' . $order->invoice_no . ' successfully!'
+                    'message' => $msg
                 ]);
             }
 
@@ -304,6 +375,9 @@ class CollectionController extends Controller
                     'source_id'       => $order->id,
                     'amount'          => $request->amount,
                     'payment_method'  => $request->payment_method,
+                    'status'          => $status,
+                    'accepted_at'     => $status === 'accepted' ? now() : null,
+                    'accepted_by'     => $status === 'accepted' ? $adminId : null,
                     'transaction_id'  => $request->transaction_id,
                     'bank_name'       => $request->bank_name,
                     'account_no'      => $request->account_no,
@@ -312,17 +386,23 @@ class CollectionController extends Controller
                     'created_by'      => $adminId,
                 ]);
 
-                $order->paid += $request->amount;
-                $order->due  -= $request->amount;
-                if ($order->due <= 0.001) {
-                    $order->due = 0.00;
+                if ($status === 'accepted') {
+                    $order->paid += $request->amount;
+                    $order->due  -= $request->amount;
+                    if ($order->due <= 0.001) {
+                        $order->due = 0.00;
+                    }
+                    $order->save();
                 }
-                $order->save();
 
                 DB::commit();
+                $msg = ($status === 'pending')
+                    ? 'Collection #' . $collection->collection_no . ' recorded as Pending.'
+                    : 'Payment of ৳ ' . number_format($request->amount, 2) . ' recorded for Custom Order #' . $order->order_number . ' successfully!';
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'Payment of ৳ ' . number_format($request->amount, 2) . ' recorded for Custom Order #' . $order->order_number . ' successfully!'
+                    'message' => $msg
                 ]);
             }
 
@@ -442,5 +522,180 @@ class CollectionController extends Controller
             ->latest('id')
             ->get();
         return view('admin.collections.dealer_history', compact('dealer', 'collections'));
+    }
+
+    /**
+     * Accept a pending collection.
+     */
+    public function accept(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $collection = Collection::lockForUpdate()->findOrFail($id);
+
+            if ($collection->status === 'accepted') {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Collection #' . $collection->collection_no . ' has already been accepted.'
+                ], 422);
+            }
+
+            $adminId = auth('admin')->id() ?? auth()->id();
+
+            // 1. Dealer Collection: Credit wallet and trigger FIFO settlement
+            if ($collection->collection_type === 'dealer') {
+                $walletService = app(DealerWalletService::class);
+                $result = $walletService->acceptDealerCollection($collection, $adminId);
+
+                DB::commit();
+                $settledCount = count($result['settled_orders'] ?? []);
+                $msg = 'Collection #' . $collection->collection_no . ' accepted successfully! ৳ ' . number_format($collection->amount, 2) . ' credited to dealer wallet.';
+                if ($settledCount > 0) {
+                    $msg .= ' Auto-settled ' . $settledCount . ' delivered order(s) via FIFO!';
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => $msg,
+                ]);
+            }
+
+            // 2. POS Order Collection: Deduct due from order
+            if ($collection->collection_type === 'pos_order') {
+                $order = PosOrder::lockForUpdate()->find($collection->source_id);
+                if ($order) {
+                    $order->paid_amount += $collection->amount;
+                    $order->due_amount  -= $collection->amount;
+                    if ($order->due_amount <= 0.001) {
+                        $order->due_amount = 0.00;
+                        $order->payment_status = 'paid';
+                    } else {
+                        $order->payment_status = 'partial';
+                    }
+                    $order->save();
+                }
+
+                $collection->update([
+                    'status'      => 'accepted',
+                    'accepted_at' => now(),
+                    'accepted_by' => $adminId,
+                ]);
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Collection #' . $collection->collection_no . ' accepted! POS order payment updated.',
+                ]);
+            }
+
+            // 3. Web Order Collection: Mark order as paid
+            if ($collection->collection_type === 'web_order') {
+                $order = WebOrder::lockForUpdate()->find($collection->source_id);
+                if ($order) {
+                    $order->payment_status = 'paid';
+                    $order->save();
+                }
+
+                $collection->update([
+                    'status'      => 'accepted',
+                    'accepted_at' => now(),
+                    'accepted_by' => $adminId,
+                ]);
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Collection #' . $collection->collection_no . ' accepted! Web order marked as paid.',
+                ]);
+            }
+
+            // 4. Custom Order Collection (Legacy)
+            if ($collection->collection_type === 'custom_order') {
+                $order = CustomOrder::lockForUpdate()->find($collection->source_id);
+                if ($order) {
+                    $order->paid += $collection->amount;
+                    $order->due  -= $collection->amount;
+                    if ($order->due <= 0.001) {
+                        $order->due = 0.00;
+                    }
+                    $order->save();
+                }
+
+                $collection->update([
+                    'status'      => 'accepted',
+                    'accepted_at' => now(),
+                    'accepted_by' => $adminId,
+                ]);
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Collection #' . $collection->collection_no . ' accepted! Custom order payment updated.',
+                ]);
+            }
+
+            // Default fallback
+            $collection->update([
+                'status'      => 'accepted',
+                'accepted_at' => now(),
+                'accepted_by' => $adminId,
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Collection #' . $collection->collection_no . ' accepted successfully!',
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error accepting collection: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Reject a pending collection.
+     */
+    public function reject(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $collection = Collection::lockForUpdate()->findOrFail($id);
+
+            if ($collection->status === 'accepted') {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot reject an already accepted collection.'
+                ], 422);
+            }
+
+            $adminId = auth('admin')->id() ?? auth()->id();
+            $reason = $request->input('reason', 'Rejected by admin');
+
+            $collection->update([
+                'status'        => 'rejected',
+                'rejected_at'   => now(),
+                'rejected_by'   => $adminId,
+                'reject_reason' => $reason,
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Collection #' . $collection->collection_no . ' has been rejected.',
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error rejecting collection: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -25,14 +25,44 @@ class DealerWalletService
             throw new InvalidArgumentException("Deposit amount must be greater than 0.");
         }
 
-        return DB::transaction(function () use ($dealerId, $amount, $paymentMethod, $details) {
+        $status = $details['status'] ?? 'pending';
+
+        return DB::transaction(function () use ($dealerId, $amount, $paymentMethod, $details, $status) {
             $dealer = Dealer::lockForUpdate()->findOrFail($dealerId);
-
-            $beforeBalance = (float) ($dealer->wallet_balance ?? 0.00);
-            $afterBalance  = $beforeBalance + $amount;
-
             $userId = $details['created_by'] ?? (auth('admin')->id() ?? auth()->id());
             $paymentDate = $details['payment_date'] ?? now()->toDateString();
+
+            if ($status === 'pending') {
+                $collection = Collection::create([
+                    'collection_no'   => Collection::generateCollectionNo(),
+                    'collection_type' => 'dealer',
+                    'party_type'      => Dealer::class,
+                    'party_id'        => $dealer->id,
+                    'source_type'     => 'dealer_wallet',
+                    'source_id'       => null,
+                    'amount'          => $amount,
+                    'payment_method'  => $paymentMethod,
+                    'status'          => 'pending',
+                    'transaction_id'  => $details['transaction_id'] ?? null,
+                    'bank_name'       => $details['bank_name'] ?? null,
+                    'account_no'      => $details['account_no'] ?? null,
+                    'payment_date'    => $paymentDate,
+                    'note'            => $details['note'] ?? 'Dealer wallet deposit (Pending)',
+                    'created_by'      => $userId,
+                ]);
+
+                return [
+                    'collection'     => $collection,
+                    'status'         => 'pending',
+                    'transaction'    => null,
+                    'settled_orders' => [],
+                    'dealer'         => $dealer,
+                ];
+            }
+
+            // If status is 'accepted'
+            $beforeBalance = (float) ($dealer->wallet_balance ?? 0.00);
+            $afterBalance  = $beforeBalance + $amount;
 
             // 1. Record Central Collection
             $collection = Collection::create([
@@ -44,6 +74,9 @@ class DealerWalletService
                 'source_id'       => null,
                 'amount'          => $amount,
                 'payment_method'  => $paymentMethod,
+                'status'          => 'accepted',
+                'accepted_at'     => now(),
+                'accepted_by'     => $userId,
                 'transaction_id'  => $details['transaction_id'] ?? null,
                 'bank_name'       => $details['bank_name'] ?? null,
                 'account_no'      => $details['account_no'] ?? null,
@@ -77,10 +110,89 @@ class DealerWalletService
 
             return [
                 'collection'     => $collection,
+                'status'         => 'accepted',
                 'transaction'    => $transaction,
                 'settled_orders' => $settledOrders,
                 'dealer'         => $dealer->fresh(),
             ];
+        });
+    }
+
+    /**
+     * Accept a pending dealer collection and apply funds to wallet + FIFO settlement.
+     */
+    public function acceptDealerCollection(Collection $collection, ?int $adminId = null): array
+    {
+        return DB::transaction(function () use ($collection, $adminId) {
+            if ($collection->status === 'accepted') {
+                throw new InvalidArgumentException("Collection #{$collection->collection_no} is already accepted.");
+            }
+
+            $dealer = Dealer::lockForUpdate()->findOrFail($collection->party_id);
+            $userId = $adminId ?? (auth('admin')->id() ?? auth()->id());
+
+            $beforeBalance = (float) ($dealer->wallet_balance ?? 0.00);
+            $afterBalance  = $beforeBalance + (float) $collection->amount;
+
+            // 1. Update Dealer Wallet Balance
+            $dealer->wallet_balance = $afterBalance;
+            $dealer->save();
+
+            // 2. Log Credit Transaction in Ledger
+            $transaction = DealerWalletTransaction::create([
+                'dealer_id'       => $dealer->id,
+                'transaction_no'  => DealerWalletTransaction::generateTransactionNo(),
+                'collection_id'   => $collection->id,
+                'dealer_order_id' => null,
+                'type'            => 'credit',
+                'amount'          => $collection->amount,
+                'before_balance'  => $beforeBalance,
+                'after_balance'   => $afterBalance,
+                'payment_method'  => $collection->payment_method,
+                'reference_no'    => $collection->transaction_id ?? $collection->collection_no,
+                'note'            => $collection->note ?? 'Wallet Deposit (Accepted)',
+                'created_by'      => $userId,
+            ]);
+
+            // 3. Mark collection as accepted
+            $collection->update([
+                'status'      => 'accepted',
+                'accepted_at' => now(),
+                'accepted_by' => $userId,
+            ]);
+
+            // 4. Auto-settle delivered orders in FIFO order
+            $settledOrders = $this->settleDeliveredOrders($dealer->id, $userId);
+
+            return [
+                'collection'     => $collection->fresh(),
+                'status'         => 'accepted',
+                'transaction'    => $transaction,
+                'settled_orders' => $settledOrders,
+                'dealer'         => $dealer->fresh(),
+            ];
+        });
+    }
+
+    /**
+     * Reject a pending dealer collection.
+     */
+    public function rejectDealerCollection(Collection $collection, ?string $reason = null, ?int $adminId = null): Collection
+    {
+        return DB::transaction(function () use ($collection, $reason, $adminId) {
+            if ($collection->status === 'accepted') {
+                throw new InvalidArgumentException("Cannot reject an already accepted collection.");
+            }
+
+            $userId = $adminId ?? (auth('admin')->id() ?? auth()->id());
+            $collection->update([
+                'status'        => 'rejected',
+                'rejected_at'   => now(),
+                'rejected_by'   => $userId,
+                'reject_reason' => $reason,
+            ]);
+
+            return $collection->fresh();
         });
     }
 

@@ -201,6 +201,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/collections', [\App\Http\Controllers\Admin\CollectionController::class, 'index'])->name('admin.collections.index');
     Route::get('/collections/create', [\App\Http\Controllers\Admin\CollectionController::class, 'create'])->name('admin.collections.create');
     Route::post('/collections/store', [\App\Http\Controllers\Admin\CollectionController::class, 'store'])->name('admin.collections.store');
+    Route::post('/collections/{id}/accept', [\App\Http\Controllers\Admin\CollectionController::class, 'accept'])->name('admin.collections.accept');
+    Route::post('/collections/{id}/reject', [\App\Http\Controllers\Admin\CollectionController::class, 'reject'])->name('admin.collections.reject');
     Route::get('/collections/customer-history/{id}', [\App\Http\Controllers\Admin\CollectionController::class, 'customerHistory'])->name('admin.collections.customer-history');
     Route::get('/collections/dealer-history/{id}', [\App\Http\Controllers\Admin\CollectionController::class, 'dealerHistory'])->name('admin.collections.dealer-history');
 

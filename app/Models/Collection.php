@@ -19,6 +19,12 @@ class Collection extends Model
         'source_id',
         'amount',
         'payment_method',
+        'status',
+        'accepted_at',
+        'accepted_by',
+        'rejected_at',
+        'rejected_by',
+        'reject_reason',
         'transaction_id',
         'bank_name',
         'account_no',
@@ -30,6 +36,8 @@ class Collection extends Model
     protected $casts = [
         'amount'       => 'decimal:2',
         'payment_date' => 'date',
+        'accepted_at'  => 'datetime',
+        'rejected_at'  => 'datetime',
     ];
 
     public static function generateCollectionNo(): string
@@ -62,8 +70,28 @@ class Collection extends Model
         return $this->belongsTo(Admin::class, 'created_by');
     }
 
+    public function acceptedByAdmin()
+    {
+        return $this->belongsTo(Admin::class, 'accepted_by');
+    }
+
     public function walletTransaction()
     {
         return $this->hasOne(DealerWalletTransaction::class, 'collection_id');
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->status === 'accepted';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === 'rejected';
     }
 }

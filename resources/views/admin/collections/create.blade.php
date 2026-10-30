@@ -311,9 +311,9 @@
                         </div>
                     </div>
 
-                    <!-- Amount & Date -->
+                    <!-- Amount, Date & Status -->
                     <div class="row">
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-4 col-12">
                             <div class="form-group">
                                 <label class="font-weight-bold" for="amount">Collection Amount (৳) <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-merge">
@@ -325,10 +325,21 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-4 col-12">
                             <div class="form-group">
                                 <label class="font-weight-bold" for="paymentDate">Payment Date <span class="text-danger">*</span></label>
                                 <input type="date" name="payment_date" id="paymentDate" class="form-control" value="{{ date('Y-m-d') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="font-weight-bold" for="collectionStatus">Collection Status <span class="text-danger">*</span></label>
+                                <select name="status" id="collectionStatus" class="form-control font-weight-bold">
+                                    <option value="pending" selected>Pending (Requires Acceptance)</option>
+                                    <option value="accepted">Accepted (Credit Immediately)</option>
+                                </select>
+                                <small class="text-muted font-small-1">Default is <strong>Pending</strong>.</small>
                             </div>
                         </div>
                     </div>
@@ -376,6 +387,11 @@
                     <div class="d-flex justify-content-between align-items-center py-75 border-bottom">
                         <span class="text-muted font-small-3">Payment Method:</span>
                         <strong class="text-dark font-small-3" id="previewMethod">Cash</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center py-75 border-bottom">
+                        <span class="text-muted font-small-3">Initial Status:</span>
+                        <span id="previewStatus" class="badge badge-pill badge-light-warning font-weight-bold">Pending</span>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center py-75 mb-2">
@@ -507,9 +523,15 @@
                     updatePreview();
                 }
             }
+            var status = $('#collectionStatus').val();
+            if (status === 'accepted') {
+                $('#previewStatus').removeClass('badge-light-warning').addClass('badge-light-success').text('Accepted');
+            } else {
+                $('#previewStatus').removeClass('badge-light-success').addClass('badge-light-warning').text('Pending');
+            }
         }
 
-        $('#dealerId, #posOrderId, #webOrderId, #amount, #paymentDate').on('change input', function() {
+        $('#dealerId, #posOrderId, #webOrderId, #amount, #paymentDate, #collectionStatus').on('change input', function() {
             updatePreview();
         });
 
