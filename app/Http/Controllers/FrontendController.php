@@ -694,6 +694,14 @@ class FrontendController extends Controller
             return redirect()->back()->with('error', 'Your cart is empty!');
         }
 
+        // Validate stock availability for non-manufacture products
+        $stockService = app(\App\Services\StockService::class);
+        $stockItems = $cartItems->map(fn($c) => ['product_id' => $c->product_id, 'qty' => $c->quantity])->toArray();
+        $stockErrors = $stockService->validateAvailability($stockItems);
+        if (!empty($stockErrors)) {
+            return redirect()->back()->with('error', implode(' ', $stockErrors));
+        }
+
         $cartTotal = $cartItems->sum(function($c) { return $c->price * $c->quantity; });
 
         $discount = 0;

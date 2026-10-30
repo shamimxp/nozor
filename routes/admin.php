@@ -143,15 +143,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Material Type module
     Route::resource('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, ['as' => 'admin']);
     Route::post('/material-type/status', [\App\Http\Controllers\Admin\MaterialTypeController::class, 'getStatus'])->name('admin.material_type.status');
-    //Purchase module
-    Route::get('/purchase/vendor-history-pdf', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistoryPdf'])->name('admin.purchase.vendor-history-pdf');
-    Route::get('/purchase/vendor-history', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorHistory'])->name('admin.purchase.vendor-history');
-    Route::get('/purchase/due-list', [\App\Http\Controllers\Admin\PurchaseController::class, 'dueList'])->name('admin.purchase.due-list');
-    Route::get('/purchase/vendor-payments/{id}', [\App\Http\Controllers\Admin\PurchaseController::class, 'vendorPaymentDetails'])->name('admin.purchase.vendor-payment-details');
-    Route::post('/purchase/add-payment', [\App\Http\Controllers\Admin\PurchaseController::class, 'addPayment'])->name('admin.purchase.add-payment');
-    Route::get('/purchase/export-excel', [\App\Http\Controllers\Admin\PurchaseController::class, 'exportExcel'])->name('admin.purchase.export-excel');
-    Route::get('/purchase/export-list-pdf', [\App\Http\Controllers\Admin\PurchaseController::class, 'exportListPdf'])->name('admin.purchase.export-list-pdf');
-    Route::resource('purchase', \App\Http\Controllers\Admin\PurchaseController::class, ['as' => 'admin']);
+    // Legacy Custom Purchase module removed (use inventory-purchase for product purchases)
+    // Route::resource('purchase', \App\Http\Controllers\Admin\PurchaseController::class, ['as' => 'admin']);
 
     //Custom Order module
     Route::get('/custom-order/export-pdf/{id}', [\App\Http\Controllers\Admin\CustomOrderController::class, 'exportPdf'])->name('admin.custom-order.export-pdf');

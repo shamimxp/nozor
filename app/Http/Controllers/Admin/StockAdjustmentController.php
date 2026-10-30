@@ -28,6 +28,9 @@ class StockAdjustmentController extends Controller
                 ->addIndexColumn()
                 ->addColumn('product_name', fn($r) => $r->product->name ?? '-')
                 ->addColumn('type_badge', function($r) {
+                    if ($r->type == 'addition') {
+                        return '<span class="badge badge-light-success">Addition (Surplus)</span>';
+                    }
                     $class = $r->type == 'normal' ? 'info' : 'danger';
                     $text = $r->type == 'normal' ? 'Normal (Exchange)' : 'Abnormal (Damage)';
                     return '<span class="badge badge-light-'.$class.'">'.$text.'</span>';
@@ -73,11 +76,13 @@ class StockAdjustmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id' => 'required',
+            'product_id' => 'required|exists:products,id',
             'quantity' => 'required|numeric|min:0.01',
-            'type' => 'required|in:normal,abnormal',
+            'type' => 'required|in:addition,normal,abnormal',
             'adjustment_date' => 'required|date',
         ]);
+
+        $stockService = app(\App\Services\StockService::class);
 
         try {
             DB::beginTransaction();
@@ -91,12 +96,29 @@ class StockAdjustmentController extends Controller
                 'created_by' => auth()->id()
             ]);
 
-            // Decrease Stock
-            $product = Product::findOrFail($request->product_id);
-            if($product->stock < $request->quantity){
-                throw new \Exception("Insufficient stock for adjustment.");
+            if ($request->type === 'addition') {
+                // Positive adjustment: increase stock
+                $stockService->recordIn(
+                    $request->product_id,
+                    (float) $request->quantity,
+                    'stock_adjustment',
+                    $adjustment->id,
+                    'ADJ-' . $adjustment->id,
+                    $request->reason ?? 'Positive stock adjustment (Surplus / Found / Return)'
+                );
+            } else {
+                // Negative adjustment: decrease stock
+                $stockService->recordOut(
+                    $request->product_id,
+                    (float) $request->quantity,
+                    'stock_adjustment',
+                    $adjustment->id,
+                    'ADJ-' . $adjustment->id,
+                    $request->reason ?? ($request->type === 'normal' ? 'Normal exchange deduction' : 'Damage/loss deduction'),
+                    null,
+                    true
+                );
             }
-            $product->decrement('stock', $request->quantity);
 
             DB::commit();
             return response()->json(['success' => 'Stock adjusted successfully.']);
@@ -108,6 +130,8 @@ class StockAdjustmentController extends Controller
 
     public function receive($id)
     {
+        $stockService = app(\App\Services\StockService::class);
+
         try {
             DB::beginTransaction();
 
@@ -123,7 +147,15 @@ class StockAdjustmentController extends Controller
                 return response()->json(['error' => 'This adjustment has already been received.'], 422);
             }
 
-            $adjustment->product->increment('stock', $adjustment->quantity);
+            $stockService->recordIn(
+                $adjustment->product_id,
+                (float) $adjustment->quantity,
+                'stock_adjustment',
+                $adjustment->id,
+                'ADJ-REC-' . $adjustment->id,
+                'Exchange item received back into inventory'
+            );
+
             $adjustment->update([
                 'is_received' => true,
                 'received_at' => now(),

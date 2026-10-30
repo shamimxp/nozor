@@ -187,12 +187,70 @@ class WebOrderController extends Controller
     public function updateStatus(Request $request)
     {
         $request->validate(['order_id' => 'required|exists:web_orders,id', 'status' => 'required']);
-        $order = WebOrder::findOrFail($request->order_id);
+        $order = WebOrder::with('items.product')->findOrFail($request->order_id);
 
         if ($order->status == 'delivered') return response()->json(['success' => false, 'message' => 'LOCKED: Status cannot be changed after delivery.'], 403);
 
-        $order->update(['status' => $request->status]);
-        return response()->json(['success' => true, 'message' => 'Status updated to ' . ucfirst(str_replace('_', ' ', $request->status))]);
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        if ($oldStatus === $newStatus) {
+            return response()->json(['success' => true, 'message' => 'Status unchanged']);
+        }
+
+        $stockService = app(\App\Services\StockService::class);
+        $activeStatuses = ['confirm', 'processing', 'shipped', 'delivered'];
+
+        // If moving to confirmed/processing/shipped/delivered from pending/cancelled
+        if (!in_array($oldStatus, $activeStatuses) && in_array($newStatus, $activeStatuses)) {
+            $items = $order->items->map(fn($it) => ['product_id' => $it->product_id, 'qty' => $it->quantity])->toArray();
+            $stockErrors = $stockService->validateAvailability($items);
+            if (!empty($stockErrors)) {
+                return response()->json(['success' => false, 'message' => implode(' ', $stockErrors)], 422);
+            }
+            $this->deductWebOrderStock($order);
+        }
+
+        // If moving to cancelled from an active status
+        if (in_array($oldStatus, $activeStatuses) && $newStatus === 'cancelled') {
+            $this->restoreWebOrderStock($order);
+        }
+
+        $order->update(['status' => $newStatus]);
+        return response()->json(['success' => true, 'message' => 'Status updated to ' . ucfirst(str_replace('_', ' ', $newStatus))]);
+    }
+
+    private function deductWebOrderStock(WebOrder $order): void
+    {
+        $stockService = app(\App\Services\StockService::class);
+        foreach ($order->items as $item) {
+            $stockService->recordOut(
+                $item->product_id,
+                (float) $item->quantity,
+                'web_order',
+                $order->id,
+                $order->invoice_no,
+                "Web order confirmed/shipped: {$order->invoice_no}",
+                null,
+                false
+            );
+        }
+    }
+
+    private function restoreWebOrderStock(WebOrder $order): void
+    {
+        $stockService = app(\App\Services\StockService::class);
+        foreach ($order->items as $item) {
+            $stockService->recordReversal(
+                $item->product_id,
+                (float) $item->quantity,
+                'web_order',
+                $order->id,
+                $order->invoice_no,
+                "Web order cancelled - stock restored: {$order->invoice_no}",
+                null
+            );
+        }
     }
 
     public function exportPdf($id)

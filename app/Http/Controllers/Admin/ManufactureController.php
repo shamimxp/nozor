@@ -749,6 +749,33 @@ class ManufactureController extends Controller
                 $unitPrice = $firstItem ? (float) $firstItem->unit_price : (float) ($order->body_part_price > 0 ? $order->body_part_price : $order->finishing_part_price);
                 $paymentAmount = $receiveQty * $unitPrice;
 
+                // Increment Product Stock and log in ledger for manufactured goods
+                $stockService = app(\App\Services\StockService::class);
+                $receivedProductsCount = 0;
+                foreach ($order->items as $orderItem) {
+                    if ($orderItem->product_id) {
+                        $stockService->recordIn(
+                            $orderItem->product_id,
+                            $receiveQty,
+                            'manufacture_receive',
+                            $order->id,
+                            $order->invoice_no,
+                            "Manufactured goods received from production ({$orderItem->part_type}) - Ref Invoice: {$order->invoice_no}"
+                        );
+                        $receivedProductsCount++;
+                    }
+                }
+                if ($receivedProductsCount === 0 && $order->product_id) {
+                    $stockService->recordIn(
+                        $order->product_id,
+                        $receiveQty,
+                        'manufacture_receive',
+                        $order->id,
+                        $order->invoice_no,
+                        "Manufactured goods received from production - Ref Invoice: {$order->invoice_no}"
+                    );
+                }
+
                 // Task 4: Create Worker Payment record based on the received quantity!
                 if ($order->worker_id && $paymentAmount > 0) {
                     WorkerPayment::create([

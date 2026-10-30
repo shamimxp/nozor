@@ -459,12 +459,15 @@ class ReportController extends Controller
                 ->addColumn('category_name', fn($r) => $r->category->name ?? '-')
                 ->addColumn('sub_category_name', fn($r) => $r->subCategory->name ?? '-')
                 ->addColumn('stock_status', function($r) {
-                    if ($r->stock <= 0) {
-                        return '<span class="badge badge-light-danger">Out of Stock</span>';
-                    } elseif ($r->stock <= 10) {
-                        return '<span class="badge badge-light-warning">Low Stock</span>';
+                    if ($r->is_manufacturer) {
+                        return '<span class="badge badge-light-primary">Manufacture</span><br><small class="text-muted font-weight-bold">Stock: ' . (float)($r->stock ?? 0) . '</small>';
                     }
-                    return '<span class="badge badge-light-success">In Stock</span>';
+                    if ($r->stock <= 0) {
+                        return '<span class="badge badge-light-danger">Out of Stock (0)</span>';
+                    } elseif ($r->stock <= 10) {
+                        return '<span class="badge badge-light-warning">Low Stock (' . (float)$r->stock . ')</span>';
+                    }
+                    return '<span class="badge badge-light-success">In Stock (' . (float)$r->stock . ')</span>';
                 })
                 ->rawColumns(['stock_status'])
                 ->make(true);

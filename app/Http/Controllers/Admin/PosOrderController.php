@@ -128,6 +128,15 @@ class PosOrderController extends Controller
         try {
             DB::beginTransaction();
 
+            $stockService = app(\App\Services\StockService::class);
+            $stockErrors = $stockService->validateAvailability($request->items);
+            if (!empty($stockErrors)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => implode(' ', $stockErrors)
+                ], 422);
+            }
+
             $order = PosOrder::create([
                 'order_number' => PosOrder::generateOrderNumber(),
                 'customer_id' => $request->customer_id,
@@ -156,11 +165,17 @@ class PosOrderController extends Controller
                     'discount' => ($item['discountAmount'] ?? 0) * $item['quantity'],
                 ]);
 
-                // Update product stock
-                $product = Product::find($item['id']);
-                if ($product) {
-                    $product->decrement('stock', $item['quantity']);
-                }
+                // Update product stock via StockService
+                $stockService->recordOut(
+                    $item['id'],
+                    (float) $item['quantity'],
+                    'pos_order',
+                    $order->id,
+                    $order->order_number,
+                    "POS sale order: {$order->order_number}",
+                    auth('admin')->id() ?? auth()->id(),
+                    false
+                );
             }
 
             DB::commit();
@@ -246,12 +261,18 @@ class PosOrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Order is already cancelled.']);
             }
 
-            // Restore product stock
+            // Restore product stock via StockService
+            $stockService = app(\App\Services\StockService::class);
             foreach ($order->items as $item) {
-                $product = Product::find($item->product_id);
-                if ($product) {
-                    $product->increment('stock', $item->quantity);
-                }
+                $stockService->recordReversal(
+                    $item->product_id,
+                    (float) $item->quantity,
+                    'pos_order',
+                    $order->id,
+                    $order->order_number,
+                    "POS order cancelled - stock restored: {$order->order_number}",
+                    auth('admin')->id() ?? auth()->id()
+                );
             }
 
             $order->update(['order_status' => 'cancelled']);

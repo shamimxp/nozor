@@ -20,10 +20,10 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">Web Orders</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.web-order.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.web-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.web-order.index')}}"><i data-feather="circle"></i><span class="menu-item">Order List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.wishlist.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.wishlist.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Wishlist</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.wishlist.index')}}"><i data-feather="circle"></i><span class="menu-item">Wishlist</span></a>
                     </li>
                 </ul>
             </li>
@@ -31,16 +31,16 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="shopping-bag"></i><span class="menu-title text-truncate">POS Orders</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.pos') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.pos')}}" target="_blank"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Order</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.pos')}}" target="_blank"><i data-feather="circle"></i><span class="menu-item">Create Order</span></a>
                     </li>
                     <li class="{{ Route::is('admin.pos-order.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.index')}}"><i data-feather="circle"></i><span class="menu-item">Order List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.pos-order.analysis') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.analysis')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order Analysis</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.analysis')}}"><i data-feather="circle"></i><span class="menu-item">Order Analysis</span></a>
                     </li>
                     <li class="{{ Route::is('admin.pos-order.due-list') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.due-list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Due List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.pos-order.due-list')}}"><i data-feather="circle"></i><span class="menu-item">Due List</span></a>
                     </li>
                 </ul>
             </li>
@@ -48,79 +48,63 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="package"></i><span class="menu-title text-truncate">Dealer Orders</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.order-requests*') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.order-requests.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order Requests</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.order-requests.index')}}"><i data-feather="circle"></i><span class="menu-item">Order Requests</span></a>
                     </li>
                     <li class="{{ Route::is('admin.draft-orders*') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.draft-orders.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Draft Orders</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.draft-orders.index')}}"><i data-feather="circle"></i><span class="menu-item">Draft Orders</span></a>
                     </li>
                     <li class="{{ Route::is('admin.dealer-order.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.dealer-order.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Order List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.dealer-order.index')}}"><i data-feather="circle"></i><span class="menu-item">Order List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.dealer-order.create') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.dealer-order.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Order</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.dealer-order.create')}}"><i data-feather="circle"></i><span class="menu-item">Create Order</span></a>
                     </li>
                     <li class="{{ Route::is('admin.dealer-order.due-list') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.dealer-order.due-list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Due List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.dealer-order.due-list')}}"><i data-feather="circle"></i><span class="menu-item">Due List</span></a>
                     </li>
                 </ul>
             </li>
-            <li class=" nav-item @if(Route::is('admin.manufacture*') || Route::is('admin.manufacture*')) open @endif">
+            <li class=" nav-item @if(Route::is('admin.manufacture*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="package"></i><span class="menu-title text-truncate">Manufacture</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.manufacture.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Order List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.index')}}"><i data-feather="circle"></i><span class="menu-item">Manufacture Order List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.create') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Create Order</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.create')}}"><i data-feather="circle"></i><span class="menu-item">Manufacture Create Order</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.pending') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.pending')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Pending List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.pending')}}"><i data-feather="circle"></i><span class="menu-item">Pending List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.confirm') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.confirm')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Confirm List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.confirm')}}"><i data-feather="circle"></i><span class="menu-item">Confirm List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.complete') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.complete')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Complete List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.complete')}}"><i data-feather="circle"></i><span class="menu-item">Complete List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.body-part') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.body-part')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Body Part Orders</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.body-part')}}"><i data-feather="circle"></i><span class="menu-item">Body Part Orders</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.finishing-part') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.finishing-part')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Finishing Part Orders</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.finishing-part')}}"><i data-feather="circle"></i><span class="menu-item">Finishing Part Orders</span></a>
                     </li>
                     <li class="{{ Route::is('admin.manufacture.receive') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.receive')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Receive Orders</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.manufacture.receive')}}"><i data-feather="circle"></i><span class="menu-item">Receive Orders</span></a>
                     </li>
                 </ul>
             </li>
-            <li class=" nav-item @if(Route::is('admin.purchase*')) open @endif">
-                <a class="d-flex align-items-center" href="#"><i data-feather="shopping-cart"></i><span class="menu-title text-truncate">Custom Purchases</span></a>
-                <ul class="menu-content">
-                    <li class="{{ Route::is('admin.purchase.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.purchase.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Purchase List</span></a>
-                    </li>
-                    <li class="{{ Route::is('admin.purchase.create') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.purchase.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Purchase</span></a>
-                    </li>
-                    <li class="{{ Route::is('admin.purchase.vendor-history') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.purchase.vendor-history')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Vendor History</span></a>
-                    </li>
-                    <li class="{{ Route::is('admin.purchase.due-list') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.purchase.due-list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Due List</span></a>
-                    </li>
-                </ul>
-            </li>
+
             <li class=" nav-item @if(Route::is('admin.inventory-purchase*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="truck"></i><span class="menu-title text-truncate">Product Purchases</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.inventory-purchase.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Purchase List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.index')}}"><i data-feather="circle"></i><span class="menu-item">Purchase List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.inventory-purchase.create') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Purchase</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.create')}}"><i data-feather="circle"></i><span class="menu-item">Create Purchase</span></a>
                     </li>
                     <li class="{{ Route::is('admin.inventory-purchase.vendor-history') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.vendor-history')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Vendor History</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.inventory-purchase.vendor-history')}}"><i data-feather="circle"></i><span class="menu-item">Vendor History</span></a>
                     </li>
                 </ul>
             </li>
@@ -132,11 +116,11 @@
                         <span class="menu-title text-truncate" data-i18n="User">Access Control</span></a>
                     <ul class="menu-content">
                                 @can('user.show')
-                                    <li class="{{ Route::currentRouteName()=='admin.user'?'active':'' }} nav-item"><a class=" d-flex align-items-center" href="{{route('admin.user')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">User List</span></a>
+                                    <li class="{{ Route::currentRouteName()=='admin.user'?'active':'' }} nav-item"><a class=" d-flex align-items-center" href="{{route('admin.user')}}"><i data-feather="circle"></i><span class="menu-item" data-i18n="List">User List</span></a>
                                     </li>
                                  @endcan
                                 @can('role.show')
-                                    <li class="{{ Route::currentRouteName()=='roles.index'?'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('roles.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="View">Role</span></a>
+                                    <li class="{{ Route::currentRouteName()=='roles.index'?'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('roles.index')}}"><i data-feather="circle"></i><span class="menu-item" data-i18n="View">Role</span></a>
                                     </li>
                                 @endcan
                     </ul>
@@ -148,10 +132,10 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="grid"></i><span class="menu-title text-truncate" data-i18n="Category Setup">Category Setup</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.category*')?'active':'' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.category.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Categories">Categories</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.category.index')}}"><i data-feather="circle"></i><span class="menu-item" data-i18n="Categories">Categories</span></a>
                     </li>
                     <li class="{{ Route::is('admin.sub-category*')?'active':'' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.sub-category.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Sub Categories">Sub Categories</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.sub-category.index')}}"><i data-feather="circle"></i><span class="menu-item" data-i18n="Sub Categories">Sub Categories</span></a>
                     </li>
                 </ul>
             </li>
@@ -159,22 +143,22 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Product Setup</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.product.create') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.product.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Product</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.product.create')}}"><i data-feather="circle"></i><span class="menu-item">Create Product</span></a>
                     </li>
                     <li class="{{ Route::is('admin.product.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.product.index')}}"><i data-feather="circle"></i><span class="menu-item">Product List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.product-attribute*')?'active':'' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Attribute</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.product-attribute.index')}}"><i data-feather="circle"></i><span class="menu-item">Product Attribute</span></a>
                     </li>
                     <li class="{{ Route::is('admin.variations*')?'active':'' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.variations.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Variation</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.variations.index')}}"><i data-feather="circle"></i><span class="menu-item">Product Variation</span></a>
                     </li>
                     <li class="{{ Route::is('admin.product.out-of-stock') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.product.out-of-stock')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Out of Stock</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.product.out-of-stock')}}"><i data-feather="circle"></i><span class="menu-item">Out of Stock</span></a>
                     </li>
                     <li class="{{ Route::is('admin.unit*') ? 'active':'' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.unit.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Units</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.unit.index')}}"><i data-feather="circle"></i><span class="menu-item">Units</span></a>
                     </li>
                 </ul>
             </li>
@@ -183,19 +167,19 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Manufacture Setting</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.cost-head*') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.cost-head.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Cost Head</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.cost-head.index')}}"><i data-feather="circle"></i><span class="menu-item">Cost Head</span></a>
                     </li>
                     <li class="{{ Route::is('admin.cost-setting*') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.cost-setting.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Cost Setting</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.cost-setting.index')}}"><i data-feather="circle"></i><span class="menu-item">Cost Setting</span></a>
                     </li>
                     <li class="{{ Route::is('admin.material-type.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.material-type.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Material Type</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.material-type.index')}}"><i data-feather="circle"></i><span class="menu-item">Material Type</span></a>
                     </li>
                     <li class="{{ Route::is('admin.raw-material-product.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.raw-material-product.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Raw Material</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.raw-material-product.index')}}"><i data-feather="circle"></i><span class="menu-item">Raw Material</span></a>
                     </li>
                     <li class="{{ Route::is('admin.product-recipe.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.product-recipe.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Recipe</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.product-recipe.index')}}"><i data-feather="circle"></i><span class="menu-item">Product Recipe</span></a>
                     </li>
                 </ul>
             </li>
@@ -203,10 +187,10 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="sliders"></i><span class="menu-title text-truncate">Stock Adjustment</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.stock-adjustment.index') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.stock-adjustment.index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Adjustment List</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.stock-adjustment.index')}}"><i data-feather="circle"></i><span class="menu-item">Adjustment List</span></a>
                     </li>
                     <li class="{{ Route::is('admin.stock-adjustment.create') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.stock-adjustment.create')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Create Adjustment</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.stock-adjustment.create')}}"><i data-feather="circle"></i><span class="menu-item">Create Adjustment</span></a>
                     </li>
                 </ul>
             </li>
@@ -276,22 +260,22 @@
                 <a class="d-flex align-items-center" href="#"><i data-feather="file-text"></i><span class="menu-title text-truncate">Reports</span></a>
                 <ul class="menu-content">
                     <li class="{{ Route::is('admin.report.custom-order-report') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.report.custom-order-report')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Custom Order Sales</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.report.custom-order-report')}}"><i data-feather="circle"></i><span class="menu-item">Custom Order Sales</span></a>
                     </li>
                     <li class="{{ Route::is('admin.report.pos-order-report') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.report.pos-order-report')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">POS Order Sales</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.report.pos-order-report')}}"><i data-feather="circle"></i><span class="menu-item">POS Order Sales</span></a>
                     </li>
                     <li class="{{ Route::is('admin.report.custom-profit-loss') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.report.custom-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Custom Profit/Loss</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.report.custom-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item">Custom Profit/Loss</span></a>
                     </li>
                     <li class="{{ Route::is('admin.report.pos-profit-loss') ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{route('admin.report.pos-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">POS Profit/Loss</span></a>
+                        <a class="d-flex align-items-center" href="{{route('admin.report.pos-profit-loss')}}"><i data-feather="circle"></i><span class="menu-item">POS Profit/Loss</span></a>
                     </li>
-                    <li class="{{ Route::is('admin.report.product-stock') ? 'active' : '' }} pb-4">
-                        <a class="d-flex align-items-center" href="{{route('admin.report.product-stock')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Product Stock Report</span></a>
+                    <li class="{{ Route::is('admin.report.product-stock') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.product-stock')}}"><i data-feather="circle"></i><span class="menu-item">Product Stock Report</span></a>
                     </li>
-                    <li class="{{ Route::is('admin.report.manufacture-report') ? 'active' : '' }} pb-4">
-                        <a class="d-flex align-items-center" href="{{route('admin.report.manufacture-report')}}"><i data-feather="circle"></i><span class="menu-item text-truncate">Manufacture Report</span></a>
+                    <li class="{{ Route::is('admin.report.manufacture-report') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{route('admin.report.manufacture-report')}}"><i data-feather="circle"></i><span class="menu-item">Manufacture Report</span></a>
                     </li>
                 </ul>
             </li>
@@ -313,6 +297,7 @@
                     <i data-feather="tag"></i>
                     <span class="menu-title text-truncate">Coupon</span>
                 </a>
+            </li>
             <li class="{{ Route::is('admin.product_reviews*') ? 'active' : '' }} nav-item">
                 <a class="d-flex align-items-center" href="{{route('admin.product_reviews.index')}}">
                     <i data-feather="star"></i>

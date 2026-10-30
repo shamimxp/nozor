@@ -219,6 +219,13 @@ class DealerOrderController extends Controller
             'items.*.price'   => 'required|numeric|min:0',
         ]);
 
+        $stockService = app(\App\Services\StockService::class);
+        $stockErrors = $stockService->validateAvailability($request->items);
+        if (!empty($stockErrors)) {
+            toastr()->error(implode(' ', $stockErrors));
+            return back()->withInput();
+        }
+
         try {
             DB::beginTransaction();
             $orderNumber = DealerOrder::generateOrderNumber();
@@ -264,6 +271,11 @@ class DealerOrderController extends Controller
             foreach ($cartItems as $item) {
                 $item['dealer_order_id'] = $order->id;
                 DealerOrderItem::create($item);
+            }
+
+            if (in_array($order->status, ['confirm', 'delivered'])) {
+                $order->load('items');
+                $this->deductOrderStock($order);
             }
 
             DB::commit();
@@ -375,7 +387,7 @@ class DealerOrderController extends Controller
 
     public function update(Request $request, $id)
     {
-        $order = DealerOrder::findOrFail($id);
+        $order = DealerOrder::with('items')->findOrFail($id);
 
         if ($order->status == 'delivered') {
             toastr()->error('Delivered orders are locked and cannot be changed.');
@@ -394,8 +406,26 @@ class DealerOrderController extends Controller
             'items.*.price'   => 'required|numeric|min:0',
         ]);
 
+        $oldStatus = $order->status;
+        $newStatus = $request->status ?? $order->status;
+
+        $stockService = app(\App\Services\StockService::class);
+        if (in_array($newStatus, ['confirm', 'delivered']) && !in_array($oldStatus, ['confirm', 'delivered'])) {
+            $stockErrors = $stockService->validateAvailability($request->items);
+            if (!empty($stockErrors)) {
+                toastr()->error(implode(' ', $stockErrors));
+                return back()->withInput();
+            }
+        }
+
         try {
             DB::beginTransaction();
+
+            // If old status had deducted stock, restore old items before replacing
+            if (in_array($oldStatus, ['confirm', 'delivered'])) {
+                $this->restoreOrderStock($order);
+            }
+
             $subTotal = 0;
             $cartItems = [];
 
@@ -430,13 +460,18 @@ class DealerOrderController extends Controller
                 'grand_total'     => $grandTotal,
                 'paid'            => $paid,
                 'due'             => $due,
-                'status'          => $request->status ?? $order->status,
+                'status'          => $newStatus,
             ]);
 
             $order->items()->delete();
             foreach ($cartItems as $item) {
                 $item['dealer_order_id'] = $order->id;
                 DealerOrderItem::create($item);
+            }
+
+            if (in_array($newStatus, ['confirm', 'delivered'])) {
+                $order->load('items');
+                $this->deductOrderStock($order);
             }
 
             DB::commit();
@@ -494,10 +529,15 @@ class DealerOrderController extends Controller
     {
         try {
             DB::beginTransaction();
-            $order = DealerOrder::findOrFail($id);
+            $order = DealerOrder::with('items')->findOrFail($id);
             if ($order->status == 'delivered') {
                 return response()->json(['error' => 'Delivered orders cannot be deleted.'], 403);
             }
+
+            if (in_array($order->status, ['confirm', 'delivered'])) {
+                $this->restoreOrderStock($order);
+            }
+
             $order->items()->delete();
             $order->delete();
             DB::commit();
@@ -511,12 +551,68 @@ class DealerOrderController extends Controller
     public function updateStatus(Request $request)
     {
         $request->validate(['order_id' => 'required|exists:dealer_orders,id', 'status' => 'required']);
-        $order = DealerOrder::findOrFail($request->order_id);
+        $order = DealerOrder::with('items.product')->findOrFail($request->order_id);
 
         if ($order->status == 'delivered') return response()->json(['success' => false, 'message' => 'LOCKED: Status cannot be changed after delivery.'], 403);
 
-        $order->update(['status' => $request->status]);
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        if ($oldStatus === $newStatus) {
+            return response()->json(['success' => true, 'message' => 'Status unchanged']);
+        }
+
+        $stockService = app(\App\Services\StockService::class);
+
+        // Moving to confirm or delivered -> check non-mfg availability and deduct
+        if (!in_array($oldStatus, ['confirm', 'delivered']) && in_array($newStatus, ['confirm', 'delivered'])) {
+            $items = $order->items->map(fn($it) => ['product_id' => $it->product_id, 'qty' => $it->qty])->toArray();
+            $stockErrors = $stockService->validateAvailability($items);
+            if (!empty($stockErrors)) {
+                return response()->json(['success' => false, 'message' => implode(' ', $stockErrors)], 422);
+            }
+            $this->deductOrderStock($order);
+        }
+
+        // Moving to cancelled from confirmed/delivered -> restore stock
+        if (in_array($oldStatus, ['confirm', 'delivered']) && $newStatus === 'cancelled') {
+            $this->restoreOrderStock($order);
+        }
+
+        $order->update(['status' => $newStatus]);
         return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+    }
+
+    private function deductOrderStock(DealerOrder $order): void
+    {
+        $stockService = app(\App\Services\StockService::class);
+        foreach ($order->items as $item) {
+            $stockService->recordOut(
+                $item->product_id,
+                $item->qty,
+                'dealer_order',
+                $order->id,
+                $order->order_number,
+                "Dealer order confirmed/delivered: {$order->order_number}",
+                null,
+                false
+            );
+        }
+    }
+
+    private function restoreOrderStock(DealerOrder $order): void
+    {
+        $stockService = app(\App\Services\StockService::class);
+        foreach ($order->items as $item) {
+            $stockService->recordReversal(
+                $item->product_id,
+                $item->qty,
+                'dealer_order',
+                $order->id,
+                $order->order_number,
+                "Dealer order cancelled/reverted - stock restored: {$order->order_number}"
+            );
+        }
     }
 
     public function exportPdf($id)

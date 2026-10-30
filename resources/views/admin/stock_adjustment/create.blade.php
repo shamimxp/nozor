@@ -43,14 +43,15 @@
                             <div class="form-group">
                                 <label>Adjustment Type</label>
                                 <select name="type" id="adjustmentType" class="form-control" required>
-                                    <option value="normal">Normal (Exchange)</option>
-                                    <option value="abnormal">Abnormal (Damage/Lost)</option>
+                                    <option value="addition">Addition (Surplus / Found / Return)</option>
+                                    <option value="normal">Normal (Exchange / Temporary Out)</option>
+                                    <option value="abnormal">Abnormal (Damage / Lost / Scrap)</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>Quantity to Decrease</label>
+                                <label id="qtyLabel">Quantity to Add</label>
                                 <input type="number" name="quantity" id="quantity" class="form-control" step="0.01" min="0.01" required>
                             </div>
                         </div>
@@ -94,19 +95,36 @@
         });
 
         $('#adjustmentType').on('change', function() {
-            if ($(this).val() === 'normal') {
+            var val = $(this).val();
+            if (val === 'addition') {
+                $('#qtyLabel').text('Quantity to Add (+)');
                 $('#typeInfo')
-                    .removeClass('alert-danger')
-                    .addClass('alert-info')
-                    .text('Normal (Exchange) decreases stock now and creates a pending receive action. When received, the quantity is added back to this product.');
+                    .removeClass('alert-info alert-danger')
+                    .addClass('alert-success')
+                    .text('Addition (+) immediately increases product inventory stock (e.g. surplus from physical audit, initial stock, or found items).');
+                $('#quantity').removeAttr('max');
                 return;
             }
 
+            if (val === 'normal') {
+                $('#qtyLabel').text('Quantity to Decrease (-)');
+                $('#typeInfo')
+                    .removeClass('alert-success alert-danger')
+                    .addClass('alert-info')
+                    .text('Normal (Exchange) decreases stock now and creates a pending receive action. When received, the quantity is added back to this product.');
+                var stock = parseFloat($('#productId find:selected').data('stock')) || 0;
+                $('#quantity').attr('max', stock);
+                return;
+            }
+
+            $('#qtyLabel').text('Quantity to Decrease (-)');
             $('#typeInfo')
-                .removeClass('alert-info')
+                .removeClass('alert-success alert-info')
                 .addClass('alert-danger')
-                .text('Abnormal (Damage/Lost) permanently decreases stock and cannot be received back.');
-        });
+                .text('Abnormal (Damage/Lost/Scrap) permanently decreases stock and cannot be received back.');
+            var stock = parseFloat($('#productId find:selected').data('stock')) || 0;
+            $('#quantity').attr('max', stock);
+        }).trigger('change');
 
         $('#adjustmentForm').on('submit', function(e) {
             e.preventDefault();
@@ -116,17 +134,23 @@
             var quantity = parseFloat($('#quantity').val()) || 0;
             var currentStock = parseFloat($('#currentStock').val()) || 0;
 
-            if (quantity > currentStock) {
-                toastr.error('Adjustment quantity cannot exceed current stock.');
+            if (type !== 'addition' && quantity > currentStock) {
+                toastr.error('Adjustment deduction quantity cannot exceed current stock.');
                 return;
             }
 
-            Swal.fire({
-                title: 'Save stock adjustment?',
-                text: (type === 'normal'
-                    ? 'This will decrease stock now and allow receive later for exchange.'
-                    : 'This will permanently decrease stock for damage or lost item.') + ' Product: ' + product,
-                icon: type === 'normal' ? 'info' : 'warning',
+            var confirmText = '';
+            var confirmIcon = 'warning';
+            if (type === 'addition') {
+                confirmText = 'This will immediately increase product stock by ' + quantity + ' unit(s).';
+                confirmIcon = 'success';
+            } else if (type === 'normal') {
+                confirmText = 'This will decrease stock now and allow receive later for exchange.';
+                confirmIcon = 'info';
+            } else {
+                confirmText = 'This will permanently decrease stock for damage or lost item.';
+                confirmIcon = 'warning';
+            }
                 showCancelButton: true,
                 confirmButtonText: 'Yes, save',
                 cancelButtonText: 'Cancel',

@@ -96,6 +96,17 @@ class OrderRequestService
             if (empty($orderItemsData)) {
                 throw new \Exception("No items selected for confirmation.");
             }
+
+            // Validate non-manufacture stock availability
+            $stockService = app(\App\Services\StockService::class);
+            $itemsToCheck = collect($orderItemsData)->map(fn($d) => [
+                'product_id' => $d['request_item']->product_id,
+                'qty' => $d['confirm_qty']
+            ])->toArray();
+            $stockErrors = $stockService->validateAvailability($itemsToCheck);
+            if (!empty($stockErrors)) {
+                throw new \Exception(implode(' ', $stockErrors));
+            }
             
             // Create a new Order
             $order = DealerOrder::create([
@@ -127,6 +138,18 @@ class OrderRequestService
                     'price'           => $data['unit_price'],
                     'total'           => $data['item_total'],
                 ]);
+
+                // Deduct stock for confirmed order
+                $stockService->recordOut(
+                    $requestItem->product_id,
+                    $confirmQty,
+                    'dealer_order',
+                    $order->id,
+                    $order->order_number,
+                    "Order Request confirmed to Dealer Order: {$order->order_number}",
+                    auth()->id(),
+                    false
+                );
 
                 // 3. Update confirmed_qty
                 $requestItem->confirmed_qty += $confirmQty;
@@ -313,6 +336,14 @@ class OrderRequestService
                 throw new \Exception("Cannot convert a draft order with no items.");
             }
 
+            // Validate non-manufacture stock availability
+            $stockService = app(\App\Services\StockService::class);
+            $itemsForStock = $draftOrder->items->map(fn($it) => ['product_id' => $it->product_id, 'qty' => $it->qty])->toArray();
+            $stockErrors = $stockService->validateAvailability($itemsForStock);
+            if (!empty($stockErrors)) {
+                throw new \Exception(implode(' ', $stockErrors));
+            }
+
             // Create DealerOrder
             $order = DealerOrder::create([
                 'order_number'    => DealerOrder::generateOrderNumber(),
@@ -341,6 +372,18 @@ class OrderRequestService
                     'total'           => $item->total,
                     'note'            => $item->note,
                 ]);
+
+                // Deduct stock for confirmed order
+                $stockService->recordOut(
+                    $item->product_id,
+                    $item->qty,
+                    'dealer_order',
+                    $order->id,
+                    $order->order_number,
+                    "Converted from Draft Order - Dealer Order confirmed: {$order->order_number}",
+                    auth()->id(),
+                    false
+                );
             }
 
             // Delete draft order and items so draft order is emptied upon conversion

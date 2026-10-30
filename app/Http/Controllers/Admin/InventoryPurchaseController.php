@@ -142,7 +142,7 @@ class InventoryPurchaseController extends Controller
     public function create()
     {
         $vendors = Vendor::orderBy('name')->get();
-        $products = Product::where('status', 1)->get();
+        $products = Product::where('status', 1)->where('is_manufacturer', 0)->orderBy('name')->get();
         $purchase_number = InventoryPurchase::generatePurchaseNumber();
         return view('admin.inventory_purchase.create', compact('vendors', 'products', 'purchase_number'));
     }
@@ -209,7 +209,7 @@ class InventoryPurchaseController extends Controller
     {
         $purchase = InventoryPurchase::with('items.product')->findOrFail($id);
         $vendors = Vendor::orderBy('name')->get();
-        $products = Product::where('status', 1)->get();
+        $products = Product::where('status', 1)->where('is_manufacturer', 0)->orderBy('name')->get();
         return view('admin.inventory_purchase.edit', compact('purchase', 'vendors', 'products'));
     }
 
@@ -276,6 +276,7 @@ class InventoryPurchaseController extends Controller
     public function receiveStore(Request $request, $id)
     {
         $purchase = InventoryPurchase::with('items')->findOrFail($id);
+        $stockService = app(\App\Services\StockService::class);
 
         try {
             $this->ensureStatusColumnSupportsWorkflow();
@@ -283,17 +284,26 @@ class InventoryPurchaseController extends Controller
 
             foreach ($request->items as $itemId => $data) {
                 $item = InventoryPurchaseItem::findOrFail($itemId);
-                $receiveQty = $data['receive_qty'];
+                $receiveQty = (float) ($data['receive_qty'] ?? 0);
+
+                if ($receiveQty <= 0) {
+                    continue;
+                }
 
                 $item->update(['received_quantity' => $receiveQty]);
 
-                // Increase Stock
-                $product = Product::findOrFail($item->product_id);
-                $product->increment('stock', $receiveQty);
+                // Increase Stock and log to ledger
+                $stockService->recordIn(
+                    $item->product_id,
+                    $receiveQty,
+                    'purchase',
+                    $purchase->id,
+                    $purchase->purchase_number,
+                    "Product purchase received: {$purchase->purchase_number}"
+                );
 
-                // Update cost price if needed?
-                // Usually we keep track of average cost or just latest cost.
-                $product->update(['cost_price' => $item->purchase_price]);
+                // Update cost price
+                Product::where('id', $item->product_id)->update(['cost_price' => $item->purchase_price]);
             }
 
             $purchase->update(['status' => 'received']);
