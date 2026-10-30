@@ -47,7 +47,7 @@ class DealerWalletService
                     'bank_name'       => $details['bank_name'] ?? null,
                     'account_no'      => $details['account_no'] ?? null,
                     'payment_date'    => $paymentDate,
-                    'note'            => $details['note'] ?? 'Dealer wallet deposit (Pending)',
+                    'note'            => !empty($details['note']) ? $details['note'] : 'Dealer wallet deposit',
                     'created_by'      => $userId,
                 ]);
 
@@ -150,7 +150,7 @@ class DealerWalletService
                 'after_balance'   => $afterBalance,
                 'payment_method'  => $collection->payment_method,
                 'reference_no'    => $collection->transaction_id ?? $collection->collection_no,
-                'note'            => $collection->note ?? 'Wallet Deposit (Accepted)',
+                'note'            => !empty($collection->note) ? str_replace(' (Pending)', '', $collection->note) : 'Dealer wallet deposit',
                 'created_by'      => $userId,
             ]);
 

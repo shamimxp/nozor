@@ -117,11 +117,12 @@
                         <th width="4%">#</th>
                         <th width="12%">Txn No</th>
                         <th width="14%">Date & Time</th>
-                        <th width="14%">Type</th>
+                        <th width="12%">Type</th>
                         <th width="12%">Amount</th>
-                        <th width="16%">Balance Flow</th>
+                        <th width="14%">Balance Flow</th>
                         <th width="10%">Method</th>
                         <th width="10%">Reference</th>
+                        <th width="8%">Status</th>
                         <th width="8%">Note</th>
                     </tr>
                 </thead>
@@ -151,6 +152,7 @@
                 { data: 'balance', name: 'after_balance', orderable: false, searchable: false },
                 { data: 'method', name: 'payment_method' },
                 { data: 'reference', name: 'reference_no' },
+                { data: 'status_badge', name: 'status_badge', orderable: false, searchable: false },
                 { data: 'note', name: 'note' }
             ],
             order: [[0, 'desc']],

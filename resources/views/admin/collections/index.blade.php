@@ -99,8 +99,8 @@
                         <div class="col-lg-2 col-md-4 col-12 mb-1 mb-lg-0">
                             <label class="font-small-2 font-weight-bold">Status</label>
                             <select id="filterStatus" class="form-control form-control-sm">
-                                <option value="">All Statuses</option>
-                                <option value="pending" selected>Pending</option>
+                                <option value="" selected>All Statuses</option>
+                                <option value="pending">Pending</option>
                                 <option value="accepted">Accepted</option>
                                 <option value="rejected">Rejected</option>
                             </select>

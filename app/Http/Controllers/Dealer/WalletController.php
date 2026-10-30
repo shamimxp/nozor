@@ -31,7 +31,7 @@ class WalletController extends Controller
 
         if ($request->ajax()) {
             $query = DealerWalletTransaction::where('dealer_id', $dealerId)
-                ->with(['dealerOrder'])
+                ->with(['dealerOrder', 'collection'])
                 ->latest('id');
 
             return DataTables::of($query)
@@ -61,8 +61,24 @@ class WalletController extends Controller
                     }
                     return e($r->reference_no ?? '-');
                 })
+                ->addColumn('status_badge', function ($r) {
+                    if ($r->collection) {
+                        $st = $r->collection->status;
+                        if ($st === 'accepted') {
+                            return '<span class="badge badge-pill badge-light-success font-weight-bold"><i data-feather="check-circle" class="mr-25"></i> Accepted</span>';
+                        } elseif ($st === 'pending') {
+                            return '<span class="badge badge-pill badge-light-warning font-weight-bold"><i data-feather="clock" class="mr-25"></i> Pending</span>';
+                        } elseif ($st === 'rejected') {
+                            return '<span class="badge badge-pill badge-light-danger font-weight-bold"><i data-feather="x-circle" class="mr-25"></i> Rejected</span>';
+                        }
+                    }
+                    if ($r->type === 'debit') {
+                        return '<span class="badge badge-pill badge-light-info font-weight-bold"><i data-feather="check" class="mr-25"></i> Settled</span>';
+                    }
+                    return '<span class="badge badge-pill badge-light-success font-weight-bold"><i data-feather="check-circle" class="mr-25"></i> Accepted</span>';
+                })
                 ->addColumn('note', fn($r) => e($r->note ?? '-'))
-                ->rawColumns(['transaction_no', 'type_badge', 'amount', 'balance', 'method', 'reference'])
+                ->rawColumns(['transaction_no', 'type_badge', 'amount', 'balance', 'method', 'reference', 'status_badge'])
                 ->make(true);
         }
 

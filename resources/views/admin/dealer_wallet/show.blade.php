@@ -100,6 +100,7 @@
                         <th>Running Balance</th>
                         <th>Payment Method</th>
                         <th>Order / Ref</th>
+                        <th>Status</th>
                         <th>Note</th>
                     </tr>
                 </thead>
@@ -206,6 +207,7 @@
                 {data: 'balance', name: 'after_balance'},
                 {data: 'method', name: 'payment_method'},
                 {data: 'reference', name: 'reference_no'},
+                {data: 'status_badge', name: 'status_badge', orderable: false, searchable: false},
                 {data: 'note', name: 'note'},
             ],
             drawCallback: function() {

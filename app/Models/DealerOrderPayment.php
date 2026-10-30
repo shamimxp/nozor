@@ -35,6 +35,11 @@ class DealerOrderPayment extends Model
         return $this->belongsTo(DealerWalletTransaction::class, 'dealer_wallet_transaction_id');
     }
 
+    public function dealerWalletTransaction()
+    {
+        return $this->belongsTo(DealerWalletTransaction::class, 'dealer_wallet_transaction_id');
+    }
+
     public function collection()
     {
         return $this->belongsTo(Collection::class, 'collection_id');

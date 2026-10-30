@@ -75,7 +75,7 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = DealerOrder::with(['items.product', 'dealer'])->where('dealer_id', auth('dealer')->id())->findOrFail($id);
+        $order = DealerOrder::with(['items.product.recipe', 'dealer', 'payments.dealerWalletTransaction'])->where('dealer_id', auth('dealer')->id())->findOrFail($id);
         return view('dealer.orders.show', compact('order'));
     }
 
