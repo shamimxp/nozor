@@ -22,6 +22,82 @@
     </div>
 </div>
 
+<!-- Financial Summary Cards -->
+<div class="row">
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card card-statistics shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted font-weight-bolder mb-50">TOTAL ORDERS VALUE</h6>
+                        <h3 class="font-weight-bolder text-primary mb-0">৳ {{ number_format($totalOrdersAmount ?? 0, 2) }}</h3>
+                    </div>
+                    <div class="avatar bg-light-primary p-50 m-0">
+                        <div class="avatar-content">
+                            <i data-feather="shopping-bag" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted">Total placed orders</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card card-statistics shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted font-weight-bolder mb-50">TOTAL PAID</h6>
+                        <h3 class="font-weight-bolder text-success mb-0">৳ {{ number_format($totalPaidAmount ?? 0, 2) }}</h3>
+                    </div>
+                    <div class="avatar bg-light-success p-50 m-0">
+                        <div class="avatar-content">
+                            <i data-feather="check-circle" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-success font-weight-bold">Settled payments</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card card-statistics shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted font-weight-bolder mb-50">TOTAL DUE</h6>
+                        <h3 class="font-weight-bolder text-danger mb-0">৳ {{ number_format($totalDueAmount ?? 0, 2) }}</h3>
+                    </div>
+                    <div class="avatar bg-light-danger p-50 m-0">
+                        <div class="avatar-content">
+                            <i data-feather="alert-circle" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted">Delivered Due: <strong class="text-danger">৳ {{ number_format($deliveredDueAmount ?? 0, 2) }}</strong></small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 col-12">
+        <div class="card card-statistics shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted font-weight-bolder mb-50">WALLET BALANCE</h6>
+                        <h3 class="font-weight-bolder text-info mb-0">৳ {{ number_format($walletBalance ?? 0, 2) }}</h3>
+                    </div>
+                    <div class="avatar bg-light-info p-50 m-0">
+                        <div class="avatar-content">
+                            <i data-feather="credit-card" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ route('dealer.wallet.index') }}" class="small text-info font-weight-bold">View Wallet Statement &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card shadow-sm border-0">
     <div class="card-body">
         <div class="row align-items-end mb-3">

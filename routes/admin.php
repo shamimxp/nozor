@@ -197,10 +197,22 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/pos-order/due-list', [\App\Http\Controllers\Admin\PosOrderController::class, 'dueList'])->name('admin.pos-order.due-list');
     Route::resource('pos-order', \App\Http\Controllers\Admin\PosOrderController::class, ['as' => 'admin']);
 
-    // Due Collection / Customer Payment module
-    Route::get('/due-collection', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'index'])->name('admin.due-collection.index');
-    Route::post('/due-collection/store', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'store'])->name('admin.due-collection.store');
-    Route::get('/due-collection/customer-history/{id}', [\App\Http\Controllers\Admin\CustomerPaymentController::class, 'customerHistory'])->name('admin.due-collection.customer-history');
+    // Collections module
+    Route::get('/collections', [\App\Http\Controllers\Admin\CollectionController::class, 'index'])->name('admin.collections.index');
+    Route::get('/collections/create', [\App\Http\Controllers\Admin\CollectionController::class, 'create'])->name('admin.collections.create');
+    Route::post('/collections/store', [\App\Http\Controllers\Admin\CollectionController::class, 'store'])->name('admin.collections.store');
+    Route::get('/collections/customer-history/{id}', [\App\Http\Controllers\Admin\CollectionController::class, 'customerHistory'])->name('admin.collections.customer-history');
+    Route::get('/collections/dealer-history/{id}', [\App\Http\Controllers\Admin\CollectionController::class, 'dealerHistory'])->name('admin.collections.dealer-history');
+
+    // Legacy Aliases & Redirects for Due Collection
+    Route::get('/due-collection', fn() => redirect()->route('admin.collections.index'))->name('admin.due-collection.index');
+    Route::post('/due-collection/store', [\App\Http\Controllers\Admin\CollectionController::class, 'store'])->name('admin.due-collection.store');
+    Route::get('/due-collection/customer-history/{id}', [\App\Http\Controllers\Admin\CollectionController::class, 'customerHistory'])->name('admin.due-collection.customer-history');
+
+    // Dealer Wallets module
+    Route::get('/dealer-wallets', [\App\Http\Controllers\Admin\DealerWalletController::class, 'index'])->name('admin.dealer-wallets.index');
+    Route::get('/dealer-wallets/{id}', [\App\Http\Controllers\Admin\DealerWalletController::class, 'show'])->name('admin.dealer-wallets.show');
+    Route::post('/dealer-wallets/{id}/deposit', [\App\Http\Controllers\Admin\DealerWalletController::class, 'deposit'])->name('admin.dealer-wallets.deposit');
     //Inventory Purchase module
     Route::get('/inventory-purchase/vendor-history-pdf', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'vendorHistoryPdf'])->name('admin.inventory-purchase.vendor-history-pdf');
     Route::get('/inventory-purchase/vendor-history', [\App\Http\Controllers\Admin\InventoryPurchaseController::class, 'vendorHistory'])->name('admin.inventory-purchase.vendor-history');

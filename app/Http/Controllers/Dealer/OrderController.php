@@ -53,7 +53,24 @@ class OrderController extends Controller
                 ->rawColumns(['order_info', 'totals', 'status_badge', 'action'])
                 ->make(true);
         }
-        return view('dealer.orders.index');
+
+        $dealerId = auth('dealer')->id();
+        $dealer = auth('dealer')->user();
+        $allOrders = DealerOrder::where('dealer_id', $dealerId)->where('status', '!=', 'cancelled')->get();
+
+        $totalOrdersAmount = (float) $allOrders->sum('grand_total');
+        $totalPaidAmount   = (float) $allOrders->sum('paid');
+        $totalDueAmount    = (float) $allOrders->sum('due');
+        $deliveredDueAmount = (float) $allOrders->where('status', 'delivered')->sum('due');
+        $walletBalance     = (float) ($dealer->wallet_balance ?? 0.00);
+
+        return view('dealer.orders.index', compact(
+            'totalOrdersAmount',
+            'totalPaidAmount',
+            'totalDueAmount',
+            'deliveredDueAmount',
+            'walletBalance'
+        ));
     }
 
     public function show($id)

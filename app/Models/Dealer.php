@@ -15,10 +15,31 @@ class Dealer extends Authenticatable
         'password',
     ];
 
+    protected $casts = [
+        'wallet_balance' => 'decimal:2',
+        'is_special'     => 'boolean',
+        'status'         => 'integer',
+    ];
+
     public function setPasswordAttribute($value)
     {
         if (!empty($value)) {
             $this->attributes['password'] = bcrypt($value);
         }
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(DealerOrder::class, 'dealer_id');
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasMany(DealerWalletTransaction::class, 'dealer_id');
+    }
+
+    public function collections()
+    {
+        return $this->morphMany(Collection::class, 'party');
     }
 }

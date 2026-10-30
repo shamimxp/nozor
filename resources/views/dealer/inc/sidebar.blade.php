@@ -19,6 +19,18 @@
             </li>
             <li class="{{ Route::currentRouteName()=='dealer.orders.index' || Route::currentRouteName()=='dealer.orders.show' ? 'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('dealer.orders.index')}}"><i data-feather="box"></i><span class="menu-title text-truncate">Orders</span></a>
             </li>
+            <li class="{{ Route::is('dealer.wallet*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{ route('dealer.wallet.index') }}">
+                    <i data-feather="credit-card"></i>
+                    <span class="menu-title text-truncate">My Wallet</span>
+                </a>
+            </li>
+            <li class="{{ Route::is('dealer.payments*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{ route('dealer.payments.index') }}">
+                    <i data-feather="dollar-sign"></i>
+                    <span class="menu-title text-truncate">Payment History</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

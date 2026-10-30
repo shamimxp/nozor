@@ -232,10 +232,16 @@
 {{--            </li>--}}
 
             <li class="navigation-header"><span>Account & Finance</span><i data-feather="more-horizontal"></i></li>
-            <li class="nav-item {{ Route::is('admin.due-collection*') ? 'active' : '' }}">
-                <a class="d-flex align-items-center" href="{{route('admin.due-collection.index')}}">
+            <li class="nav-item {{ (Route::is('admin.collections*') || Route::is('admin.due-collection*')) ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{ route('admin.collections.index') }}">
                     <i data-feather="dollar-sign"></i>
-                    <span class="menu-title text-truncate">Collection</span>
+                    <span class="menu-title text-truncate">Collections</span>
+                </a>
+            </li>
+            <li class="nav-item {{ Route::is('admin.dealer-wallets*') ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{ route('admin.dealer-wallets.index') }}">
+                    <i data-feather="credit-card"></i>
+                    <span class="menu-title text-truncate">Dealer Wallets</span>
                 </a>
             </li>
             <li class="nav-item {{ Route::is('admin.worker-balance-sheet*') ? 'active' : '' }}">

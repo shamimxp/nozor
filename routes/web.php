@@ -104,6 +104,10 @@ Route::prefix('dealer')->name('dealer.')->group(function () {
         Route::get('/orders/{id}', [\App\Http\Controllers\Dealer\OrderController::class, 'show'])->name('orders.show');
         Route::get('/orders/{id}/pdf', [\App\Http\Controllers\Dealer\OrderController::class, 'downloadPdf'])->name('orders.pdf');
 
+        // Dealer Wallet & Payments
+        Route::get('/wallet', [\App\Http\Controllers\Dealer\WalletController::class, 'index'])->name('wallet.index');
+        Route::get('/payments', [\App\Http\Controllers\Dealer\WalletController::class, 'payments'])->name('payments.index');
+
         Route::get('/back-to-admin', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'backToAdmin'])->name('back');
     });
 });

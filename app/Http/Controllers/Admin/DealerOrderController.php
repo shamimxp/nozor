@@ -278,6 +278,10 @@ class DealerOrderController extends Controller
                 $this->deductOrderStock($order);
             }
 
+            if ($order->status === 'delivered') {
+                app(\App\Services\DealerWalletService::class)->settleDeliveredOrders($order->dealer_id);
+            }
+
             DB::commit();
             toastr()->success('Dealer order created successfully.');
             return redirect()->route('admin.dealer-order.index');
@@ -580,6 +584,12 @@ class DealerOrderController extends Controller
         }
 
         $order->update(['status' => $newStatus]);
+
+        // If status changed to delivered, auto-settle from dealer wallet (FIFO)
+        if ($newStatus === 'delivered') {
+            app(\App\Services\DealerWalletService::class)->settleDeliveredOrders($order->dealer_id);
+        }
+
         return response()->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 
