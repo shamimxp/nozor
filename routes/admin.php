@@ -300,4 +300,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // Backwards-compatible aliases
     Route::get('/worker-payment', fn() => redirect()->route('admin.worker-invoices.index'))->name('admin.worker-payment.index');
     Route::delete('/worker-payment/{id}', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'destroy'])->name('admin.worker-payment.destroy');
+
+    // User Full Activities & Real-time Inactivity Status (following SAL /company/user-activities)
+    Route::get('/user-activities', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.user-activities.index');
+    Route::get('/user-activities/{role}/{id}/daily-log', [\App\Http\Controllers\Admin\UserActivityController::class, 'dailyLog'])->name('admin.user-activities.daily-log');
 });

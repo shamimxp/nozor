@@ -216,6 +216,13 @@
                     <span class="menu-title text-truncate">Vendor List</span>
                 </a>
             </li>
+            <li class="{{ Route::is('admin.user-activities.*') ? 'active' : '' }} nav-item">
+                <a class="d-flex align-items-center" href="{{ route('admin.user-activities.index') }}">
+                    <i data-feather="users"></i>
+                    <span class="menu-title text-truncate">User Activities</span>
+                </a>
+            </li>
+
 {{--            <li class="{{ Route::is('admin.fabric.index') || Route::is('admin.fabric.create') || Route::is('admin.fabric.edit') ? 'active' : '' }} nav-item">--}}
 {{--                <a class="d-flex align-items-center" href="{{route('admin.fabric.index')}}">--}}
 {{--                    <i data-feather="scissors"></i>--}}

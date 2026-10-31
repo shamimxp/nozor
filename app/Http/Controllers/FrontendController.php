@@ -530,7 +530,10 @@ class FrontendController extends Controller
         $cartId = $request->cart_id;
         $sessionId = session()->getId();
 
-        \App\Models\Cart::where('id', $cartId)->where('session_id', $sessionId)->delete();
+        $cart = \App\Models\Cart::where('id', $cartId)->where('session_id', $sessionId)->first();
+        if ($cart) {
+            $cart->delete();
+        }
 
         $cartItems = \App\Models\Cart::with('product')->where('session_id', $sessionId)->get();
         $cartCount = $cartItems->sum('quantity');
@@ -635,7 +638,10 @@ class FrontendController extends Controller
     public function clearCart(Request $request)
     {
         $sessionId = session()->getId();
-        \App\Models\Cart::where('session_id', $sessionId)->delete();
+        $items = \App\Models\Cart::where('session_id', $sessionId)->get();
+        foreach ($items as $item) {
+            $item->delete();
+        }
 
         $settings = \App\Models\WebSetting::first();
         $currency = $settings->currency_symbol ?? 'TK';
@@ -818,9 +824,12 @@ class FrontendController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Unauthorized.']);
         }
 
-        \App\Models\Wishlist::where('user_id', auth()->id())
+        $wish = \App\Models\Wishlist::where('user_id', auth()->id())
             ->where('id', $request->wishlist_id)
-            ->delete();
+            ->first();
+        if ($wish) {
+            $wish->delete();
+        }
 
         $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
         return response()->json([
