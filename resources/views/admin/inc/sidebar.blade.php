@@ -62,6 +62,17 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item @if(Route::is('admin.returns*')) open @endif">
+                <a class="d-flex align-items-center" href="#"><i data-feather="rotate-ccw"></i><span class="menu-title text-truncate">Return Orders</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admin.returns.index') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.returns.index') }}"><i data-feather="circle"></i><span class="menu-item">Return List</span></a>
+                    </li>
+                    <li class="{{ Route::is('admin.returns.create') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.returns.create') }}"><i data-feather="circle"></i><span class="menu-item">Create Return</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class=" nav-item @if(Route::is('admin.manufacture*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="package"></i><span class="menu-title text-truncate">Manufacture</span></a>
                 <ul class="menu-content">

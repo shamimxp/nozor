@@ -51,6 +51,15 @@ class DealerController extends Controller
                     }
                     return '-';
                 })
+                ->addColumn('wallet_balance', function ($row) {
+                    $bal = (float) ($row->wallet_balance ?? 0);
+                    if ($bal > 0) {
+                        return '<span class="badge badge-light-success font-weight-bolder font-small-3 px-1 py-50">৳ ' . number_format($bal, 2) . '</span>';
+                    } elseif ($bal < 0) {
+                        return '<span class="badge badge-light-danger font-weight-bolder font-small-3 px-1 py-50">৳ ' . number_format($bal, 2) . '</span>';
+                    }
+                    return '<span class="text-muted font-weight-bold font-small-3">৳ 0.00</span>';
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="'.route('admin.dealer.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewDealer" title="View"><i data-feather="eye"></i></a>';
                     $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editDealer" title="Edit"><i data-feather="edit"></i></a>';
@@ -58,7 +67,7 @@ class DealerController extends Controller
                     $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteDealer" title="Delete"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['status', 'is_special', 'profile_image', 'action'])
+                ->rawColumns(['status', 'is_special', 'profile_image', 'wallet_balance', 'action'])
                 ->make(true);
         }
         return view('admin.dealer.index');

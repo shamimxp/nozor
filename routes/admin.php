@@ -304,4 +304,14 @@ Route::group(['middleware' => ['auth:admin']], function () {
     // User Full Activities & Real-time Inactivity Status (following SAL /company/user-activities)
     Route::get('/user-activities', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.user-activities.index');
     Route::get('/user-activities/{role}/{id}/daily-log', [\App\Http\Controllers\Admin\UserActivityController::class, 'dailyLog'])->name('admin.user-activities.daily-log');
+
+    // Central Return Module (Multi-channel: Dealer, POS, Web; Dual refund: Cash & Wallet; Approval Lifecycle)
+    Route::get('/returns', [\App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('admin.returns.index');
+    Route::get('/returns/create', [\App\Http\Controllers\Admin\ReturnController::class, 'create'])->name('admin.returns.create');
+    Route::post('/returns', [\App\Http\Controllers\Admin\ReturnController::class, 'store'])->name('admin.returns.store');
+    Route::get('/returns/ajax/invoices', [\App\Http\Controllers\Admin\ReturnController::class, 'getInvoices'])->name('admin.returns.ajax.invoices');
+    Route::get('/returns/ajax/invoice-products', [\App\Http\Controllers\Admin\ReturnController::class, 'getInvoiceProducts'])->name('admin.returns.ajax.invoice-products');
+    Route::get('/returns/{id}', [\App\Http\Controllers\Admin\ReturnController::class, 'show'])->name('admin.returns.show');
+    Route::post('/returns/{id}/approve', [\App\Http\Controllers\Admin\ReturnController::class, 'approve'])->name('admin.returns.approve');
+    Route::post('/returns/{id}/reject', [\App\Http\Controllers\Admin\ReturnController::class, 'reject'])->name('admin.returns.reject');
 });

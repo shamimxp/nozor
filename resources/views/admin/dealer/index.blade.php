@@ -186,6 +186,7 @@
                             <th>Name</th>
                             <th>Shop Name</th>
                             <th>Phone</th>
+                            <th>Wallet Balance</th>
                             <th>Status</th>
                             <th>Special</th>
                             <th>Action</th>
@@ -227,6 +228,7 @@
                 {data: 'name', name: 'name'},
                 {data: 'shop_name', name: 'shop_name'},
                 {data: 'phone', name: 'phone'},
+                {data: 'wallet_balance', name: 'wallet_balance'},
                 {data: 'status', name: 'status'},
                 {data: 'is_special', name: 'is_special'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},

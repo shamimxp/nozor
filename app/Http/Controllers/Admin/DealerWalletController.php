@@ -151,8 +151,39 @@ class DealerWalletController extends Controller
                     }
                     return '<span class="badge badge-pill badge-light-success font-weight-bold"><i data-feather="check-circle" class="mr-25"></i> Accepted</span>';
                 })
-                ->addColumn('note', fn($r) => e($r->note ?? '-'))
-                ->rawColumns(['transaction_no', 'type_badge', 'amount', 'balance', 'method', 'reference', 'status_badge'])
+                ->addColumn('note', function ($r) {
+                    $note = trim($r->note ?? '');
+                    if (empty($note) || $note === '-') {
+                        return '<span class="text-muted font-small-2">-</span>';
+                    }
+
+                    $escapedFullNote = e($note);
+                    $escapedTxn = e($r->transaction_no ?? '-');
+                    $escapedDate = e($r->created_at->format('d M, Y h:i A'));
+                    $typeLabel = $r->type === 'credit' ? 'Credit (Deposit)' : 'Debit (Order Pay)';
+                    $typeBadgeClass = $r->type === 'credit' ? 'badge-light-success' : 'badge-light-danger';
+
+                    if (mb_strlen($note) <= 32) {
+                        return '<span class="font-small-2 text-dark font-weight-500">' . $escapedFullNote . '</span>';
+                    }
+
+                    $shortNote = mb_substr($note, 0, 26) . '...';
+
+                    return '<div class="d-flex align-items-center note-cell-wrapper" style="gap: 5px;">
+                        <span class="font-small-2 text-dark font-weight-500 text-truncate" style="max-width: 140px;" title="' . $escapedFullNote . '">' . e($shortNote) . '</span>
+                        <button type="button" class="btn btn-xs btn-outline-primary btn-show-note d-inline-flex align-items-center py-25 px-50"
+                            style="border-radius: 4px; font-weight: 600; font-size: 11px; white-space: nowrap;"
+                            data-txn="#' . $escapedTxn . '"
+                            data-date="' . $escapedDate . '"
+                            data-type="' . $typeLabel . '"
+                            data-type-badge="' . $typeBadgeClass . '"
+                            data-note="' . $escapedFullNote . '"
+                            title="View Full Note">
+                            <i data-feather="file-text" style="width: 11px; height: 11px; margin-right: 3px;"></i> View
+                        </button>
+                    </div>';
+                })
+                ->rawColumns(['transaction_no', 'type_badge', 'amount', 'balance', 'method', 'reference', 'status_badge', 'note'])
                 ->make(true);
         }
 
