@@ -1,15 +1,13 @@
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
-        <ul class="nav navbar-nav flex-row">
-            <li class="nav-item mr-auto"><a class="navbar-brand mt-0" href="{{ route('admin.dashboard') }}" style="padding-top: 0; padding-bottom: 0; margin-top: 10px;">
-                    <span class="brand-logo"></span>
-                    <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" style="width: 180px; height: 55px; object-fit: contain;">
+        <ul class="nav navbar-nav flex-row w-100 align-items-center">
+            <li class="nav-item flex-grow-1"><a class="navbar-brand w-100" href="{{ route('admin.dashboard') }}">
+                    <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo">
                 </a>
             </li>
-            <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary" data-feather="disc" data-ticon="disc"></i></a></li>
+            <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pl-1 pr-0" data-toggle="collapse"><i class="d-block d-xl-none text-white toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4 text-white" data-feather="disc" data-ticon="disc"></i></a></li>
         </ul>
     </div>
-    <div class="shadow-bottom"></div>
     <div class="main-menu-content">
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
             <li class="{{ Route::currentRouteName()=='admin.dashboard'?'active':'' }} nav-item"><a class="d-flex align-items-center" href="{{route('admin.dashboard')}}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboard</span></a>

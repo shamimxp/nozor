@@ -1,91 +1,105 @@
 @extends('layouts.admin')
 @section('content')
     <section id="dashboard-ecommerce">
-        <div class="row match-height">
-            <!-- Medal Card -->
-            <div class="col-xl-4 col-md-6 col-12">
-                <div class="card card-congratulation-medal">
-                    <div class="card-body">
-                        <h5>Today's Sales 🎉</h5>
-                        <p class="card-text font-small-3">Total revenue from all sources today</p>
-                        <h3 class="mb-75 mt-2 pt-50">
-                            <a href="javascript:void(0);">৳ {{ number_format($todayTotalRevenue, 2) }}</a>
-                        </h3>
-                        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('admin.pos') }}'">View POS</button>
-                        <img src="{{asset('admin')}}/app-assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" />
+        <!-- FieldOra Warm Header Banner Card -->
+        <div class="fieldora-banner-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap">
+                <div class="d-flex align-items-center">
+                    <div class="fieldora-banner-icon mr-1">
+                        <i data-feather="grid"></i>
+                    </div>
+                    <div>
+                        <h3 class="fieldora-banner-title">Dashboard Overview</h3>
+                        <p class="fieldora-banner-subtitle">Real-time business performance, sales, inventory, and pending dues</p>
                     </div>
                 </div>
+                <div class="fieldora-banner-actions mt-1 mt-md-0 d-flex align-items-center flex-wrap" style="gap: 8px;">
+                    <a href="{{ route('admin.pos') }}" class="btn btn-outline-secondary" target="_blank">
+                        <i data-feather="shopping-cart" class="mr-50"></i> POS Terminal
+                    </a>
+                    <a href="{{ route('admin.collections.index') }}" class="btn btn-outline-secondary">
+                        <i data-feather="dollar-sign" class="mr-50"></i> Collections
+                    </a>
+                    <a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary">
+                        <i data-feather="plus" class="mr-50"></i> Create Order
+                    </a>
+                </div>
             </div>
-            <!--/ Medal Card -->
+        </div>
 
-            <!-- Statistics Card -->
-            <div class="col-xl-8 col-md-6 col-12">
-                <div class="card card-statistics">
-                    <div class="card-header">
-                        <h4 class="card-title">Statistics</h4>
-                        <div class="d-flex align-items-center">
-                            <p class="card-text font-small-2 mr-25 mb-0">Updated 1 month ago</p>
+        <!-- 4 Key Performance Metric Cards -->
+        <div class="row match-height">
+            <!-- Today's Sales Card -->
+            <div class="col-xl-3 col-sm-6 col-12 mb-2">
+                <div class="card fieldora-stat-card mb-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fieldora-stat-label">Today's Revenue</div>
+                            <div class="fieldora-stat-value">৳ {{ number_format($todayTotalRevenue, 2) }}</div>
+                            <small class="text-muted font-small-2 mt-50 d-block">
+                                <span class="badge badge-light-success py-25 px-50 font-small-1">Today</span> Active sales
+                            </small>
                         </div>
-                    </div>
-                    <div class="card-body statistics-body">
-                        <div class="row">
-                            <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
-                                <div class="media">
-                                    <div class="avatar bg-light-primary mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="trending-up" class="avatar-icon"></i>
-                                        </div>
-                                    </div>
-                                    <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">{{ number_format($salesCount) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">Total Orders</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
-                                <div class="media">
-                                    <div class="avatar bg-light-info mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="user" class="avatar-icon"></i>
-                                        </div>
-                                    </div>
-                                    <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">{{ number_format($customerCount) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">Customers</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
-                                <div class="media">
-                                    <div class="avatar bg-light-danger mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="box" class="avatar-icon"></i>
-                                        </div>
-                                    </div>
-                                    <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">{{ number_format($productCount) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">Products</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 col-12">
-                                <div class="media">
-                                    <div class="avatar bg-light-success mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="dollar-sign" class="avatar-icon"></i>
-                                        </div>
-                                    </div>
-                                    <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">৳ {{ number_format($totalRevenue, 2) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">Revenue</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="fieldora-stat-icon-wrapper" style="background: rgba(17, 28, 56, 0.08); color: #111c38;">
+                            <i data-feather="sun" style="width: 20px; height: 20px;"></i>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--/ Statistics Card -->
+
+            <!-- Total Orders Card -->
+            <div class="col-xl-3 col-sm-6 col-12 mb-2">
+                <div class="card fieldora-stat-card mb-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fieldora-stat-label">Total Orders</div>
+                            <div class="fieldora-stat-value">{{ number_format($salesCount) }}</div>
+                            <small class="text-muted font-small-2 mt-50 d-block">
+                                <span class="badge badge-light-primary py-25 px-50 font-small-1">Orders</span> POS, Web & Dealer
+                            </small>
+                        </div>
+                        <div class="fieldora-stat-icon-wrapper" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
+                            <i data-feather="shopping-bag" style="width: 20px; height: 20px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers Card -->
+            <div class="col-xl-3 col-sm-6 col-12 mb-2">
+                <div class="card fieldora-stat-card mb-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fieldora-stat-label">Total Customers</div>
+                            <div class="fieldora-stat-value">{{ number_format($customerCount) }}</div>
+                            <small class="text-muted font-small-2 mt-50 d-block">
+                                <span class="badge badge-light-info py-25 px-50 font-small-1">Parties</span> Registered buyers
+                            </small>
+                        </div>
+                        <div class="fieldora-stat-icon-wrapper" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9;">
+                            <i data-feather="users" style="width: 20px; height: 20px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Lifetime Revenue Card -->
+            <div class="col-xl-3 col-sm-6 col-12 mb-2">
+                <div class="card fieldora-stat-card mb-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fieldora-stat-label">Lifetime Revenue</div>
+                            <div class="fieldora-stat-value">৳ {{ number_format($totalRevenue, 2) }}</div>
+                            <small class="text-muted font-small-2 mt-50 d-block">
+                                <span class="badge badge-light-success py-25 px-50 font-small-1">Total</span> {{ number_format($productCount) }} Products
+                            </small>
+                        </div>
+                        <div class="fieldora-stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i data-feather="dollar-sign" style="width: 20px; height: 20px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row match-height">
@@ -93,10 +107,10 @@
                 <div class="row match-height">
                     <!-- Bar Chart - Orders -->
                     <div class="col-lg-6 col-md-3 col-6">
-                        <div class="card">
+                        <div class="card mb-2">
                             <div class="card-body pb-50">
-                                <h6>Orders</h6>
-                                <h2 class="font-weight-bolder mb-1">{{ number_format($salesCount) }}</h2>
+                                <div class="fieldora-stat-label">Orders</div>
+                                <h3 class="font-weight-bolder mb-1" style="color: #111c38;">{{ number_format($salesCount) }}</h3>
                                 <div id="statistics-order-chart"></div>
                             </div>
                         </div>
@@ -105,10 +119,10 @@
 
                     <!-- Line Chart - Profit -->
                     <div class="col-lg-6 col-md-3 col-6">
-                        <div class="card card-tiny-line-stats">
+                        <div class="card card-tiny-line-stats mb-2">
                             <div class="card-body pb-50">
-                                <h6>Revenue</h6>
-                                <h2 class="font-weight-bolder mb-1">৳ {{ number_format($totalRevenue / 1000, 1) }}k</h2>
+                                <div class="fieldora-stat-label">Revenue</div>
+                                <h3 class="font-weight-bolder mb-1" style="color: #111c38;">৳ {{ number_format($totalRevenue / 1000, 1) }}k</h3>
                                 <div id="statistics-profit-chart"></div>
                             </div>
                         </div>
@@ -117,13 +131,13 @@
 
                     <!-- Earnings Card -->
                     <div class="col-lg-12 col-md-6 col-12">
-                        <div class="card earnings-card">
+                        <div class="card earnings-card mb-2">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h4 class="card-title mb-1">Earnings by Source</h4>
-                                        <div class="font-small-2">All Time</div>
-                                        <h5 class="mb-1">৳ {{ number_format($totalRevenue, 2) }}</h5>
+                                        <h4 class="card-title mb-50">Earnings by Source</h4>
+                                        <div class="font-small-2 text-muted mb-50">All Time</div>
+                                        <h5 class="mb-1" style="color: #111c38; font-weight: 700;">৳ {{ number_format($totalRevenue, 2) }}</h5>
                                         <p class="card-text text-muted font-small-2">
                                             POS, Web, and Custom Orders
                                         </p>
@@ -141,16 +155,18 @@
 
             <!-- Revenue Report Card -->
             <div class="col-lg-8 col-12">
-                <div class="card card-revenue-budget">
+                <div class="card card-revenue-budget mb-2">
                     <div class="row mx-0">
                         <div class="col-md-12 col-12 revenue-report-wrapper">
-                            <div class="d-sm-flex justify-content-between align-items-center mb-3">
-                                <h4 class="card-title mb-50 mb-sm-0">Revenue Report ({{ date('Y') }})</h4>
+                            <div class="d-sm-flex justify-content-between align-items-center mb-2 pt-1 px-1">
                                 <div class="d-flex align-items-center">
-                                    <div class="d-flex align-items-center mr-2">
-                                        <span class="bullet bullet-primary font-small-3 mr-50 cursor-pointer"></span>
-                                        <span>Revenue</span>
+                                    <div class="fieldora-banner-icon mr-1" style="width: 34px; height: 34px; border-radius: 8px;">
+                                        <i data-feather="bar-chart-2" style="width: 16px; height: 16px;"></i>
                                     </div>
+                                    <h4 class="card-title mb-0">Revenue Report ({{ date('Y') }})</h4>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge badge-light-primary">Monthly Revenue Trend</span>
                                 </div>
                             </div>
                             <div id="revenue-report-chart"></div>
@@ -164,51 +180,52 @@
         <div class="row match-height">
             <!-- Dues Section -->
             <div class="col-xl-12 col-md-12 col-12">
-                <div class="card card-statistics">
-                    <div class="card-header">
-                        <h4 class="card-title">Pending Dues Overview</h4>
+                <div class="card mb-2">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <p class="card-text font-small-2 mr-25 mb-0">Total Outstanding: <strong>৳ {{ number_format($totalDue, 2) }}</strong></p>
+                            <div class="fieldora-banner-icon mr-1" style="width: 34px; height: 34px; border-radius: 8px;">
+                                <i data-feather="clock" style="width: 16px; height: 16px;"></i>
+                            </div>
+                            <h4 class="card-title mb-0">Pending Dues Overview</h4>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-light-danger py-50 px-75 font-small-2">
+                                Total Outstanding: <strong>৳ {{ number_format($totalDue, 2) }}</strong>
+                            </span>
                         </div>
                     </div>
-                    <div class="card-body statistics-body">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-xl-4 col-sm-6 col-12 mb-2 mb-xl-0">
-                                <div class="media">
-                                    <div class="avatar bg-light-primary mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="shopping-bag" class="avatar-icon"></i>
-                                        </div>
+                                <div class="media align-items-center p-1 rounded" style="background: #ffffff; border: 1px solid #efeae2;">
+                                    <div class="avatar mr-1" style="background: rgba(17, 28, 56, 0.1); color: #111c38; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                        <i data-feather="shopping-bag" style="width: 18px; height: 18px;"></i>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">৳ {{ number_format($posOrderDue, 2) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">POS Order Dues</p>
+                                        <div class="fieldora-stat-label mb-25">POS Order Dues</div>
+                                        <h4 class="font-weight-bolder mb-0 text-danger">৳ {{ number_format($posOrderDue, 2) }}</h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-sm-6 col-12 mb-2 mb-xl-0">
-                                <div class="media">
-                                    <div class="avatar bg-light-info mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="globe" class="avatar-icon"></i>
-                                        </div>
+                                <div class="media align-items-center p-1 rounded" style="background: #ffffff; border: 1px solid #efeae2;">
+                                    <div class="avatar mr-1" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                        <i data-feather="globe" style="width: 18px; height: 18px;"></i>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">৳ {{ number_format($webOrderDue, 2) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">Web Order Dues</p>
+                                        <div class="fieldora-stat-label mb-25">Web Order Dues</div>
+                                        <h4 class="font-weight-bolder mb-0 text-warning">৳ {{ number_format($webOrderDue, 2) }}</h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-sm-6 col-12 mb-2 mb-sm-0">
-                                <div class="media">
-                                    <div class="avatar bg-light-danger mr-2">
-                                        <div class="avatar-content">
-                                            <i data-feather="settings" class="avatar-icon"></i>
-                                        </div>
+                                <div class="media align-items-center p-1 rounded" style="background: #ffffff; border: 1px solid #efeae2;">
+                                    <div class="avatar mr-1" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                        <i data-feather="settings" style="width: 18px; height: 18px;"></i>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0">৳ {{ number_format($customOrderDue, 2) }}</h4>
-                                        <p class="card-text font-small-3 mb-0">Custom Order Dues</p>
+                                        <div class="fieldora-stat-label mb-25">Custom Order Dues</div>
+                                        <h4 class="font-weight-bolder mb-0 text-danger">৳ {{ number_format($customOrderDue, 2) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -222,40 +239,50 @@
         <div class="row match-height">
             <!-- Recent Web Orders Card -->
             <div class="col-lg-12 col-12">
-                <div class="card card-company-table">
-                    <div class="card-header">
-                        <h4 class="card-title">Recent Web Orders</h4>
+                <div class="card card-company-table mb-2">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="fieldora-banner-icon mr-1" style="width: 34px; height: 34px; border-radius: 8px;">
+                                <i data-feather="shopping-cart" style="width: 16px; height: 16px;"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-0">Recent Web Orders</h4>
+                                <small class="text-muted">Latest customer purchases through website</small>
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.web-order.index') }}" class="btn btn-outline-secondary btn-sm">
+                            View All Orders <i data-feather="chevron-right" class="ml-25"></i>
+                        </a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table mb-0">
                                 <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th style="padding-left: 20px;">Order ID</th>
                                     <th>Customer Name</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     <th>Amount</th>
+                                    <th class="text-right" style="padding-right: 20px;">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @forelse($recentWebOrders as $order)
                                 <tr>
-                                    <td>
-                                        <span class="font-weight-bolder">#{{ $order->invoice_no }}</span>
+                                    <td style="padding-left: 20px;">
+                                        <span class="font-weight-bolder" style="color: #111c38;">#{{ $order->invoice_no }}</span>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar bg-light-primary mr-1">
-                                                <div class="avatar-content">
-                                                    <i data-feather="user" class="font-medium-3"></i>
-                                                </div>
+                                            <div class="avatar mr-1" style="width: 32px; height: 32px; border-radius: 6px; background: rgba(17, 28, 56, 0.08); color: #111c38; display: flex; align-items: center; justify-content: center;">
+                                                <i data-feather="user" style="width: 14px; height: 14px;"></i>
                                             </div>
-                                            <span>{{ $order->address->name ?? 'Unknown' }}</span>
+                                            <span class="font-weight-bold">{{ $order->address->name ?? 'Unknown Customer' }}</span>
                                         </div>
                                     </td>
                                     <td class="text-nowrap">
-                                        <span class="font-weight-bolder">{{ $order->created_at->format('d M, Y') }}</span>
+                                        <span class="text-muted">{{ $order->created_at->format('d M, Y') }}</span>
                                     </td>
                                     <td>
                                         <span class="badge badge-light-{{ $order->status == 'pending' ? 'warning' : ($order->status == 'completed' ? 'success' : 'primary') }}">
@@ -265,10 +292,15 @@
                                     <td>
                                         <span class="font-weight-bolder text-success">৳ {{ number_format($order->total, 2) }}</span>
                                     </td>
+                                    <td class="text-right" style="padding-right: 20px;">
+                                        <a href="{{ route('admin.web-order.show', $order->id) }}" class="btn btn-outline-secondary btn-sm py-25 px-50">
+                                            <i data-feather="eye" style="width: 12px; height: 12px;" class="mr-25"></i> View
+                                        </a>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">No recent web orders found.</td>
+                                    <td colspan="6" class="text-center text-muted py-4">No recent web orders found.</td>
                                 </tr>
                                 @endforelse
                                 </tbody>
@@ -278,6 +310,7 @@
                 </div>
             </div>
             <!--/ Recent Web Orders Card -->
+        </div>
 
             <!-- Developer Meetup Card -->
             <div class="col-lg-4 col-md-6 col-12">
@@ -535,11 +568,11 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     $(window).on("load", function () {
-        var primaryColor = '#7367f0';
-        var infoColor = '#00cfe8';
-        var successColor = '#28c76f';
-        var warningColor = '#ff9f43';
-        var gridBorderColor = '#ebe9f1';
+        var primaryColor = '#111c38';
+        var infoColor = '#0ea5e9';
+        var successColor = '#10b981';
+        var warningColor = '#f59e0b';
+        var gridBorderColor = '#e2e8f0';
         
         // Orders Chart
         var orderChartOptions = {

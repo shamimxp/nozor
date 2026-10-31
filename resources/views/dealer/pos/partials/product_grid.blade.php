@@ -1,7 +1,7 @@
 @forelse($products as $product)
     <div class="col-pos-5 col-md-4 col-6 mb-2 px-1">
         <div class="card border text-center shadow-none product-card {{ $product->is_out_of_stock ? 'stock__out' : '' }}" 
-             style="border-radius: 12px; transition: 0.3s; cursor:pointer; position: relative; height: 100%;"
+             style="border-radius: 12px; transition: 0.3s; cursor:pointer; position: relative; height: 100%; overflow: hidden;"
              data-id="{{ $product->id }}" 
              data-title="{{ $product->name }}" 
              data-price="{{ $product->pos_price }}" 
@@ -10,8 +10,10 @@
              onclick="{{ $product->is_out_of_stock ? '' : 'addToCart(this)' }}">
              
             @if($product->is_out_of_stock)
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); z-index: 8; border-radius: 12px; pointer-events: none;"></div>
-                <div style="position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); background-color: #f5365c; color: #ffffff !important; padding: 10px 0; font-size: 14px; font-weight: 800; text-transform: uppercase; text-align: center; z-index: 10; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); letter-spacing: 1.5px; pointer-events: none;">Stock Out</div>
+                <div class="stock-out-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.55); z-index: 8; border-radius: 12px; pointer-events: none;"></div>
+                <div class="corner-ribbon-wrap">
+                    <span class="corner-ribbon">Stock Out</span>
+                </div>
             @endif
 
             <div class="card-body p-1 d-flex flex-column justify-content-between">

@@ -1,0 +1,1252 @@
+/*================================================================================
+    FieldOra SaaS Theme for Admin Panel
+    Designed based on FieldOra (E-Tracker Solution) Design System
+================================================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:root {
+    --fieldora-navy: #111c38;
+    --fieldora-navy-dark: #0c152a;
+    --fieldora-navy-light: #1c2b52;
+    --fieldora-bg: #edf2f7;
+    --fieldora-card-bg: #FDFAF5;
+    --fieldora-banner-bg: #FDFAF5;
+    --fieldora-banner-border: #efeae2;
+    --fieldora-border: #efeae2;
+    --fieldora-divider: #f0ebe1;
+    --fieldora-text-main: #1e293b;
+    --fieldora-text-muted: #64748b;
+    --fieldora-sidebar-text: #8ea0bc;
+}
+
+/* 1. Global Typography & Background */
+body, 
+body.vertical-layout,
+.vertical-layout, 
+button, 
+input, 
+select, 
+textarea, 
+.navigation, 
+.card, 
+h1, h2, h3, h4, h5, h6,
+.table {
+    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+body, 
+body.vertical-layout {
+    background-color: var(--fieldora-bg) !important;
+    color: var(--fieldora-text-main) !important;
+    font-size: 0.93rem;
+}
+
+.content-wrapper {
+    background-color: transparent !important;
+    padding-top: 1.2rem !important;
+}
+
+/* 2. Top Header Navbar */
+.header-navbar.floating-nav {
+    background-color: #ffffff !important;
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px rgba(17, 28, 56, 0.05) !important;
+}
+
+.header-navbar .navbar-container .bookmark-wrapper .nav-link,
+.header-navbar .navbar-container .nav-link {
+    color: var(--fieldora-navy) !important;
+}
+
+.header-navbar .dropdown-user .user-nav .user-name {
+    color: var(--fieldora-navy) !important;
+    font-weight: 600 !important;
+}
+
+.header-navbar .dropdown-user .user-nav .user-status {
+    color: var(--fieldora-text-muted) !important;
+    font-size: 11px !important;
+}
+
+/* 3. Deep Navy Sidebar Menu */
+.main-menu,
+.main-menu.menu-light,
+.main-menu.menu-dark,
+.main-menu-content {
+    background-color: var(--fieldora-navy) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.04) !important;
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15) !important;
+}
+
+.main-menu .navbar-header {
+    background-color: var(--fieldora-navy) !important;
+    padding: 10px 14px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.main-menu .navbar-header .navbar-brand {
+    background: #ffffff !important;
+    padding: 6px 14px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    height: 50px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.main-menu .navbar-header .navbar-brand img {
+    width: 100% !important;
+    height: 38px !important;
+    object-fit: contain !important;
+}
+
+.main-menu .navbar-header .brand-logo {
+    display: none !important;
+}
+
+.main-menu .navbar-header .modern-nav-toggle {
+    color: #8ea0bc !important;
+    padding: 0 !important;
+    margin-left: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.main-menu .navbar-header .modern-nav-toggle .collapse-toggle-icon,
+.main-menu .navbar-header .modern-nav-toggle .toggle-icon,
+.main-menu .navbar-header .modern-nav-toggle svg,
+.main-menu .navbar-header .modern-nav-toggle i {
+    color: #8ea0bc !important;
+    stroke: #8ea0bc !important;
+}
+
+/* Remove White Gradient Shadow Under Sidebar Header */
+.main-menu .shadow-bottom,
+.main-menu-content .shadow-bottom,
+.shadow-bottom {
+    display: none !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    background: none !important;
+}
+
+.main-menu .navigation {
+    background-color: var(--fieldora-navy) !important;
+}
+
+/* Sidebar Module Headers */
+.main-menu .navigation > li.navigation-header,
+.main-menu.menu-light .navigation > li.navigation-header {
+    color: #8ea0bc !important;
+    text-transform: uppercase !important;
+    font-size: 10px !important;
+    letter-spacing: 1.2px !important;
+    font-weight: 700 !important;
+    margin: 12px 14px 4px 14px !important;
+    padding: 10px 8px 4px 10px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    line-height: normal !important;
+    opacity: 0.85;
+}
+
+.main-menu .navigation > li.navigation-header i,
+.main-menu .navigation > li.navigation-header svg {
+    display: none !important;
+}
+
+.main-menu .navigation-header span {
+    color: #8ea0bc !important;
+}
+
+.main-menu .navigation-header span::before {
+    content: "MODULE: ";
+    font-size: 9px;
+    opacity: 0.6;
+    letter-spacing: 1px;
+}
+
+/* Inactive Sidebar Links */
+.main-menu .navigation > li > a {
+    color: var(--fieldora-sidebar-text) !important;
+    border-radius: 8px !important;
+    margin: 2px 14px !important;
+    padding: 10px 14px !important;
+    font-weight: 500 !important;
+    font-size: 13.5px !important;
+    transition: all 0.2s ease !important;
+}
+
+.main-menu .navigation > li > a i,
+.main-menu .navigation > li > a svg {
+    color: var(--fieldora-sidebar-text) !important;
+    stroke: var(--fieldora-sidebar-text) !important;
+    margin-right: 12px !important;
+    width: 17px !important;
+    height: 17px !important;
+}
+
+.main-menu .navigation > li:not(.active) > a:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+.main-menu .navigation > li:not(.active) > a:hover i,
+.main-menu .navigation > li:not(.active) > a:hover svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* Active Sidebar Item - Solid Crisp White Pill with Navy Text */
+.main-menu .navigation > li.active > a,
+.main-menu .navigation > li.sidebar-group-active > a {
+    background: #ffffff !important;
+    color: var(--fieldora-navy) !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.main-menu .navigation > li.active > a i,
+.main-menu .navigation > li.active > a svg,
+.main-menu .navigation > li.sidebar-group-active > a i,
+.main-menu .navigation > li.sidebar-group-active > a svg {
+    color: var(--fieldora-navy) !important;
+    stroke: var(--fieldora-navy) !important;
+}
+
+/* Sidebar Submenus */
+.main-menu .navigation .menu-content {
+    background: var(--fieldora-navy-dark) !important;
+    padding: 4px 0 !important;
+}
+
+/* Remove Vuexy's default dark container on active li */
+.main-menu .navigation .menu-content > li,
+.main-menu .navigation .menu-content > li.active,
+.vertical-layout.vertical-menu-modern .main-menu .navigation .menu-content > li.active {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Submenu item link */
+.main-menu .navigation .menu-content > li > a {
+    display: flex !important;
+    align-items: center !important;
+    padding: 8px 14px 8px 24px !important;
+    color: var(--fieldora-sidebar-text) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    margin: 2px 12px !important;
+    transition: all 0.15s ease !important;
+}
+
+/* Replace hollow circle with sleek 6px solid bullet */
+.main-menu .navigation .menu-content > li > a i,
+.main-menu .navigation .menu-content > li > a svg {
+    width: 6px !important;
+    height: 6px !important;
+    min-width: 6px !important;
+    max-width: 6px !important;
+    border-radius: 50% !important;
+    background-color: var(--fieldora-sidebar-text) !important;
+    fill: var(--fieldora-sidebar-text) !important;
+    border: none !important;
+    stroke: none !important;
+    margin-right: 12px !important;
+    margin-left: 4px !important;
+    display: inline-block !important;
+}
+
+.main-menu .navigation .menu-content > li:not(.active) > a:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.main-menu .navigation .menu-content > li:not(.active) > a:hover i,
+.main-menu .navigation .menu-content > li:not(.active) > a:hover svg {
+    background-color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+/* Active Submenu Link: Crisp White Pill (Single Clean Container) */
+.main-menu .navigation .menu-content > li.active > a {
+    background: #ffffff !important;
+    color: var(--fieldora-navy) !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    margin: 2px 12px !important;
+    padding: 8px 14px 8px 24px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+.main-menu .navigation .menu-content > li.active > a i,
+.main-menu .navigation .menu-content > li.active > a svg {
+    background-color: var(--fieldora-navy) !important;
+    fill: var(--fieldora-navy) !important;
+}
+
+/* Card Title Icon Badge (FieldOra SaaS Style) */
+.fieldora-title-badge {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background-color: var(--fieldora-navy) !important;
+    color: #ffffff !important;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    margin-right: 10px;
+    box-shadow: 0 1px 3px rgba(17, 28, 56, 0.15);
+    flex-shrink: 0;
+}
+
+.fieldora-title-badge i,
+.fieldora-title-badge svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    width: 16px !important;
+    height: 16px !important;
+    stroke-width: 2 !important;
+}
+
+.card-header .card-title {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: var(--fieldora-navy) !important;
+    margin-bottom: 0 !important;
+}
+
+/* 4. FieldOra Warm Header Banner Card */
+.fieldora-banner-card {
+    background-color: var(--fieldora-banner-bg) !important;
+    border: 1px solid var(--fieldora-banner-border) !important;
+    border-radius: 12px !important;
+    padding: 18px 24px !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.fieldora-banner-icon {
+    width: 44px;
+    height: 44px;
+    background-color: var(--fieldora-navy) !important;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff !important;
+    flex-shrink: 0;
+}
+
+.fieldora-banner-icon i,
+.fieldora-banner-icon svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    width: 20px;
+    height: 20px;
+}
+
+.fieldora-banner-title {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: var(--fieldora-navy) !important;
+    line-height: 1.25;
+    margin-bottom: 3px;
+    letter-spacing: -0.3px;
+}
+
+.fieldora-banner-subtitle {
+    font-size: 13px !important;
+    color: var(--fieldora-text-muted) !important;
+    margin-bottom: 0;
+}
+
+/* 5. FieldOra Ivory Cards (#FDFAF5) */
+.card,
+.card-body,
+.fieldora-stat-card,
+.fieldora-banner-card {
+    background-color: #FDFAF5 !important;
+}
+
+.card {
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(17, 28, 56, 0.04) !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.card-header,
+.card-footer {
+    background-color: #FDFAF5 !important;
+    border-bottom: 1px solid var(--fieldora-divider) !important;
+    padding: 16px 20px !important;
+}
+
+.card-title {
+    color: var(--fieldora-navy) !important;
+    font-weight: 700 !important;
+    font-size: 15.5px !important;
+    letter-spacing: -0.2px;
+}
+
+/* Metric / Stat Card Enhancements */
+.fieldora-stat-card {
+    background-color: #FDFAF5 !important;
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 12px !important;
+    padding: 20px;
+    height: 100%;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fieldora-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(17, 28, 56, 0.08);
+}
+
+.fieldora-stat-label {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+    color: var(--fieldora-text-muted);
+    margin-bottom: 6px;
+}
+
+.fieldora-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--fieldora-navy);
+    line-height: 1.2;
+}
+
+.fieldora-stat-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 6. FieldOra Deep Navy Data Tables & #FDFAF5 Surface */
+.table, 
+table.dataTable,
+.table-responsive,
+.table-responsive > .table,
+.table tbody,
+.table tbody tr,
+.table-striped tbody tr:nth-of-type(odd),
+.table-striped tbody tr:nth-of-type(even),
+.table tbody tr td,
+table.dataTable tbody tr td {
+    background-color: #FDFAF5 !important;
+}
+
+.table, 
+table.dataTable,
+.table-responsive > .table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+}
+
+.table thead th, 
+table.dataTable thead th, 
+.card-company-table thead th {
+    background-color: var(--fieldora-navy) !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.6px !important;
+    text-transform: uppercase !important;
+    border: none !important;
+    padding: 13px 16px !important;
+    vertical-align: middle !important;
+}
+
+.table thead th a,
+table.dataTable thead th a {
+    color: #ffffff !important;
+}
+
+.table thead th:first-child, 
+table.dataTable thead th:first-child {
+    border-top-left-radius: 8px !important;
+}
+
+.table thead th:last-child, 
+table.dataTable thead th:last-child {
+    border-top-right-radius: 8px !important;
+}
+
+.table tbody tr td, 
+table.dataTable tbody tr td {
+    border-top: none !important;
+    border-bottom: 1px solid #efeae2 !important;
+    padding: 12px 16px !important;
+    color: var(--fieldora-text-main) !important;
+    font-size: 13.5px !important;
+    vertical-align: middle !important;
+}
+
+.table tbody tr:hover, 
+.table.table-hover tbody tr:hover,
+table.dataTable tbody tr:hover,
+.table tbody tr:hover td,
+table.dataTable tbody tr:hover td {
+    background-color: #f7f1e4 !important;
+}
+
+/* 7. FieldOra Action Button Styles (Matching Exact FieldOra Screenshot) */
+table:not(#cart-table):not(#cart_table) td .btn:not(.input-group *):not(.qty-btn):not(.remove-item-btn),
+table.dataTable td .btn:not(.input-group *):not(.qty-btn):not(.remove-item-btn) {
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    padding: 4px 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    line-height: 1.25 !important;
+    transition: all 0.15s ease !important;
+    margin: 2px 2px !important;
+    height: 28px !important;
+}
+
+/* POS Cart Tables (Dealer & Admin POS) */
+#cart-table,
+#cart_table {
+    background-color: #FDFAF5 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+}
+
+#cart-table thead tr th,
+#cart_table thead tr th {
+    background-color: #001f3f !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    padding: 12px 14px !important;
+    border: none !important;
+    vertical-align: middle !important;
+}
+
+#cart-table thead tr th:first-child,
+#cart_table thead tr th:first-child {
+    border-top-left-radius: 6px !important;
+}
+
+#cart-table thead tr th:last-child,
+#cart_table thead tr th:last-child {
+    border-top-right-radius: 6px !important;
+}
+
+#cart-table tbody tr,
+#cart_table tbody tr {
+    background-color: #FDFAF5 !important;
+    border-bottom: 1px solid #efeae2 !important;
+    transition: background-color 0.15s ease;
+}
+
+#cart-table tbody tr:hover,
+#cart_table tbody tr:hover {
+    background-color: #f7f1e4 !important;
+}
+
+#cart-table tbody tr td,
+#cart_table tbody tr td {
+    padding: 10px 12px !important;
+    vertical-align: middle !important;
+    border-top: none !important;
+    border-bottom: 1px solid #efeae2 !important;
+    background: transparent !important;
+}
+
+/* POS Quantity Stepper Input Group (Admin & Dealer) */
+#cart-table .input-group,
+#cart_table .input-group {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    width: 112px !important;
+    margin: 0 auto !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    height: 32px !important;
+}
+
+#cart-table .input-group .add_btn,
+#cart_table .input-group .add_btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    flex: 0 0 32px !important;
+    background-color: #001f3f !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s ease !important;
+}
+
+#cart-table .input-group .add_btn:hover,
+#cart_table .input-group .add_btn:hover {
+    background-color: #0b2b52 !important;
+}
+
+#cart-table .input-group .add_btn i,
+#cart_table .input-group .add_btn i {
+    color: #ffffff !important;
+    font-size: 12px !important;
+}
+
+#cart-table .input-group .quantity_input,
+#cart_table .input-group .quantity_input {
+    width: 48px !important;
+    height: 32px !important;
+    flex: 1 1 auto !important;
+    border: none !important;
+    border-left: 1px solid #ced4da !important;
+    border-right: 1px solid #ced4da !important;
+    border-radius: 0 !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+    font-size: 13.5px !important;
+    color: #333333 !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -moz-appearance: textfield !important;
+}
+
+#cart-table .input-group .quantity_input::-webkit-outer-spin-button,
+#cart-table .input-group .quantity_input::-webkit-inner-spin-button,
+#cart_table .input-group .quantity_input::-webkit-outer-spin-button,
+#cart_table .input-group .quantity_input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+/* POS Action Button (Solid Red square with white trash) */
+#cart-table .cart_actionBtn.misty-color,
+#cart_table .cart_actionBtn.misty-color,
+#cart-table .remove-item-btn,
+#cart_table .remove-item-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    background-color: #f5365c !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+#cart-table .cart_actionBtn.misty-color:hover,
+#cart_table .cart_actionBtn.misty-color:hover,
+#cart-table .remove-item-btn:hover,
+#cart_table .remove-item-btn:hover {
+    background-color: #d9254c !important;
+    transform: scale(1.05) !important;
+}
+
+#cart-table .cart_actionBtn.misty-color i,
+#cart_table .cart_actionBtn.misty-color i,
+#cart-table .remove-item-btn i,
+#cart_table .remove-item-btn i {
+    color: #ffffff !important;
+    font-size: 13px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+table td .btn i,
+table td .btn svg,
+table.dataTable td .btn i,
+table.dataTable td .btn svg {
+    width: 13px !important;
+    height: 13px !important;
+    stroke-width: 2 !important;
+}
+
+/* [ 👁 View ] Button (FieldOra Slate-Blue Tint) */
+table td .btn-info,
+table td .btn-view,
+table.dataTable td .btn-info,
+table.dataTable td .btn-view {
+    background-color: #eef3f8 !important;
+    border: 1px solid #c8d7e6 !important;
+    color: #2c4764 !important;
+    font-weight: 600 !important;
+}
+
+table td .btn-info i,
+table td .btn-info svg,
+table td .btn-view i,
+table td .btn-view svg,
+table.dataTable td .btn-info i,
+table.dataTable td .btn-info svg {
+    color: #2c4764 !important;
+    stroke: #2c4764 !important;
+}
+
+table td .btn-info:hover,
+table td .btn-view:hover,
+table.dataTable td .btn-info:hover,
+table.dataTable td .btn-view:hover {
+    background-color: #e0ecf7 !important;
+    border-color: #b0c7de !important;
+    color: #1a324b !important;
+}
+
+table td .btn-info::after,
+table td .btn-view::after,
+table.dataTable td .btn-info::after,
+table.dataTable td .btn-view::after {
+    content: "View";
+    font-size: 11.5px;
+    font-weight: 600;
+    margin-left: 5px;
+    letter-spacing: 0.1px;
+}
+
+/* [ ✏ Edit ] Button (FieldOra Pale Olive-Khaki Tint) */
+table td .btn-primary:not(.btn-block):not(#filterBtn),
+table td .btn-warning,
+table td .btn-edit,
+table.dataTable td .btn-primary:not(.btn-block):not(#filterBtn),
+table.dataTable td .btn-warning,
+table.dataTable td .btn-edit {
+    background-color: #f7f2e6 !important;
+    border: 1px solid #ded4bd !important;
+    color: #695730 !important;
+    font-weight: 600 !important;
+}
+
+table td .btn-primary:not(.btn-block) i,
+table td .btn-primary:not(.btn-block) svg,
+table td .btn-warning i,
+table td .btn-warning svg,
+table td .btn-edit i,
+table td .btn-edit svg,
+table.dataTable td .btn-primary:not(.btn-block) i,
+table.dataTable td .btn-primary:not(.btn-block) svg,
+table.dataTable td .btn-warning i,
+table.dataTable td .btn-warning svg,
+table.dataTable td .btn-edit i,
+table.dataTable td .btn-edit svg {
+    color: #695730 !important;
+    stroke: #695730 !important;
+}
+
+table td .btn-primary:not(.btn-block):hover,
+table td .btn-warning:hover,
+table td .btn-edit:hover,
+table.dataTable td .btn-primary:not(.btn-block):hover,
+table.dataTable td .btn-warning:hover,
+table.dataTable td .btn-edit:hover {
+    background-color: #ece4cf !important;
+    border-color: #cfc1a0 !important;
+    color: #4e3f1e !important;
+}
+
+table td .btn-primary:not(.btn-block)::after,
+table td .btn-warning::after,
+table td .btn-edit::after,
+table.dataTable td .btn-primary:not(.btn-block)::after,
+table.dataTable td .btn-warning::after,
+table.dataTable td .btn-edit::after {
+    content: "Edit";
+    font-size: 11.5px;
+    font-weight: 600;
+    margin-left: 5px;
+    letter-spacing: 0.1px;
+}
+
+/* [ Download / PDF / Options ] Outline Button */
+table td .btn-secondary,
+table.dataTable td .btn-secondary,
+table td .btn-outline-secondary,
+table.dataTable td .btn-outline-secondary {
+    background-color: #ffffff !important;
+    border: 1px solid #d5dce6 !important;
+    color: #4b5563 !important;
+    padding: 4px 8px !important;
+}
+
+table td .btn-secondary i,
+table td .btn-secondary svg,
+table.dataTable td .btn-secondary i,
+table.dataTable td .btn-secondary svg {
+    color: #4b5563 !important;
+    stroke: #4b5563 !important;
+}
+
+table td .btn-secondary:hover,
+table.dataTable td .btn-secondary:hover,
+table td .btn-outline-secondary:hover,
+table.dataTable td .btn-outline-secondary:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #1f2937 !important;
+}
+
+/* [ Delete ] Soft Light Red Button */
+table td .btn-danger,
+table.dataTable td .btn-danger {
+    background-color: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+    padding: 4px 8px !important;
+}
+
+table td .btn-danger i,
+table td .btn-danger svg,
+table.dataTable td .btn-danger i,
+table.dataTable td .btn-danger svg {
+    color: #b91c1c !important;
+    stroke: #b91c1c !important;
+}
+
+table td .btn-danger:hover,
+table.dataTable td .btn-danger:hover {
+    background-color: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #991b1b !important;
+}
+
+/* Global Primary Button Outside Tables (e.g. Filter, Create, Submit) */
+body .btn-primary:not(table td .btn):not(table.dataTable td .btn) {
+    background-color: var(--fieldora-navy) !important;
+    border-color: var(--fieldora-navy) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+body .btn-primary:not(table td .btn):not(table.dataTable td .btn):hover, 
+body .btn-primary:not(table td .btn):not(table.dataTable td .btn):focus, 
+body .btn-primary:not(table td .btn):not(table.dataTable td .btn):active {
+    background-color: var(--fieldora-navy-light) !important;
+    border-color: var(--fieldora-navy-light) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(17, 28, 56, 0.25) !important;
+}
+
+/* Secondary / Outline Action Pills Outside Tables */
+body .btn-outline-secondary:not(table td .btn), 
+body .btn-outline-primary:not(table td .btn),
+body .btn-action-pill:not(table td .btn) {
+    background-color: #ffffff !important;
+    border: 1px solid var(--fieldora-border) !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-size: 12.5px !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+body .btn-outline-secondary:not(table td .btn):hover, 
+body .btn-action-pill:not(table td .btn):hover,
+body .btn-outline-primary:not(table td .btn):hover {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: var(--fieldora-navy) !important;
+}
+
+/* 8. Modern Status Badges */
+.badge {
+    padding: 5px 10px !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    letter-spacing: 0.2px !important;
+}
+
+.badge-light-success, .badge-success {
+    background-color: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+.badge-light-warning, .badge-warning {
+    background-color: #fffbeb !important;
+    color: #b45309 !important;
+    border: 1px solid #fde68a !important;
+}
+
+.badge-light-danger, .badge-danger {
+    background-color: #fee2e2 !important;
+    color: #b91c1c !important;
+    border: 1px solid #fecaca !important;
+}
+
+.badge-light-primary, .badge-primary {
+    background-color: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border: 1px solid #bfdbfe !important;
+}
+
+.badge-light-info, .badge-info {
+    background-color: #f0fdfa !important;
+    color: #0f766e !important;
+    border: 1px solid #99f6e4 !important;
+}
+
+/* 9. Pagination & DataTables Controls */
+.pagination {
+    margin-top: 1rem;
+}
+
+.page-item.active .page-link {
+    background-color: var(--fieldora-navy) !important;
+    border-color: var(--fieldora-navy) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+}
+
+.page-link {
+    color: var(--fieldora-text-muted) !important;
+    border: 1px solid var(--fieldora-border) !important;
+    margin: 0 2px !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+}
+
+.page-link:hover {
+    background-color: #f8fafc !important;
+    color: var(--fieldora-navy) !important;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    background-color: #ffffff !important;
+    margin-left: 8px !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--fieldora-navy) !important;
+    box-shadow: 0 0 0 3px rgba(17, 28, 56, 0.1) !important;
+    outline: none !important;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 6px !important;
+    padding: 5px 8px !important;
+    font-size: 13px !important;
+    background-color: #ffffff !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: var(--fieldora-text-muted) !important;
+    font-size: 12.5px !important;
+    padding-top: 12px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 10px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 6px !important;
+    border: 1px solid var(--fieldora-border) !important;
+    padding: 5px 12px !important;
+    font-size: 12.5px !important;
+    color: var(--fieldora-text-muted) !important;
+    background: #ffffff !important;
+    margin: 0 2px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: var(--fieldora-navy) !important;
+    color: #ffffff !important;
+    border-color: var(--fieldora-navy) !important;
+    font-weight: 600 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #f8fafc !important;
+    color: var(--fieldora-navy) !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* 10. Form Controls */
+.form-control {
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 8px !important;
+    color: var(--fieldora-text-main) !important;
+    font-size: 13.5px !important;
+    padding: 8px 14px !important;
+}
+
+.form-control:focus {
+    border-color: var(--fieldora-navy) !important;
+    box-shadow: 0 0 0 3px rgba(17, 28, 56, 0.1) !important;
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 8px !important;
+    height: 38px !important;
+}
+
+/* 11. Breadcrumbs */
+.breadcrumb-item a {
+    color: var(--fieldora-text-muted) !important;
+    font-size: 13px !important;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--fieldora-navy) !important;
+}
+
+.breadcrumb-item.active {
+    color: var(--fieldora-navy) !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+}
+
+/* Unified Filter & Reset Section Buttons */
+#filterBtn,
+#resetBtn,
+.btn-filter,
+.btn-reset,
+button[id*="filter"],
+button[id*="reset"],
+a[id*="filter"],
+a[id*="reset"],
+#filterForm button,
+.filter-form button,
+form[id*="filter"] button {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    min-width: 95px !important;
+    padding: 0 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+    margin-right: 6px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease !important;
+}
+
+#filterBtn,
+.btn-filter,
+button[id*="filter"],
+a[id*="filter"] {
+    background-color: var(--fieldora-navy) !important;
+    border: 1px solid var(--fieldora-navy) !important;
+    color: #ffffff !important;
+}
+#filterBtn:hover,
+.btn-filter:hover {
+    background-color: var(--fieldora-navy-light) !important;
+    border-color: var(--fieldora-navy-light) !important;
+    color: #ffffff !important;
+}
+
+#resetBtn,
+.btn-reset,
+button[id*="reset"],
+a[id*="reset"] {
+    background-color: #64748b !important;
+    border: 1px solid #64748b !important;
+    color: #ffffff !important;
+}
+#resetBtn:hover,
+.btn-reset:hover {
+    background-color: #475569 !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+/* Ensure inputs and selects in filter rows align to 38px */
+#filterForm .form-control,
+.filter-form .form-control,
+form[id*="filter"] .form-control {
+    height: 38px !important;
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    background-color: #ffffff !important;
+    border: 1px solid var(--fieldora-border) !important;
+}
+
+#filterForm .select2-container--default .select2-selection--single,
+.filter-form .select2-container--default .select2-selection--single,
+form[id*="filter"] .select2-container--default .select2-selection--single {
+    height: 38px !important;
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--fieldora-border) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* POS Styling (Admin & Dealer) */
+body.main_body,
+.pos_header,
+.pos__body {
+    font-family: 'Instrument Sans', sans-serif !important;
+}
+
+.pos_header {
+    background: var(--fieldora-navy) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 10px 0 !important;
+}
+
+.product__box {
+    background: #ffffff !important;
+    border: 1px solid var(--fieldora-border) !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+.product__box:not(.stock__out):hover {
+    border-color: var(--fieldora-navy) !important;
+    box-shadow: 0 4px 12px rgba(17, 28, 56, 0.12) !important;
+    transform: translateY(-2px) !important;
+}
+
+.product__box .product_title,
+.product_title {
+    font-weight: 600 !important;
+    color: var(--fieldora-navy) !important;
+}
+
+/* 11.1 Diagonal Corner Ribbon Badge (Top-Left) for Out of Stock */
+.product-card,
+.product__box {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.product-card.stock__out,
+.product__box.stock__out {
+    cursor: not-allowed !important;
+}
+
+.corner-ribbon-wrap {
+    width: 85px !important;
+    height: 85px !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 12 !important;
+    pointer-events: none !important;
+    border-top-left-radius: 12px !important;
+}
+
+.corner-ribbon-wrap .corner-ribbon {
+    position: absolute !important;
+    display: block !important;
+    width: 125px !important;
+    padding: 3px 0 !important;
+    background: #f5365c !important;
+    background: linear-gradient(135deg, #f5365c 0%, #e11d48 100%) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) !important;
+    color: #ffffff !important;
+    font-size: 9.5px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    letter-spacing: 0.8px !important;
+    line-height: 14px !important;
+    top: 17px !important;
+    left: -33px !important;
+    transform: rotate(-45deg) !important;
+    -webkit-transform: rotate(-45deg) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
+.stock-out-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    z-index: 8 !important;
+    border-radius: 12px !important;
+    pointer-events: none !important;
+}
+
+/* 12. Footer */
+footer.footer {
+    background-color: transparent !important;
+    padding: 1.5rem 0 1rem 0 !important;
+    color: var(--fieldora-text-muted) !important;
+    font-size: 12px !important;
+}

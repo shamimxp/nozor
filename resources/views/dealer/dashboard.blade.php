@@ -14,13 +14,13 @@
 
     <style>
         .stat-card-modern {
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-bottom-width: 3px;
-            border-radius: 6px;
-            box-shadow: 0 4px 15px -4px rgba(0, 0, 0, 0.03);
-            background: #fff;
+            border: 1px solid #efeae2;
+            border-bottom: 3px solid #111c38;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(17, 28, 56, 0.04);
+            background: #FDFAF5;
             padding: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -29,9 +29,8 @@
             animation: fadeInUp 0.6s ease-out forwards;
         }
         .stat-card-modern:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
-            border-bottom-width: 5px;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(17, 28, 56, 0.08);
         }
         
         @keyframes fadeInUp {
@@ -122,6 +121,32 @@
             display: none !important;
         }
     </style>
+
+    <!-- FieldOra Warm Header Banner Card -->
+    <div class="fieldora-banner-card mb-2">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div class="d-flex align-items-center">
+                <div class="fieldora-banner-icon mr-1">
+                    <i data-feather="grid"></i>
+                </div>
+                <div>
+                    <h3 class="fieldora-banner-title">Dealer Portal</h3>
+                    <p class="fieldora-banner-subtitle">Overview of orders, sales, payments, and wallet status</p>
+                </div>
+            </div>
+            <div class="fieldora-banner-actions mt-1 mt-md-0 d-flex align-items-center flex-wrap" style="gap: 8px;">
+                <a href="{{ route('dealer.pos') }}" class="btn btn-outline-secondary">
+                    <i data-feather="shopping-cart" class="mr-50"></i> POS System
+                </a>
+                <a href="{{ route('dealer.wallet.index') }}" class="btn btn-outline-secondary">
+                    <i data-feather="credit-card" class="mr-50"></i> My Wallet
+                </a>
+                <a href="{{ route('dealer.orders.index') }}" class="btn btn-primary">
+                    <i data-feather="box" class="mr-50"></i> My Orders
+                </a>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <!-- Confirmed Orders -->

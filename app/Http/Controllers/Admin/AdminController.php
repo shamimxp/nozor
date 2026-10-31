@@ -334,8 +334,11 @@ class AdminController extends Controller
             
             $stockOut = $isOutOfStock ? 'stock__out' : '';
             
-            $stockOverlay = $isOutOfStock ? '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); z-index: 8; border-radius: 12px; pointer-events: none;"></div>' : '';
-            $stockText = $isOutOfStock ? '<div style="position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); background-color: #f5365c; color: #ffffff !important; padding: 10px 0; font-size: 14px; font-weight: 800; text-transform: uppercase; text-align: center; z-index: 10; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); letter-spacing: 1.5px; pointer-events: none;">Stock Out</div>' : '';
+            $stockBadge = $isOutOfStock ? '
+                <div class="stock-out-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.55); z-index: 8; border-radius: 12px; pointer-events: none;"></div>
+                <div class="corner-ribbon-wrap">
+                    <span class="corner-ribbon">Stock Out</span>
+                </div>' : '';
             
             $imageUrl = $product->featured_image ? asset(config('imagepath.product') . '/' . $product->featured_image) : asset('images/no-image.png');
 
@@ -347,8 +350,7 @@ class AdminController extends Controller
                         data-stock="' . ($product->is_manufacturer ? 999999 : $product->stock) . '"
                         data-discount-type="' . $product->discount_type . '"
                         data-discount-amount="' . $product->discount_amount . '">
-                        ' . $stockOverlay . '
-                        ' . $stockText . '
+                        ' . $stockBadge . '
                         <div class="product_thumb">
                             <img src="' . $imageUrl . '" alt="' . e($product->name) . '">
                         </div>

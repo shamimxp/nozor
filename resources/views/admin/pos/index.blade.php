@@ -12,6 +12,9 @@
     <!-- font awesome -->
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/all.min.css')}}">
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/fontawesome.min.css')}}">
+    <!-- FieldOra Typography & Theme -->
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/fieldora-theme.css') }}?v={{ time() }}">
     <!-- css file link -->
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/global.css')}}">
     <link rel="stylesheet" href="{{asset('admin/pos/assets/css/main.css')}}">
@@ -53,35 +56,67 @@
 
         /* Out of stock */
         .product__box.stock__out {
-            /* filter: grayscale(1); */
             cursor: not-allowed;
-            opacity: 0.78;
+            position: relative !important;
+            overflow: hidden !important;
         }
 
         .product__box.stock__out .product_thumb {
-            filter: blur(2px);
+            filter: blur(1px);
+            opacity: 0.85;
         }
 
         .product__box.stock__out .product_title {
-            color: #aaa;
+            color: #777;
         }
 
-        .product__box.stock__out span {
+        /* Diagonal Corner Ribbon Badge (Top-Left) */
+        .corner-ribbon-wrap {
+            width: 85px;
+            height: 85px;
+            overflow: hidden;
             position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%) rotate(-12deg);
-            background: rgba(220, 53, 69, 0.92);
-            color: #fff;
-            padding: 3px 10px;
-            font-weight: 700;
-            font-size: 11px;
+            top: 0;
+            left: 0;
+            z-index: 12;
+            pointer-events: none;
+            border-top-left-radius: 12px;
+        }
+
+        .corner-ribbon-wrap .corner-ribbon {
+            position: absolute;
+            display: block;
+            width: 125px;
+            padding: 3px 0;
+            background: #f5365c;
+            background: linear-gradient(135deg, #f5365c 0%, #e11d48 100%);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            color: #ffffff !important;
+            font-size: 9.5px;
+            font-weight: 800;
             text-transform: uppercase;
-            z-index: 5;
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
-            white-space: nowrap;
-            letter-spacing: 0.5px;
+            text-align: center;
+            letter-spacing: 0.8px;
+            line-height: 14px;
+            top: 17px;
+            left: -33px;
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .stock-out-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.55);
+            z-index: 8;
+            border-radius: 12px;
+            pointer-events: none;
         }
 
         .pos__product_wrapper {

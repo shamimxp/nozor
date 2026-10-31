@@ -66,13 +66,14 @@ class DealerOrderController extends Controller
                     return '<select class="form-control form-control-sm updateStatusSelect" data-order-id="' . $r->id . '" style="min-width:130px" ' . $disabled . '>' . $options . '</select>';
                 })
                 ->addColumn('action', function ($r) {
-                    $btn = '';
-                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm mr-25" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
+                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
                     if (!in_array($r->status, ['delivered', 'cancelled'])) {
-                        $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25" title="Edit"><i data-feather="edit"></i></a>';
+                        $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>';
                     }
+                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
                     $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder" title="Delete"><i data-feather="trash"></i></a>';
+                    $btn .= '</div>';
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'dealer_name', 'totals', 'status_badge', 'action'])
@@ -127,8 +128,10 @@ class DealerOrderController extends Controller
                     return ucfirst($r->status);
                 })
                 ->addColumn('action', function ($r) {
-                    $btn = '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm mr-25" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
+                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn .= '</div>';
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'dealer_name', 'totals', 'status_badge', 'action'])
