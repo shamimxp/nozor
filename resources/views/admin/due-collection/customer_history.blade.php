@@ -13,25 +13,18 @@
 </style>
 @endpush
 
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Payment History</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.customer.index') }}">Customers</a></li>
+        <li class="breadcrumb-item active">Payment History</li>
+    </ol>
+</div>
+@endsection
+
 @section('content')
-<div class="content-wrapper">
-    <div class="content-header row">
-        <div class="content-header-left col-md-9 col-12 mb-2">
-            <div class="row breadcrumbs-top">
-                <div class="col-12">
-                    <h2 class="content-header-title float-left mb-0">Payment History</h2>
-                    <div class="breadcrumb-wrapper">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.customer.index') }}">Customers</a></li>
-                            <li class="breadcrumb-item active">Payment History</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-body">
         <div class="customer-info-header">
             <div class="row">
                 <div class="col-md-6">
@@ -88,6 +81,4 @@
                 </div>
             </div>
         </section>
-    </div>
-</div>
 @endsection

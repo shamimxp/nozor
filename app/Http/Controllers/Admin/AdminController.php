@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
+use App\Services\DashboardAnalyticsService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -177,73 +178,38 @@ class AdminController extends Controller
         }
     }
 
-    public function dashboard()
+    public function dashboard(DashboardAnalyticsService $analyticsService)
     {
-        $salesCount = \App\Models\PosOrder::count() + \App\Models\CustomOrder::count() + \App\Models\WebOrder::count();
+        $kpis = $analyticsService->getKpiMetrics();
+        $monthlyTrends = $analyticsService->getMonthlyRevenueTrends((int) date('Y'));
+        $financialHealth = $analyticsService->getFinancialHealth();
+        $operations = $analyticsService->getOperationsAndInventory();
+        $recentOrders = $analyticsService->getRecentOmnichannelOrders(8);
+        $topProducts = $analyticsService->getTopProducts(5);
+        $criticalInventory = $analyticsService->getCriticalInventory(6);
+
+        // Retain backward-compatible top-level keys
+        $totalRevenue = $kpis['totalGrossRevenue'];
+        $todayTotalRevenue = $kpis['todayRevenue'];
+        $totalDue = $kpis['totalReceivableDue'];
+        $salesCount = $kpis['totalOrdersCount'];
         $customerCount = \App\Models\Customer::count();
-        $productCount = \App\Models\Product::count();
-        
-        $posRevenue = \App\Models\PosOrder::sum('payable_amount') ?? 0;
-        $customRevenue = \App\Models\CustomOrder::sum('grand_total') ?? 0;
-        $webRevenue = \App\Models\WebOrder::sum('total') ?? 0;
-        $totalRevenue = $posRevenue + $customRevenue + $webRevenue;
-
-        // Today's Revenue
-        $today = date('Y-m-d');
-        $todayPosRevenue = \App\Models\PosOrder::whereDate('created_at', $today)->sum('payable_amount') ?? 0;
-        $todayCustomRevenue = \App\Models\CustomOrder::whereDate('created_at', $today)->sum('grand_total') ?? 0;
-        $todayWebRevenue = \App\Models\WebOrder::whereDate('created_at', $today)->sum('total') ?? 0;
-        $todayTotalRevenue = $todayPosRevenue + $todayCustomRevenue + $todayWebRevenue;
-
-        // Recent Web Orders (for analytics)
-        $recentWebOrders = \App\Models\WebOrder::with('address')
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Chart Data: Monthly Revenue (Current Year)
-        $currentYear = date('Y');
-        $monthlyRevenue = [];
-        $monthlyOrders = [];
-        $months = [];
-
-        for ($i = 1; $i <= 12; $i++) {
-            $monthName = date('M', mktime(0, 0, 0, $i, 10));
-            $months[] = $monthName;
-
-            // Revenue for month
-            $posM = \App\Models\PosOrder::whereYear('created_at', $currentYear)->whereMonth('created_at', $i)->sum('payable_amount') ?? 0;
-            $webM = \App\Models\WebOrder::whereYear('created_at', $currentYear)->whereMonth('created_at', $i)->sum('total') ?? 0;
-            $customM = \App\Models\CustomOrder::whereYear('created_at', $currentYear)->whereMonth('created_at', $i)->sum('grand_total') ?? 0;
-            
-            $monthlyRevenue[] = $posM + $webM + $customM;
-
-            // Orders for month
-            $posC = \App\Models\PosOrder::whereYear('created_at', $currentYear)->whereMonth('created_at', $i)->count();
-            $webC = \App\Models\WebOrder::whereYear('created_at', $currentYear)->whereMonth('created_at', $i)->count();
-            $customC = \App\Models\CustomOrder::whereYear('created_at', $currentYear)->whereMonth('created_at', $i)->count();
-            
-            $monthlyOrders[] = $posC + $webC + $customC;
-        }
-
-        // Earnings Source (Donut Chart)
-        $earningsSource = [
-            'POS' => $posRevenue,
-            'Web' => $webRevenue,
-            'Custom' => $customRevenue
-        ];
-
-        // Dues Calculation
-        $posOrderDue = \App\Models\PosOrder::sum('due_amount') ?? 0;
-        $customOrderDue = \App\Models\CustomOrder::sum('due') ?? 0;
-        // Web orders typically don't have a specific due column, we assume unpaid/pending orders are due
-        $webOrderDue = \App\Models\WebOrder::whereNotIn('status', ['delivered', 'canceled'])->sum('total') ?? 0;
-        $totalDue = $posOrderDue + $customOrderDue + $webOrderDue;
+        $productCount = $operations['totalProducts'];
 
         return view('admin.dashboard', compact(
-            'salesCount', 'customerCount', 'productCount', 'totalRevenue', 
-            'recentWebOrders', 'months', 'monthlyRevenue', 'monthlyOrders', 
-            'earningsSource', 'todayTotalRevenue', 'posOrderDue', 'customOrderDue', 'webOrderDue', 'totalDue'
+            'kpis',
+            'monthlyTrends',
+            'financialHealth',
+            'operations',
+            'recentOrders',
+            'topProducts',
+            'criticalInventory',
+            'totalRevenue',
+            'todayTotalRevenue',
+            'totalDue',
+            'salesCount',
+            'customerCount',
+            'productCount'
         ));
     }
 

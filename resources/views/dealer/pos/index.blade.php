@@ -2,9 +2,6 @@
 @section('title', 'POS System')
 
 @section('content')
-<div class="content-header row">
-</div>
-<div class="content-body">
     <div class="row">
         <!-- Main POS Area (Products) -->
         <div class="col-xl-7 col-lg-7">
@@ -107,7 +104,6 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('styles')

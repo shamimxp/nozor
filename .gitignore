@@ -4,6 +4,11 @@
 /public/uploads/ads/
 /public/retailer/*
 /storage/*.key
+/storage/debugbar/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/logs/
 /vendor
 .env
 .env.backup

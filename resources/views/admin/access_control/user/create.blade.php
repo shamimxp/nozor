@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('title', __('Create User'))
 @section('content')
     <section class="validations" id="validation">
         <div class="row">

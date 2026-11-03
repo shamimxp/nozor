@@ -1,13 +1,17 @@
 @extends('layouts.admin')
 @section('title', 'POS Order Sales Report')
+
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">POS Order Sales Report</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active">POS Sales Report</li>
+    </ol>
+</div>
+@endsection
+
 @section('content')
-<div class="content-wrapper">
-    <div class="content-header row">
-        <div class="content-header-left col-md-9 col-12 mb-2">
-            <h2 class="content-header-title float-left mb-0">POS Order Sales Report</h2>
-        </div>
-    </div>
-    <div class="content-body">
         <div class="card">
             <div class="card-body">
                 <form id="filterForm">
@@ -73,8 +77,6 @@
                 </table>
             </div>
         </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')

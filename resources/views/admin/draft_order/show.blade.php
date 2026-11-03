@@ -1,29 +1,24 @@
 @extends('layouts.admin')
 @section('title', 'Draft Order Details - ' . $draftOrder->draft_number)
 
-@section('content')
-<div class="content-header row">
-    <div class="content-header-left col-md-8 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-left mb-0">Draft Order Details</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.draft-orders.index') }}">Draft Orders</a></li>
-                        <li class="breadcrumb-item active">{{ $draftOrder->draft_number }}</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
-        <a href="{{ route('admin.draft-orders.index') }}" class="btn btn-outline-secondary">
-            <i data-feather="arrow-left" class="mr-50"></i> Back to List
-        </a>
-    </div>
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Draft Order Details</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.draft-orders.index') }}">Draft Orders</a></li>
+        <li class="breadcrumb-item active">{{ $draftOrder->draft_number }}</li>
+    </ol>
 </div>
+@endsection
 
-<div class="content-body">
+@section('content-header-right')
+<a href="{{ route('admin.draft-orders.index') }}" class="btn btn-outline-secondary">
+    <i data-feather="arrow-left" class="mr-50"></i> Back to List
+</a>
+@endsection
+
+@section('content')
     <section class="invoice-preview-wrapper">
         <div class="row invoice-preview">
             <!-- Action Bar -->
@@ -234,7 +229,6 @@
             </div>
         </div>
     </section>
-</div>
 
 @include('admin.partials.image-preview-modal')
 @endsection

@@ -89,6 +89,64 @@
         display: block !important;
         margin-top: -2px !important;
     }
+    /* Worker Balance Sheet Make Payment Action Button */
+    .make-payment-btn {
+        height: 32px !important;
+        padding: 5px 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+        box-shadow: none !important;
+        transition: all 0.2s ease !important;
+        text-decoration: none !important;
+    }
+    .make-payment-btn::after,
+    .make-payment-btn::before {
+        display: none !important;
+        content: none !important;
+    }
+    .make-payment-btn i,
+    .make-payment-btn svg {
+        width: 14px !important;
+        height: 14px !important;
+        stroke-width: 2 !important;
+        margin-right: 5px !important;
+    }
+    .make-payment-btn.btn-pay-active {
+        background-color: #111C38 !important;
+        border: 1px solid #111C38 !important;
+        color: #ffffff !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 4px rgba(17, 28, 56, 0.15) !important;
+    }
+    .make-payment-btn.btn-pay-active:hover {
+        background-color: #1e293b !important;
+        border-color: #1e293b !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 8px rgba(17, 28, 56, 0.22) !important;
+    }
+    .make-payment-btn.btn-pay-active i,
+    .make-payment-btn.btn-pay-active svg {
+        color: #10B981 !important;
+        stroke: #10B981 !important;
+    }
+    .make-payment-btn.btn-pay-clear {
+        background-color: #f1f5f9 !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #64748b !important;
+        cursor: not-allowed !important;
+        opacity: 0.9 !important;
+    }
+    .make-payment-btn.btn-pay-clear i,
+    .make-payment-btn.btn-pay-clear svg {
+        color: #10B981 !important;
+        stroke: #10B981 !important;
+    }
 </style>
 @endpush
 
@@ -116,7 +174,7 @@
                                 <th class="text-right">Total Paid</th>
                                 <th class="text-right">Balance (Due)</th>
                                 <th class="text-center">Status</th>
-                                <th class="text-center" style="width: 140px;">Action</th>
+                                <th class="text-center" style="width: 155px; min-width: 155px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>

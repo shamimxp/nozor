@@ -12,8 +12,6 @@
 @endsection
 @section('content')
 
-    <div class="content-wrapper">
-        <div class="content-body">
             <!-- account setting page -->
             <section id="page-account-settings">
                 <div class="row">
@@ -244,8 +242,6 @@
                 </div>
             </section>
             <!-- / account setting page -->
-        </div>
-    </div>
 @endsection
 @push('scripts')
 

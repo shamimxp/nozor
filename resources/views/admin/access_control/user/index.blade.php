@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('title', __('User List'))
 @section('content')
     <section id="basic-datatable">
         <div class="row">

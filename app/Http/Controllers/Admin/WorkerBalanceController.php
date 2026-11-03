@@ -55,14 +55,20 @@ class WorkerBalanceController extends Controller
                 })
                 ->addColumn('action', function ($worker) {
                     $balance = (float) $worker->invoices->where('due_amount', '>', 0)->sum('due_amount');
-                    $disabled = $balance <= 0 ? 'disabled' : '';
-                    return '<button type="button" class="btn btn-sm btn-primary make-payment-btn" ' . $disabled . '
-                                data-id="' . $worker->id . '"
-                                data-name="' . e($worker->name) . '"
-                                data-phone="' . e($worker->phone) . '"
-                                data-balance="' . $balance . '"
-                                title="Make Payment to ' . e($worker->name) . '">
-                                <i data-feather="dollar-sign" style="width: 13px; height: 13px;" class="mr-25"></i> Make Payment
+                    if ($balance > 0) {
+                        return '<button type="button" class="btn btn-sm make-payment-btn btn-pay-active"
+                                    data-id="' . $worker->id . '"
+                                    data-name="' . e($worker->name) . '"
+                                    data-phone="' . e($worker->phone) . '"
+                                    data-balance="' . $balance . '"
+                                    title="Make Payment to ' . e($worker->name) . '">
+                                    <i data-feather="dollar-sign"></i> Make Payment
+                                </button>';
+                    }
+
+                    return '<button type="button" class="btn btn-sm make-payment-btn btn-pay-clear" disabled
+                                title="All dues are cleared for ' . e($worker->name) . '">
+                                <i data-feather="check-circle"></i> All Clear
                             </button>';
                 })
                 ->rawColumns(['worker_info', 'phone', 'total_earned', 'total_paid', 'balance', 'status', 'action'])

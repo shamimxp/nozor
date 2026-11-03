@@ -1,18 +1,17 @@
 @extends('layouts.admin')
 @section('title', 'Dealer Order Requests')
 
-@section('content')
-<div class="content-header mb-3 mt-n1">
-    <div class="row align-items-center">
-        <div class="col">
-            <h2 class="font-weight-bolder mb-0">Dealer Order Requests</h2>
-            <p class="text-muted mb-0">Manage and track dealer order requests</p>
-        </div>
-    </div>
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Order Requests</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active">Dealer Order Requests</li>
+    </ol>
 </div>
+@endsection
 
-
-
+@section('content')
 <div class="card shadow-sm border-0">
     <div class="card-body">
         <div class="row align-items-end mb-3">

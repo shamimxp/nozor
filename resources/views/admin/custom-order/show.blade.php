@@ -1,24 +1,18 @@
 @extends('layouts.admin')
 @section('title', 'Order Details - ' . $order->order_number)
 
-@section('content')
-<div class="content-header row">
-    <div class="content-header-left col-md-9 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-left mb-0">Custom Order Details</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.custom-order.index') }}"> Custom Orders</a></li>
-                        <li class="breadcrumb-item active">{{ $order->order_number }}</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Custom Order Details</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.custom-order.index') }}">Custom Orders</a></li>
+        <li class="breadcrumb-item active">{{ $order->order_number }}</li>
+    </ol>
 </div>
+@endsection
 
-<div class="content-body">
+@section('content')
     <section class="invoice-preview-wrapper">
         <div class="row invoice-preview">
             <!-- Invoice -->
@@ -305,7 +299,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <style>
     @media print {

@@ -1,21 +1,23 @@
 @extends('layouts.admin')
-@section('title', 'Draft Order List')
+@section('title', 'Draft Orders')
+
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Draft Orders</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active">Draft Orders</li>
+    </ol>
+</div>
+@endsection
+
+@section('content-header-right')
+<a href="{{ route('admin.order-requests.index') }}" class="btn btn-outline-primary shadow-sm font-weight-bold">
+    <i data-feather="list" class="mr-50"></i> View Order Requests
+</a>
+@endsection
 
 @section('content')
-<div class="content-header mb-2 mt-n1">
-    <div class="row align-items-center">
-        <div class="col">
-            <h2 class="font-weight-bolder mb-0">Draft Orders</h2>
-            <p class="text-muted mb-0">Manage draft orders created from Order Requests</p>
-        </div>
-        <div class="col-auto">
-            <a href="{{ route('admin.order-requests.index') }}" class="btn btn-outline-primary shadow-sm font-weight-bold">
-                <i data-feather="list" class="mr-50"></i> View Order Requests
-            </a>
-        </div>
-    </div>
-</div>
-
 <div class="card shadow-sm border-0">
     <div class="card-body">
         <div class="row align-items-end mb-3">

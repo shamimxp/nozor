@@ -2,12 +2,6 @@
 @section('title', 'Subscribers')
 @section('content')
 <section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Subscribers</h2>
-            <p>List of all newsletter subscribers.</p>
-        </div>
-    </div>
     <div class="card mb-4">
         <div class="card-body">
             <div class="table-responsive">

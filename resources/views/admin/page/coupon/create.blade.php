@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('title', 'Add Coupon')
 
 @section('content')
 <div class="row">

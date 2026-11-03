@@ -1,6 +1,23 @@
 @extends('layouts.admin')
 @section('title', 'Edit Custom Order')
 
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Edit Custom Order</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.custom-order.index') }}">Custom Orders</a></li>
+        <li class="breadcrumb-item active">{{ $order->order_number }}</li>
+    </ol>
+</div>
+@endsection
+
+@section('content-header-right')
+<a href="{{ route('admin.custom-order.index') }}" class="btn btn-outline-secondary">
+    <i data-feather="arrow-left" class="mr-50"></i> Back to List
+</a>
+@endsection
+
 @section('content')
 <style>
     :root {
@@ -19,20 +36,6 @@
     .section-title i { margin-right: 10px; color: #6366f1; }
     .btn-indigo { background-color: #6366f1; color: white; }
 </style>
-
-<div class="content-header mb-2 mt-n1">
-    <div class="row align-items-center">
-        <div class="col">
-            <h2 class="font-weight-bolder mb-0">Edit Custom Order</h2>
-            <p class="">Ref: <span class="text-primary font-weight-bold">{{ $order->order_number }}</span> • Style: {{ $order->style_number }}</p>
-        </div>
-        <div class="col-auto">
-            <a href="{{ route('admin.custom-order.index') }}" class="btn btn-outline-secondary">
-                <i data-feather="arrow-left"></i> Back
-            </a>
-        </div>
-    </div>
-</div>
 
 <form action="{{ route('admin.custom-order.update', $order->id) }}" method="POST" enctype="multipart/form-data" id="customOrderForm">
     @csrf

@@ -2,12 +2,6 @@
 @section('title', 'Contact Messages')
 @section('content')
 <section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Contact Messages</h2>
-            <p>List of all contact messages from the website.</p>
-        </div>
-    </div>
     <div class="card mb-4">
         <div class="card-body">
             <div class="table-responsive">

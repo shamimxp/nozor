@@ -134,25 +134,29 @@
 </style>
 @endpush
 
+@section('breadcrumb')
+<div class="d-flex align-items-center" style="gap: 12px;">
+    <h2 class="content-header-title mb-0 text-dark font-weight-bolder" style="font-size: 1.4rem;">Order Request Detail</h2>
+    <span class="req-number-badge">{{ $orderRequest->request_number ?? '#'.$orderRequest->id }}</span>
+</div>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.order-requests.index') }}">Order Requests</a></li>
+        <li class="breadcrumb-item active">{{ $orderRequest->request_number ?? '#'.$orderRequest->id }}</li>
+    </ol>
+</div>
+@endsection
+
+@section('content-header-right')
+<a href="{{ route('admin.order-requests.index') }}" class="btn-back">
+    <i data-feather="arrow-left" style="width:15px;height:15px;"></i> Back to List
+</a>
+@endsection
+
 @section('content')
 @inject('priceCalculator', 'App\Services\ProductPriceCalculator')
 
-{{-- ── Page Header ── --}}
-<div class="content-header row align-items-center mb-1">
-    <div class="content-header-left col-md-8 col-12 mb-2">
-        <div class="d-flex align-items-center" style="gap: 12px;">
-            <h2 class="content-header-title mb-0 text-dark font-weight-bolder" style="font-size: 1.4rem;">Order Request Detail</h2>
-            <span class="req-number-badge">{{ $orderRequest->request_number ?? '#'.$orderRequest->id }}</span>
-        </div>
-    </div>
-    <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
-        <a href="{{ route('admin.order-requests.index') }}" class="btn-back">
-            <i data-feather="arrow-left" style="width:15px;height:15px;"></i> Back to List
-        </a>
-    </div>
-</div>
-
-<div class="content-body">
 <form action="{{ route('admin.order-requests.confirm', $orderRequest->id) }}" method="POST" id="confirmForm">
 @csrf
 
@@ -385,7 +389,6 @@
 </div>{{-- END single card --}}
 
 </form>
-</div>
 @endsection
 
 @push('scripts')

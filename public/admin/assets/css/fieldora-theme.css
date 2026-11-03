@@ -758,10 +758,10 @@ table.dataTable td .btn-view::after {
 }
 
 /* [ ✏ Edit ] Button (FieldOra Pale Olive-Khaki Tint) */
-table td .btn-primary:not(.btn-block):not(#filterBtn),
+table td .btn-primary:not(.btn-block):not(#filterBtn):not(.make-payment-btn):not(.addDepositBtn),
 table td .btn-warning,
 table td .btn-edit,
-table.dataTable td .btn-primary:not(.btn-block):not(#filterBtn),
+table.dataTable td .btn-primary:not(.btn-block):not(#filterBtn):not(.make-payment-btn):not(.addDepositBtn),
 table.dataTable td .btn-warning,
 table.dataTable td .btn-edit {
     background-color: #f7f2e6 !important;
@@ -770,14 +770,14 @@ table.dataTable td .btn-edit {
     font-weight: 600 !important;
 }
 
-table td .btn-primary:not(.btn-block) i,
-table td .btn-primary:not(.btn-block) svg,
+table td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn) i,
+table td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn) svg,
 table td .btn-warning i,
 table td .btn-warning svg,
 table td .btn-edit i,
 table td .btn-edit svg,
-table.dataTable td .btn-primary:not(.btn-block) i,
-table.dataTable td .btn-primary:not(.btn-block) svg,
+table.dataTable td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn) i,
+table.dataTable td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn) svg,
 table.dataTable td .btn-warning i,
 table.dataTable td .btn-warning svg,
 table.dataTable td .btn-edit i,
@@ -786,10 +786,10 @@ table.dataTable td .btn-edit svg {
     stroke: #695730 !important;
 }
 
-table td .btn-primary:not(.btn-block):hover,
+table td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn):hover,
 table td .btn-warning:hover,
 table td .btn-edit:hover,
-table.dataTable td .btn-primary:not(.btn-block):hover,
+table.dataTable td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn):hover,
 table.dataTable td .btn-warning:hover,
 table.dataTable td .btn-edit:hover {
     background-color: #ece4cf !important;
@@ -797,10 +797,10 @@ table.dataTable td .btn-edit:hover {
     color: #4e3f1e !important;
 }
 
-table td .btn-primary:not(.btn-block)::after,
+table td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn)::after,
 table td .btn-warning::after,
 table td .btn-edit::after,
-table.dataTable td .btn-primary:not(.btn-block)::after,
+table.dataTable td .btn-primary:not(.btn-block):not(.make-payment-btn):not(.addDepositBtn)::after,
 table.dataTable td .btn-warning::after,
 table.dataTable td .btn-edit::after {
     content: "Edit";
@@ -808,6 +808,83 @@ table.dataTable td .btn-edit::after {
     font-weight: 600;
     margin-left: 5px;
     letter-spacing: 0.1px;
+}
+
+/* Worker Balance Sheet Make Payment Action Button */
+table td .btn.make-payment-btn,
+table.dataTable td .btn.make-payment-btn {
+    height: 32px !important;
+    padding: 5px 14px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+table td .btn.make-payment-btn::after,
+table.dataTable td .btn.make-payment-btn::after,
+table td .btn.make-payment-btn::before,
+table.dataTable td .btn.make-payment-btn::before {
+    display: none !important;
+    content: none !important;
+}
+
+table td .btn.make-payment-btn i,
+table td .btn.make-payment-btn svg,
+table.dataTable td .btn.make-payment-btn i,
+table.dataTable td .btn.make-payment-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+    stroke-width: 2 !important;
+    margin-right: 5px !important;
+}
+
+table td .btn.make-payment-btn.btn-pay-active,
+table.dataTable td .btn.make-payment-btn.btn-pay-active {
+    background-color: #111C38 !important;
+    border: 1px solid #111C38 !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 4px rgba(17, 28, 56, 0.15) !important;
+}
+
+table td .btn.make-payment-btn.btn-pay-active:hover,
+table.dataTable td .btn.make-payment-btn.btn-pay-active:hover {
+    background-color: #1e293b !important;
+    border-color: #1e293b !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(17, 28, 56, 0.22) !important;
+}
+
+table td .btn.make-payment-btn.btn-pay-active i,
+table td .btn.make-payment-btn.btn-pay-active svg,
+table.dataTable td .btn.make-payment-btn.btn-pay-active i,
+table.dataTable td .btn.make-payment-btn.btn-pay-active svg {
+    color: #10B981 !important;
+    stroke: #10B981 !important;
+}
+
+table td .btn.make-payment-btn.btn-pay-clear,
+table.dataTable td .btn.make-payment-btn.btn-pay-clear {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
+    cursor: not-allowed !important;
+    opacity: 0.9 !important;
+}
+
+table td .btn.make-payment-btn.btn-pay-clear i,
+table td .btn.make-payment-btn.btn-pay-clear svg,
+table.dataTable td .btn.make-payment-btn.btn-pay-clear i,
+table.dataTable td .btn.make-payment-btn.btn-pay-clear svg {
+    color: #10B981 !important;
+    stroke: #10B981 !important;
 }
 
 /* [ Download / PDF / Options ] Outline Button */

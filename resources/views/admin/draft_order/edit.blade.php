@@ -1,30 +1,25 @@
 @extends('layouts.admin')
 @section('title', 'Edit Draft Order - ' . $draftOrder->draft_number)
 
-@section('content')
-<div class="content-header row">
-    <div class="content-header-left col-md-8 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-left mb-0">Edit Draft Order</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.draft-orders.index') }}">Draft Orders</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.draft-orders.show', $draftOrder->id) }}">{{ $draftOrder->draft_number }}</a></li>
-                        <li class="breadcrumb-item active">Edit</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
-        <a href="{{ route('admin.draft-orders.show', $draftOrder->id) }}" class="btn btn-outline-secondary">
-            <i data-feather="arrow-left" class="mr-50"></i> Back to Details
-        </a>
-    </div>
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Edit Draft Order</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.draft-orders.index') }}">Draft Orders</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.draft-orders.show', $draftOrder->id) }}">{{ $draftOrder->draft_number }}</a></li>
+        <li class="breadcrumb-item active">Edit</li>
+    </ol>
 </div>
+@endsection
 
-<div class="content-body">
+@section('content-header-right')
+<a href="{{ route('admin.draft-orders.show', $draftOrder->id) }}" class="btn btn-outline-secondary">
+    <i data-feather="arrow-left" class="mr-50"></i> Back to Details
+</a>
+@endsection
+
+@section('content')
     <form action="{{ route('admin.draft-orders.update', $draftOrder->id) }}" method="POST" id="editDraftForm">
         @csrf
         @method('PUT')
@@ -189,7 +184,6 @@
             </div>
         </div>
     </form>
-</div>
 
 @include('admin.partials.image-preview-modal')
 @endsection

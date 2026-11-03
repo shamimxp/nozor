@@ -39,15 +39,57 @@
     <div class="content-overlay"></div>
     <div class="header-navbar-shadow"></div>
     <div class="content-wrapper">
-        <div class="content-header row">
-            <div class="content-header-left col-md-9 col-12 mb-2">
-                <div class="row breadcrumbs-top">
-                    <div class="col-12">
-                        @yield('breadcrumb')
+        @php
+            $hasCustomBreadcrumb = View::hasSection('breadcrumb');
+            $hasHeaderRight = View::hasSection('content-header-right');
+            $rawTitle = trim($__env->yieldContent('page-title', $__env->yieldContent('title', '')));
+            $cleanTitle = preg_replace('/\s*[|\-]\s*(Wood\s*Machinery|Nozor).*$/i', '', $rawTitle);
+            if (empty($cleanTitle)) {
+                $cleanTitle = $rawTitle;
+            }
+        @endphp
+
+        @if($hasCustomBreadcrumb)
+            <div class="content-header row">
+                <div class="content-header-left {{ $hasHeaderRight ? 'col-md-8 col-12' : 'col-12' }} mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            @yield('breadcrumb')
+                        </div>
                     </div>
                 </div>
+                @if($hasHeaderRight)
+                <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
+                    <div class="form-group breadcrumb-right mb-0">
+                        @yield('content-header-right')
+                    </div>
+                </div>
+                @endif
             </div>
-        </div>
+        @elseif(!empty($cleanTitle) && !Route::is('dealer.dashboard'))
+            <div class="content-header row">
+                <div class="content-header-left {{ $hasHeaderRight ? 'col-md-8 col-12' : 'col-12' }} mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">{{ $cleanTitle }}</h2>
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ route('dealer.dashboard') }}">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">{{ $cleanTitle }}</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if($hasHeaderRight)
+                <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
+                    <div class="form-group breadcrumb-right mb-0">
+                        @yield('content-header-right')
+                    </div>
+                </div>
+                @endif
+            </div>
+        @endif
         <div class="content-body">
             <!-- Dashboard Ecommerce Starts -->
             @yield('content')

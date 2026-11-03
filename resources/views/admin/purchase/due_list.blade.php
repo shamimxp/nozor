@@ -1,24 +1,18 @@
 @extends('layouts.admin')
 @section('title', 'Purchase Due List')
+
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Purchase Due List</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.purchase.index') }}">Purchases</a></li>
+        <li class="breadcrumb-item active">Invoice Due List</li>
+    </ol>
+</div>
+@endsection
+
 @section('content')
-<div class="content-wrapper">
-    <div class="content-header row">
-        <div class="content-header-left col-md-9 col-12 mb-2">
-            <div class="row breadcrumbs-top">
-                <div class="col-12">
-                    <h2 class="content-header-title float-left mb-0">Purchase Due List</h2>
-                    <div class="breadcrumb-wrapper">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.purchase.index') }}">Purchases</a></li>
-                            <li class="breadcrumb-item active">Invoice Due List</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-body">
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -43,8 +37,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
 <!-- Purchase Payment Modal -->
 <div class="modal fade text-left" id="purchasePaymentModal" tabindex="-1" role="dialog" aria-labelledby="purchasePayModalLabel" aria-hidden="true">

@@ -1,18 +1,18 @@
 @extends('layouts.dealer')
 @section('title', 'Request Detail')
 
-@section('content')
-<div class="content-header row">
-    <div class="content-header-left col-md-9 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-left mb-0 text-primary font-weight-bolder" style="letter-spacing: 0.5px; border-left: 4px solid #7367f0; padding-left: 10px;">Request Detail</h2>
-            </div>
-        </div>
-    </div>
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Request Detail</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dealer.dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('dealer.order-requests.index') }}">Order Requests</a></li>
+        <li class="breadcrumb-item active">{{ $orderRequest->request_number ?? '#'.$orderRequest->id }}</li>
+    </ol>
 </div>
+@endsection
 
-<div class="content-body">
+@section('content')
     <section class="invoice-preview-wrapper">
         <div class="row invoice-preview">
             <!-- Invoice -->
@@ -164,7 +164,6 @@
             </div>
         </div>
     </section>
-</div>
 @endsection
 
 @push('scripts')

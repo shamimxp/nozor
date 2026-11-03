@@ -1,20 +1,23 @@
 @extends('layouts.admin')
-@section('title', 'Dealer Order List')
+@section('title', 'Dealer Orders')
+
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Dealer Orders</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item active">Dealer Orders</li>
+    </ol>
+</div>
+@endsection
+
+@section('content-header-right')
+<a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary shadow-sm font-weight-bold">
+    <i data-feather="plus"></i> Create New Order
+</a>
+@endsection
 
 @section('content')
-<div class="content-header mb-3 mt-n1">
-    <div class="row align-items-center">
-        <div class="col">
-            <h2 class="font-weight-bolder mb-0">Dealer Orders</h2>
-            <p class="text-muted mb-0">Manage and track dealer orders</p>
-        </div>
-        <div class="col-auto">
-            <a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary shadow-sm font-weight-bold">
-                <i data-feather="plus"></i> Create New Order
-            </a>
-        </div>
-    </div>
-</div>
 
 
 

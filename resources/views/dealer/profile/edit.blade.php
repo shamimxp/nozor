@@ -1,24 +1,17 @@
 @extends('layouts.dealer')
 @section('title', 'Dealer Profile')
 
-@section('content')
-<div class="content-header row">
-    <div class="content-header-left col-md-9 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-left mb-0">Profile</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dealer.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Edit Profile</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Profile</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dealer.dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Edit Profile</li>
+    </ol>
 </div>
+@endsection
 
-<div class="content-body">
+@section('content')
     @if(session()->has('admin_id'))
         <div class="alert alert-warning">
             <div class="alert-body d-flex justify-content-between align-items-center">
@@ -75,5 +68,4 @@
             </div>
         </div>
     </section>
-</div>
 @endsection

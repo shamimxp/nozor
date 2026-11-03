@@ -1,6 +1,23 @@
 @extends('layouts.admin')
 @section('title', 'Create Dealer Order - ' . $orderNumber)
 
+@section('breadcrumb')
+<h2 class="content-header-title float-left mb-0">Create Dealer Order</h2>
+<div class="breadcrumb-wrapper">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dealer-order.index') }}">Dealer Orders</a></li>
+        <li class="breadcrumb-item active">{{ $orderNumber }}</li>
+    </ol>
+</div>
+@endsection
+
+@section('content-header-right')
+<a href="{{ route('admin.dealer-order.index') }}" class="btn btn-outline-secondary">
+    <i data-feather="arrow-left" class="mr-50"></i> Back to Orders
+</a>
+@endsection
+
 @section('content')
 <style>
     .invoice-preview-card {
@@ -23,27 +40,6 @@
         top: 0 !important;
     }
 </style>
-
-<div class="content-header row">
-    <div class="content-header-left col-md-8 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-left mb-0">Create Dealer Order</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dealer-order.index') }}">Dealer Orders</a></li>
-                        <li class="breadcrumb-item active">{{ $orderNumber }}</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-header-right col-md-4 col-12 text-md-right mb-2">
-        <a href="{{ route('admin.dealer-order.index') }}" class="btn btn-outline-secondary">
-            <i data-feather="arrow-left" class="mr-50"></i> Back to Orders
-        </a>
-    </div>
-</div>
 
 <form action="{{ route('admin.dealer-order.store') }}" method="POST" enctype="multipart/form-data" id="dealerOrderForm">
     @csrf
