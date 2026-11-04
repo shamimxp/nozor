@@ -614,6 +614,105 @@ footer.main .newsletter {
     }
 }
 
+/*================================================================================
+  Product cards — hover-only animated border
+  Applies to Popular Products, Daily Best Sells, mini lists, shop grids, etc.
+================================================================================*/
+@property --wm-card-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.product-cart-wrap,
+.wm-mini-lists .product-list-small article.wm-mini-product {
+    --wm-card-radius: 15px;
+    position: relative;
+    border-color: #e8edf5 !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.wm-mini-lists .product-list-small article.wm-mini-product {
+    --wm-card-radius: 12px;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 10px 8px;
+    border-radius: var(--wm-card-radius);
+    background: #fff;
+    border: 1px solid #e8edf5;
+}
+
+.wm-mini-lists .product-list-small article.wm-mini-product:not(:last-child) {
+    margin-bottom: 14px;
+}
+
+/* Traveling brand border — only while hovered */
+.product-cart-wrap::before,
+.wm-mini-lists .product-list-small article.wm-mini-product::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+        from var(--wm-card-angle),
+        transparent 0deg,
+        transparent 220deg,
+        rgba(203, 33, 39, 0.15) 260deg,
+        #cb2127 300deg,
+        #ff7a7e 330deg,
+        rgba(203, 33, 39, 0.15) 350deg,
+        transparent 360deg
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+            mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 6;
+    transition: opacity 0.2s ease;
+}
+
+.product-cart-wrap:hover,
+.wm-mini-lists .product-list-small article.wm-mini-product:hover {
+    border-color: rgba(203, 33, 39, 0.45) !important;
+    box-shadow: 0 12px 28px rgba(17, 28, 56, 0.1) !important;
+}
+
+.product-cart-wrap:hover::before,
+.wm-mini-lists .product-list-small article.wm-mini-product:hover::before {
+    opacity: 1;
+    animation: wm-card-border-spin 2.2s linear infinite;
+}
+
+@keyframes wm-card-border-spin {
+    to { --wm-card-angle: 360deg; }
+}
+
+/* Shop list view keeps its own layout hover */
+.product-list .product-cart-wrap:hover {
+    box-shadow: none !important;
+}
+
+.product-list .product-cart-wrap::before {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-cart-wrap:hover::before,
+    .wm-mini-lists .product-list-small article.wm-mini-product:hover::before {
+        animation: none;
+        background: #cb2127;
+        padding: 1px;
+        opacity: 0.9;
+    }
+}
+
 /* Daily Best Sells — vertical machinery ad */
 .wm-bestsells-banner {
     position: relative;

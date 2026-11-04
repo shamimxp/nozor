@@ -671,14 +671,14 @@
     </section>
     <!--End Best Sales-->
     <!--End Deals-->
-    <section class="section-padding mb-30">
+    <section class="section-padding mb-30 wm-mini-lists">
         <div class="container">
             <div class="row">
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-sm-5 mb-md-0 wow animate__animated animate__fadeInUp" data-wow-delay="0">
                     <h4 class="section-title style-1 mb-30 animated animated">Top Selling</h4>
                     <div class="product-list-small animated animated">
                         @foreach($topSellingProducts as $product)
-                            <article class="row align-items-center hover-up">
+                            <article class="row align-items-center hover-up wm-mini-product">
                                 <figure class="col-md-4 mb-0">
                                     <a href="{{ route('product.details', encrypt($product->id)) }}"><img src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{ $product->name }}" /></a>
                                 </figure>
@@ -723,7 +723,7 @@
                     <h4 class="section-title style-1 mb-30 animated animated">Trending Products</h4>
                     <div class="product-list-small animated animated">
                         @foreach($featuredProducts3 as $product)
-                            <article class="row align-items-center hover-up">
+                            <article class="row align-items-center hover-up wm-mini-product">
                                 <figure class="col-md-4 mb-0">
                                     <a href="{{ route('product.details', encrypt($product->id)) }}"><img src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{ $product->name }}" /></a>
                                 </figure>
@@ -768,7 +768,7 @@
                     <h4 class="section-title style-1 mb-30 animated animated">Recently added</h4>
                     <div class="product-list-small animated animated">
                         @foreach($recentProducts3 as $product)
-                            <article class="row align-items-center hover-up">
+                            <article class="row align-items-center hover-up wm-mini-product">
                                 <figure class="col-md-4 mb-0">
                                     <a href="{{ route('product.details', encrypt($product->id)) }}"><img src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{ $product->name }}" /></a>
                                 </figure>
@@ -813,7 +813,7 @@
                     <h4 class="section-title style-1 mb-30 animated animated">Top Rated</h4>
                     <div class="product-list-small animated animated">
                         @foreach($topRatedProducts3 as $product)
-                        <article class="row align-items-center hover-up">
+                        <article class="row align-items-center hover-up wm-mini-product">
                             <figure class="col-md-4 mb-0">
                                 <a href="{{ route('product.details', encrypt($product->id)) }}"><img src="{{ $product->featured_image ? asset(config('imagepath.product') . $product->featured_image) : asset('images/no-image.png') }}" alt="{{ $product->name }}" /></a>
                             </figure>
