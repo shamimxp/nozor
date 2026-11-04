@@ -1,15 +1,6 @@
 @extends('frontend.layouts.app')
 @section('content')
 <style>
-    /* Brand related background color */
-    .bg-brand-light {
-        background-color: #fdede7 !important; /* Very Light Peach from logo */
-        transition: all 0.3s ease;
-    }
-    .bg-brand-light:hover {
-        background-color: #f9d2c5 !important; /* Slightly darker peach on hover */
-    }
-
     /* Prevent FOUC (Flash of Unstyled Content) before Slick JS loads */
     .hero-slider-1:not(.slick-initialized) {
         display: block;
@@ -22,11 +13,12 @@
     .carausel-10-columns:not(.slick-initialized) {
         display: flex;
         overflow: hidden;
-        gap: 15px;
+        gap: 14px;
     }
-    .carausel-10-columns:not(.slick-initialized) .card-2 {
+    .carausel-10-columns:not(.slick-initialized) .card-2,
+    .carausel-10-columns:not(.slick-initialized) .wm-cat-card {
         flex: 0 0 auto;
-        width: 135px;
+        width: 128px;
     }
 
     .carausel-4-columns:not(.slick-initialized) {
@@ -72,28 +64,33 @@
         </div>
     </section>
     <!--End hero slider-->
-    <section class="popular-categories section-padding">
+    <section class="popular-categories section-padding wm-categories">
         <div class="container wow animate__animated animate__fadeIn">
-            <div class="section-title">
+            <div class="section-title wm-categories__head">
                 <div class="title">
                     <h3>Featured Categories</h3>
+                    <p class="wm-categories__sub">CNC bits, blades, cutters &amp; workshop essentials</p>
                 </div>
-                <div class="slider-arrow slider-arrow-2 flex-right carausel-10-columns-arrow" id="carausel-10-columns-arrows"></div>
+                <div class="wm-categories__actions">
+                    <a href="{{ route('shop') }}" class="wm-categories__all">View all</a>
+                    <div class="slider-arrow slider-arrow-2 flex-right carausel-10-columns-arrow" id="carausel-10-columns-arrows"></div>
+                </div>
             </div>
             <div class="carausel-10-columns-cover position-relative">
                 <div class="carausel-10-columns" id="carausel-10-columns">
                    @foreach($categories as $category)
-                    <div class="card-2 bg-brand-light wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
-                        <figure class="img-hover-scale overflow-hidden">
-                            <a href="{{route('category.products',$category->slug)}}">
-                                <img src="{{ $category->image
-                             ? asset(config('imagepath.category') . $category->image)
-                             : asset('images/no-image.png') }}" alt="" />
-                            </a>
-                        </figure>
-                        <h6><a href="{{route('category.products',$category->slug)}}">{{$category->name}}</a></h6>
-                        <span>{{$category->products_count}} items</span>
-                    </div>
+                    <a href="{{ route('category.products', $category->slug) }}" class="card-2 wm-cat-card wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
+                        <span class="wm-cat-card__media">
+                            <img
+                                src="{{ $category->image ? asset(config('imagepath.category') . $category->image) : asset('images/no-image.png') }}"
+                                alt="{{ $category->name }}"
+                            >
+                        </span>
+                        <span class="wm-cat-card__body">
+                            <span class="wm-cat-card__name">{{ $category->name }}</span>
+                            <span class="wm-cat-card__count">{{ $category->products_count }} {{ $category->products_count == 1 ? 'item' : 'items' }}</span>
+                        </span>
+                    </a>
                    @endforeach
                 </div>
             </div>

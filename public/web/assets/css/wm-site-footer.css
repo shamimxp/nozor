@@ -615,21 +615,184 @@ footer.main .newsletter {
 }
 
 /*================================================================================
-  Product cards — hover-only animated border
-  Applies to Popular Products, Daily Best Sells, mini lists, shop grids, etc.
+  Featured Categories — WOOD Machinery custom carousel
 ================================================================================*/
-@property --wm-card-angle {
-    syntax: "<angle>";
-    initial-value: 0deg;
-    inherits: false;
+.wm-categories {
+    padding-top: 18px;
+    padding-bottom: 10px;
+    background:
+        radial-gradient(ellipse 60% 80% at 0% 0%, rgba(203, 33, 39, 0.04), transparent 55%),
+        linear-gradient(180deg, #f7f9fc 0%, #ffffff 100%);
 }
 
+.wm-categories__head {
+    align-items: flex-end;
+    margin-bottom: 22px !important;
+}
+
+.wm-categories__head .title h3 {
+    color: var(--wm-navy);
+    margin-bottom: 4px;
+}
+
+.wm-categories__sub {
+    margin: 0;
+    font-size: 14px;
+    color: var(--wm-muted);
+    font-weight: 500;
+}
+
+.wm-categories__actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.wm-categories__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--wm-brand);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.wm-categories__all:hover {
+    color: var(--wm-navy);
+}
+
+.wm-categories .slider-arrow-2 .slider-btn {
+    background: #fff !important;
+    border: 1px solid var(--wm-line) !important;
+    color: var(--wm-navy) !important;
+    box-shadow: 0 6px 16px rgba(17, 28, 56, 0.06);
+}
+
+.wm-categories .slider-arrow-2 .slider-btn:hover {
+    background: var(--wm-brand) !important;
+    border-color: var(--wm-brand) !important;
+    color: #fff !important;
+}
+
+.wm-categories .carausel-10-columns .card-2.wm-cat-card,
+.wm-cat-card {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    min-height: 0 !important;
+    height: auto !important;
+    margin-bottom: 4px;
+    padding: 10px 8px 8px !important;
+    text-align: center;
+    text-decoration: none !important;
+    background: #fff !important;
+    border: 1px solid var(--wm-line) !important;
+    border-radius: 12px !important;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wm-cat-card__media {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f3f6fb;
+    border: 1px solid rgba(17, 28, 56, 0.06);
+    flex-shrink: 0;
+}
+
+.wm-cat-card__media img {
+    width: 72%;
+    height: 72%;
+    object-fit: contain;
+    display: block;
+}
+
+.wm-cat-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    width: 100%;
+}
+
+.wm-cat-card__name {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--wm-navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wm-cat-card__count {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--wm-muted);
+    background: #f3f6fb;
+    width: fit-content;
+}
+
+/* Same simple hover border language as .product-cart-wrap */
+.wm-categories .card-2.wm-cat-card:hover,
+.wm-cat-card:hover {
+    border: 1px solid var(--wm-brand) !important;
+    box-shadow: 0 10px 22px rgba(17, 28, 56, 0.08) !important;
+    background: #fff !important;
+}
+
+.wm-cat-card:hover .wm-cat-card__name {
+    color: var(--wm-brand);
+}
+
+.wm-cat-card:hover .wm-cat-card__count {
+    color: var(--wm-brand);
+    background: rgba(203, 33, 39, 0.08);
+}
+
+.wm-cat-card::before,
+.wm-categories .card-2.wm-cat-card::before {
+    display: none !important;
+    content: none !important;
+    animation: none !important;
+}
+
+@media (max-width: 575.98px) {
+    .wm-categories__head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .wm-categories__actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/*================================================================================
+  Product cards — simple brand border on hover
+  Applies to Popular Products, Daily Best Sells, mini lists, shop grids, etc.
+================================================================================*/
 .product-cart-wrap,
 .wm-mini-lists .product-list-small article.wm-mini-product {
     --wm-card-radius: 15px;
     position: relative;
     border-color: #e8edf5 !important;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .wm-mini-lists .product-list-small article.wm-mini-product {
@@ -646,71 +809,21 @@ footer.main .newsletter {
     margin-bottom: 14px;
 }
 
-/* Traveling brand border — only while hovered */
 .product-cart-wrap::before,
 .wm-mini-lists .product-list-small article.wm-mini-product::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1.5px;
-    background: conic-gradient(
-        from var(--wm-card-angle),
-        transparent 0deg,
-        transparent 220deg,
-        rgba(203, 33, 39, 0.15) 260deg,
-        #cb2127 300deg,
-        #ff7a7e 330deg,
-        rgba(203, 33, 39, 0.15) 350deg,
-        transparent 360deg
-    );
-    -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-            mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 6;
-    transition: opacity 0.2s ease;
+    display: none !important;
+    content: none !important;
 }
 
 .product-cart-wrap:hover,
 .wm-mini-lists .product-list-small article.wm-mini-product:hover {
-    border-color: rgba(203, 33, 39, 0.45) !important;
-    box-shadow: 0 12px 28px rgba(17, 28, 56, 0.1) !important;
-}
-
-.product-cart-wrap:hover::before,
-.wm-mini-lists .product-list-small article.wm-mini-product:hover::before {
-    opacity: 1;
-    animation: wm-card-border-spin 2.2s linear infinite;
-}
-
-@keyframes wm-card-border-spin {
-    to { --wm-card-angle: 360deg; }
+    border: 1px solid var(--wm-brand) !important;
+    box-shadow: 0 10px 22px rgba(17, 28, 56, 0.08) !important;
 }
 
 /* Shop list view keeps its own layout hover */
 .product-list .product-cart-wrap:hover {
     box-shadow: none !important;
-}
-
-.product-list .product-cart-wrap::before {
-    display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .product-cart-wrap:hover::before,
-    .wm-mini-lists .product-list-small article.wm-mini-product:hover::before {
-        animation: none;
-        background: #cb2127;
-        padding: 1px;
-        opacity: 0.9;
-    }
 }
 
 /* Daily Best Sells — vertical machinery ad */
