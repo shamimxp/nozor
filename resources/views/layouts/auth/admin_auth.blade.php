@@ -8,10 +8,9 @@
     <meta name="description" content="Vuexy admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
     <meta name="keywords" content="admin template, Vuexy admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
-    <title>Login Page - Wood-Machinery</title>
+    <title>Admin Login — WOOD Machinery</title>
     <link rel="apple-touch-icon" href="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}">
     <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
     <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin')}}/app-assets/vendors/css/vendors.min.css">
     <!-- END: Vendor CSS-->
@@ -30,6 +29,7 @@
     <!-- END: Page CSS-->
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin')}}/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('admin/assets/css/wm-auth.css') }}?v={{ filemtime(public_path('admin/assets/css/wm-auth.css')) }}">
     <!-- END: Custom CSS-->
 </head>
 <!-- END: Head-->

@@ -1,54 +1,121 @@
 @extends('layouts.auth.seller_auth')
+@section('page-title', 'Worker Login')
+
 @section('content')
-    <div class="auth-wrapper auth-v2">
-        <div class="auth-inner row m-0">
-            <a class="brand-logo" href="javascript:void(0);">
-                <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo" height="28">
-                <h2 class="brand-text text-primary ml-1">My Panel</h2>
-            </a>
-            <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
-                <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
-                    <img class="img-fluid" src="{{ asset('admin/app-assets/images/pages/login-v2.svg') }}" alt="Login V2" />
-                </div>
-            </div>
-            <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
-                <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
-                    <h2 class="card-title font-weight-bold mb-1">Welcome to Worker Panel! 👋</h2>
-                    <p class="card-text mb-2">Sign in with your phone number and password.</p>
+<div class="wm-worker">
+    <span class="wm-worker__spark"></span>
+    <span class="wm-worker__spark"></span>
+    <span class="wm-worker__spark"></span>
+    <span class="wm-worker__spark"></span>
+    <span class="wm-worker__spark"></span>
 
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+    <header class="wm-worker__topbar">
+        <a class="wm-worker__topbar-logo" href="javascript:void(0);">
+            <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="WOOD Machinery">
+        </a>
+        <div class="wm-worker__topbar-tag">My Panel · Shop Floor</div>
+    </header>
 
-                    <form class="auth-login-form mt-2" action="{{ route('mypanel.login.submit') }}" method="POST">
-                        @csrf
-                        <div class="form-group">
-                            <label class="form-label" for="phone">Phone Number</label>
-                            <input class="form-control @error('phone') is-invalid @enderror" id="phone" type="text" name="phone" placeholder="Enter your phone number" autofocus tabindex="1" value="{{ old('phone') }}" />
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <div class="input-group input-group-merge form-password-toggle">
-                                <input class="form-control form-control-merge @error('password') is-invalid @enderror" id="password" type="password" name="password" placeholder="············" tabindex="2" />
-                                <div class="input-group-append"><span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" id="remember-me" type="checkbox" name="remember" tabindex="3" />
-                                <label class="custom-control-label" for="remember-me"> Remember Me</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block" tabindex="4">Sign in</button>
-                    </form>
-                </div>
+    <section class="wm-worker__hero">
+        <svg class="wm-worker__gear" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <path fill="#f0a202" d="M43.5 8.2l2.4 10.8 9.8-5.2 5.2 9.8 10.8-2.4 2.4 10.8 10.8 2.4-2.4 10.8 9.8 5.2-5.2 9.8 5.2 9.8-9.8 5.2 2.4 10.8-10.8 2.4-2.4 10.8-10.8-2.4-5.2 9.8-9.8-5.2-2.4 10.8-10.8-2.4 2.4-10.8-9.8-5.2 5.2-9.8-5.2-9.8 9.8-5.2-2.4-10.8 10.8-2.4 2.4-10.8 10.8 2.4 5.2-9.8 9.8 5.2zM50 35a15 15 0 100 30 15 15 0 000-30z"/>
+        </svg>
+        <svg class="wm-worker__gear wm-worker__gear--sm" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <path fill="#f0a202" d="M43.5 8.2l2.4 10.8 9.8-5.2 5.2 9.8 10.8-2.4 2.4 10.8 10.8 2.4-2.4 10.8 9.8 5.2-5.2 9.8 5.2 9.8-9.8 5.2 2.4 10.8-10.8 2.4-2.4 10.8-10.8-2.4-5.2 9.8-9.8-5.2-2.4 10.8-10.8-2.4 2.4-10.8-9.8-5.2 5.2-9.8-5.2-9.8 9.8-5.2-2.4-10.8 10.8-2.4 2.4-10.8 10.8 2.4 5.2-9.8 9.8 5.2zM50 35a15 15 0 100 30 15 15 0 000-30z"/>
+        </svg>
+
+        <a class="wm-worker__logo" href="javascript:void(0);">
+            <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="WOOD Machinery">
+        </a>
+        <div class="wm-worker__tag">My Panel · Shop Floor</div>
+        <h1>Your <em>manufacture</em> day starts here</h1>
+        <p>Check assigned orders, invoices and payouts — built for workers on the floor.</p>
+
+        <ul class="wm-worker__points">
+            <li>Assigned manufacture orders</li>
+            <li>Invoice &amp; payment history</li>
+            <li>Profile &amp; password update</li>
+        </ul>
+    </section>
+
+    <section class="wm-worker__panel">
+        <div class="wm-worker__panel-inner">
+            <div class="wm-worker__panel-head">
+                <h2>Worker sign in</h2>
+                <span>Phone + password</span>
             </div>
+
+            @if($errors->any())
+                <div class="wm-alert">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form class="auth-login-form" action="{{ route('mypanel.login.submit') }}" method="POST">
+                @csrf
+                <div class="wm-field">
+                    <label for="phone">Phone number</label>
+                    <input
+                        class="wm-input @error('phone') is-invalid @enderror"
+                        id="phone"
+                        type="text"
+                        name="phone"
+                        placeholder="Enter your phone number"
+                        autofocus
+                        tabindex="1"
+                        value="{{ old('phone') }}"
+                    >
+                </div>
+
+                <div class="wm-field">
+                    <label for="password">Password</label>
+                    <div class="wm-pass">
+                        <input
+                            class="wm-input @error('password') is-invalid @enderror"
+                            id="password"
+                            type="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            tabindex="2"
+                        >
+                        <button type="button" class="wm-pass__toggle" data-toggle-pass="#password" aria-label="Show password">
+                            <i data-feather="eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="wm-worker__meta">
+                    <label class="wm-check wm-check--light">
+                        <input type="checkbox" name="remember" tabindex="3">
+                        <span>Remember Me</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="wm-worker__btn" tabindex="4">Open My Panel</button>
+            </form>
+
+            <div class="wm-worker__note">&copy; {{ date('Y') }} WOOD Machinery — Worker access</div>
         </div>
-    </div>
+    </section>
+</div>
+
+<script>
+    document.body.classList.add('wm-auth-worker');
+    document.querySelectorAll('[data-toggle-pass]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var input = document.querySelector(btn.getAttribute('data-toggle-pass'));
+            if (!input) return;
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            if (window.feather) {
+                btn.innerHTML = show ? '<i data-feather="eye-off"></i>' : '<i data-feather="eye"></i>';
+                feather.replace();
+            }
+        });
+    });
+</script>
 @endsection
