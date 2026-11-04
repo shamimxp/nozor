@@ -113,4 +113,28 @@ Route::prefix('dealer')->name('dealer.')->group(function () {
     });
 });
 
+Route::prefix('mypanel')->name('mypanel.')->group(function () {
+    Route::get('/', fn () => redirect()->route('mypanel.login'));
+    Route::get('/login', [\App\Http\Controllers\WorkerPanel\AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\WorkerPanel\AuthController::class, 'login'])->name('login.submit');
+
+    Route::middleware('auth:worker')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\WorkerPanel\DashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/profile', [\App\Http\Controllers\WorkerPanel\ProfileController::class, 'edit'])->name('profile');
+        Route::post('/profile', [\App\Http\Controllers\WorkerPanel\ProfileController::class, 'update'])->name('profile.update');
+
+        Route::post('/logout', [\App\Http\Controllers\WorkerPanel\AuthController::class, 'logout'])->name('logout');
+
+        Route::get('/manufactures', [\App\Http\Controllers\WorkerPanel\ManufactureOrderController::class, 'index'])->name('manufactures.index');
+        Route::get('/manufactures/{id}', [\App\Http\Controllers\WorkerPanel\ManufactureOrderController::class, 'show'])->name('manufactures.show');
+        Route::get('/manufactures/{id}/print', [\App\Http\Controllers\WorkerPanel\ManufactureOrderController::class, 'print'])->name('manufactures.print');
+
+        Route::get('/invoices', [\App\Http\Controllers\WorkerPanel\InvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('/payments', [\App\Http\Controllers\WorkerPanel\InvoiceController::class, 'payments'])->name('payments.index');
+
+        Route::get('/back-to-admin', [\App\Http\Controllers\Admin\WorkerImpersonationController::class, 'backToAdmin'])->name('back');
+    });
+});
+
 require __DIR__.'/auth.php';

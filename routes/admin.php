@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     
     // Worker module
     \App\Support\TrashRoutes::register('worker', \App\Http\Controllers\WorkerController::class, 'worker');
+    Route::get('worker/{id}/login-as', [\App\Http\Controllers\Admin\WorkerImpersonationController::class, 'loginAs'])->name('admin.worker.loginAs');
     Route::resource('worker', \App\Http\Controllers\WorkerController::class, ['as' => 'admin']);
 
     //Dealer module

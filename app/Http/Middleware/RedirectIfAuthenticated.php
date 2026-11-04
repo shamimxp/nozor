@@ -25,6 +25,12 @@ class RedirectIfAuthenticated
         if ($guard == "seller" && Auth::guard($guard)->check()) {
             return redirect(RouteServiceProvider::SELLER_HOME);
         }
+        if ($guard == "dealer" && Auth::guard($guard)->check()) {
+            return redirect()->route('dealer.dashboard');
+        }
+        if ($guard == "worker" && Auth::guard($guard)->check()) {
+            return redirect(RouteServiceProvider::WORKER_HOME);
+        }
         if (Auth::guard($guard)->check()) {
             return redirect(RouteServiceProvider::HOME);
         }

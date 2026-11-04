@@ -24,6 +24,12 @@ class Authenticate extends Middleware
         if ($request->is('seller') || $request->is('seller/*')) {
             return route('seller.login');
         }
+        if ($request->is('dealer') || $request->is('dealer/*')) {
+            return route('dealer.login');
+        }
+        if ($request->is('mypanel') || $request->is('mypanel/*')) {
+            return route('mypanel.login');
+        }
 
         if (! $request->expectsJson()) {
             return route('login');

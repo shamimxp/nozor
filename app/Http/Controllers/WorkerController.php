@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Models\Worker;
 use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,9 +52,10 @@ class WorkerController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('admin.worker.show', $row->id) . '" class="btn btn-info btn-sm" title="View Profile"><i data-feather="eye"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editWorker"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteWorker"><i data-feather="trash"></i></a>';
+                    $btn = '<a href="' . route('admin.worker.show', $row->id) . '" class="btn btn-info btn-sm mr-1" title="View Profile"><i data-feather="eye"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editWorker" title="Edit"><i data-feather="edit"></i></a>';
+                    $btn .= '<a href="' . route('admin.worker.loginAs', $row->id) . '" class="btn btn-success btn-sm mr-1" title="Login As Worker"><i data-feather="log-in"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteWorker" title="Delete"><i data-feather="trash"></i></a>';
                     return $btn;
                 })
                 ->rawColumns(['action', 'status_label', 'image'])
@@ -77,7 +77,7 @@ class WorkerController extends Controller
         ]);
 
         $data = $request->except(['password', 'password_confirmation', 'profile_image']);
-        $data['password'] = Hash::make($request->password);
+        $data['password'] = $request->password;
 
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $request->file('profile_image')->store('workers', 'public');
@@ -298,7 +298,7 @@ class WorkerController extends Controller
         $data = $request->except(['password', 'password_confirmation', 'profile_image']);
         
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = $request->password;
         }
 
         if ($request->hasFile('profile_image')) {
