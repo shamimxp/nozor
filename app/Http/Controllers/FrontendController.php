@@ -16,14 +16,13 @@ class FrontendController extends Controller
     {
         $categories = Category::where('status', 1)
             ->withCount(['products' => function ($query) {
-                $query->where('status', 1);
+                $query->website();
             }])
             ->get();
 
         $banners = Banner::where('status',1)->get();
         $products = Product::with('gallery')
-            ->where('status', 1)
-            ->forCustomer()
+            ->website()
             ->latest()
             ->take(20)
             ->get();
@@ -50,23 +49,22 @@ class FrontendController extends Controller
 
         $topSellingProducts = collect();
         if (!empty($topProductIds)) {
-            $topSellingProductsResult = Product::with('category')->where('status', 1)->forCustomer()->whereIn('id', $topProductIds)->get();
+            $topSellingProductsResult = Product::with('category')->website()->whereIn('id', $topProductIds)->get();
             $topSellingProducts = collect($topProductIds)->map(function ($id) use ($topSellingProductsResult) {
                 return $topSellingProductsResult->where('id', $id)->first();
             })->filter();
         } else {
-            $topSellingProducts = Product::with( 'category')->where('status', 1)->forCustomer()->take(3)->get();
+            $topSellingProducts = Product::with('category')->website()->take(3)->get();
         }
 
-        $featuredProducts3 = Product::with( 'category')->where('status', 1)->forCustomer()->where('is_featured', 1)->inRandomOrder()->take(3)->get();
+        $featuredProducts3 = Product::with('category')->website()->where('is_featured', 1)->inRandomOrder()->take(3)->get();
 
-        $recentProducts3 = Product::with( 'category')->where('status', 1)->forCustomer()->latest()->take(3)->get();
+        $recentProducts3 = Product::with('category')->website()->latest()->take(3)->get();
 
-        $featuredProducts = Product::where('status', 1)->forCustomer()->where('is_featured', 1)->latest()->take(20)->get();
+        $featuredProducts = Product::website()->where('is_featured', 1)->latest()->take(20)->get();
 
         $topRatedProducts3 = Product::with('approvedReviews')
-            ->where('status', 1)
-            ->forCustomer()
+            ->website()
             ->whereHas('approvedReviews', function($q) {
                 $q->where('rating', '>=', 4);
             })
@@ -76,8 +74,7 @@ class FrontendController extends Controller
 
         if ($topRatedProducts3->count() < 3) {
             $needed = 3 - $topRatedProducts3->count();
-            $additional = Product::where('status', 1)
-                ->forCustomer()
+            $additional = Product::website()
                 ->whereNotIn('id', $topRatedProducts3->pluck('id'))
                 ->inRandomOrder()
                 ->take($needed)
@@ -142,7 +139,7 @@ class FrontendController extends Controller
         $query = $request->get('q');
         $categoryId = $request->get('category');
         
-        $productsQuery = \App\Models\Product::where('status', 1)->forCustomer()->where('name', 'LIKE', '%' . $query . '%');
+        $productsQuery = \App\Models\Product::website()->where('name', 'LIKE', '%' . $query . '%');
         
         if (!empty($categoryId)) {
             $category = \App\Models\Category::where('slug', $categoryId)->first();
@@ -186,7 +183,7 @@ class FrontendController extends Controller
         return response()->json(['html' => $html]);
     }
     public function shop(Request $request, $slug = null){
-        $query = \App\Models\Product::with('category')->where('status', 1)->forCustomer();
+        $query = \App\Models\Product::with('category')->website();
 
         if ($slug) {
             $category = \App\Models\Category::where('slug', $slug)->first();
@@ -245,7 +242,7 @@ class FrontendController extends Controller
 
         // Initial page load: show first 50 products
         $products = (clone $query)->take(50)->get();
-        $categories = \App\Models\Category::withCount('products')->where('status', 1)->take(10)->get();
+        $categories = \App\Models\Category::withCount(['products' => function ($query) { $query->website(); }])->where('status', 1)->take(10)->get();
 
         return view('frontend.page.shop', compact('products', 'categories', 'settings', 'totalProducts'));
     }
@@ -255,10 +252,9 @@ class FrontendController extends Controller
     public function details($id){
         $product = Product::with(['gallery','category', 'variations.variationValue', 'variations.variation', 'reviews' => function($q) {
             $q->where('status', 1)->latest();
-        }])->forCustomer()->findOrFail(decrypt($id));
+        }])->website()->findOrFail(decrypt($id));
 
-        $relatedProducts = Product::where('status', 1)
-            ->forCustomer()
+        $relatedProducts = Product::website()
             ->where('category_id', $product->category_id);
 
         if ($product->sub_category_id) {
@@ -270,15 +266,14 @@ class FrontendController extends Controller
             ->take(8)
             ->get();
 
-        $newProducts = Product::where('status', 1)
-            ->forCustomer()
+        $newProducts = Product::website()
              ->where('id', '!=', $product->id)
             ->latest()
             ->take(6)
             ->get()
             ->shuffle();
 
-        $categories = \App\Models\Category::withCount('products')->where('status', 1)->take(10)->get();
+        $categories = \App\Models\Category::withCount(['products' => function ($query) { $query->website(); }])->where('status', 1)->take(10)->get();
 
         return view('frontend.page.product_details',compact('product', 'relatedProducts', 'newProducts', 'categories'));
     }
@@ -420,7 +415,9 @@ class FrontendController extends Controller
             abort(404, 'Invalid product.');
         }
 
-        $product = Product::with('gallery', 'category', 'variations.variationValue', 'variations.variation')->findOrFail($id);
+        $product = Product::with('gallery', 'category', 'variations.variationValue', 'variations.variation')
+            ->website()
+            ->findOrFail($id);
         $settings = \App\Models\WebSetting::first();
 
         // Calculate final price
@@ -452,10 +449,10 @@ class FrontendController extends Controller
         \App\Models\Cart::where('created_at', '<', now()->subDays(10))->delete();
 
         $productId = $request->product_id;
-        $product = Product::find($productId);
+        $product = Product::website()->find($productId);
 
         if (!$product) {
-            return response()->json(['status' => 'error', 'message' => 'Product not found']);
+            return response()->json(['status' => 'error', 'message' => 'Product not available']);
         }
 
         // We use session()->getId() to track guest users' individual data

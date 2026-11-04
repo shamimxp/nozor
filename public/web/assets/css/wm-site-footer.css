@@ -321,6 +321,109 @@ a.btn-brand:hover,
     color: var(--wm-brand) !important;
 }
 
+/* Section title underline (Top Selling / Trending / etc.) → logo red */
+.section-title.style-1::after {
+    background-color: var(--wm-brand) !important;
+}
+
+/* Quantity stepper — Quick View / product details / cart */
+.detail-extralink .detail-qty,
+.detail-qty.wm-qty,
+.wm-qty {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    position: relative !important;
+    gap: 0;
+    max-width: 108px !important;
+    min-width: 96px;
+    height: 50px !important;
+    padding: 0 36px 0 14px !important;
+    margin: 0 10px 0 0 !important;
+    background: #fff !important;
+    border: 1.5px solid var(--wm-line) !important;
+    border-radius: 10px !important;
+    color: var(--wm-navy) !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.detail-extralink .detail-qty:focus-within,
+.detail-qty.wm-qty:focus-within,
+.wm-qty:focus-within {
+    border-color: var(--wm-brand) !important;
+    box-shadow: 0 0 0 3px rgba(203, 33, 39, 0.12) !important;
+}
+
+.detail-qty.wm-qty > a,
+.wm-qty > a,
+.detail-extralink .detail-qty > a {
+    color: var(--wm-brand) !important;
+    width: 28px;
+    height: 20px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    right: 4px !important;
+    z-index: 2;
+    text-decoration: none !important;
+}
+
+.detail-qty.wm-qty > a.qty-up,
+.detail-extralink .detail-qty > a.qty-up {
+    top: 2px !important;
+}
+
+.detail-qty.wm-qty > a.qty-down,
+.detail-extralink .detail-qty > a.qty-down {
+    bottom: 2px !important;
+}
+
+.detail-qty.wm-qty > a:hover,
+.wm-qty > a:hover,
+.detail-extralink .detail-qty > a:hover {
+    color: var(--wm-brand-hover) !important;
+}
+
+.detail-qty .qty-val,
+.wm-qty .qty-val,
+input.qty-val {
+    width: 100%;
+    max-width: 52px;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    text-align: center;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: var(--wm-navy) !important;
+    line-height: 1.2 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    appearance: textfield;
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+}
+
+/* Kill native number spinners everywhere (prevents double arrows) */
+.detail-qty .qty-val::-webkit-outer-spin-button,
+.detail-qty .qty-val::-webkit-inner-spin-button,
+.wm-qty .qty-val::-webkit-outer-spin-button,
+.wm-qty .qty-val::-webkit-inner-spin-button,
+input.qty-val::-webkit-outer-spin-button,
+input.qty-val::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: none !important;
+    margin: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    opacity: 0 !important;
+}
+
 /* Sort by / nice-select dropdown hover → logo red */
 .nice-select .option:hover,
 .nice-select .option.focus,

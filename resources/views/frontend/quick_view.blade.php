@@ -87,10 +87,10 @@
             @endif
 
             <div class="detail-extralink mb-30">
-                <div class="detail-qty border radius">
-                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                    <input type="text" name="quantity" class="qty-val" value="1" min="1">
-                    <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                <div class="detail-qty border radius wm-qty">
+                    <a href="#" class="qty-down" aria-label="Decrease quantity"><i class="fi-rs-angle-small-down"></i></a>
+                    <input type="text" name="quantity" class="qty-val" value="1" min="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    <a href="#" class="qty-up" aria-label="Increase quantity"><i class="fi-rs-angle-small-up"></i></a>
                 </div>
                 <div class="product-extra-link2">
                     <button type="button" class="button button-add-to-cart add-to-cart-btn" data-id="{{ $product->id }}"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
@@ -140,29 +140,10 @@
             $('.slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
         });
 
-        // Initialize Qty Up-Down for Quick View
-        $('.detail-qty').each(function () {
-            var $this = $(this);
-            var qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
-
-            $this.find('.qty-up').off('click').on('click', function (event) {
-                event.preventDefault();
-                qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
-                qtyval = qtyval + 1;   
-                $(this).prev().val(qtyval).trigger('change');
-            });
-
-             $this.find(".qty-down").off("click").on("click", function (event) {
-                 event.preventDefault(); 
-                 qtyval = parseInt($this.find(".qty-val").val(), 10) || 1;
-                 qtyval = qtyval - 1;
-                 if (qtyval > 0) {
-                     $(this).next().val(qtyval).trigger('change');
-                 } else {
-                     qtyval = 1;
-                     $(this).next().val(qtyval).trigger('change');
-                 }
-             });
+        // Qty controls are handled globally in app layout (min 1, integers only).
+        $('.detail-qty .qty-val').each(function () {
+            var v = parseInt(String($(this).val()).replace(/[^\d]/g, ''), 10);
+            $(this).val((!v || v < 1) ? '1' : String(v));
         });
     })(jQuery);
 </script>

@@ -115,4 +115,16 @@ class Product extends Model
     {
         return $query->where('customer_show', 1);
     }
+
+    /**
+     * Products visible on the public website:
+     * active + customer-visible + selling price greater than 0.
+     */
+    public function scopeWebsite($query)
+    {
+        return $query
+            ->where('status', 1)
+            ->where('customer_show', 1)
+            ->where('selling_price', '>', 0);
+    }
 }

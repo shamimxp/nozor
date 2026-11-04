@@ -73,7 +73,7 @@
                             <td class="text-center detail-info" data-title="Stock">
                                 <div class="detail-extralink mr-15">
                                     <div class="detail-qty border radius mt-1">
-                                        <input type="text" name="quantity[{{ $cItem->id }}]" class="qty-val cart-page-qty-val" value="{{ $cItem->quantity }}" min="1">
+                                        <input type="text" name="quantity[{{ $cItem->id }}]" class="qty-val cart-page-qty-val" value="{{ $cItem->quantity }}" min="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
                                     </div>
                                 </div>
                             </td>

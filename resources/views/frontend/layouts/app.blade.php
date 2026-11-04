@@ -155,21 +155,74 @@
         });
     });
 
-    // ── Quantity stepper for dynamically loaded content (Quick View modal) ──
+    // ── Quantity: integers only, minimum 1 (Quick View / product / cart) ──
+    function wmNormalizeQty($input) {
+        var raw = String($input.val() == null ? '' : $input.val());
+        var digits = raw.replace(/[^\d]/g, '').replace(/^0+/, '');
+        var val = parseInt(digits, 10);
+        if (!Number.isFinite(val) || val < 1) {
+            val = 1;
+        }
+        $input.val(String(val));
+        return val;
+    }
+
+    $(document).on('input change blur', '.qty-val', function() {
+        wmNormalizeQty($(this));
+    });
+
+    $(document).on('paste', '.qty-val', function() {
+        var $input = $(this);
+        setTimeout(function() { wmNormalizeQty($input); }, 0);
+    });
+
+    $(document).on('keydown', '.qty-val', function(e) {
+        var key = e.key;
+        var $input = $(this);
+        var current = String($input.val() || '');
+        var start = this.selectionStart || 0;
+        var end = this.selectionEnd || 0;
+
+        // Allow control/navigation keys
+        if (
+            e.ctrlKey || e.metaKey || e.altKey ||
+            ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].indexOf(key) !== -1
+        ) {
+            return;
+        }
+
+        // Digits only
+        if (!/^\d$/.test(key)) {
+            e.preventDefault();
+            return;
+        }
+
+        // Preview next value and block anything that becomes < 1 (0, 00, empty+0)
+        var next = current.slice(0, start) + key + current.slice(end);
+        var nextDigits = next.replace(/[^\d]/g, '').replace(/^0+/, '');
+        var nextVal = parseInt(nextDigits, 10);
+        if (!Number.isFinite(nextVal) || nextVal < 1) {
+            e.preventDefault();
+            $input.val('1');
+        }
+    });
+
     $(document).on('click', '.qty-up', function(e) {
         e.preventDefault();
         var $input = $(this).closest('.detail-qty').find('.qty-val');
-        var val = parseInt($input.val()) || 1;
-        $input.val(val + 1);
+        var val = wmNormalizeQty($input);
+        $input.val(String(val + 1)).trigger('change');
     });
 
     $(document).on('click', '.qty-down', function(e) {
         e.preventDefault();
         var $input = $(this).closest('.detail-qty').find('.qty-val');
-        var val = parseInt($input.val()) || 1;
-        if (val > 1) {
-            $input.val(val - 1);
+        var val = wmNormalizeQty($input);
+        if (val <= 1) {
+            $input.val('1');
+            return;
         }
+        $input.val(String(val - 1)).trigger('change');
     });
 
     $(document).on('click', '.add-to-cart-btn', function(e) {
@@ -181,7 +234,10 @@
         let qty = 1;
         let qtyInput = btn.closest('.detail-info').find('.qty-val');
         if(qtyInput.length) {
-            qty = qtyInput.val();
+            qty = wmNormalizeQty(qtyInput);
+        }
+        if (!qty || qty < 1) {
+            qty = 1;
         }
 
         let _token = '{{ csrf_token() }}';
