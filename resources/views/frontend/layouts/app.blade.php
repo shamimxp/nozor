@@ -50,8 +50,8 @@
     .custom-preloader {
         width: 60px;
         height: 60px;
-        border: 6px solid rgba(241, 88, 34, 0.2);
-        border-top-color: #F15822; /* Primary Color */
+        border: 6px solid rgba(203, 33, 39, 0.2);
+        border-top-color: #CB2127; /* Logo brand red */
         border-radius: 50%;
         animation: custom-spin 2.5s linear infinite; /* 2.5 second duration */
     }
@@ -281,7 +281,7 @@
                 }
                 if(response.status === 'added') {
                     toastr.success(response.message);
-                    btn.find('i').css('color', '#F15822');
+                    btn.find('i').css('color', '#CB2127');
                 } else if(response.status === 'removed') {
                     toastr.info(response.message);
                     btn.find('i').css('color', '');

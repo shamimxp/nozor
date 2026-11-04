@@ -5,12 +5,154 @@
 :root {
     --wm-navy: #111c38;
     --wm-navy-deep: #0b1220;
+    /* Logo brand red from edited_red_letters.svg (#CB2127) */
     --wm-brand: #cb2127;
+    --wm-brand-hover: #a81a1f;
     --wm-brand-soft: rgba(203, 33, 39, 0.1);
+    --wm-brand-soft-2: #fdecec;
     --wm-ink: #1e293b;
     --wm-muted: #64748b;
     --wm-line: #e8edf5;
     --wm-soft: #f5f7fb;
+}
+
+/*================================================================================
+  Global brand remaps — replace Nest orange (#f15822) / mint with logo red
+================================================================================*/
+.text-brand,
+a.text-brand {
+    color: var(--wm-brand) !important;
+}
+
+/* Primary Nest buttons → logo red */
+.btn,
+.button,
+button.btn,
+.btn-brand,
+#load-more-btn,
+button.btn-brand,
+a.btn-brand,
+.banner-img .btn,
+.banner-big .btn,
+.deal .btn,
+.newsletter .form-subcriber button,
+.wm-newsletter .form-subcriber button {
+    background-color: var(--wm-brand) !important;
+    border-color: var(--wm-brand) !important;
+    color: #fff !important;
+}
+
+.btn:hover,
+.button:hover,
+.btn-brand:hover,
+#load-more-btn:hover,
+button.btn-brand:hover,
+a.btn-brand:hover,
+.banner-img .btn:hover,
+.banner-big .btn:hover,
+.deal .btn:hover,
+.newsletter .form-subcriber button:hover,
+.wm-newsletter .form-subcriber button:hover {
+    background-color: var(--wm-brand-hover) !important;
+    border-color: var(--wm-brand-hover) !important;
+    color: #fff !important;
+}
+
+/* Product price */
+.product-cart-wrap .product-content-wrap .product-price span,
+.product-cart-wrap .product-content-wrap .product-price span.new-price,
+.product-list-small .product-price,
+.product-list-small .product-price span,
+.detail-info .product-price .current-price {
+    color: var(--wm-brand) !important;
+}
+
+/* Vendor “By …” link */
+.product-cart-wrap .product-content-wrap .font-small a {
+    color: var(--wm-brand) !important;
+}
+
+/* Discount / badge tags */
+.product-cart-wrap .product-badges span.hot,
+.product-cart-wrap .product-badges span.new,
+.product-cart-wrap .product-badges span.sale,
+.product-cart-wrap .product-badges span.best,
+.vendor-wrap .product-badges.product-badges-position span.hot,
+.vendor-wrap .product-badges.product-badges-position span.new,
+.vendor-wrap .product-badges.product-badges-position span.sale,
+.vendor-wrap .product-badges.product-badges-position span.best {
+    background-color: var(--wm-brand) !important;
+}
+
+/* Add button — soft brand idle, solid brand hover */
+.product-cart-wrap .product-card-bottom .add-cart .add {
+    background-color: var(--wm-brand-soft-2) !important;
+    color: var(--wm-brand) !important;
+}
+
+.product-cart-wrap .product-card-bottom .add-cart .add:hover,
+.product-cart-wrap .product-card-bottom .add-cart .add:focus {
+    background-color: var(--wm-brand) !important;
+    color: #fff !important;
+}
+
+.product-cart-wrap .product-content-wrap .add-to-cart:hover {
+    background-color: var(--wm-brand) !important;
+    color: #fff !important;
+}
+
+/* Full-width Add To Cart buttons in carousels */
+.product-cart-wrap .btn.add-to-cart-btn,
+.product-cart-wrap a.btn.add-to-cart-btn {
+    background-color: var(--wm-brand) !important;
+    border-color: var(--wm-brand) !important;
+    color: #fff !important;
+}
+
+.product-cart-wrap .btn.add-to-cart-btn:hover,
+.product-cart-wrap a.btn.add-to-cart-btn:hover {
+    background-color: var(--wm-brand-hover) !important;
+    border-color: var(--wm-brand-hover) !important;
+}
+
+/* Header / nav accents that were Nest orange */
+.hotline p,
+.header-style-1 .hotline p {
+    color: var(--wm-brand) !important;
+}
+
+.categories-button-active,
+.header-style-1 .main-categori-wrap > a,
+.header-style-1 .main-categori-wrap > a:hover,
+.header-style-1 .main-categori-wrap > a.categories-button-active {
+    background: var(--wm-brand) !important;
+    background-color: var(--wm-brand) !important;
+    border-color: var(--wm-brand) !important;
+}
+
+.header-action-2 .search-button,
+.search-style-2 form button,
+.search button,
+.header-action-icon-2 span.pro-count.blue,
+.header-action-icon-2 span.pro-count {
+    background-color: var(--wm-brand) !important;
+}
+
+.main-menu nav > ul > li > a:hover,
+.main-menu nav > ul > li.active > a,
+.main-menu nav > ul > li:hover > a {
+    color: var(--wm-brand) !important;
+}
+
+/* Nest green/orange hover borders → logo red */
+.product-cart-wrap:hover,
+.card-2:hover {
+    border-color: var(--wm-brand) !important;
+}
+
+/* Add button default text was Nest orange */
+.product-cart-wrap .product-card-bottom .add-cart .add i {
+    color: inherit;
 }
 
 /* Remove Nest template spacing that created the huge gap */
