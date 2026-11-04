@@ -1299,3 +1299,350 @@ footer.main .newsletter {
     color: #fff !important;
     font-weight: 700;
 }
+
+/*================================================================================
+  Customer Login / Register — wood machinery storefront auth
+================================================================================*/
+.wm-auth-page {
+    padding: 48px 0 88px;
+    background:
+        radial-gradient(ellipse 70% 50% at 10% 0%, rgba(203, 33, 39, 0.06), transparent 55%),
+        linear-gradient(180deg, #f3f5f9 0%, #eef1f6 100%);
+}
+
+.wm-auth-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    min-height: 560px;
+    overflow: hidden;
+    border: 1px solid rgba(17, 28, 56, 0.08);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(17, 28, 56, 0.08);
+}
+
+.wm-auth-visual {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100%;
+    padding: 36px 40px 40px;
+    color: #fff;
+    overflow: hidden;
+    background: var(--wm-navy-deep);
+}
+
+.wm-auth-visual__media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.04);
+    filter: saturate(0.92) contrast(1.05);
+    z-index: 0;
+    animation: wm-auth- ken 18s ease-in-out infinite alternate;
+}
+
+.wm-auth-visual__shade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(115deg, rgba(11, 18, 32, 0.92) 18%, rgba(17, 28, 56, 0.72) 58%, rgba(203, 33, 39, 0.38) 100%),
+        linear-gradient(0deg, rgba(11, 18, 32, 0.55), transparent 42%);
+}
+
+.wm-auth-visual__grid {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0.18;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 85%);
+    pointer-events: none;
+}
+
+.wm-auth-visual__content {
+    position: relative;
+    z-index: 3;
+    max-width: 420px;
+}
+
+.wm-auth-visual__logo {
+    display: block;
+    height: 42px;
+    width: auto;
+    margin-bottom: 28px;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+}
+
+.wm-auth-visual__kicker {
+    display: inline-block;
+    margin: 0 0 12px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.wm-auth-visual h2 {
+    margin: 0 0 14px;
+    color: #fff;
+    font-size: clamp(1.65rem, 2.4vw, 2.15rem);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.wm-auth-visual__lead {
+    margin: 0 0 28px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+.wm-auth-visual__points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.wm-auth-visual__points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.wm-auth-visual__icon {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(203, 33, 39, 0.92);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(203, 33, 39, 0.28);
+}
+
+.wm-auth-visual__icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.wm-auth-form {
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+}
+
+.wm-auth-form__inner {
+    width: 100%;
+    padding: 48px 44px;
+}
+
+.wm-auth-form__chip {
+    display: inline-block;
+    margin: 0 0 14px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--wm-brand-soft);
+    color: var(--wm-brand);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.wm-auth-form__title {
+    margin: 0 0 8px;
+    color: var(--wm-navy);
+    font-size: clamp(1.85rem, 2.5vw, 2.35rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+}
+
+.wm-auth-form__sub {
+    margin: 0 0 32px;
+    color: var(--wm-muted);
+    font-size: 15px;
+}
+
+.wm-auth-form__sub a {
+    color: var(--wm-brand) !important;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.wm-auth-form__sub a:hover {
+    color: var(--wm-brand-hover) !important;
+    text-decoration: underline;
+}
+
+.wm-auth-form__fields {
+    display: grid;
+    gap: 18px;
+}
+
+.wm-auth-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--wm-ink);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.wm-auth-field input {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid #d9e0ec;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--wm-ink);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wm-auth-field input::placeholder {
+    color: #94a3b8;
+}
+
+.wm-auth-field input:focus {
+    border-color: var(--wm-brand);
+    box-shadow: 0 0 0 4px var(--wm-brand-soft);
+}
+
+.wm-auth-error {
+    display: block;
+    margin-top: 8px;
+    color: var(--wm-brand);
+    font-size: 13px;
+}
+
+.wm-auth-form__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.wm-auth-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--wm-muted);
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.wm-auth-check input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--wm-brand);
+}
+
+.wm-auth-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 6px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--wm-brand) !important;
+    color: #fff !important;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 14px 28px rgba(203, 33, 39, 0.22);
+}
+
+.wm-auth-submit:hover {
+    background: var(--wm-brand-hover) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(203, 33, 39, 0.28);
+}
+
+@keyframes wm-auth-ken {
+    from { transform: scale(1.04) translate3d(0, 0, 0); }
+    to { transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
+}
+
+@media (max-width: 991.98px) {
+    .wm-auth-page {
+        padding: 28px 0 64px;
+    }
+
+    .wm-auth-shell {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .wm-auth-visual {
+        min-height: 280px;
+        padding: 28px 24px 30px;
+    }
+
+    .wm-auth-visual__logo {
+        height: 34px;
+        margin-bottom: 18px;
+    }
+
+    .wm-auth-visual h2 {
+        font-size: 1.55rem;
+    }
+
+    .wm-auth-visual__lead {
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .wm-auth-visual__points {
+        display: none;
+    }
+
+    .wm-auth-form__inner {
+        padding: 32px 22px 36px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wm-auth-visual__media {
+        animation: none;
+    }
+
+    .wm-auth-submit {
+        transition: none;
+    }
+
+    .wm-auth-submit:hover {
+        transform: none;
+    }
+}
