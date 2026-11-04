@@ -89,6 +89,8 @@ class DraftOrderController extends Controller
                     $btn = '<div class="d-flex align-items-center" style="gap:4px;">';
                     // Show
                     $btn .= '<a href="' . route('admin.draft-orders.show', $r->id) . '" class="btn btn-info btn-sm p-50" title="View Details"><i data-feather="eye" style="width:14px;height:14px;"></i></a>';
+                    // View History
+                    $btn .= '<button type="button" class="btn btn-outline-info btn-sm p-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="draft_order" data-order-number="' . e($r->draft_number) . '" title="View History"><i data-feather="clock" style="width:14px;height:14px;"></i></button>';
                     // Download PDF
                     $btn .= '<a href="' . route('admin.draft-orders.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm p-50" title="Download PDF"><i data-feather="download" style="width:14px;height:14px;"></i></a>';
                     // Print

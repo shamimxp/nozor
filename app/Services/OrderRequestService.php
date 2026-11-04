@@ -8,6 +8,7 @@ use App\Models\DealerOrder;
 use App\Models\DealerOrderItem;
 use App\Models\DraftOrder;
 use App\Models\DraftOrderItem;
+use App\Services\OrderActivityService;
 use Illuminate\Support\Facades\DB;
 
 class OrderRequestService
@@ -33,6 +34,13 @@ class OrderRequestService
                     'confirmed_qty'    => 0,
                 ]);
             }
+
+            // Log Order Request Creation
+            OrderActivityService::logCreated(
+                order: $orderRequest,
+                remarks: $note,
+                properties: ['items_count' => count($items)]
+            );
 
             return $orderRequest;
         });
@@ -171,7 +179,25 @@ class OrderRequestService
                 // 6. Update order_request status
                 $orderRequest->status = 'partially_confirmed';
                 $orderRequest->save();
+
+                OrderActivityService::logStatusChange(
+                    order: $orderRequest,
+                    fromStatus: 'pending',
+                    toStatus: 'partially_confirmed',
+                    remarks: "Items confirmed into Dealer Order #{$order->order_number}."
+                );
             }
+
+            // Log Dealer Order Creation
+            OrderActivityService::logCreated(
+                order: $order,
+                remarks: $orderNote ?: $admin_note,
+                properties: [
+                    'source_request' => $orderRequest->request_number ?? ('#' . $orderRequest->id),
+                    'grand_total'    => (float)$order->grand_total,
+                    'items_count'    => count($orderItemsData),
+                ]
+            );
 
             return $order;
         });
@@ -278,7 +304,24 @@ class OrderRequestService
             } else {
                 $orderRequest->status = 'partially_drafted';
                 $orderRequest->save();
+
+                OrderActivityService::logStatusChange(
+                    order: $orderRequest,
+                    fromStatus: 'pending',
+                    toStatus: 'partially_drafted',
+                    remarks: "Items moved to Draft Order #{$draftOrder->draft_number}."
+                );
             }
+
+            OrderActivityService::logCreated(
+                order: $draftOrder,
+                remarks: $adminNote ?: $orderNote,
+                properties: [
+                    'source_request' => $orderRequest->request_number ?? ('#' . $orderRequest->id),
+                    'grand_total'    => (float)$draftOrder->grand_total,
+                    'items_count'    => count($draftItemsData)
+                ]
+            );
 
             return $draftOrder;
         });
@@ -385,6 +428,17 @@ class OrderRequestService
                     false
                 );
             }
+
+            // Log conversion into Dealer Order
+            OrderActivityService::logCreated(
+                order: $order,
+                remarks: "Converted from Draft Order #{$draftOrder->draft_number}.",
+                properties: [
+                    'source_draft' => $draftOrder->draft_number,
+                    'grand_total'  => (float)$order->grand_total,
+                    'items_count'  => $draftOrder->items->count(),
+                ]
+            );
 
             // Delete draft order and items so draft order is emptied upon conversion
             $draftOrder->items()->delete();

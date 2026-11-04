@@ -208,6 +208,7 @@
     @endforeach
     @endif
 </script>
+@include('admin.partials.order_history_modal')
 </body>
 <!-- END: Body-->
 

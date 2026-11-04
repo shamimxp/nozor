@@ -758,6 +758,28 @@ class FrontendController extends Controller
         \App\Models\Cart::where('session_id', $sessionId)->delete();
         session()->forget('coupon');
 
+        // Log Web Order Creation Activity
+        \App\Services\OrderActivityService::logCreated(
+            order: $order,
+            remarks: $request->note ?: 'Order placed via website checkout.',
+            properties: [
+                'subtotal'        => (float)$order->subtotal,
+                'discount'        => (float)$order->discount,
+                'shipping_charge' => (float)$order->shipping_charge,
+                'total'           => (float)$order->total,
+                'payment_method'  => $order->payment_method,
+                'items_count'     => $cartItems->count(),
+                'customer_name'   => $request->name,
+                'customer_phone'  => $request->phone,
+                'billing_address' => $request->billing_address,
+            ],
+            customActor: [
+                'id'   => auth()->check() ? auth()->id() : null,
+                'name' => auth()->check() ? (auth()->user()->name ?? 'Customer') : ($request->name . ' (Guest)'),
+                'type' => 'customer'
+            ]
+        );
+
         return redirect()->route('index')->with('success', 'Order placed successfully!');
     }
 

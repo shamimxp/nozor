@@ -20,6 +20,9 @@
                 <div class="card">
                     <div class="card-body d-flex flex-wrap">
                         <a href="{{ route('admin.dealer-order.export-pdf', $order->id) }}" class="btn btn-primary mr-1 mb-1">Download PDF</a>
+                        <button type="button" class="btn btn-outline-info mr-1 mb-1 view-order-history" data-order-id="{{ $order->id }}" data-order-type="dealer_order" data-order-number="{{ $order->order_number }}">
+                            <i data-feather="clock" class="mr-25"></i> View History
+                        </button>
                         <button class="btn btn-outline-secondary mr-1 mb-1" onclick="window.print()">
                             Print
                         </button>

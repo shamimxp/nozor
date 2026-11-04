@@ -85,9 +85,15 @@ class OrderRequestController extends Controller
                     }
                 })
                 ->addColumn('action', function ($row) {
-                    return '<a href="'.route('admin.order-requests.show', $row->id).'" class="btn btn-sm btn-outline-primary" style="padding: 0.3rem 0.6rem;">
-                                <i data-feather="eye" style="width: 14px; height: 14px; margin-right: 4px;"></i> Details
-                            </a>';
+                    $reqNo = $row->request_number ?? ('#' . $row->id);
+                    return '<div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                <a href="'.route('admin.order-requests.show', $row->id).'" class="btn btn-sm btn-outline-primary" style="padding: 0.3rem 0.6rem;">
+                                    <i data-feather="eye" style="width: 14px; height: 14px; margin-right: 4px;"></i> Details
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-info view-order-history" data-order-id="'.$row->id.'" data-order-type="order_request" data-order-number="'.$reqNo.'" style="padding: 0.3rem 0.6rem;" title="View History">
+                                    <i data-feather="clock" style="width: 14px; height: 14px; margin-right: 4px;"></i> History
+                                </button>
+                            </div>';
                 })
                 ->rawColumns(['request_info', 'dealer_info', 'total_items', 'total_amount', 'status_badge', 'action'])
                 ->make(true);

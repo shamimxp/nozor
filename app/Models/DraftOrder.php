@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasOrderActivities;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DraftOrder extends Model
 {
-    use HasFactory;
+    use HasFactory, HasOrderActivities;
 
     protected $fillable = [
         'draft_number',

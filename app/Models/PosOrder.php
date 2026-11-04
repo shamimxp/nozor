@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasOrderActivities;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PosOrder extends Model
 {
-    use HasFactory;
+    use HasFactory, HasOrderActivities;
 
     protected $fillable = [
         'order_number', 'customer_id', 'total_amount', 'discount_amount',

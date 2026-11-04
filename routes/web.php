@@ -103,6 +103,7 @@ Route::prefix('dealer')->name('dealer.')->group(function () {
         Route::get('/orders', [\App\Http\Controllers\Dealer\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{id}', [\App\Http\Controllers\Dealer\OrderController::class, 'show'])->name('orders.show');
         Route::get('/orders/{id}/pdf', [\App\Http\Controllers\Dealer\OrderController::class, 'downloadPdf'])->name('orders.pdf');
+        Route::get('/orders/{type}/{id}/history', [\App\Http\Controllers\Admin\OrderHistoryController::class, 'getHistory'])->name('orders.history');
 
         // Dealer Wallet & Payments
         Route::get('/wallet', [\App\Http\Controllers\Dealer\WalletController::class, 'index'])->name('wallet.index');

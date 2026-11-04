@@ -28,10 +28,14 @@ class OrderRequestController extends Controller
                     return '<span class="badge badge-pill '.$badge.'">'.ucfirst(str_replace('_', ' ', $row->status)).'</span>';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="'.route('dealer.order-requests.show', $row->id).'" class="btn btn-sm btn-info" title="View"><i data-feather="eye"></i></a> ';
+                    $reqNo = $row->request_number ?? ('#' . $row->id);
+                    $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
+                    $btn .= '<a href="'.route('dealer.order-requests.show', $row->id).'" class="btn btn-sm btn-info" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<button type="button" class="btn btn-sm btn-outline-primary view-order-history" data-order-id="'.$row->id.'" data-order-type="order_request" data-order-number="'.$reqNo.'" title="View History"><i data-feather="clock"></i></button>';
                     if($row->status == 'pending') {
                         $btn .= '<button type="button" class="btn btn-sm btn-danger" onclick="deleteRequest('.$row->id.')" title="Delete"><i data-feather="trash-2"></i></button>';
                     }
+                    $btn .= '</div>';
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])

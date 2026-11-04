@@ -197,6 +197,9 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/pos-order/due-list', [\App\Http\Controllers\Admin\PosOrderController::class, 'dueList'])->name('admin.pos-order.due-list');
     Route::resource('pos-order', \App\Http\Controllers\Admin\PosOrderController::class, ['as' => 'admin']);
 
+    // Order Activity History API
+    Route::get('/orders/{type}/{id}/history', [\App\Http\Controllers\Admin\OrderHistoryController::class, 'getHistory'])->name('admin.orders.history');
+
     // Collections module
     Route::get('/collections', [\App\Http\Controllers\Admin\CollectionController::class, 'index'])->name('admin.collections.index');
     Route::get('/collections/create', [\App\Http\Controllers\Admin\CollectionController::class, 'create'])->name('admin.collections.create');

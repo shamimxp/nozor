@@ -161,6 +161,9 @@
                 <div class="card">
                     <div class="card-body">
                         <a href="{{ route('admin.web-order.export-pdf', $order->id) }}" class="btn btn-primary btn-block mb-75">Download PDF</a>
+                        <button type="button" class="btn btn-outline-info btn-block mb-75 view-order-history" data-order-id="{{ $order->id }}" data-order-type="web_order" data-order-number="{{ $order->invoice_no }}">
+                            <i data-feather="clock" class="mr-25"></i> View History
+                        </button>
                         <button class="btn btn-outline-secondary btn-block mb-75" onclick="window.print()">
                             Print
                         </button>

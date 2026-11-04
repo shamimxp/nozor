@@ -152,6 +152,9 @@
                 <button class="btn btn-primary btn-block mb-75" onclick="window.print()">
                     <i data-feather="printer" class="mr-25"></i> Print
                 </button>
+                <button type="button" class="btn btn-outline-info btn-block mb-75 view-order-history" data-order-id="{{ $order->id }}" data-order-type="pos_order" data-order-number="{{ $order->order_number }}">
+                    <i data-feather="clock" class="mr-25"></i> View History
+                </button>
                 <a href="{{ route('admin.pos-order.export-pdf', $order->id) }}" class="btn btn-outline-secondary btn-block mb-75">
                     <i data-feather="download" class="mr-25"></i> Download PDF
                 </a>

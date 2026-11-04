@@ -237,6 +237,8 @@
     fetchWebOrderNotifications();
     setInterval(fetchWebOrderNotifications, 10000);
 </script>
+
+@include('admin.partials.order_history_modal')
 </body>
 <!-- END: Body-->
 

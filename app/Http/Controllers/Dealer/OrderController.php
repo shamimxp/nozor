@@ -47,8 +47,9 @@ class OrderController extends Controller
                 })
                 ->addColumn('action', function ($r) {
                     $viewBtn = '<a href="' . route('dealer.orders.show', $r->id) . '" class="btn btn-info btn-sm mr-50" title="View"><i data-feather="eye"></i></a>';
+                    $histBtn = '<button type="button" class="btn btn-outline-primary btn-sm mr-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
                     $pdfBtn = '<a href="' . route('dealer.orders.pdf', $r->id) . '" class="btn btn-primary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
-                    return '<div class="d-flex align-items-center">' . $viewBtn . $pdfBtn . '</div>';
+                    return '<div class="d-flex align-items-center">' . $viewBtn . $histBtn . $pdfBtn . '</div>';
                 })
                 ->rawColumns(['order_info', 'totals', 'status_badge', 'action'])
                 ->make(true);

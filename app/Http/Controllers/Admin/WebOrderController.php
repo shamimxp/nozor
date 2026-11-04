@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\WebOrder;
 use App\Models\WebOrderAddress;
 use App\Models\WebOrderItem;
+use App\Services\OrderActivityService;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -68,12 +69,14 @@ class WebOrderController extends Controller
                     return '<select class="form-control form-control-sm updateStatusSelect" data-order-id="' . $r->id . '" style="min-width:130px" ' . $disabled . '>' . $options . '</select>';
                 })
                 ->addColumn('action', function ($r) {
-                    $btn = '';
-                    $btn .= '<a href="' . route('admin.web-order.show', $r->id) . '" class="btn btn-info btn-sm mr-25"><i data-feather="eye"></i></a>';
+                    $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
+                    $btn .= '<a href="' . route('admin.web-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="web_order" data-order-number="' . $r->invoice_no . '" title="View History"><i data-feather="clock"></i></button>';
                     if ($r->status === 'pending') {
-                        $btn .= '<a href="' . route('admin.web-order.edit', $r->id) . '" class="btn btn-primary btn-sm mr-25"><i data-feather="edit"></i></a>';
+                        $btn .= '<a href="' . route('admin.web-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>';
                     }
-                    $btn .= '<a href="' . route('admin.web-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm"><i data-feather="download"></i></a>';
+                    $btn .= '<a href="' . route('admin.web-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn .= '</div>';
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'customer_name', 'items_summary', 'totals', 'status_badge', 'action'])
@@ -174,6 +177,21 @@ class WebOrderController extends Controller
                 ]);
             }
 
+            // Log update activity
+            OrderActivityService::logUpdated(
+                order: $order,
+                description: "Web Order {$order->invoice_no} details and items were updated by staff.",
+                changes: [
+                    'subtotal'        => (float)$order->subtotal,
+                    'discount'        => (float)$order->discount,
+                    'shipping_charge' => (float)$order->shipping_charge,
+                    'total'           => (float)$order->total,
+                    'status'          => $order->status,
+                    'items_count'     => count($submittedItemIds),
+                ],
+                remarks: $request->note
+            );
+
             DB::commit();
             toastr()->success('Web order updated successfully.');
             return redirect()->route('admin.web-order.index');
@@ -217,6 +235,15 @@ class WebOrderController extends Controller
         }
 
         $order->update(['status' => $newStatus]);
+
+        // Log status change activity
+        OrderActivityService::logStatusChange(
+            order: $order,
+            fromStatus: $oldStatus,
+            toStatus: $newStatus,
+            remarks: "Web Order status updated from {$oldStatus} to {$newStatus}."
+        );
+
         return response()->json(['success' => true, 'message' => 'Status updated to ' . ucfirst(str_replace('_', ' ', $newStatus))]);
     }
 

@@ -7,6 +7,7 @@ use App\Models\PosOrder;
 use App\Models\PosOrderItem;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Services\OrderActivityService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -63,8 +64,9 @@ class PosOrderController extends Controller
                     return '<span class="badge badge-light-' . $status_class . ' text-uppercase">' . $r->order_status . '</span>';
                 })
                 ->addColumn('action', function($r) {
-                    $btn = '<div class="d-flex">';
+                    $btn = '<div class="d-flex align-items-center">';
                     $btn .= '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-50" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<button type="button" class="btn btn-sm btn-outline-primary mr-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
                     $btn .= '<a href="' . route('admin.pos-order.export-pdf', $r->id) . '" class="btn btn-sm btn-secondary mr-50" title="Download PDF"><i data-feather="download"></i></a>';
                     if($r->order_status != 'cancelled') {
                         $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-warning mr-50 cancelOrder" title="Cancel Order"><i data-feather="x-circle"></i></a>';
@@ -98,7 +100,9 @@ class PosOrderController extends Controller
                 ->addColumn('action', function($r) {
                     $customerId = $r->customer_id ?? '';
                     $customerName = $r->customer->name ?? 'Walk-in';
-                    $btn = '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
+                    $btn = '<div class="d-inline-flex align-items-center">';
+                    $btn .= '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
+                    $btn .= '<button type="button" class="btn btn-sm btn-outline-primary mr-25 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
                     $btn .= '<button type="button" class="btn btn-sm btn-success payBtn ml-25"
                                 data-id="'.$r->id.'"
                                 data-customer-id="'.$customerId.'"
@@ -106,6 +110,7 @@ class PosOrderController extends Controller
                                 data-order-number="'.$r->order_number.'"
                                 data-due="'.$r->due_amount.'"
                                 data-type="POSOrder">Pay</button>';
+                    $btn .= '</div>';
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'customer_info', 'financials', 'action'])
@@ -175,6 +180,29 @@ class PosOrderController extends Controller
                     "POS sale order: {$order->order_number}",
                     auth('admin')->id() ?? auth()->id(),
                     false
+                );
+            }
+
+            // Log Order Creation Activity
+            OrderActivityService::logCreated(
+                order: $order,
+                remarks: $request->staff_note ?: $request->note,
+                properties: [
+                    'total_amount'   => (float)$order->total_amount,
+                    'payable_amount' => (float)$order->payable_amount,
+                    'paid_amount'    => (float)$order->paid_amount,
+                    'due_amount'     => (float)$order->due_amount,
+                    'payment_method' => $order->payment_method,
+                    'items_count'    => count($request->items),
+                ]
+            );
+
+            if ($order->paid_amount > 0) {
+                OrderActivityService::logPayment(
+                    order: $order,
+                    amount: $order->paid_amount,
+                    method: $order->payment_method ?? 'Cash',
+                    remarks: 'Initial payment recorded during POS checkout.'
                 );
             }
 
@@ -275,7 +303,13 @@ class PosOrderController extends Controller
                 );
             }
 
+            $oldStatus = $order->order_status;
             $order->update(['order_status' => 'cancelled']);
+
+            OrderActivityService::logCancellation(
+                order: $order,
+                reason: 'Order cancelled by staff - inventory restored.'
+            );
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Order cancelled successfully and stock restored.']);

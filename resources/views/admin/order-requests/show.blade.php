@@ -149,9 +149,14 @@
 @endsection
 
 @section('content-header-right')
-<a href="{{ route('admin.order-requests.index') }}" class="btn-back">
-    <i data-feather="arrow-left" style="width:15px;height:15px;"></i> Back to List
-</a>
+<div class="d-inline-flex align-items-center">
+    <button type="button" class="btn btn-outline-info mr-1 view-order-history" data-order-id="{{ $orderRequest->id }}" data-order-type="order_request" data-order-number="{{ $orderRequest->request_number ?? '#'.$orderRequest->id }}">
+        <i data-feather="clock" style="width:15px;height:15px;"></i> View History
+    </button>
+    <a href="{{ route('admin.order-requests.index') }}" class="btn-back">
+        <i data-feather="arrow-left" style="width:15px;height:15px;"></i> Back to List
+    </a>
+</div>
 @endsection
 
 @section('content')

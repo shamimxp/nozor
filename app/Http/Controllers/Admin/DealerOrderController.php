@@ -7,6 +7,7 @@ use App\Models\Dealer;
 use App\Models\DealerOrder;
 use App\Models\DealerOrderItem;
 use App\Models\Product;
+use App\Services\OrderActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -68,6 +69,7 @@ class DealerOrderController extends Controller
                 ->addColumn('action', function ($r) {
                     $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
                     $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
                     if (!in_array($r->status, ['delivered', 'cancelled'])) {
                         $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>';
                     }
@@ -130,6 +132,7 @@ class DealerOrderController extends Controller
                 ->addColumn('action', function ($r) {
                     $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
                     $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
+                    $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
                     $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
                     $btn .= '</div>';
                     return $btn;
@@ -283,6 +286,31 @@ class DealerOrderController extends Controller
 
             if ($order->status === 'delivered') {
                 app(\App\Services\DealerWalletService::class)->settleDeliveredOrders($order->dealer_id);
+            }
+
+            // Log Dealer Order Creation
+            OrderActivityService::logCreated(
+                order: $order,
+                remarks: $order->note ?: $order->admin_notes,
+                properties: [
+                    'sub_total'       => (float)$order->sub_total,
+                    'discount'        => (float)$order->discount,
+                    'carrying_charge' => (float)$order->carrying_charge,
+                    'grand_total'     => (float)$order->grand_total,
+                    'paid'            => (float)$order->paid,
+                    'due'             => (float)$order->due,
+                    'status'          => $order->status,
+                    'items_count'     => count($cartItems)
+                ]
+            );
+
+            if ($order->paid > 0) {
+                OrderActivityService::logPayment(
+                    order: $order,
+                    amount: $order->paid,
+                    method: 'Cash',
+                    remarks: 'Initial deposit/payment on order creation.'
+                );
             }
 
             DB::commit();
@@ -481,6 +509,28 @@ class DealerOrderController extends Controller
                 $this->deductOrderStock($order);
             }
 
+            if ($oldStatus !== $newStatus) {
+                OrderActivityService::logStatusChange(
+                    order: $order,
+                    fromStatus: $oldStatus,
+                    toStatus: $newStatus,
+                    remarks: "Status changed during order edit."
+                );
+            }
+
+            OrderActivityService::logUpdated(
+                order: $order,
+                description: "Dealer Order {$order->order_number} details and items were updated by staff.",
+                changes: [
+                    'grand_total' => (float)$order->grand_total,
+                    'paid'        => (float)$order->paid,
+                    'due'         => (float)$order->due,
+                    'status'      => $order->status,
+                    'items_count' => count($cartItems),
+                ],
+                remarks: $order->note ?: $order->admin_notes
+            );
+
             DB::commit();
             toastr()->success('Dealer order updated successfully.');
             return redirect()->route('admin.dealer-order.index');
@@ -523,6 +573,21 @@ class DealerOrderController extends Controller
                 'grand_total' => $grandTotal,
                 'due' => $due
             ]);
+
+            $productName = $item->product->name ?? ('Product #' . $item->product_id);
+            OrderActivityService::logItemUpdated(
+                order: $order,
+                description: "Item '{$productName}' quantity updated to {$qty} for Dealer Order {$order->order_number}.",
+                itemData: [
+                    'item_id'    => $item->id,
+                    'product_id' => $item->product_id,
+                    'product_name' => $productName,
+                    'qty'        => $qty,
+                    'price'      => (float)$item->price,
+                    'total'      => (float)$item->total,
+                ],
+                remarks: $request->note
+            );
 
             \Illuminate\Support\Facades\DB::commit();
             return response()->json(['success' => true, 'message' => 'Item and order totals updated successfully']);
@@ -588,9 +653,33 @@ class DealerOrderController extends Controller
 
         $order->update(['status' => $newStatus]);
 
+        // Log Status Change
+        OrderActivityService::logStatusChange(
+            order: $order,
+            fromStatus: $oldStatus,
+            toStatus: $newStatus,
+            remarks: "Status updated to " . ucfirst($newStatus)
+        );
+
         // If status changed to delivered, auto-settle from dealer wallet (FIFO)
         if ($newStatus === 'delivered') {
             app(\App\Services\DealerWalletService::class)->settleDeliveredOrders($order->dealer_id);
+
+            // System-generated activity for automated wallet settlement
+            OrderActivityService::log(
+                order: $order,
+                action: 'delivered',
+                description: "Delivered order auto-settlement processed against Dealer wallet balance by System.",
+                fromStatus: null,
+                toStatus: 'delivered',
+                remarks: "Automated FIFO wallet settlement execution.",
+                properties: ['auto_settled' => true],
+                actor: [
+                    'id'   => null,
+                    'name' => 'System / Automated Activity',
+                    'type' => 'system'
+                ]
+            );
         }
 
         return response()->json(['success' => true, 'message' => 'Status updated successfully']);

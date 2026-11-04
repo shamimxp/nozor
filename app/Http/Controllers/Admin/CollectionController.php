@@ -11,6 +11,7 @@ use App\Models\PosOrder;
 use App\Models\WebOrder;
 use App\Models\CustomOrder;
 use App\Services\DealerWalletService;
+use App\Services\OrderActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -298,6 +299,17 @@ class CollectionController extends Controller
                         $order->payment_status = 'partial';
                     }
                     $order->save();
+
+                    OrderActivityService::logPayment(
+                        order: $order,
+                        amount: $request->amount,
+                        method: $request->payment_method ?? 'Cash',
+                        remarks: "Due payment collected (Collection #{$collection->collection_no}).",
+                        properties: [
+                            'collection_no' => $collection->collection_no,
+                            'remaining_due' => (float)$order->due_amount
+                        ]
+                    );
                 }
 
                 DB::commit();
@@ -340,6 +352,17 @@ class CollectionController extends Controller
                 if ($status === 'accepted') {
                     $order->payment_status = 'paid';
                     $order->save();
+
+                    OrderActivityService::logPayment(
+                        order: $order,
+                        amount: $request->amount,
+                        method: $request->payment_method ?? 'Cash',
+                        remarks: "Due payment collected (Collection #{$collection->collection_no}).",
+                        properties: [
+                            'collection_no' => $collection->collection_no,
+                            'remaining_due' => (float)$order->due_amount
+                        ]
+                    );
                 }
 
                 DB::commit();
@@ -393,6 +416,17 @@ class CollectionController extends Controller
                         $order->due = 0.00;
                     }
                     $order->save();
+
+                    OrderActivityService::logPayment(
+                        order: $order,
+                        amount: $request->amount,
+                        method: $request->payment_method ?? 'Cash',
+                        remarks: "Due payment collected (Collection #{$collection->collection_no}).",
+                        properties: [
+                            'collection_no' => $collection->collection_no,
+                            'remaining_due' => (float)$order->due_amount
+                        ]
+                    );
                 }
 
                 DB::commit();
@@ -478,7 +512,7 @@ class CollectionController extends Controller
                     'payment_status' => $fresh->due_amount <= 0.001 ? 'paid' : 'partial'
                 ]);
 
-                Collection::create([
+                $collection = Collection::create([
                     'collection_no'   => Collection::generateCollectionNo(),
                     'collection_type' => 'pos_order',
                     'party_type'      => Customer::class,
@@ -491,6 +525,17 @@ class CollectionController extends Controller
                     'note'            => $request->note,
                     'created_by'      => $adminId,
                 ]);
+
+                OrderActivityService::logPayment(
+                    order: $order,
+                    amount: $request->amount,
+                    method: $request->payment_method ?? 'Cash',
+                    remarks: "Due payment recorded (Collection #{$collection->collection_no}).",
+                    properties: [
+                        'collection_no' => $collection->collection_no,
+                        'remaining_due' => (float)$fresh->due_amount
+                    ]
+                );
             }
 
             DB::commit();

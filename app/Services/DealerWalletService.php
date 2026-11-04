@@ -7,6 +7,7 @@ use App\Models\DealerOrder;
 use App\Models\DealerWalletTransaction;
 use App\Models\DealerOrderPayment;
 use App\Models\Collection;
+use App\Services\OrderActivityService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -273,6 +274,22 @@ class DealerWalletService
                     $order->due = 0.00;
                 }
                 $order->save();
+
+                OrderActivityService::logPayment(
+                    order: $order,
+                    amount: $settleAmount,
+                    method: 'Dealer Wallet',
+                    remarks: "Auto-settlement from dealer wallet balance (Tx: {$dwt->transaction_no}).",
+                    properties: [
+                        'transaction_no' => $dwt->transaction_no,
+                        'remaining_due'  => (float) $order->due,
+                    ],
+                    customActor: [
+                        'id'   => $adminId,
+                        'name' => $adminId ? ('Admin #' . $adminId) : 'System / Automated Activity',
+                        'type' => $adminId ? 'admin' : 'system'
+                    ]
+                );
 
                 $settled[] = [
                     'order_id'       => $order->id,

@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\CustomerPayment;
 use App\Models\CustomOrder;
 use App\Models\PosOrder;
+use App\Services\OrderActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -105,6 +106,15 @@ class CustomerPaymentController extends Controller
                 'note'           => $request->note,
                 'created_by'     => auth('admin')->id(),
             ]);
+
+            if ($payableModel instanceof PosOrder) {
+                OrderActivityService::logPayment(
+                    order: $payableModel,
+                    amount: $request->amount,
+                    method: $request->payment_method ?? 'Cash',
+                    remarks: $request->note ?: "Payment recorded via Customer Payments."
+                );
+            }
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Payment recorded successfully!']);
