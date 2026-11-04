@@ -1,4 +1,4 @@
-<header class="header-area header-style-1 header-height-2">
+<header class="header-area header-style-1 header-height-2 wm-header">
     <div class="mobile-promotion">
         <span>Grand opening, <strong>up to 15%</strong> off all items. Only <strong>3 days</strong> left</span>
     </div>
@@ -208,17 +208,16 @@
                         <nav>
                             <ul>
                                 <li>
-                                    <a class="active" href="{{Url('/')}}">Home </a>
+                                    <a class="{{ request()->routeIs('index') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('shop')}}">Shop</a>
+                                    <a class="{{ request()->routeIs('shop', 'category.products', 'product.details') ? 'active' : '' }}" href="{{ route('shop') }}">Shop</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('about')}}">About</a>
+                                    <a class="{{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">About</a>
                                 </li>
-
                                 <li>
-                                    <a href="{{route('contact')}}">Contact</a>
+                                    <a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Contact</a>
                                 </li>
                             </ul>
                         </nav>
