@@ -16,6 +16,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{asset('web')}}/assets/css/plugins/animate.min.css" />
     <link rel="stylesheet" href="{{asset('web')}}/assets/css/main.css?v=5.5" />
+    <link rel="stylesheet" href="{{ asset('web/assets/css/wm-site-footer.css') }}?v={{ filemtime(public_path('web/assets/css/wm-site-footer.css')) }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 </head>
 
