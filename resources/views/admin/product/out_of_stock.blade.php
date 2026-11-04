@@ -102,12 +102,10 @@
         $('body').on('click', '.deleteProduct', function () {
             var id = $(this).data("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete it!',
                 customClass: {
                     confirmButton: 'btn btn-primary',
@@ -121,10 +119,20 @@
                         url: "{{ url('admin/product') }}"+'/'+id,
                         success: function (data) {
                             table.draw();
-                            toastr.success(data.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
-                        error: function (data) {
-                            console.log('Error:', data);
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }

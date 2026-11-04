@@ -138,9 +138,12 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Dealer List</h4>
-                    <button type="button" class="btn btn-primary" id="showAddDealerBtn">
-                        <i data-feather="plus"></i> Add Dealer
-                    </button>
+                    <div class="d-flex" style="gap:6px;">
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.dealer.trash')])
+                        <button type="button" class="btn btn-primary" id="showAddDealerBtn">
+                            <i data-feather="plus"></i> Add Dealer
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -330,11 +333,11 @@
             var id = $(this).data('id');
 
             Swal.fire({
-                title: 'Delete this dealer?',
-                text: 'This action cannot be undone.',
+                title: 'Move to trash?',
+                text: 'You can restore this later from Show Deleted Data.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, delete',
+                confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'btn btn-danger',
@@ -353,16 +356,20 @@
                         table.draw(false);
                         Swal.fire({
                             icon: 'success',
-                            title: 'Deleted',
-                            text: data.success,
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            },
+                            title: 'Deleted!',
+                            text: data.message || data.success,
+                            customClass: { confirmButton: 'btn btn-success' },
                             buttonsStyling: false
                         });
                     },
-                    error: function (data) {
-                        toastr.error((data.responseJSON && data.responseJSON.error) || 'Error deleting dealer.');
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot delete',
+                            text: (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong!',
+                            customClass: { confirmButton: 'btn btn-danger' },
+                            buttonsStyling: false
+                        });
                     }
                 });
             });

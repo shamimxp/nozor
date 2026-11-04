@@ -3,8 +3,8 @@
 namespace App\Models\Admin;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, TracksSoftDeletion;
     protected $guard = 'admin';
 
     /**

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RawMaterialProduct extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     protected $fillable = [
         'name', 'unit_id', 'material_type_id', 'cost_price', 'price_per_unit', 'grade_value', 'status'
@@ -21,5 +22,10 @@ class RawMaterialProduct extends Model
     public function materialType()
     {
         return $this->belongsTo(MaterialType::class);
+    }
+
+    public function recipeItems()
+    {
+        return $this->hasMany(ProductRecipeItem::class);
     }
 }

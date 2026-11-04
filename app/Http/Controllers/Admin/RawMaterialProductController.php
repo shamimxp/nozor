@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\RawMaterialProduct;
 use App\Models\Unit;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class RawMaterialProductController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'raw_material_product';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -133,10 +142,9 @@ class RawMaterialProductController extends Controller
         return response()->json(['success' => 'Raw Material Product updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        RawMaterialProduct::findOrFail($id)->delete();
-        return response()->json(['success' => 'Raw Material Product deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function getStatus(Request $request)

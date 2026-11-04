@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Vendor;
@@ -9,7 +10,7 @@ use App\Models\Admin\Admin;
 
 class InventoryPurchase extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     protected $guarded= [
         'id'
@@ -32,6 +33,11 @@ class InventoryPurchase extends Model
     public function payments()
     {
         return $this->hasMany(InventoryPurchasePayment::class);
+    }
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class, 'purchase_id');
     }
 
     public function creator()

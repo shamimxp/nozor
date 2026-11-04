@@ -12,6 +12,7 @@
 @endsection
 
 @section('content-header-right')
+@include('admin.partials.show_deleted_button', ['route' => route('admin.draft-orders.trash')])
 <a href="{{ route('admin.order-requests.index') }}" class="btn btn-outline-primary shadow-sm font-weight-bold">
     <i data-feather="list" class="mr-50"></i> View Order Requests
 </a>
@@ -176,41 +177,44 @@
             });
         });
 
-        // Delete Draft Order (Restores items to Order Request)
+        // Soft-delete Draft Order
         $(document).on('click', '.btnDeleteDraft', function() {
             let id = $(this).data('id');
             let num = $(this).data('num');
 
             Swal.fire({
-                title: 'Delete Draft Order?',
-                text: 'Draft ' + num + ' will be deleted, and all products will be returned to the original Order Request.',
+                title: 'Move to trash?',
+                text: 'Draft ' + num + ' will be moved to trash. You can restore it later from Show Deleted Data.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ea5455',
-                cancelButtonColor: '#6e7d88',
-                confirmButtonText: 'Yes, Delete & Restore!'
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
                         url: "/admin/draft-orders/" + id,
                         type: "DELETE",
-                        data: {
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                toastr.success(response.message);
-                                table.ajax.reload(null, false);
-                            } else {
-                                toastr.error(response.message || 'Failed to delete draft order.');
-                            }
+                        data: { _token: "{{ csrf_token() }}" },
+                        success: function(data) {
+                            table.ajax.reload(null, false);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
                         error: function(xhr) {
-                            let msg = 'Error deleting draft order.';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                msg = xhr.responseJSON.message;
-                            }
-                            toastr.error(msg);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }

@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\HasOrderActivities;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderRequest extends Model
 {
-    use HasFactory, HasOrderActivities;
+    use HasFactory, TracksSoftDeletion, HasOrderActivities;
 
     protected $fillable = ['request_number', 'dealer_id', 'status', 'note'];
 

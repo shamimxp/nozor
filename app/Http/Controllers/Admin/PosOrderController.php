@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\PosOrder;
 use App\Models\PosOrderItem;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Services\Deletion\SoftDeleteService;
 use App\Services\OrderActivityService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -15,6 +17,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PosOrderController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'pos_order';
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -68,10 +77,10 @@ class PosOrderController extends Controller
                     $btn .= '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-50" title="View"><i data-feather="eye"></i></a>';
                     $btn .= '<button type="button" class="btn btn-sm btn-outline-primary mr-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
                     $btn .= '<a href="' . route('admin.pos-order.export-pdf', $r->id) . '" class="btn btn-sm btn-secondary mr-50" title="Download PDF"><i data-feather="download"></i></a>';
-                    if($r->order_status != 'cancelled') {
+                    if ($r->order_status === 'pending') {
                         $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-warning mr-50 cancelOrder" title="Cancel Order"><i data-feather="x-circle"></i></a>';
                     }
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-danger deleteOrder" title="Delete Permanent"><i data-feather="trash"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-danger deleteOrder" title="Delete"><i data-feather="trash"></i></a>';
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -235,19 +244,9 @@ class PosOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, SoftDeleteService $softDeleteService)
     {
-        try {
-            DB::beginTransaction();
-            $order = PosOrder::findOrFail($id);
-            $order->items()->delete();
-            $order->delete();
-            DB::commit();
-            return response()->json(['success' => true, 'message' => 'Order deleted successfully.']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Something went wrong.']);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     /**

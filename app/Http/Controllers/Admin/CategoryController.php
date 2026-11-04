@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use Brian2694\Toastr\Facades\Toastr;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'category';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -45,7 +54,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:categories,name',
+            'name' => ['required', Rule::unique('categories', 'name')->whereNull('deleted_at')],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
@@ -66,7 +75,7 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
         if ($category->image) {
             $category->image_url = asset(config('imagepath.category') . $category->image);
         } else {
@@ -78,11 +87,11 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|unique:categories,name,' . $id,
+            'name' => ['required', Rule::unique('categories', 'name')->whereNull('deleted_at')->ignore($id)],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
 
@@ -99,19 +108,14 @@ class CategoryController extends Controller
         return response()->json(['success' => 'Category updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $category = Category::find($id);
-        if ($category->image) {
-            $category->deleteOne(config('imagepath.category'), $category->image);
-        }
-        $category->delete();
-        return response()->json(['success' => 'Category deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function getStatus(Request $request)
     {
-        $category = Category::find($request->id);
+        $category = Category::findOrFail($request->id);
         $category->status = $request->status;
         $category->save();
         return response()->json(['success' => 'Status changed successfully.']);

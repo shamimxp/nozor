@@ -7,7 +7,10 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Product List</h4>
-                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
+                    <div class="d-flex" style="gap:6px;">
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.product.trash')])
+                        <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
+                    </div>
                 </div>
             </div>
             <div class="card-body border-bottom p-1">
@@ -292,12 +295,10 @@
         $('body').on('click', '.deleteProduct', function () {
             var id = $(this).data("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete it!',
                 customClass: {
                     confirmButton: 'btn btn-primary',
@@ -311,10 +312,20 @@
                         url: "{{ url('admin/product') }}"+'/'+id,
                         success: function (data) {
                             table.draw();
-                            toastr.success(data.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
-                        error: function (data) {
-                            console.log('Error:', data);
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }

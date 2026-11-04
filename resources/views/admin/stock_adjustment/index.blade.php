@@ -90,9 +90,12 @@
             <div class="card-header border-bottom py-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0"><i data-feather="list" class="mr-50"></i> Adjustment Records</h4>
-                    <a href="{{ route('admin.stock-adjustment.create') }}" class="btn btn-primary btn-sm">
-                        <i data-feather="plus" class="mr-25"></i> Add Adjustment
-                    </a>
+                    <div class="d-flex" style="gap:6px;">
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.stock-adjustment.trash')])
+                        <a href="{{ route('admin.stock-adjustment.create') }}" class="btn btn-primary btn-sm">
+                            <i data-feather="plus" class="mr-25"></i> Add Adjustment
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="card-body pt-2">
@@ -273,27 +276,17 @@
             });
         });
 
-        // Delete stock adjustment with reversal
+        // Soft-delete stock adjustment
         $(document).on('click', '.deleteAdjustmentBtn', function() {
             var button = $(this);
             var id = button.data('id');
-            var product = button.data('product');
-            var type = button.data('type');
-            var quantity = button.data('quantity');
-
-            var warningText = 'Deleting this adjustment will automatically revert its stock movement for "' + product + '".';
-            if (type === 'addition') {
-                warningText = 'Deleting this will DEDUCT ' + quantity + ' unit(s) back from "' + product + '".';
-            } else if (type === 'abnormal' || type === 'normal') {
-                warningText = 'Deleting this will RESTORE ' + quantity + ' unit(s) back to "' + product + '".';
-            }
 
             Swal.fire({
-                title: 'Delete this Adjustment?',
-                text: warningText,
+                title: 'Move to trash?',
+                text: 'You can restore this later from Show Deleted Data.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, Delete & Revert',
+                confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'btn btn-danger',
@@ -310,20 +303,24 @@
                 $.ajax({
                     url: "{{ url('/admin/stock-adjustment') }}/" + id,
                     type: "DELETE",
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        toastr.success(response.success || 'Adjustment deleted successfully.');
+                    data: { _token: "{{ csrf_token() }}" },
+                    success: function(data) {
                         adjustmentTable.ajax.reload(null, false);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: data.message || data.success,
+                            customClass: { confirmButton: 'btn btn-success' }
+                        });
                     },
                     error: function(xhr) {
                         button.attr('disabled', false);
-                        var errorMsg = 'Failed to delete adjustment.';
-                        if (xhr.responseJSON && xhr.responseJSON.error) {
-                            errorMsg = xhr.responseJSON.error;
-                        }
-                        toastr.error(errorMsg);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot delete',
+                            text: (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong!',
+                            customClass: { confirmButton: 'btn btn-danger' }
+                        });
                     }
                 });
             });

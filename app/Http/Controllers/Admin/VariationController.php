@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Variation;
 use App\Models\VariationValue;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class VariationController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'variation';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -82,9 +91,8 @@ class VariationController extends Controller
         return response()->json(['success' => 'Variation updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        Variation::find($id)->delete();
-        return response()->json(['success' => 'Variation deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

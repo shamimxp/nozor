@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Model;
 
 class Manufacture extends Model
 {
+    use TracksSoftDeletion;
+
     protected $fillable = [
         'company_id',
         'product_id',
@@ -36,6 +38,11 @@ class Manufacture extends Model
     public function items()
     {
         return $this->hasMany(ManufactureOrderItem::class, 'manufacture_id');
+    }
+
+    public function workerPayments()
+    {
+        return $this->hasMany(WorkerPayment::class, 'manufacture_order_id');
     }
 
     public function product()

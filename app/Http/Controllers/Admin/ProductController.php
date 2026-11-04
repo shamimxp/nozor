@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
@@ -10,6 +11,7 @@ use App\Models\ProductAttributeValue;
 use App\Models\ProductImage;
 use App\Models\SubCategory;
 use App\Models\RawMaterialProduct;
+use App\Services\Deletion\SoftDeleteService;
 use App\Services\ProductPriceCalculator;
 use App\Services\ProductRecipeWriter;
 use Illuminate\Http\Request;
@@ -20,6 +22,12 @@ use App\Traits\UploadAble;
 class ProductController extends Controller
 {
     use UploadAble;
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'product';
+    }
 
     public function index(Request $request)
     {
@@ -552,18 +560,9 @@ class ProductController extends Controller
         return response()->json(['success' => 'Product updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $product = Product::findOrFail($id);
-        if ($product->featured_image) {
-            $this->deleteOne(config('imagepath.product'), $product->featured_image);
-        }
-        foreach ($product->gallery as $img) {
-            $this->deleteOne(config('imagepath.product'), $img->image);
-            $img->delete();
-        }
-        $product->delete();
-        return response()->json(['success' => 'Product deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function getStatus(Request $request)

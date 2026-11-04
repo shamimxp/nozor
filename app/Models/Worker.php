@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Worker extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
     
     protected $fillable = [
         'name', 'phone', 'email', 'address', 'profile_image',
@@ -27,6 +28,11 @@ class Worker extends Model
     public function payouts()
     {
         return $this->hasMany(WorkerPayout::class, 'worker_id');
+    }
+
+    public function manufactures()
+    {
+        return $this->hasMany(Manufacture::class);
     }
 
     public function getDueBalanceAttribute()

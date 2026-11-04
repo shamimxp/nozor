@@ -4,8 +4,8 @@ namespace App\Models\Seller;
 
 use App\Notifications\Seller\SellerEmailVerifyNotification;
 use App\Notifications\Seller\SellerResetPasswordNotification;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Seller extends Authenticatable implements  MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, TracksSoftDeletion;
 
     protected $guard = 'seller';
 

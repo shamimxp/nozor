@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CustomOrder;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Vendor;
 use App\Models\VendorPayment;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,6 +17,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'purchase';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -384,15 +393,9 @@ class PurchaseController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        try {
-            $purchase = Purchase::findOrFail($id);
-            $purchase->delete();
-            return response()->json(['success' => true, 'message' => 'Purchase deleted successfully.']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Something went wrong.']);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     /**

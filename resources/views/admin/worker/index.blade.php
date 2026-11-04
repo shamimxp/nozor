@@ -120,6 +120,7 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Worker List</h4>
                     <div>
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.worker.trash')])
                         <button type="button" class="btn btn-outline-secondary mr-50" id="resetFilterBtn">
                             <i data-feather="refresh-cw"></i> Reset Filter
                         </button>
@@ -309,11 +310,11 @@
             var id = $(this).data('id');
 
             Swal.fire({
-                title: 'Delete this worker?',
-                text: 'This action cannot be undone.',
+                title: 'Move to trash?',
+                text: 'You can restore this later from Show Deleted Data.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, delete',
+                confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'btn btn-danger',
@@ -332,16 +333,20 @@
                         table.draw(false);
                         Swal.fire({
                             icon: 'success',
-                            title: 'Deleted',
-                            text: data.success,
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            },
+                            title: 'Deleted!',
+                            text: data.message || data.success,
+                            customClass: { confirmButton: 'btn btn-success' },
                             buttonsStyling: false
                         });
                     },
-                    error: function (data) {
-                        toastr.error((data.responseJSON && data.responseJSON.error) || 'Error deleting worker.');
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot delete',
+                            text: (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong!',
+                            customClass: { confirmButton: 'btn btn-danger' },
+                            buttonsStyling: false
+                        });
                     }
                 });
             });

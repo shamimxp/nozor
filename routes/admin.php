@@ -75,22 +75,27 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('/roles', RoleController::class);
 
     //Category module
+    \App\Support\TrashRoutes::register('category', \App\Http\Controllers\Admin\CategoryController::class, 'category');
     Route::resource('category', \App\Http\Controllers\Admin\CategoryController::class, ['as' => 'admin']);
     Route::post('/category/status', [\App\Http\Controllers\Admin\CategoryController::class, 'getStatus'])->name('admin.category.status');
 
     //SubCategory module
+    \App\Support\TrashRoutes::register('sub-category', \App\Http\Controllers\Admin\SubCategoryController::class, 'sub-category');
     Route::resource('sub-category', \App\Http\Controllers\Admin\SubCategoryController::class, ['as' => 'admin']);
     Route::post('/sub-category/status', [\App\Http\Controllers\Admin\SubCategoryController::class, 'getStatus'])->name('admin.sub_category.status');
 
     //Product Attribute module
+    \App\Support\TrashRoutes::register('product-attribute', \App\Http\Controllers\Admin\ProductAttributeController::class, 'product-attribute');
     Route::resource('product-attribute', \App\Http\Controllers\Admin\ProductAttributeController::class, ['as' => 'admin']);
     Route::post('/product-attribute/status', [\App\Http\Controllers\Admin\ProductAttributeController::class, 'getStatus'])->name('admin.product_attribute.status');
 
     // Variations
+    \App\Support\TrashRoutes::register('variations', \App\Http\Controllers\Admin\VariationController::class, 'variations');
     Route::resource('variations', \App\Http\Controllers\Admin\VariationController::class, ['as' => 'admin']);
 
     //Product module
     Route::get('/product/out-of-stock', [\App\Http\Controllers\Admin\ProductController::class, 'outOfStock'])->name('admin.product.out-of-stock');
+    \App\Support\TrashRoutes::register('product', \App\Http\Controllers\Admin\ProductController::class, 'product');
     Route::get('/product/{id}/duplicate', [\App\Http\Controllers\Admin\ProductController::class, 'duplicate'])->name('admin.product.duplicate');
     Route::post('/product/{id}/duplicate', [\App\Http\Controllers\Admin\ProductController::class, 'duplicateStore'])->name('admin.product.duplicate.store');
     Route::resource('product', \App\Http\Controllers\Admin\ProductController::class, ['as' => 'admin']);
@@ -102,45 +107,57 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/get-subcategory/{category_id}', [\App\Http\Controllers\Admin\ProductController::class, 'getSubCategory'])->name('admin.product.get_subcategory');
 
     //Unit module
+    \App\Support\TrashRoutes::register('unit', \App\Http\Controllers\Admin\UnitController::class, 'unit');
     Route::resource('unit', \App\Http\Controllers\Admin\UnitController::class, ['as' => 'admin']);
     Route::post('/unit/status', [\App\Http\Controllers\Admin\UnitController::class, 'getStatus'])->name('admin.unit.status');
 
     //Customer module
+    \App\Support\TrashRoutes::register('customer', \App\Http\Controllers\Admin\CustomerController::class, 'customer');
     Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class, ['as' => 'admin']);
     
     // Worker module
+    \App\Support\TrashRoutes::register('worker', \App\Http\Controllers\WorkerController::class, 'worker');
     Route::resource('worker', \App\Http\Controllers\WorkerController::class, ['as' => 'admin']);
 
     //Dealer module
+    \App\Support\TrashRoutes::register('dealer', \App\Http\Controllers\Admin\DealerController::class, 'dealer');
     Route::get('dealer/{id}/login-as', [\App\Http\Controllers\Admin\DealerImpersonationController::class, 'loginAs'])->name('admin.dealer.loginAs');
     Route::resource('dealer', \App\Http\Controllers\Admin\DealerController::class, ['as' => 'admin']);
 
     //Vendor module
+    \App\Support\TrashRoutes::register('vendor', \App\Http\Controllers\Admin\VendorController::class, 'vendor');
     Route::resource('vendor', \App\Http\Controllers\Admin\VendorController::class, ['as' => 'admin']);
 
     //Fabric module
+    \App\Support\TrashRoutes::register('fabric', \App\Http\Controllers\Admin\FabricController::class, 'fabric');
     Route::resource('fabric', \App\Http\Controllers\Admin\FabricController::class, ['as' => 'admin']);
 
     //Fabric Price module
+    \App\Support\TrashRoutes::register('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, 'fabric-price');
     Route::resource('fabric-price', \App\Http\Controllers\Admin\FabricPriceController::class, ['as' => 'admin']);
 
     //Raw Material Product module
+    \App\Support\TrashRoutes::register('raw-material-product', \App\Http\Controllers\Admin\RawMaterialProductController::class, 'raw-material-product');
     Route::resource('raw-material-product', \App\Http\Controllers\Admin\RawMaterialProductController::class, ['as' => 'admin']);
     Route::post('/raw-material-product/status', [\App\Http\Controllers\Admin\RawMaterialProductController::class, 'getStatus'])->name('admin.raw_material_product.status');
+    \App\Support\TrashRoutes::register('product-recipe', \App\Http\Controllers\Admin\ProductRecipeController::class, 'product-recipe');
     Route::resource('product-recipe', \App\Http\Controllers\Admin\ProductRecipeController::class, ['as' => 'admin']);
     Route::get('/product-price-calculate', [\App\Http\Controllers\Admin\ProductPriceController::class,'calculate'])->name('admin.product-price-calculator');
 
     // Cost Head module
+    \App\Support\TrashRoutes::register('cost-head', \App\Http\Controllers\Admin\CostHeadController::class, 'cost-head');
     Route::resource('cost-head', \App\Http\Controllers\Admin\CostHeadController::class, ['as' => 'admin']);
     Route::post('/cost-head/status', [\App\Http\Controllers\Admin\CostHeadController::class, 'getStatus'])->name('admin.cost-head.status');
 
     // Cost Setting module
     Route::get('/cost-setting/check-title', [\App\Http\Controllers\Admin\CostSettingController::class, 'checkTitle'])->name('admin.cost-setting.check-title');
+    \App\Support\TrashRoutes::register('cost-setting', \App\Http\Controllers\Admin\CostSettingController::class, 'cost-setting');
     Route::get('/cost-setting/{id}/details', [\App\Http\Controllers\Admin\CostSettingController::class, 'getDetails'])->name('admin.cost-setting.details');
     Route::resource('cost-setting', \App\Http\Controllers\Admin\CostSettingController::class, ['as' => 'admin']);
     Route::post('/cost-setting/status', [\App\Http\Controllers\Admin\CostSettingController::class, 'getStatus'])->name('admin.cost-setting.status');
 
     // Material Type module
+    \App\Support\TrashRoutes::register('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, 'material-type');
     Route::resource('material-type', \App\Http\Controllers\Admin\MaterialTypeController::class, ['as' => 'admin']);
     Route::post('/material-type/status', [\App\Http\Controllers\Admin\MaterialTypeController::class, 'getStatus'])->name('admin.material_type.status');
     // Legacy Custom Purchase module removed (use inventory-purchase for product purchases)
@@ -154,6 +171,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/custom-order/update-status', [\App\Http\Controllers\Admin\CustomOrderController::class, 'updateStatus'])->name('admin.custom-order.update-status');
     Route::get('/custom-order-fabric-prices', [\App\Http\Controllers\Admin\CustomOrderController::class, 'getFabricPrices'])->name('admin.custom-order.fabric-prices');
     Route::get('/custom-order/due-list', [\App\Http\Controllers\Admin\CustomOrderController::class, 'dueList'])->name('admin.custom-order.due-list');
+    \App\Support\TrashRoutes::register('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, 'custom-order');
     Route::resource('custom-order', \App\Http\Controllers\Admin\CustomOrderController::class, ['as' => 'admin']);
 
     Route::get('/web-order/notifications', [\App\Http\Controllers\Admin\WebOrderController::class, 'notifications'])->name('admin.web-order.notifications');
@@ -164,6 +182,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('web-order', \App\Http\Controllers\Admin\WebOrderController::class, ['as' => 'admin', 'except' => ['create', 'store', 'destroy']]);
 
     // Wishlist module
+    \App\Support\TrashRoutes::register('wishlist', \App\Http\Controllers\Admin\WishlistController::class, 'wishlist');
     Route::resource('wishlist', \App\Http\Controllers\Admin\WishlistController::class, ['as' => 'admin', 'only' => ['index', 'destroy']]);
 
     // Order Requests module
@@ -173,6 +192,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('order-requests/{id}/draft', [\App\Http\Controllers\OrderRequestController::class, 'createDraft'])->name('admin.order-requests.draft');
 
     // Draft Orders module
+    \App\Support\TrashRoutes::register('draft-orders', \App\Http\Controllers\Admin\DraftOrderController::class, 'draft-orders');
     Route::get('/draft-orders/{id}/export-pdf', [\App\Http\Controllers\Admin\DraftOrderController::class, 'exportPdf'])->name('admin.draft-orders.export-pdf');
     Route::get('/draft-orders/{id}/print', [\App\Http\Controllers\Admin\DraftOrderController::class, 'print'])->name('admin.draft-orders.print');
     Route::post('/draft-orders/{id}/convert', [\App\Http\Controllers\Admin\DraftOrderController::class, 'convertToOrder'])->name('admin.draft-orders.convert');
@@ -186,6 +206,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/dealer-order/status', [\App\Http\Controllers\Admin\DealerOrderController::class, 'updateStatus'])->name('admin.dealer-order.status');
     Route::get('/dealer-order/due-list', [\App\Http\Controllers\Admin\DealerOrderController::class, 'dueList'])->name('admin.dealer-order.due-list');
     Route::post('/dealer-order/item/update', [\App\Http\Controllers\Admin\DealerOrderController::class, 'updateItem'])->name('admin.dealer-order.item.update');
+    \App\Support\TrashRoutes::register('dealer-order', \App\Http\Controllers\Admin\DealerOrderController::class, 'dealer-order');
     Route::resource('dealer-order', \App\Http\Controllers\Admin\DealerOrderController::class, ['as' => 'admin']);
 
     //POS Order module
@@ -195,6 +216,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/pos-order/export-pdf/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'exportPdf'])->name('admin.pos-order.export-pdf');
     Route::post('/pos-order/cancel/{id}', [\App\Http\Controllers\Admin\PosOrderController::class, 'cancel'])->name('admin.pos-order.cancel');
     Route::get('/pos-order/due-list', [\App\Http\Controllers\Admin\PosOrderController::class, 'dueList'])->name('admin.pos-order.due-list');
+    \App\Support\TrashRoutes::register('pos-order', \App\Http\Controllers\Admin\PosOrderController::class, 'pos-order');
     Route::resource('pos-order', \App\Http\Controllers\Admin\PosOrderController::class, ['as' => 'admin']);
 
     // Order Activity History API
@@ -239,9 +261,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/manufacture/get-prices', [\App\Http\Controllers\Admin\ManufactureController::class, 'getPrices'])->name('admin.manufacture.get-prices');
     Route::post('/manufacture/change-status', [\App\Http\Controllers\Admin\ManufactureController::class, 'changeStatus'])->name('admin.manufacture.change-status');
     Route::get('/manufacture/{id}/print', [\App\Http\Controllers\Admin\ManufactureController::class, 'print'])->name('admin.manufacture.print');
+    \App\Support\TrashRoutes::register('manufacture', \App\Http\Controllers\Admin\ManufactureController::class, 'manufacture');
     Route::resource('manufacture', \App\Http\Controllers\Admin\ManufactureController::class, ['as' => 'admin']);
 
     //Stock Adjustment module
+    \App\Support\TrashRoutes::register('stock-adjustment', \App\Http\Controllers\Admin\StockAdjustmentController::class, 'stock-adjustment');
     Route::post('/stock-adjustment/{id}/receive', [\App\Http\Controllers\Admin\StockAdjustmentController::class, 'receive'])->name('admin.stock-adjustment.receive');
     Route::resource('stock-adjustment', \App\Http\Controllers\Admin\StockAdjustmentController::class, ['as' => 'admin']);
 
@@ -264,10 +288,12 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::get('/report/export-pos-sales-pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPosSalesPdf'])->name('admin.report.export-pos-sales-pdf');
 
     // Banner module
+    \App\Support\TrashRoutes::register('banner', \App\Http\Controllers\Admin\BannerController::class, 'banner');
     Route::resource('banner', \App\Http\Controllers\Admin\BannerController::class, ['as' => 'admin']);
     Route::post('/banner/status', [\App\Http\Controllers\Admin\BannerController::class, 'getStatus'])->name('admin.banner.status');
 
     // Coupon module
+    \App\Support\TrashRoutes::register('coupon', \App\Http\Controllers\Admin\CouponController::class, 'coupon');
     Route::resource('coupon', \App\Http\Controllers\Admin\CouponController::class, ['as' => 'admin']);
 
     // Web Settings module
@@ -275,24 +301,29 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/web-setting/update', [\App\Http\Controllers\Admin\WebSettingController::class, 'update'])->name('admin.web-setting.update');
 
     // Product Reviews module
+    \App\Support\TrashRoutes::register('product-reviews', \App\Http\Controllers\Admin\ProductReviewController::class, 'product_reviews');
     Route::get('/product-reviews', [\App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('admin.product_reviews.index');
     Route::post('/product-reviews/status', [\App\Http\Controllers\Admin\ProductReviewController::class, 'updateStatus'])->name('admin.product_reviews.status');
     Route::post('/product-reviews/reply/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'reply'])->name('admin.product_reviews.reply');
     Route::delete('/product-reviews/delete/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'destroy'])->name('admin.product_reviews.destroy');
 
     // Contact Messages
+    \App\Support\TrashRoutes::register('contact-messages', \App\Http\Controllers\Admin\ContactMessageController::class, 'contact-messages');
     Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('admin.contact-messages.index');
     Route::delete('contact-messages/{id}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('admin.contact-messages.destroy');
 
     // Subscribers
+    \App\Support\TrashRoutes::register('subscribers', \App\Http\Controllers\Admin\SubscriberController::class, 'subscribers');
     Route::get('subscribers', [\App\Http\Controllers\Admin\SubscriberController::class, 'index'])->name('admin.subscribers.index');
     Route::delete('subscribers/{id}', [\App\Http\Controllers\Admin\SubscriberController::class, 'destroy'])->name('admin.subscribers.destroy');
 
     // Worker Invoice List (Renamed from worker-payment)
+    \App\Support\TrashRoutes::register('worker-invoices', \App\Http\Controllers\Admin\WorkerPaymentController::class, 'worker-invoices');
     Route::get('/worker-invoices', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'index'])->name('admin.worker-invoices.index');
     Route::delete('/worker-invoices/{id}', [\App\Http\Controllers\Admin\WorkerPaymentController::class, 'destroy'])->name('admin.worker-invoices.destroy');
 
     // Worker Balance Sheet & Worker Payment List
+    \App\Support\TrashRoutes::register('worker-payouts', \App\Http\Controllers\Admin\WorkerBalanceController::class, 'worker-payouts');
     Route::get('/worker-balance-sheet', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'balanceSheet'])->name('admin.worker-balance-sheet.index');
     Route::get('/worker-payments', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'paymentList'])->name('admin.worker-payouts.index');
     Route::post('/worker-payouts', [\App\Http\Controllers\Admin\WorkerBalanceController::class, 'storePayout'])->name('admin.worker-payouts.store');

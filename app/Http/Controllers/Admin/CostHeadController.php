@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CostHead;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class CostHeadController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'cost_head';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -68,12 +77,9 @@ class CostHeadController extends Controller
         return response()->json(['success' => 'Cost Head updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $costHead = CostHead::findOrFail($id);
-        $costHead->delete();
-
-        return response()->json(['success' => 'Cost Head deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function getStatus(Request $request)

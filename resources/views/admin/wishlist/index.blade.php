@@ -7,6 +7,7 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Customer Wishlists</h4>
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.wishlist.trash')])
                 </div>
             </div>
             <div class="card-body table-responsive pt-2">
@@ -57,23 +58,42 @@
 
         $('body').on('click', '.delete-wishlist', function () {
             var id = $(this).data('id');
-            if(confirm("Are you sure you want to delete this wishlist record?")) {
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ route('admin.wishlist.index') }}/" + id,
-                    success: function (data) {
-                        if(data.success) {
-                            toastr.success(data.message);
+            Swal.fire({
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('admin.wishlist.index') }}/" + id,
+                        success: function (data) {
                             table.draw();
-                        } else {
-                            toastr.error(data.message);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
-                    },
-                    error: function (data) {
-                        toastr.error('Error deleting record.');
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
     });
 </script>

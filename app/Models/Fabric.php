@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Fabric extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     /**
      * The attributes that are mass assignable.
@@ -23,4 +24,9 @@ class Fabric extends Model
         'name',
         'status',
     ];
+
+    public function prices()
+    {
+        return $this->hasMany(FabricPrice::class);
+    }
 }

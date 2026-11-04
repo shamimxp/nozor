@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\SubCategory;
+use App\Services\Deletion\SoftDeleteService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -12,6 +14,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SubCategoryController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'sub_category';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -108,14 +117,9 @@ class SubCategoryController extends Controller
         return response()->json(['success' => 'Sub Category updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $subCategory = SubCategory::find($id);
-        if ($subCategory->image) {
-            $subCategory->deleteOne(config('imagepath.sub_category'), $subCategory->image);
-        }
-        $subCategory->delete();
-        return response()->json(['success' => 'Sub Category deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function getStatus(Request $request)

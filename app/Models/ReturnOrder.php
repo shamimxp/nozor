@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ReturnOrder extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     protected $table = 'returns';
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Vendor extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     /**
      * The attributes that are mass assignable.
@@ -35,5 +36,15 @@ class Vendor extends Model
     public function payments()
     {
         return $this->hasMany(VendorPayment::class);
+    }
+
+    public function inventoryPurchases()
+    {
+        return $this->hasMany(InventoryPurchase::class);
+    }
+
+    public function customOrders()
+    {
+        return $this->hasMany(CustomOrder::class);
     }
 }

@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'coupon';
+    }
+
     public function index()
     {
         $coupons = \App\Models\Coupon::latest()->get();
@@ -55,9 +64,8 @@ class CouponController extends Controller
         return redirect()->route('admin.coupon.index')->with('success', 'Coupon updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        \App\Models\Coupon::findOrFail($id)->delete();
-        return redirect()->route('admin.coupon.index')->with('success', 'Coupon deleted successfully');
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

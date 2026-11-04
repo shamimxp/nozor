@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Helpers\NumberToWords;
 use App\Models\Worker;
 use App\Models\WorkerPayment;
 use App\Models\WorkerPayout;
 use App\Models\WorkerPayoutItem;
-use App\Helpers\NumberToWords;
+use App\Services\Deletion\SoftDeleteService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class WorkerBalanceController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'worker_payout';
+    }
+
     /**
      * Display Worker Balance Sheet
      */
@@ -319,14 +328,18 @@ class WorkerBalanceController extends Controller
                 }
             }
 
-            // Delete the payout record (items cascade deleted)
-            $payout->delete();
+            $softDeleteService = app(SoftDeleteService::class);
+            $result = $softDeleteService->delete($payout, $this->trashModuleKey());
+            if (! $result['success']) {
+                DB::rollBack();
+                return response()->json($result, 422);
+            }
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Payment history deleted successfully! ৳' . number_format($revertedAmount, 2) . ' has been added back to worker balance.'
+                'message' => 'Payment history moved to trash! ৳' . number_format($revertedAmount, 2) . ' has been added back to worker balance.',
             ]);
 
         } catch (\Exception $e) {

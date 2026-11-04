@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\User;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +15,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'customer';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -142,21 +151,8 @@ class CustomerController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        try {
-            DB::beginTransaction();
-            $customer = Customer::findOrFail($id);
-            if ($customer->user_id) {
-                User::where('id', $customer->user_id)->delete();
-            }
-            $customer->addresses()->delete();
-            $customer->delete();
-            DB::commit();
-            return response()->json(['success' => 'Customer deleted successfully.']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Something went wrong.'], 500);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

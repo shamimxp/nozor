@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomerAddress extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     protected $fillable = ['customer_id', 'address'];
 

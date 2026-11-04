@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Vendor;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class VendorController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'vendor';
+    }
+
     /**
      * Display a listing of the vendors.
      *
@@ -115,14 +124,8 @@ class VendorController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        try {
-            $vendor = Vendor::findOrFail($id);
-            $vendor->delete();
-            return response()->json(['success' => 'Vendor deleted successfully.']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Something went wrong.'], 500);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

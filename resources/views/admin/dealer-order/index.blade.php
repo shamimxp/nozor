@@ -12,6 +12,7 @@
 @endsection
 
 @section('content-header-right')
+@include('admin.partials.show_deleted_button', ['route' => route('admin.dealer-order.trash')])
 <a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary shadow-sm font-weight-bold">
     <i data-feather="plus"></i> Create New Order
 </a>
@@ -138,29 +139,38 @@
         $(document).on('click', '.deleteOrder', function() {
             let id = $(this).data('id');
             Swal.fire({
-                title: 'Are you sure?',
-                text: "This will permanently delete the dealer order!",
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
                         url: "/admin/dealer-order/" + id,
                         type: "DELETE",
                         data: { _token: '{{ csrf_token() }}' },
-                        success: function(res) {
-                            if (res.success) {
-                                toastr.success(res.success);
-                                table.draw();
-                            } else {
-                                toastr.error(res.error || 'Error deleting order');
-                            }
+                        success: function(data) {
+                            table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
                         error: function(xhr) {
-                            toastr.error(xhr.responseJSON?.error || 'Failed to delete order');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || xhr.responseJSON?.error || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }

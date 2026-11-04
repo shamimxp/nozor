@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\ProductAttribute;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductAttributeController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'product_attribute';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -69,10 +78,9 @@ class ProductAttributeController extends Controller
         return response()->json(['success' => 'Product Attribute updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        ProductAttribute::find($id)->delete();
-        return response()->json(['success' => 'Product Attribute deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function getStatus(Request $request)

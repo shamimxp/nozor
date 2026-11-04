@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\HasOrderActivities;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class WebOrder extends Model
 {
-    use HasFactory, HasOrderActivities;
+    use HasFactory, TracksSoftDeletion, HasOrderActivities;
     protected $fillable = [
         'invoice_no',
         'user_id',

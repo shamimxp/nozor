@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\UploadAble;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory, UploadAble;
+    use HasFactory, TracksSoftDeletion, UploadAble;
 
     protected $fillable = [
         'name', 'model_no', 'slug', 'category_id', 'sub_category_id', 'unit_id',
@@ -63,6 +64,46 @@ class Product extends Model
     public function recipe()
     {
         return $this->hasOne(ProductRecipe::class);
+    }
+
+    public function posOrderItems()
+    {
+        return $this->hasMany(PosOrderItem::class);
+    }
+
+    public function webOrderItems()
+    {
+        return $this->hasMany(WebOrderItem::class);
+    }
+
+    public function dealerOrderItems()
+    {
+        return $this->hasMany(DealerOrderItem::class);
+    }
+
+    public function draftOrderItems()
+    {
+        return $this->hasMany(DraftOrderItem::class);
+    }
+
+    public function manufactureOrderItems()
+    {
+        return $this->hasMany(ManufactureOrderItem::class);
+    }
+
+    public function inventoryPurchaseItems()
+    {
+        return $this->hasMany(InventoryPurchaseItem::class);
+    }
+
+    public function returnItems()
+    {
+        return $this->hasMany(ReturnOrderItem::class, 'product_id');
+    }
+
+    public function stockAdjustments()
+    {
+        return $this->hasMany(StockAdjustment::class);
     }
 
     public function scopeForDealer($query)

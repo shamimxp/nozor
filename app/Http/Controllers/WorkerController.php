@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Models\Worker;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
@@ -10,6 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class WorkerController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'worker';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -304,14 +313,8 @@ class WorkerController extends Controller
         return response()->json(['success' => 'Worker updated successfully.']);
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $worker = Worker::findOrFail($id);
-        if ($worker->profile_image) {
-            Storage::disk('public')->delete($worker->profile_image);
-        }
-        $worker->delete();
-
-        return response()->json(['success' => 'Worker deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

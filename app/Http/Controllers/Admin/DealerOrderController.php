@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Dealer;
 use App\Models\DealerOrder;
 use App\Models\DealerOrderItem;
 use App\Models\Product;
+use App\Services\Deletion\SoftDeleteService;
 use App\Services\OrderActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class DealerOrderController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'dealer_order';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -70,7 +79,7 @@ class DealerOrderController extends Controller
                     $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
                     $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
                     $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
-                    if (!in_array($r->status, ['delivered', 'cancelled'])) {
+                    if ($r->status === 'pending') {
                         $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>';
                     }
                     $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
@@ -350,8 +359,8 @@ class DealerOrderController extends Controller
     {
         $order = DealerOrder::with(['items.product.recipe', 'dealer'])->findOrFail($id);
 
-        if ($order->status == 'delivered') {
-            toastr()->warning('Delivered orders cannot be modified.');
+        if ($order->status !== 'pending') {
+            toastr()->warning('Only pending orders can be edited.');
             return redirect()->route('admin.dealer-order.index');
         }
 
@@ -424,8 +433,8 @@ class DealerOrderController extends Controller
     {
         $order = DealerOrder::with('items')->findOrFail($id);
 
-        if ($order->status == 'delivered') {
-            toastr()->error('Delivered orders are locked and cannot be changed.');
+        if ($order->status !== 'pending') {
+            toastr()->error('Only pending orders can be edited.');
             return back();
         }
 
@@ -597,26 +606,32 @@ class DealerOrderController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
         try {
             DB::beginTransaction();
             $order = DealerOrder::with('items')->findOrFail($id);
+
             if ($order->status == 'delivered') {
-                return response()->json(['error' => 'Delivered orders cannot be deleted.'], 403);
+                DB::rollBack();
+                return response()->json(['message' => 'Delivered orders cannot be deleted.'], 403);
             }
 
             if (in_array($order->status, ['confirm', 'delivered'])) {
                 $this->restoreOrderStock($order);
             }
 
-            $order->items()->delete();
-            $order->delete();
+            $result = $softDeleteService->delete($order, $this->trashModuleKey());
+            if (! $result['success']) {
+                DB::rollBack();
+                return response()->json($result, 422);
+            }
+
             DB::commit();
-            return response()->json(['success' => 'Dealer order deleted successfully.']);
+            return response()->json(['success' => true, 'message' => $result['message']]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Something went wrong.'], 500);
+            return response()->json(['message' => $e->getMessage() ?: 'Something went wrong.'], 500);
         }
     }
 

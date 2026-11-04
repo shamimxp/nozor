@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CostSetting;
 use App\Models\Dealer;
@@ -13,11 +14,19 @@ use App\Models\Worker;
 use App\Models\WorkerPayment;
 use App\Http\Requests\StoreManufactureRequest;
 use App\Http\Requests\UpdateManufactureRequest;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ManufactureController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'manufacture';
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -584,15 +593,9 @@ class ManufactureController extends Controller
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id, SoftDeleteService $softDeleteService)
     {
-        $manufacture = Manufacture::findOrFail($id);
-        if ($manufacture->is_confirm) {
-            return response()->json(['error' => 'Confirmed records cannot be deleted.'], 403);
-        }
-
-        $manufacture->delete();
-        return response()->json(['success' => 'Manufacture order deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function export(Request $request)

@@ -9,9 +9,12 @@
                 <h4 class="card-title mb-0">
                     <i data-feather="credit-card" class="mr-50 text-primary"></i> Worker Payment List
                 </h4>
-                <a href="{{ route('admin.worker-balance-sheet.index') }}" class="btn btn-outline-primary btn-sm">
-                    <i data-feather="users" class="mr-25"></i> Worker Balance Sheet
-                </a>
+                <div class="d-flex" style="gap:0.4rem;">
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.worker-payouts.trash')])
+                    <a href="{{ route('admin.worker-balance-sheet.index') }}" class="btn btn-outline-primary btn-sm">
+                        <i data-feather="users" class="mr-25"></i> Worker Balance Sheet
+                    </a>
+                </div>
             </div>
             <div class="card-body mt-2">
                 <div class="row mb-2">

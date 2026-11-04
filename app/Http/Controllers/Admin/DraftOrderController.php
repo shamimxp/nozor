@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\DraftOrder;
 use App\Models\DraftOrderItem;
 use App\Models\OrderRequest;
 use App\Models\OrderRequestItem;
+use App\Services\Deletion\SoftDeleteService;
 use App\Services\OrderRequestService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -15,6 +17,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DraftOrderController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'draft_order';
+    }
+
     protected $orderRequestService;
 
     public function __construct(OrderRequestService $orderRequestService)
@@ -287,19 +296,20 @@ class DraftOrderController extends Controller
     }
 
     /**
-     * Remove the entire draft order and restore all products to the original Order Request.
+     * Soft-delete the draft order and restore products to the original Order Request.
      */
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
         try {
-            DB::transaction(function () use ($id) {
+            $result = null;
+
+            DB::transaction(function () use ($id, $softDeleteService, &$result) {
                 $draftOrder = DraftOrder::with('items')->findOrFail($id);
 
                 if ($draftOrder->status === 'converted') {
-                    throw new \Exception("Converted draft orders cannot be deleted.");
+                    throw new \Exception('Converted draft orders cannot be deleted.');
                 }
 
-                // Restore all items back to Order Request
                 if ($draftOrder->order_request_id) {
                     foreach ($draftOrder->items as $item) {
                         $this->orderRequestService->restoreDraftItemToOrderRequest(
@@ -310,27 +320,21 @@ class DraftOrderController extends Controller
                     }
                 }
 
-                // Delete draft order (items cascade delete)
-                $draftOrder->delete();
+                $result = $softDeleteService->delete($draftOrder, $this->trashModuleKey());
+                if (! $result['success']) {
+                    throw new \Exception($result['message']);
+                }
             });
 
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Draft order deleted and all products restored to original Order Request.',
-                ]);
-            }
-
-            return redirect()->route('admin.draft-orders.index')
-                ->with('success', 'Draft order deleted and all products restored to original Order Request.');
+            return response()->json([
+                'success' => true,
+                'message' => $result['message'] ?? 'Draft order moved to trash and products restored to Order Request.',
+            ]);
         } catch (\Exception $e) {
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $e->getMessage(),
-                ], 422);
-            }
-            return redirect()->back()->with('error', $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
         }
     }
 

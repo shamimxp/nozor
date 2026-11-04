@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\CustomOrder;
@@ -13,6 +14,7 @@ use App\Models\FabricPrice;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Vendor;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -21,6 +23,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomOrderController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'custom_order';
+    }
+
     /**
      * Display a listing of custom orders.
      */
@@ -406,25 +415,9 @@ class CustomOrderController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        try {
-            DB::beginTransaction();
-            $order = CustomOrder::findOrFail($id);
-            if ($order->status == 'delivered') {
-                return response()->json(['error' => 'Delivered orders cannot be deleted.'], 403);
-            }
-            $dir = public_path('images/custom_orders/' . $order->id);
-            if (File::isDirectory($dir)) File::deleteDirectory($dir);
-            $order->items()->delete();
-            $order->images()->delete();
-            $order->delete();
-            DB::commit();
-            return response()->json(['success' => 'Custom order deleted successfully.']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Something went wrong.'], 500);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     public function assignVendor(Request $request)

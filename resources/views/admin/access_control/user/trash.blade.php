@@ -36,6 +36,8 @@
                                 <th>{{__('Phone Number')}}</th>
                                 <th>{{__('Email')}}</th>
                                 <th>{{__('Roles')}}</th>
+                                <th>{{__('Deleted By')}}</th>
+                                <th>{{__('Deleted At')}}</th>
                                 <th>{{__('Action')}}</th>
                             </tr>
                             </thead>
@@ -62,6 +64,8 @@
                     {data: "phone_number"},
                     {data: "email"},
                     {data: "roles", searchable: false, orderable: false},
+                    {data: "deleted_by_name", searchable: false, orderable: false},
+                    {data: "deleted_at_formatted", searchable: false, orderable: false},
                     {data: "action", searchable: false, orderable: false},
                 ],
             });

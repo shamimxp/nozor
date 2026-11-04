@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductVariation extends Model
 {
+    use TracksSoftDeletion;
+
     protected $table = 'product_variation';
     
     protected $fillable = ['product_id', 'variation_id', 'variation_value_id'];

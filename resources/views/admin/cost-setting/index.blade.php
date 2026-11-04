@@ -7,6 +7,7 @@
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Cost Setting List</h4>
                 <div>
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.cost-setting.trash')])
                     <a href="{{ route('admin.cost-head.index') }}" class="btn btn-outline-secondary mr-50">
                         <i data-feather="list"></i> Cost Heads
                     </a>
@@ -94,22 +95,43 @@
         // Delete Cost Setting
         $('body').on('click', '.deleteBtn', function() {
             let id = $(this).data('id');
-            if (confirm('Are you sure you want to delete this cost setting?')) {
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ url('admin/cost-setting') }}/" + id,
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        table.draw();
-                        toastr.success(response.success);
-                    },
-                    error: function(xhr) {
-                        toastr.error('Failed to delete cost setting.');
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url('admin/cost-setting') }}/" + id,
+                        data: { "_token": "{{ csrf_token() }}" },
+                        success: function(data) {
+                            table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
+                        }
+                    });
+                }
+            });
         });
     });
 </script>

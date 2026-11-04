@@ -3,6 +3,10 @@
 @section('content')
 <section class="content-main">
     <div class="card mb-4">
+        <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Subscribers</h4>
+            @include('admin.partials.show_deleted_button', ['route' => route('admin.subscribers.trash')])
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover" id="example">
@@ -26,7 +30,7 @@
 @push('scripts')
 <script>
     $(document).ready(function () {
-        $('#example').DataTable({
+        var table = $('#example').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('admin.subscribers.index') }}",
@@ -34,7 +38,7 @@
                 {data: 'id', name: 'id'},
                 {data: 'email', name: 'email'},
                 {
-                    data: 'created_at', 
+                    data: 'created_at',
                     name: 'created_at',
                     render: function(data) {
                         return data ? new Date(data).toLocaleDateString() : '';
@@ -42,6 +46,46 @@
                 },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-end'}
             ]
+        });
+
+        $('body').on('click', '.deleteSubscriber', function () {
+            var id = $(this).data('id');
+            Swal.fire({
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url('admin/subscribers') }}/" + id,
+                        success: function (data) {
+                            table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
+                        }
+                    });
+                }
+            });
         });
     });
 </script>

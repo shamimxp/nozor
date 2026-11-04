@@ -4,8 +4,9 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header border-bottom p-1">
-                <h4 class="card-title">Product Reviews</h4>
+            <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Product Reviews</h4>
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.product_reviews.trash')])
             </div>
             <div class="card-body table-responsive pt-2">
                 @if(session('success'))
@@ -43,11 +44,7 @@
                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#replyModal{{ $review->id }}">
                                     Reply
                                 </button>
-                                <form action="{{ route('admin.product_reviews.destroy', $review->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this review?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-danger deleteReview" data-id="{{ $review->id }}">Delete</button>
                             </td>
                         </tr>
 
@@ -109,6 +106,48 @@
                 },
                 error: function() {
                     toastr.error('Something went wrong!');
+                }
+            });
+        });
+
+        $('body').on('click', '.deleteReview', function () {
+            var id = $(this).data('id');
+            var row = $(this).closest('tr');
+            Swal.fire({
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url('admin/product-reviews/delete') }}/" + id,
+                        data: { _token: "{{ csrf_token() }}" },
+                        success: function (data) {
+                            row.fadeOut(300, function() { $(this).remove(); });
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
+                        }
+                    });
                 }
             });
         });

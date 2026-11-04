@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\RawMaterialProduct;
+use App\Services\Deletion\SoftDeleteService;
 use App\Services\ProductRecipeWriter;
 use Illuminate\Http\Request;
 
 class ProductRecipeController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'product_recipe';
+    }
+
     public function index(Request $request){
         if ($request->ajax()) {
             $data = \App\Models\ProductRecipe::with(['product', 'items.rawMaterialProduct', 'costSetting'])->latest()->get();
@@ -173,19 +182,9 @@ class ProductRecipeController extends Controller
         return redirect()->route('admin.product-recipe.index');
     }
 
-    public function destroy($id){
-        $recipe = \App\Models\ProductRecipe::findOrFail($id);
-        
-        if (is_array($recipe->manufacture_images)) {
-            foreach ($recipe->manufacture_images as $old_img) {
-                if (file_exists(public_path($old_img))) {
-                    @unlink(public_path($old_img));
-                }
-            }
-        }
-        
-        $recipe->delete();
-        return response()->json(['success' => 'Product Recipe deleted successfully.']);
+    public function destroy($id, SoftDeleteService $softDeleteService)
+    {
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     private function recipeRules(bool $requireItems): array

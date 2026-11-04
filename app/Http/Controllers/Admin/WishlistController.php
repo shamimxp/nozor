@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Wishlist;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class WishlistController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'wishlist';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -37,13 +46,8 @@ class WishlistController extends Controller
         return view('admin.wishlist.index');
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $wishlist = Wishlist::find($id);
-        if ($wishlist) {
-            $wishlist->delete();
-            return response()->json(['success' => true, 'message' => 'Wishlist record deleted successfully.']);
-        }
-        return response()->json(['success' => false, 'message' => 'Wishlist record not found.'], 404);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

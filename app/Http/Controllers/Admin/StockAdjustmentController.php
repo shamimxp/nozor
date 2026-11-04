@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\StockAdjustment;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class StockAdjustmentController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'stock_adjustment';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -236,7 +245,7 @@ class StockAdjustmentController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
         $stockService = app(\App\Services\StockService::class);
 
@@ -246,13 +255,11 @@ class StockAdjustmentController extends Controller
             $adjustment = StockAdjustment::with('product')->lockForUpdate()->findOrFail($id);
             $product = Product::lockForUpdate()->find($adjustment->product_id);
 
-            // Revert stock impact
             if ($adjustment->type === 'addition') {
-                // Positive adjustment is being cancelled: deduct stock back
                 if ($product && (float) $product->stock < (float) $adjustment->quantity) {
                     DB::rollback();
                     return response()->json([
-                        'error' => "Cannot delete adjustment: available stock ({$product->stock}) is less than the adjustment quantity ({$adjustment->quantity})."
+                        'message' => "Cannot delete adjustment: available stock ({$product->stock}) is less than the adjustment quantity ({$adjustment->quantity}).",
                     ], 422);
                 }
 
@@ -267,7 +274,6 @@ class StockAdjustmentController extends Controller
                     false
                 );
             } elseif ($adjustment->type === 'abnormal') {
-                // Damage deduction is being cancelled: restore stock back
                 $stockService->recordIn(
                     $adjustment->product_id,
                     (float) $adjustment->quantity,
@@ -276,28 +282,31 @@ class StockAdjustmentController extends Controller
                     'ADJ-REV-' . $adjustment->id,
                     'Reversal of damage deduction #' . $adjustment->id
                 );
-            } elseif ($adjustment->type === 'normal') {
-                // Exchange adjustment
-                if (!$adjustment->is_received) {
-                    // Was deducted and not yet received back: restore deducted stock
-                    $stockService->recordIn(
-                        $adjustment->product_id,
-                        (float) $adjustment->quantity,
-                        'stock_adjustment_reversal',
-                        $adjustment->id,
-                        'ADJ-REV-' . $adjustment->id,
-                        'Reversal of pending exchange deduction #' . $adjustment->id
-                    );
-                }
+            } elseif ($adjustment->type === 'normal' && ! $adjustment->is_received) {
+                $stockService->recordIn(
+                    $adjustment->product_id,
+                    (float) $adjustment->quantity,
+                    'stock_adjustment_reversal',
+                    $adjustment->id,
+                    'ADJ-REV-' . $adjustment->id,
+                    'Reversal of pending exchange deduction #' . $adjustment->id
+                );
             }
 
-            $adjustment->delete();
+            $result = $softDeleteService->delete($adjustment, $this->trashModuleKey());
+            if (! $result['success']) {
+                DB::rollBack();
+                return response()->json($result, 422);
+            }
 
             DB::commit();
-            return response()->json(['success' => 'Stock adjustment deleted and stock reversed successfully.']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Stock adjustment moved to trash and stock reversed successfully.',
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['error' => $e->getMessage()], 422);
+            return response()->json(['message' => $e->getMessage()], 422);
         }
     }
 }

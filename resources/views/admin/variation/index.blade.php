@@ -4,11 +4,14 @@
 <div class="row" id="table-striped">
     <div class="col-12">
         <div class="card">
-            <div class="card-header border-bottom p-1">
-                <h4 class="card-title">Variations</h4>
-                <button type="button" class="btn btn-primary" id="createNewVariation">
-                    <i data-feather="plus"></i> Add Variation
-                </button>
+            <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Variations</h4>
+                <div class="d-flex align-items-center gap-1">
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.variations.trash')])
+                    <button type="button" class="btn btn-primary" id="createNewVariation">
+                        <i data-feather="plus"></i> Add Variation
+                    </button>
+                </div>
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="variationTable" class="table table-bordered table-striped">
@@ -199,13 +202,16 @@
         $('body').on('click', '.deleteVariation', function () {
             var id = $(this).data("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -213,10 +219,20 @@
                         url: "{{ url('admin/variations') }}"+'/'+id,
                         success: function (data) {
                             table.draw();
-                            toastr.success(data.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
-                        error: function (data) {
-                            console.log('Error:', data);
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }

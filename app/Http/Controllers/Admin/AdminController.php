@@ -133,7 +133,7 @@ class AdminController extends Controller
     public function adminUserDeleted()
     {
         if (\request()->ajax()) {
-            $admins = Admin::onlyTrashed()->get();
+            $admins = Admin::onlyTrashed()->with('deletedByUser')->latest('deleted_at')->get();
             return DataTables::of($admins)
                 ->addIndexColumn()
                 ->addColumn('roles', function ($admin) {
@@ -142,6 +142,12 @@ class AdminController extends Controller
                         $button .= '<span class="badge badge-info mr-1">' . $role . '</span>';
                     }
                     return $button;
+                })
+                ->addColumn('deleted_by_name', function ($admin) {
+                    return e(optional($admin->deletedByUser)->name ?? '—');
+                })
+                ->addColumn('deleted_at_formatted', function ($admin) {
+                    return $admin->deleted_at ? $admin->deleted_at->format('d M Y h:i A') : '—';
                 })
                 ->addColumn('action', function ($admin) {
                         return view('admin.access_control.user.trash_action', compact('admin'));

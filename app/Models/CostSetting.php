@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CostSetting extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     protected $table = 'cost_settings';
 
@@ -28,6 +29,11 @@ class CostSetting extends Model
     public function recipes()
     {
         return $this->hasMany(ProductRecipe::class, 'cost_setting_id');
+    }
+
+    public function manufactureOrderItems()
+    {
+        return $this->hasMany(ManufactureOrderItem::class, 'cost_setting_id');
     }
 
     public function getBodyChargeAttribute(): float

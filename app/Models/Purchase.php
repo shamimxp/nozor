@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Models\Admin\Admin;
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Purchase extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksSoftDeletion;
 
     protected $fillable = [
         'purchase_number', 'custom_order_id', 'style_number', 'vendor_id',

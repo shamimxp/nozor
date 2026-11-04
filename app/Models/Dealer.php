@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\TracksSoftDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 class Dealer extends Authenticatable
 {
-    use HasFactory, HasRoles;
+    use HasFactory, TracksSoftDeletion, HasRoles;
     protected $guarded = ['id'];
 
     protected $hidden = [
@@ -41,5 +42,20 @@ class Dealer extends Authenticatable
     public function collections()
     {
         return $this->morphMany(Collection::class, 'party');
+    }
+
+    public function draftOrders()
+    {
+        return $this->hasMany(DraftOrder::class);
+    }
+
+    public function manufactures()
+    {
+        return $this->hasMany(Manufacture::class);
+    }
+
+    public function orderRequests()
+    {
+        return $this->hasMany(OrderRequest::class);
     }
 }

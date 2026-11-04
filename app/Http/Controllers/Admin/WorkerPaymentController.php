@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use App\Models\WorkerPayment;
 use App\Models\Worker;
@@ -10,6 +12,13 @@ use App\Models\Manufacture;
 
 class WorkerPaymentController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'worker_payment';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -135,16 +144,14 @@ class WorkerPaymentController extends Controller
         return view('admin.worker_payment.index', compact('workers', 'page_title'));
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
         $payment = WorkerPayment::findOrFail($id);
 
         if ($payment->status !== 'pending') {
-            return response()->json(['error' => 'Only pending invoices can be deleted.'], 403);
+            return response()->json(['message' => 'Only pending invoices can be deleted.'], 403);
         }
 
-        $payment->delete();
-
-        return response()->json(['success' => 'Worker invoice record deleted successfully']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

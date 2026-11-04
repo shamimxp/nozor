@@ -7,6 +7,7 @@
             <div class="card-header border-bottom p-1">
                 <h4 class="card-title">{{ isset($page_title) ? $page_title : 'Manufacture Order List' }}</h4>
                 <div>
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.manufacture.trash')])
                     <a href="javascript:void(0)" class="btn btn-success" id="exportBtn"><i data-feather="file-text"></i> Export Excel</a>
                     <a href="{{ route('admin.manufacture.create') }}" class="btn btn-primary">Create New</a>
                 </div>
@@ -362,28 +363,41 @@
         $(document).on('click', '.delete-record', function() {
             let id = $(this).data('id');
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-outline-danger ml-1'
+                },
+                buttonsStyling: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
                         url: "{{ url('admin/manufacture') }}/" + id,
                         type: 'DELETE',
-                        success: function(response) {
-                            toastr.success(response.success);
+                        success: function(data) {
                             table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
                         error: function(xhr) {
-                            toastr.error(xhr.responseJSON.error || 'Something went wrong.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || xhr.responseJSON?.error || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }
-            })
+            });
         });
         // Export button handler
         $('#exportBtn').on('click', function(e) {

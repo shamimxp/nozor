@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class BannerController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'banner';
+    }
+
     /**
      * Display a listing of banners.
      */
@@ -122,20 +131,11 @@ class BannerController extends Controller
     }
 
     /**
-     * Remove the specified banner.
+     * Soft-delete the specified banner.
      */
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        try {
-            $banner = Banner::findOrFail($id);
-            if ($banner->image) {
-                $banner->deleteOne(config('imagepath.banner'), $banner->image);
-            }
-            $banner->delete();
-            return response()->json(['success' => 'Banner deleted successfully.']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Something went wrong.'], 500);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     /**

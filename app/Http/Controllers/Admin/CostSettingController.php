@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CostHead;
 use App\Models\CostSetting;
 use App\Models\CostSettingItem;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class CostSettingController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'cost_setting';
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -250,12 +259,9 @@ class CostSettingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $costSetting = CostSetting::findOrFail($id);
-        $costSetting->delete();
-
-        return response()->json(['success' => 'Cost Setting deleted successfully.']);
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 
     /**

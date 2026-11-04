@@ -57,9 +57,12 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Customer List</h4>
-                    <button type="button" class="btn btn-primary" id="showAddCustomerBtn">
-                        <i data-feather="plus"></i> Add Customer
-                    </button>
+                    <div class="d-flex" style="gap:6px;">
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.customer.trash')])
+                        <button type="button" class="btn btn-primary" id="showAddCustomerBtn">
+                            <i data-feather="plus"></i> Add Customer
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body table-responsive pt-2">
@@ -200,11 +203,11 @@
             var id = $(this).data('id');
 
             Swal.fire({
-                title: 'Delete this customer?',
-                text: 'This will also delete the customer login account.',
+                title: 'Move to trash?',
+                text: 'You can restore this later from Show Deleted Data.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, delete',
+                confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'btn btn-danger',
@@ -223,16 +226,20 @@
                         table.draw(false);
                         Swal.fire({
                             icon: 'success',
-                            title: 'Deleted',
-                            text: data.success,
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            },
+                            title: 'Deleted!',
+                            text: data.message || data.success,
+                            customClass: { confirmButton: 'btn btn-success' },
                             buttonsStyling: false
                         });
                     },
-                    error: function (data) {
-                        toastr.error((data.responseJSON && data.responseJSON.error) || 'Error deleting customer.');
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot delete',
+                            text: (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong!',
+                            customClass: { confirmButton: 'btn btn-danger' },
+                            buttonsStyling: false
+                        });
                     }
                 });
             });

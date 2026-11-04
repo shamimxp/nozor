@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Dealer;
+use App\Services\Deletion\SoftDeleteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +14,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DealerController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'dealer';
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -212,26 +221,8 @@ class DealerController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        try {
-            DB::beginTransaction();
-            $dealer = Dealer::findOrFail($id);
-            if ($dealer->profile_image && file_exists(public_path($dealer->profile_image))) {
-                unlink(public_path($dealer->profile_image));
-            }
-            if ($dealer->nid_image && file_exists(public_path($dealer->nid_image))) {
-                unlink(public_path($dealer->nid_image));
-            }
-            if ($dealer->trade_license && file_exists(public_path($dealer->trade_license))) {
-                unlink(public_path($dealer->trade_license));
-            }
-            $dealer->delete();
-            DB::commit();
-            return response()->json(['success' => 'Dealer deleted successfully.']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Something went wrong.'], 500);
-        }
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Models\ProductReview;
+use App\Services\Deletion\SoftDeleteService;
+use Illuminate\Http\Request;
 
 class ProductReviewController extends Controller
 {
+    use HandlesTrash;
+
+    protected function trashModuleKey(): string
+    {
+        return 'product_review';
+    }
+
     public function index()
     {
         $reviews = ProductReview::with('product')->latest()->get();
@@ -34,11 +42,8 @@ class ProductReviewController extends Controller
         return redirect()->back()->with('success', 'Reply updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy($id, SoftDeleteService $softDeleteService)
     {
-        $review = ProductReview::findOrFail($id);
-        $review->delete();
-
-        return redirect()->back()->with('success', 'Review deleted successfully.');
+        return $this->softDeleteRecord($id, $softDeleteService);
     }
 }

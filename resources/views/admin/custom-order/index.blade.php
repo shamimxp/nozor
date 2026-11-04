@@ -64,6 +64,7 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Custom Order List</h4>
                     <div class="d-flex gap-1">
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.custom-order.trash')])
                         <button class="btn btn-success btn-sm" id="exportExcelBtn" title="Export to Excel (CSV)">
                             <i data-feather="file-text"></i> Excel
                         </button>
@@ -278,12 +279,10 @@
         $('body').on('click', '.deleteOrder', function () {
             var id = $(this).data("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Delete this order? (Items and images will be removed)",
+                title: 'Move to trash?',
+                text: "You can restore this later from Show Deleted Data.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete it!',
                 customClass: {
                     confirmButton: 'btn btn-primary',
@@ -297,10 +296,20 @@
                         url: "{{ url('admin/custom-order') }}"+'/'+id,
                         success: function (data) {
                             table.draw();
-                            toastr.success(data.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message || data.success,
+                                customClass: { confirmButton: 'btn btn-success' }
+                            });
                         },
-                        error: function (data) {
-                            toastr.error(data.responseJSON.error || 'Something went wrong!');
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot delete',
+                                text: xhr.responseJSON?.message || xhr.responseJSON?.error || 'Something went wrong!',
+                                customClass: { confirmButton: 'btn btn-danger' }
+                            });
                         }
                     });
                 }
