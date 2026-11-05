@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Dealer;
@@ -14,12 +15,21 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DealerController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'dealer';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('dealer', [
+            'dealer.edit' => ['getStatus', 'loginAs'],
+            'dealer.show' => ['loginAs'],
+        ]);
+    }
+
 
     public function index(Request $request)
     {
@@ -70,10 +80,10 @@ class DealerController extends Controller
                     return '<span class="text-muted font-weight-bold font-small-3">৳ 0.00</span>';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="'.route('admin.dealer.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewDealer" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editDealer" title="Edit"><i data-feather="edit"></i></a>';
-                    $btn .= '<a href="'.route('admin.dealer.loginAs', $row->id).'" class="btn btn-success btn-sm mr-1" title="Login As Dealer"><i data-feather="log-in"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteDealer" title="Delete"><i data-feather="trash"></i></a>';
+                    $btn = perm_html('dealer.show', '<a href="'.route('admin.dealer.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewDealer" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('dealer.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editDealer" title="Edit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('dealer.edit', '<a href="'.route('admin.dealer.loginAs', $row->id).'" class="btn btn-success btn-sm mr-1" title="Login As Dealer"><i data-feather="log-in"></i></a>');
+                    $btn .= perm_html('dealer.delete', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteDealer" title="Delete"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['status', 'is_special', 'profile_image', 'wallet_balance', 'action'])

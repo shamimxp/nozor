@@ -7,10 +7,12 @@
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Variations</h4>
                 <div class="d-flex align-items-center gap-1">
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.variations.trash')])
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.variations.trash'), 'permission' => 'variation.deleted-list'])
+                    @can('variation.create')
                     <button type="button" class="btn btn-primary" id="createNewVariation">
                         <i data-feather="plus"></i> Add Variation
                     </button>
+                    @endcan
                 </div>
             </div>
             <div class="card-body table-responsive pt-2">

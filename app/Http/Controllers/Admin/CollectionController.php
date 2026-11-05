@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
 use App\Models\Customer;
@@ -18,6 +20,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CollectionController extends Controller
 {
+    use AuthorizesAdminModule;
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('collection');
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -156,7 +165,7 @@ class CollectionController extends Controller
                         </button>';
                     }
 
-                    return '<div class="d-flex align-items-center">' . $actionBtns . '</div>';
+                    return perm_html('collection.delete', '<div class="d-flex align-items-center">' . $actionBtns . '</div>');
                 })
                 ->rawColumns(['collection_no', 'party_info', 'type_badge', 'amount', 'method_badge', 'status_badge', 'action'])
                 ->make(true);

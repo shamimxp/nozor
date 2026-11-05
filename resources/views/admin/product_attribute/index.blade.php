@@ -7,10 +7,12 @@
             <div class="card-header border-bottom d-flex justify-content-between align-items-center p-1">
                 <h4 class="card-title mb-0">Product Attribute List</h4>
                 <div class="d-flex align-items-center gap-1">
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.product-attribute.trash')])
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.product-attribute.trash'), 'permission' => 'product_attribute.deleted-list'])
+                    @can('product_attribute.create')
                     <button type="button" class="btn btn-primary" id="createNewAttribute">
                         <i data-feather="plus"></i> Add New Attribute
                     </button>
+                    @endcan
                 </div>
             </div>
             <div class="card-body table-responsive pt-2">

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Services\Deletion\SoftDeleteService;
@@ -12,11 +14,16 @@ use App\Models\Manufacture;
 
 class WorkerPaymentController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'worker_payment';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('worker_payment');
     }
 
     public function index(Request $request)
@@ -130,7 +137,7 @@ class WorkerPaymentController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     if ($row->status === 'pending') {
-                        return '<button type="button" class="btn btn-sm btn-danger delete-record" data-id="'.$row->id.'" title="Delete"><i data-feather="trash-2"></i></button>';
+                        return perm_html('worker_payment.delete', '<button type="button" class="btn btn-sm btn-danger delete-record" data-id="'.$row->id.'" title="Delete"><i data-feather="trash-2"></i></button>');
                     }
                     return '<span class="text-muted font-weight-bold" title="Cannot delete paid or partially paid invoice">—</span>';
                 })

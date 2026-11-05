@@ -90,7 +90,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Fabric Price List</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.fabric-price.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.fabric-price.trash'), 'permission' => 'fabric_price.deleted-list'])
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="fabricPriceTable" class="table table-bordered table-striped">

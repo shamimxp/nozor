@@ -16,12 +16,14 @@ class AdminTableSeeder extends Seeder
      */
     public function run()
     {
-        $admin = Admin::create([
-            'name' => 'Super Admin',
-            'phone_number' => '01631059182',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('1234'),
-        ]);
-        $admin->assignRole(2);
+        $admin = Admin::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Super Admin',
+                'phone_number' => '01631059182',
+                'password' => Hash::make('1234'),
+            ]
+        );
+        $admin->assignRole(config('admin_permissions.super_admin_role', 'Super Admin'));
     }
 }

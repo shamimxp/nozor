@@ -83,9 +83,11 @@
             <div class="card-header border-bottom py-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0"><i data-feather="credit-card" class="mr-50 text-primary"></i> Dealer Wallets & Due Summary</h4>
-                    <a href="{{ route('admin.collections.create') }}" class="btn btn-primary btn-sm">
+                    @can('collection.create')
+                        <a href="{{ route('admin.collections.create') }}" class="btn btn-primary btn-sm">
                         <i data-feather="plus-circle" class="mr-25"></i> Add Collection / Deposit
                     </a>
+                        @endcan
                 </div>
             </div>
             <div class="card-body pt-2">

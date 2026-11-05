@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\PosOrder;
@@ -17,11 +19,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PosOrderController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'pos_order';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('pos_order');
     }
 
     /**
@@ -74,13 +81,13 @@ class PosOrderController extends Controller
                 })
                 ->addColumn('action', function($r) {
                     $btn = '<div class="d-flex align-items-center">';
-                    $btn .= '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-50" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-outline-primary mr-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
-                    $btn .= '<a href="' . route('admin.pos-order.export-pdf', $r->id) . '" class="btn btn-sm btn-secondary mr-50" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn .= perm_html('pos_order.show', '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-50" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('pos_order.show', '<button type="button" class="btn btn-sm btn-outline-primary mr-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>');
+                    $btn .= perm_html('pos_order.show', '<a href="' . route('admin.pos-order.export-pdf', $r->id) . '" class="btn btn-sm btn-secondary mr-50" title="Download PDF"><i data-feather="download"></i></a>');
                     if ($r->order_status === 'pending') {
                         $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-warning mr-50 cancelOrder" title="Cancel Order"><i data-feather="x-circle"></i></a>';
                     }
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-danger deleteOrder" title="Delete"><i data-feather="trash"></i></a>';
+                    $btn .= perm_html('pos_order.delete', '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-danger deleteOrder" title="Delete"><i data-feather="trash"></i></a>');
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -110,15 +117,15 @@ class PosOrderController extends Controller
                     $customerId = $r->customer_id ?? '';
                     $customerName = $r->customer->name ?? 'Walk-in';
                     $btn = '<div class="d-inline-flex align-items-center">';
-                    $btn .= '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-outline-primary mr-25 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn ml-25"
+                    $btn .= perm_html('pos_order.show', '<a href="' . route('admin.pos-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>');
+                    $btn .= perm_html('pos_order.show', '<button type="button" class="btn btn-sm btn-outline-primary mr-25 view-order-history" data-order-id="' . $r->id . '" data-order-type="pos_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>');
+                    $btn .= perm_html('pos_order.create', '<button type="button" class="btn btn-sm btn-success payBtn ml-25"
                                 data-id="'.$r->id.'"
                                 data-customer-id="'.$customerId.'"
                                 data-customer-name="'.$customerName.'"
                                 data-order-number="'.$r->order_number.'"
                                 data-due="'.$r->due_amount.'"
-                                data-type="POSOrder">Pay</button>';
+                                data-type="POSOrder">Pay</button>');
                     $btn .= '</div>';
                     return $btn;
                 })

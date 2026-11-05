@@ -49,8 +49,10 @@
                     </div>
 
                     <div class="mt-2">
+                        @canany(['banner.create', 'banner.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                         <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -60,7 +62,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Banner List</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.banner.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.banner.trash'), 'permission' => 'banner.deleted-list'])
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="bannerTable" class="table table-bordered table-striped">

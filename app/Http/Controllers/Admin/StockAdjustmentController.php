@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
@@ -13,11 +15,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StockAdjustmentController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'stock_adjustment';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('stock_adjustment');
     }
 
     public function index(Request $request)
@@ -90,20 +97,20 @@ class StockAdjustmentController extends Controller
                 ->addColumn('action', function($r) {
                     $html = '<div class="btn-group btn-group-sm" role="group">';
                     if ($r->type === 'normal' && !$r->is_received) {
-                        $html .= '<button type="button" class="btn btn-success btn-sm receiveAdjustmentBtn mr-50"
+                        $html .= perm_html('stock_adjustment.show', '<button type="button" class="btn btn-success btn-sm receiveAdjustmentBtn mr-50"
                             data-id="'.$r->id.'"
                             data-product="'.e($r->product->name ?? '-').'"
                             data-quantity="'.$r->quantity.'" title="Receive Exchange Stock">
                             <i data-feather="download"></i> Receive
-                        </button>';
+                        </button>');
                     }
-                    $html .= '<button type="button" class="btn btn-outline-danger btn-sm deleteAdjustmentBtn"
+                    $html .= perm_html('stock_adjustment.delete', '<button type="button" class="btn btn-outline-danger btn-sm deleteAdjustmentBtn"
                         data-id="'.$r->id.'"
                         data-product="'.e($r->product->name ?? '-').'"
                         data-type="'.$r->type.'"
                         data-quantity="'.$r->quantity.'" title="Delete Adjustment">
                         <i data-feather="trash-2"></i>
-                    </button>';
+                    </button>');
                     $html .= '</div>';
                     return $html;
                 })

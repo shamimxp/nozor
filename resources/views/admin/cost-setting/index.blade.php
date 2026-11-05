@@ -7,13 +7,15 @@
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Cost Setting List</h4>
                 <div>
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.cost-setting.trash')])
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.cost-setting.trash'), 'permission' => 'cost_setting.deleted-list'])
                     <a href="{{ route('admin.cost-head.index') }}" class="btn btn-outline-secondary mr-50">
                         <i data-feather="list"></i> Cost Heads
                     </a>
-                    <a href="{{ route('admin.cost-setting.create') }}" class="btn btn-primary">
+                    @can('cost_setting.create')
+                        <a href="{{ route('admin.cost-setting.create') }}" class="btn btn-primary">
                         <i data-feather="plus"></i> Add Cost Setting
                     </a>
+                        @endcan
                 </div>
             </div>
             <div class="card-body pt-2">

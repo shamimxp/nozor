@@ -12,10 +12,12 @@
 @endsection
 
 @section('content-header-right')
-@include('admin.partials.show_deleted_button', ['route' => route('admin.dealer-order.trash')])
-<a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary shadow-sm font-weight-bold">
+@include('admin.partials.show_deleted_button', ['route' => route('admin.dealer-order.trash'), 'permission' => 'dealer_order.deleted-list'])
+@can('dealer_order.create')
+                        <a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary shadow-sm font-weight-bold">
     <i data-feather="plus"></i> Create New Order
 </a>
+                        @endcan
 @endsection
 
 @section('content')

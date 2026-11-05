@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class DealerImpersonationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:dealer.edit')->only('loginAs');
+    }
+
     public function loginAs($id)
     {
         $dealer = Dealer::findOrFail($id);

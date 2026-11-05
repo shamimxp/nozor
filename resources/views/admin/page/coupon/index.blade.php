@@ -8,8 +8,10 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Coupons</h4>
                 <div class="d-flex align-items-center gap-1">
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.coupon.trash')])
-                    <a href="{{ route('admin.coupon.create') }}" class="btn btn-primary btn-sm">Add Coupon</a>
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.coupon.trash'), 'permission' => 'coupon.deleted-list'])
+                    @can('coupon.create')
+                        <a href="{{ route('admin.coupon.create') }}" class="btn btn-primary btn-sm">Add Coupon</a>
+                        @endcan
                 </div>
             </div>
             <div class="card-body">
@@ -44,8 +46,12 @@
                                         @endif
                                     </td>
                                     <td>
+                                        @can('coupon.edit')
                                         <a href="{{ route('admin.coupon.edit', $coupon->id) }}" class="btn btn-info btn-sm">Edit</a>
+                                        @endcan
+                                        @can('coupon.delete')
                                         <button type="button" class="btn btn-danger btn-sm deleteCoupon" data-id="{{ $coupon->id }}">Delete</button>
+                                        @endcan
                                     </td>
                                 </tr>
                             @endforeach

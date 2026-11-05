@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Product Reviews</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.product_reviews.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.product_reviews.trash'), 'permission' => 'product_review.deleted-list'])
             </div>
             <div class="card-body table-responsive pt-2">
                 @if(session('success'))
@@ -35,16 +35,24 @@
                             <td>{{ Str::limit($review->comment, 50) }}</td>
                             <td>{{ Str::limit($review->reply, 50) }}</td>
                             <td>
+                                @can('product_review.edit')
                                 <div class="custom-control custom-switch custom-control-inline">
                                     <input type="checkbox" class="custom-control-input changeStatus" id="customSwitch{{$review->id}}" data-id="{{$review->id}}" {{ $review->status == 1 ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="customSwitch{{$review->id}}"></label>
                                 </div>
+                                @else
+                                    {{ $review->status == 1 ? 'Active' : 'Inactive' }}
+                                @endcan
                             </td>
                             <td>
+                                @can('product_review.edit')
                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#replyModal{{ $review->id }}">
                                     Reply
                                 </button>
+                                @endcan
+                                @can('product_review.delete')
                                 <button type="button" class="btn btn-sm btn-danger deleteReview" data-id="{{ $review->id }}">Delete</button>
+                                @endcan
                             </td>
                         </tr>
 

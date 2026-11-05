@@ -10,7 +10,7 @@
                     <i data-feather="credit-card" class="mr-50 text-primary"></i> Worker Payment List
                 </h4>
                 <div class="d-flex" style="gap:0.4rem;">
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.worker-payouts.trash')])
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.worker-payouts.trash'), 'permission' => 'worker_payout.deleted-list'])
                     <a href="{{ route('admin.worker-balance-sheet.index') }}" class="btn btn-outline-primary btn-sm">
                         <i data-feather="users" class="mr-25"></i> Worker Balance Sheet
                     </a>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CostSetting;
@@ -20,11 +22,16 @@ use Illuminate\Support\Facades\DB;
 
 class ManufactureController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'manufacture';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('manufacture');
     }
 
     /**
@@ -173,13 +180,13 @@ class ManufactureController extends Controller
                     if (!$m) return 'N/A';
                     $checked = ($m->status == 1 || $m->is_confirm == 1 || $m->status == 2) ? 'checked' : '';
                     $disabled = $m->status == 2 ? 'disabled' : '';
-                    return '<div class="custom-control custom-switch custom-switch-success">
+                    return perm_html('manufacture.edit', '<div class="custom-control custom-switch custom-switch-success">
                                 <input type="checkbox" class="custom-control-input change-status" id="status_'.$row->id.'" data-id="'.$m->id.'" data-field="is_confirm" '.$checked.' '.$disabled.'>
                                 <label class="custom-control-label" for="status_'.$row->id.'">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
                                 </label>
-                            </div>';
+                            </div>');
                 })
                 ->addColumn('is_complete', function ($row) {
                     $m = $row->manufacture;

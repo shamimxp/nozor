@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use App\Models\CustomOrder;
 use App\Models\PosOrder;
@@ -16,6 +18,35 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
+    use AuthorizesAdminModule;
+
+    public function __construct()
+    {
+        $reportMethods = [
+            'customOrderReport',
+            'posOrderReport',
+            'customProfitLossReport',
+            'exportCustomProfitLossExcel',
+            'exportCustomProfitLossPdf',
+            'posProfitLossReport',
+            'exportPosProfitLossExcel',
+            'exportPosProfitLossPdf',
+            'exportCustomSalesExcel',
+            'exportCustomSalesPdf',
+            'exportPosSalesExcel',
+            'exportPosSalesPdf',
+            'productStockReport',
+            'exportProductStockExcel',
+            'exportProductStockPdf',
+            'manufactureReport',
+        ];
+
+        $this->authorizeAdminModule('report', [
+            'report.list' => $reportMethods,
+            'report.show' => $reportMethods,
+        ]);
+    }
+
     /**
      * Custom Order Sales Report
      */

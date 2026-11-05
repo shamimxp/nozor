@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
@@ -12,12 +13,18 @@ use Illuminate\Http\Request;
 
 class ProductRecipeController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'product_recipe';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('product_recipe');
+    }
+
 
     public function index(Request $request){
         if ($request->ajax()) {
@@ -53,9 +60,9 @@ class ProductRecipeController extends Controller
                     return $html;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="'.route('admin.product-recipe.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewBtn" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="'.route('admin.product-recipe.edit', $row->id).'" class="btn btn-dark btn-sm mr-1 editBtn" title="Edit"><i data-feather="edit"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteBtn"><i data-feather="trash-2"></i></a>';
+                    $btn = perm_html('product_recipe.show', '<a href="'.route('admin.product-recipe.show', $row->id).'" class="btn btn-info btn-sm mr-1 viewBtn" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('product_recipe.edit', '<a href="'.route('admin.product-recipe.edit', $row->id).'" class="btn btn-dark btn-sm mr-1 editBtn" title="Edit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('product_recipe.delete', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteBtn"><i data-feather="trash-2"></i></a>');
 
                     return $btn;
                 })

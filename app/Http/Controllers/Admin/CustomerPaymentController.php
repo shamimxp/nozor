@@ -14,6 +14,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CustomerPaymentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:collection.list')->only('index');
+        $this->middleware('can:collection.create')->only('store');
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {

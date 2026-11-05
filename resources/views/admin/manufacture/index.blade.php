@@ -4,22 +4,28 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header border-bottom p-1">
-                <h4 class="card-title">{{ isset($page_title) ? $page_title : 'Manufacture Order List' }}</h4>
-                <div>
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.manufacture.trash')])
-                    <a href="javascript:void(0)" class="btn btn-success" id="exportBtn"><i data-feather="file-text"></i> Export Excel</a>
-                    <a href="{{ route('admin.manufacture.create') }}" class="btn btn-primary">Create New</a>
+            <div class="card-header border-bottom p-1 d-flex flex-wrap align-items-center justify-content-between" style="gap:.75rem;">
+                <h4 class="card-title mb-0">{{ isset($page_title) ? $page_title : 'Manufacture Order List' }}</h4>
+                <div class="d-flex flex-wrap align-items-center" style="gap:.5rem;">
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.manufacture.trash'), 'permission' => 'manufacture.deleted-list'])
+                    <a href="javascript:void(0)" class="btn btn-success d-inline-flex align-items-center" id="exportBtn">
+                        <i data-feather="file-text" class="mr-50" style="width:14px;height:14px;"></i> Export Excel
+                    </a>
+                    @can('manufacture.create')
+                        <a href="{{ route('admin.manufacture.create') }}" class="btn btn-primary d-inline-flex align-items-center">
+                            <i data-feather="plus" class="mr-50" style="width:14px;height:14px;"></i> Create New
+                        </a>
+                    @endcan
                 </div>
             </div>
             <div class="card-body mt-2">
-                <div class="row mb-2">
-                    <div class="col-md-3">
-                        <label>Date Range</label>
-                        <input type="text" id="daterange" class="form-control" placeholder="Select Date Range">
+                <div class="mfg-filter-bar mb-2">
+                    <div class="mfg-filter-field mfg-filter-date">
+                        <label for="daterange">Date Range</label>
+                        <input type="text" id="daterange" class="form-control" placeholder="Select Date Range" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <label>Worker</label>
+                    <div class="mfg-filter-field">
+                        <label for="filter_worker">Worker</label>
                         <select id="filter_worker" class="form-control select2">
                             <option value="">All Workers</option>
                             @foreach($workers as $worker)
@@ -27,8 +33,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <label>Dealer</label>
+                    <div class="mfg-filter-field">
+                        <label for="filter_dealer">Dealer</label>
                         <select id="filter_dealer" class="form-control select2">
                             <option value="">All Dealers</option>
                             @foreach($dealers as $dealer)
@@ -37,8 +43,8 @@
                         </select>
                     </div>
                     @if(!isset($fixed_part_type))
-                    <div class="col-md-2">
-                        <label>Part Type</label>
+                    <div class="mfg-filter-field">
+                        <label for="filter_part">Part Type</label>
                         <select id="filter_part" class="form-control">
                             <option value="">All Parts</option>
                             <option value="body">Body Part</option>
@@ -49,8 +55,8 @@
                         <input type="hidden" id="filter_part" value="{{ $fixed_part_type }}">
                     @endif
                     @if(!isset($fixed_status))
-                    <div class="col-md-2">
-                        <label>Status</label>
+                    <div class="mfg-filter-field">
+                        <label for="filter_status">Status</label>
                         <select id="filter_status" class="form-control">
                             <option value="">All Status</option>
                             <option value="0">Pending</option>
@@ -61,11 +67,17 @@
                     @else
                         <input type="hidden" id="filter_status" value="{{ $fixed_status }}">
                     @endif
-                    <div class="col-md-1">
-                        <label>&nbsp;</label>
-                        <div class="btn-group w-100">
-                            <button type="button" id="btn-filter" class="btn btn-primary" title="Search"><i data-feather="search"></i></button>
-                            <button type="button" id="btn-reset" class="btn btn-danger" title="Reset Filters"><i data-feather="refresh-ccw"></i></button>
+                    <div class="mfg-filter-actions">
+                        <label class="d-none d-md-block">&nbsp;</label>
+                        <div class="d-flex align-items-center" style="gap:.5rem;">
+                            <button type="button" id="btn-filter" class="btn btn-primary d-inline-flex align-items-center" title="Search">
+                                <i data-feather="search" class="mr-50" style="width:14px;height:14px;"></i>
+                                <span>Filter</span>
+                            </button>
+                            <button type="button" id="btn-reset" class="btn btn-outline-secondary d-inline-flex align-items-center" title="Reset Filters">
+                                <i data-feather="refresh-ccw" class="mr-50" style="width:14px;height:14px;"></i>
+                                <span>Reset</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -140,6 +152,64 @@
 </div>
 
 <style>
+    .mfg-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .75rem 1rem;
+        align-items: flex-end;
+        padding: 1rem;
+        background: #F8F8FC;
+        border: 1px solid #E6E8F0;
+        border-radius: 10px;
+    }
+    .mfg-filter-field {
+        flex: 1 1 160px;
+        min-width: 160px;
+        max-width: 100%;
+    }
+    .mfg-filter-date {
+        flex: 1.2 1 200px;
+        min-width: 200px;
+    }
+    .mfg-filter-actions {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+    .mfg-filter-field label,
+    .mfg-filter-actions label {
+        display: block;
+        margin-bottom: .35rem;
+        font-size: .8125rem;
+        font-weight: 600;
+        color: #5E5873;
+    }
+    .mfg-filter-field .form-control,
+    .mfg-filter-field .select2-container .select2-selection--single {
+        min-height: 38px;
+        border-radius: 8px;
+        border-color: #E6E8F0;
+    }
+    .mfg-filter-field .select2-container { width: 100% !important; }
+    .mfg-filter-actions .btn {
+        border-radius: 8px;
+        font-weight: 600;
+        white-space: nowrap;
+        min-height: 38px;
+    }
+    @media (max-width: 991.98px) {
+        .mfg-filter-actions {
+            margin-left: 0;
+            width: 100%;
+        }
+        .mfg-filter-actions .d-flex {
+            width: 100%;
+        }
+        .mfg-filter-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+
     /* Full bleed for Manufacture Image column cells (top, bottom, left, right edge-to-edge) */
     .yajra-datatable td.mfg-image-cell {
         padding: 0 !important;

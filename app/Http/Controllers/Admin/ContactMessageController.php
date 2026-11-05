@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
@@ -10,11 +12,16 @@ use Illuminate\Http\Request;
 
 class ContactMessageController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'contact_message';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('contact_message');
     }
 
     public function index(Request $request)
@@ -24,7 +31,7 @@ class ContactMessageController extends Controller
             return \Yajra\DataTables\Facades\DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    return '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-sm btn-danger deleteContactMessage">Delete</a>';
+                    return perm_html('contact_message.delete', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-sm btn-danger deleteContactMessage">Delete</a>');
                 })
                 ->rawColumns(['action'])
                 ->make(true);

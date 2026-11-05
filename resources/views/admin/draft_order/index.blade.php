@@ -12,7 +12,7 @@
 @endsection
 
 @section('content-header-right')
-@include('admin.partials.show_deleted_button', ['route' => route('admin.draft-orders.trash')])
+@include('admin.partials.show_deleted_button', ['route' => route('admin.draft-orders.trash'), 'permission' => 'draft_order.deleted-list'])
 <a href="{{ route('admin.order-requests.index') }}" class="btn btn-outline-primary shadow-sm font-weight-bold">
     <i data-feather="list" class="mr-50"></i> View Order Requests
 </a>

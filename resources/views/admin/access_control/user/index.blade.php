@@ -11,13 +11,17 @@
                         </div>
                         <div class="dt-action-buttons text-right">
                             <div class="dt-buttons d-inline-flex">
-                                @can('user.add')
-                                    <a href="{{route('admin.user.create')}}" class="btn btn-primary"><i
-                                            class="fas fa-plus"></i>{{__('Add New')}}</a>
+                                @can('user.create')
+                                    <a href="{{ route('admin.user.create') }}" class="btn btn-primary d-inline-flex align-items-center">
+                                        <i data-feather="plus" class="mr-50" style="width:14px;height:14px;"></i>
+                                        {{ __('Add New') }}
+                                    </a>
                                 @endcan
-                                @can('user.delete')
-                                    <a href="{{route('admin-user.deleted')}}" class="btn btn-danger ml-1"><i
-                                            class="far fa-trash-alt pr-1"></i>{{__('Deleted Data')}}</a>
+                                @can('user.deleted-list')
+                                    <a href="{{ route('admin-user.deleted') }}" class="btn btn-danger ml-1 d-inline-flex align-items-center">
+                                        <i data-feather="trash-2" class="mr-50" style="width:14px;height:14px;"></i>
+                                        {{ __('Deleted Data') }}
+                                    </a>
                                 @endcan
                             </div>
                         </div>
@@ -60,6 +64,9 @@
                     {data: "roles", searchable: false, orderable: false},
                     {data: "action", searchable: false, orderable: false},
                 ],
+                drawCallback: function () {
+                    if (window.feather) feather.replace({ width: 14, height: 14 });
+                }
             });
 
             $(document).on('click', '.delete-user-btn', function (e) {

@@ -16,6 +16,23 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderHistoryController extends Controller
 {
+    public function __construct()
+    {
+        // History is readable if the admin can show any related order module.
+        $this->middleware(function ($request, $next) {
+            $allowed = [
+                'web_order.show', 'pos_order.show', 'dealer_order.show',
+                'draft_order.show', 'order_request.show',
+            ];
+            foreach ($allowed as $permission) {
+                if (\Illuminate\Support\Facades\Gate::check($permission)) {
+                    return $next($request);
+                }
+            }
+            abort(403);
+        });
+    }
+
     /**
      * Map slug/alias to model class & order_type
      */

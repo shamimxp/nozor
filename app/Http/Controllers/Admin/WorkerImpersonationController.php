@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class WorkerImpersonationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:worker.edit')->only('loginAs');
+    }
+
     public function loginAs($id)
     {
         $worker = Worker::findOrFail($id);

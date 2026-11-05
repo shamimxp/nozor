@@ -8,7 +8,7 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">POS Order List</h4>
                     <div>
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.pos-order.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.pos-order.trash'), 'permission' => 'pos_order.deleted-list'])
                         <a href="{{ route('admin.pos-order.export-list-excel') }}" class="btn btn-success" id="exportExcelBtn"><i data-feather="file-text"></i> Excel</a>
                         <a href="{{ route('admin.pos-order.export-list-pdf') }}" class="btn btn-danger" id="exportPdfBtn"><i data-feather="file"></i> PDF</a>
                         @if(Route::has('admin.pos'))

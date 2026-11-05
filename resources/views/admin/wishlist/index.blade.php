@@ -7,7 +7,7 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Customer Wishlists</h4>
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.wishlist.trash')])
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.wishlist.trash'), 'permission' => 'wishlist.deleted-list'])
                 </div>
             </div>
             <div class="card-body table-responsive pt-2">

@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use Illuminate\Http\Request;
 
 class OrderRequestController extends Controller
 {
+    use AuthorizesAdminModule;
+
     protected $orderRequestService;
 
     public function __construct(\App\Services\OrderRequestService $orderRequestService)
     {
+        $this->authorizeAdminModule('order_request', [
+            'order_request.edit' => ['confirm'],
+            'order_request.create' => ['createDraft'],
+        ]);
         $this->orderRequestService = $orderRequestService;
     }
 

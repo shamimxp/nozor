@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Models\Worker;
 use App\Services\Deletion\SoftDeleteService;
@@ -11,11 +12,16 @@ use Illuminate\Support\Facades\Storage;
 
 class WorkerController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'worker';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('worker');
     }
 
     public function index(Request $request)
@@ -52,10 +58,10 @@ class WorkerController extends Controller
                     return 'N/A';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('admin.worker.show', $row->id) . '" class="btn btn-info btn-sm mr-1" title="View Profile"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editWorker" title="Edit"><i data-feather="edit"></i></a>';
-                    $btn .= '<a href="' . route('admin.worker.loginAs', $row->id) . '" class="btn btn-success btn-sm mr-1" title="Login As Worker"><i data-feather="log-in"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteWorker" title="Delete"><i data-feather="trash"></i></a>';
+                    $btn = perm_html('worker.show', '<a href="' . route('admin.worker.show', $row->id) . '" class="btn btn-info btn-sm mr-1" title="View Profile"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('worker.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm mr-1 editWorker" title="Edit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('worker.edit', '<a href="' . route('admin.worker.loginAs', $row->id) . '" class="btn btn-success btn-sm mr-1" title="Login As Worker"><i data-feather="log-in"></i></a>');
+                    $btn .= perm_html('worker.delete', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteWorker" title="Delete"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['action', 'status_label', 'image'])
@@ -196,9 +202,9 @@ class WorkerController extends Controller
                     })
                     ->addColumn('action', function ($row) {
                         $html = '<div class="btn-group">';
-                        $html .= '<a href="' . route('admin.manufacture.show', $row->id) . '" class="btn btn-sm btn-info p-50 rounded mr-25" title="View Order"><i data-feather="eye"></i></a>';
+                        $html .= perm_html('manufacture.show', '<a href="' . route('admin.manufacture.show', $row->id) . '" class="btn btn-sm btn-info p-50 rounded mr-25" title="View Order"><i data-feather="eye"></i></a>');
                         if ($row->status >= 1) {
-                            $html .= '<a href="' . route('admin.manufacture.print', $row->id) . '" target="_blank" class="btn btn-sm btn-outline-primary p-50 rounded" title="Print"><i data-feather="printer"></i></a>';
+                            $html .= perm_html('manufacture.show', '<a href="' . route('admin.manufacture.print', $row->id) . '" target="_blank" class="btn btn-sm btn-outline-primary p-50 rounded" title="Print"><i data-feather="printer"></i></a>');
                         }
                         $html .= '</div>';
                         return $html;

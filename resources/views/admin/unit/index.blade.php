@@ -17,8 +17,10 @@
                         <span class="text-danger error-text name_error"></span>
                     </div>
                     <div class="mt-2">
+                        @canany(['unit.create', 'unit.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                         <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -28,7 +30,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Unit List</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.unit.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.unit.trash'), 'permission' => 'unit.deleted-list'])
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="unitTable" class="table table-bordered table-striped">

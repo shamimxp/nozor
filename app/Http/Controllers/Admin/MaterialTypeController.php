@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\MaterialType;
@@ -11,12 +12,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MaterialTypeController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'material_type';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('material_type', [
+            'material_type.edit' => ['getStatus'],
+        ]);
+    }
+
 
     public function index(Request $request)
     {
@@ -26,17 +35,17 @@ class MaterialTypeController extends Controller
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
                     $checked = $row->status == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-success">
+                    return perm_html('material_type.edit', '<div class="custom-control custom-switch custom-switch-success">
                                 <input type="checkbox" class="custom-control-input changeStatus" ' . $checked . ' data-id="' . $row->id . '" id="status' . $row->id . '">
                                 <label class="custom-control-label" for="status' . $row->id . '">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
                                 </label>
-                            </div>';
+                            </div>');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" data-name="' . $row->name . '" class="btn btn-primary p-0 px-25 editBtn" title="Edit"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger p-0 px-25 deleteBtn" title="Delete"><i data-feather="trash-2"></i></a>';
+                    $btn = perm_html('material_type.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" data-name="' . $row->name . '" class="btn btn-primary p-0 px-25 editBtn" title="Edit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('material_type.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger p-0 px-25 deleteBtn" title="Delete"><i data-feather="trash-2"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])

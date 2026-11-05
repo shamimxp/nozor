@@ -13,7 +13,11 @@ use Spatie\Permission\Traits\HasRoles;
 class Admin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, TracksSoftDeletion;
+
     protected $guard = 'admin';
+
+    /** Spatie permission guard */
+    protected $guard_name = 'admin';
 
     /**
      * The attributes that are mass assignable.

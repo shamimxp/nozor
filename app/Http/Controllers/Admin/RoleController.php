@@ -15,15 +15,19 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:role.show')->only('index');
-        $this->middleware('can:role.add')->only(['create', 'store']);
+        $this->middleware('can:role.list')->only('index');
+        $this->middleware('can:role.create')->only(['create', 'store']);
         $this->middleware('can:role.edit')->only(['edit', 'update']);
+        $this->middleware('can:role.delete')->only(['destroy']);
     }
 
     public function index()
     {
         if (\request()->ajax()) {
-            $roles = Role::where('guard_name', 'admin')->where('id', '!=', 2)->orderBy('id', 'desc')->get();
+            $roles = Role::where('guard_name', 'admin')
+                ->where('name', '!=', config('admin_permissions.super_admin_role', 'Super Admin'))
+                ->orderBy('id', 'desc')
+                ->get();
             return DataTables::of($roles)
                 ->addIndexColumn()
                 ->addColumn('action', function ($role) {
@@ -37,7 +41,7 @@ class RoleController extends Controller
 
     public function create()
     {
-        $permissions = Permission::where('guard_name', 'admin')->get()->groupBy('module_name');
+        $permissions = $this->groupedAdminPermissions();
         return view('admin.access_control.role.create', compact('permissions'));
     }
 
@@ -58,8 +62,11 @@ class RoleController extends Controller
         $permissions = $request->input('permissions');
         if (!empty($permissions)) {
             $role->syncPermissions($permissions);
-           return back();
+            Toastr::success('Role created successfully!', 'Success');
+            return redirect()->route('roles.index');
         }
+
+        return back()->withInput();
     }
 
 //    public function show($id)
@@ -71,11 +78,30 @@ class RoleController extends Controller
     {
         try {
             $role = Role::findById(decrypt($id));
-            $permissions = Permission::where('guard_name', 'admin')->get()->groupBy('module_name');
+            $permissions = $this->groupedAdminPermissions();
             return view('admin.access_control.role.edit', compact('role', 'permissions'));
         } catch (DecryptException $e) {
             abort(404);
         }
+    }
+
+    /**
+     * Admin permissions grouped by module, actions in a stable UX order.
+     */
+    protected function groupedAdminPermissions()
+    {
+        $actionOrder = array_flip(config('admin_permissions.actions', [
+            'list', 'create', 'edit', 'show', 'delete', 'force-delete', 'deleted-list', 'restore',
+        ]));
+
+        return Permission::where('guard_name', 'admin')
+            ->get()
+            ->sortBy(function (Permission $permission) use ($actionOrder) {
+                $action = explode('.', $permission->name, 2)[1] ?? $permission->name;
+                return $actionOrder[$action] ?? 999;
+            })
+            ->groupBy('module_name')
+            ->sortKeys();
     }
 
     public function update(Request $request, $id)

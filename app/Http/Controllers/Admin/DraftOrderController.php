@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\DraftOrder;
@@ -17,7 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DraftOrderController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
@@ -28,6 +30,7 @@ class DraftOrderController extends Controller
 
     public function __construct(OrderRequestService $orderRequestService)
     {
+        $this->authorizeAdminModule('draft_order');
         $this->orderRequestService = $orderRequestService;
     }
 
@@ -97,23 +100,23 @@ class DraftOrderController extends Controller
                 ->addColumn('action', function ($r) {
                     $btn = '<div class="d-flex align-items-center" style="gap:4px;">';
                     // Show
-                    $btn .= '<a href="' . route('admin.draft-orders.show', $r->id) . '" class="btn btn-info btn-sm p-50" title="View Details"><i data-feather="eye" style="width:14px;height:14px;"></i></a>';
+                    $btn .= perm_html('draft_order.show', '<a href="' . route('admin.draft-orders.show', $r->id) . '" class="btn btn-info btn-sm p-50" title="View Details"><i data-feather="eye" style="width:14px;height:14px;"></i></a>');
                     // View History
-                    $btn .= '<button type="button" class="btn btn-outline-info btn-sm p-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="draft_order" data-order-number="' . e($r->draft_number) . '" title="View History"><i data-feather="clock" style="width:14px;height:14px;"></i></button>';
+                    $btn .= perm_html('draft_order.show', '<button type="button" class="btn btn-outline-info btn-sm p-50 view-order-history" data-order-id="' . $r->id . '" data-order-type="draft_order" data-order-number="' . e($r->draft_number) . '" title="View History"><i data-feather="clock" style="width:14px;height:14px;"></i></button>');
                     // Download PDF
-                    $btn .= '<a href="' . route('admin.draft-orders.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm p-50" title="Download PDF"><i data-feather="download" style="width:14px;height:14px;"></i></a>';
+                    $btn .= perm_html('draft_order.show', '<a href="' . route('admin.draft-orders.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm p-50" title="Download PDF"><i data-feather="download" style="width:14px;height:14px;"></i></a>');
                     // Print
                     $btn .= '<a href="' . route('admin.draft-orders.print', $r->id) . '" target="_blank" class="btn btn-light btn-sm p-50" title="Print"><i data-feather="printer" style="width:14px;height:14px;"></i></a>';
 
                     if ($r->status === 'draft') {
                         // Edit
-                        $btn .= '<a href="' . route('admin.draft-orders.edit', $r->id) . '" class="btn btn-primary btn-sm p-50" title="Edit Draft"><i data-feather="edit" style="width:14px;height:14px;"></i></a>';
+                        $btn .= perm_html('draft_order.edit', '<a href="' . route('admin.draft-orders.edit', $r->id) . '" class="btn btn-primary btn-sm p-50" title="Edit Draft"><i data-feather="edit" style="width:14px;height:14px;"></i></a>');
                         // Convert to Order
                         $btn .= '<button type="button" class="btn btn-success btn-sm p-50 btnConvertOrder" data-id="' . $r->id . '" data-num="' . e($r->draft_number) . '" title="Convert to Dealer Order"><i data-feather="check-circle" style="width:14px;height:14px;"></i></button>';
                     }
 
                     // Delete
-                    $btn .= '<button type="button" class="btn btn-danger btn-sm p-50 btnDeleteDraft" data-id="' . $r->id . '" data-num="' . e($r->draft_number) . '" title="Delete Draft"><i data-feather="trash" style="width:14px;height:14px;"></i></button>';
+                    $btn .= perm_html('draft_order.delete', '<button type="button" class="btn btn-danger btn-sm p-50 btnDeleteDraft" data-id="' . $r->id . '" data-num="' . e($r->draft_number) . '" title="Delete Draft"><i data-feather="trash" style="width:14px;height:14px;"></i></button>');
                     $btn .= '</div>';
                     return $btn;
                 })

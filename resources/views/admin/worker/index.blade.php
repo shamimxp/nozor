@@ -106,8 +106,10 @@
                     </div>
 
                     <div class="mt-2 text-right">
+                        @canany(['worker.create', 'worker.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save Worker</button>
                         <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -120,13 +122,15 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Worker List</h4>
                     <div>
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.worker.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.worker.trash'), 'permission' => 'worker.deleted-list'])
                         <button type="button" class="btn btn-outline-secondary mr-50" id="resetFilterBtn">
                             <i data-feather="refresh-cw"></i> Reset Filter
                         </button>
+                        @can('worker.create')
                         <button type="button" class="btn btn-primary" id="showAddWorkerBtn">
                             <i data-feather="plus"></i> Add Worker
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>

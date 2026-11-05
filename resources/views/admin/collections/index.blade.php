@@ -86,9 +86,11 @@
                         <a href="{{ route('admin.dealer-wallets.index') }}" class="btn btn-outline-primary btn-sm mr-1">
                             <i data-feather="credit-card" class="mr-25"></i> Dealer Wallets
                         </a>
+                        @can('collection.create')
                         <a href="{{ route('admin.collections.create') }}" class="btn btn-primary btn-sm">
                             <i data-feather="plus-circle" class="mr-25"></i> Record Collection
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>

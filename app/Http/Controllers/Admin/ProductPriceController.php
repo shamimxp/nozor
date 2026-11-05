@@ -9,6 +9,11 @@ use App\Services\ProductPriceCalculator;
 
 class ProductPriceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:product.list');
+    }
+
     public function calculate(Request $request, ProductPriceCalculator $calculator)
     {
         $validated = $request->validate([

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Dealer;
@@ -15,10 +17,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ReturnController extends Controller
 {
+    use AuthorizesAdminModule;
+
     protected ReturnService $returnService;
 
     public function __construct(ReturnService $returnService)
     {
+        $this->authorizeAdminModule('return_order');
         $this->returnService = $returnService;
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Wishlist;
@@ -11,11 +13,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class WishlistController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'wishlist';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('wishlist');
     }
 
     public function index(Request $request)
@@ -35,9 +42,9 @@ class WishlistController extends Controller
                     return $row->created_at->format('d M, Y h:i A');
                 })
                 ->addColumn('action', function($row){
-                    return '<button class="btn btn-sm btn-danger delete-wishlist" data-id="' . $row->id . '">
+                    return perm_html('wishlist.delete', '<button class="btn btn-sm btn-danger delete-wishlist" data-id="' . $row->id . '">
                                 <i data-feather="trash"></i> Delete
-                            </button>';
+                            </button>');
                 })
                 ->rawColumns(['user_info', 'action'])
                 ->make(true);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CostHead;
@@ -11,12 +12,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CostHeadController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'cost_head';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('cost_head', [
+            'cost_head.edit' => ['getStatus'],
+        ]);
+    }
+
 
     public function index(Request $request)
     {
@@ -26,17 +35,17 @@ class CostHeadController extends Controller
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
                     $checked = $row->status == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-success">
+                    return perm_html('cost_head.edit', '<div class="custom-control custom-switch custom-switch-success">
                                 <input type="checkbox" class="custom-control-input changeStatus" ' . $checked . ' data-id="' . $row->id . '" id="status' . $row->id . '">
                                 <label class="custom-control-label" for="status' . $row->id . '">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
                                 </label>
-                            </div>';
+                            </div>');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" data-title="' . e($row->title) . '" data-status="' . $row->status . '" class="btn btn-primary btn-sm p-0 px-25 editBtn" title="Edit"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm p-0 px-25 deleteBtn" title="Delete"><i data-feather="trash-2"></i></a>';
+                    $btn = perm_html('cost_head.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" data-title="' . e($row->title) . '" data-status="' . $row->status . '" class="btn btn-primary btn-sm p-0 px-25 editBtn" title="Edit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('cost_head.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm p-0 px-25 deleteBtn" title="Delete"><i data-feather="trash-2"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])

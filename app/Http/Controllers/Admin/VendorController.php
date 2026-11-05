@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Vendor;
@@ -11,12 +12,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class VendorController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'vendor';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('vendor', [
+            'vendor.edit' => ['getStatus'],
+        ]);
+    }
+
 
     /**
      * Display a listing of the vendors.
@@ -31,8 +40,8 @@ class VendorController extends Controller
             return DataTables::of($vendors)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editVendor"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteVendor"><i data-feather="trash"></i></a>';
+                    $btn = perm_html('vendor.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editVendor"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('vendor.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteVendor"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['action'])

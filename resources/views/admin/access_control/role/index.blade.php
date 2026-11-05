@@ -20,9 +20,11 @@
                         </div>
                         <div class="dt-action-buttons text-right">
                             <div class="dt-buttons d-inline-flex">
-                                @can('role.add')
-                                    <a href="{{route('roles.create')}}" class="btn btn-primary"><i
-                                            class="fas fa-plus"></i>{{__('Add New')}}</a>
+                                @can('role.create')
+                                    <a href="{{ route('roles.create') }}" class="btn btn-primary d-inline-flex align-items-center">
+                                        <i data-feather="plus" class="mr-50" style="width:14px;height:14px;"></i>
+                                        {{ __('Add New') }}
+                                    </a>
                                 @endcan
                             </div>
                         </div>
@@ -58,6 +60,9 @@
                     {data: "name"},
                     {data: "action", searchable: false, orderable: false},
                 ],
+                drawCallback: function () {
+                    if (window.feather) feather.replace({ width: 14, height: 14 });
+                }
             });
         })
     </script>

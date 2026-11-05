@@ -7,7 +7,9 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Stock Purchase List</h4>
-                    <a href="{{ route('admin.inventory-purchase.create') }}" class="btn btn-primary">Create Purchase</a>
+                    @can('inventory_purchase.create')
+                        <a href="{{ route('admin.inventory-purchase.create') }}" class="btn btn-primary">Create Purchase</a>
+                        @endcan
                 </div>
             </div>
             <div class="card-body pt-2">

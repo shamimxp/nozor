@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
 use App\Models\UserActivity;
@@ -13,6 +15,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserActivityController extends Controller
 {
+    use AuthorizesAdminModule;
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('user_activity');
+    }
+
     /**
      * Display a listing of user activities with real-time last action & inactivity status.
      * Corresponds to "/company/user-activities" in SAL.

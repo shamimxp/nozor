@@ -11,6 +11,11 @@ use App\Models\Dealer;
 
 class ManufactureListController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:manufacture.list');
+    }
+
     /**
      * Common DataTable builder for Manufacture Order Items
      */

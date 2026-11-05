@@ -12,9 +12,11 @@
         </div>
     </div>
     <div>
-        <a href="{{ route('admin.stock-adjustment.create') }}" class="btn btn-primary">
+        @can('stock_adjustment.create')
+                        <a href="{{ route('admin.stock-adjustment.create') }}" class="btn btn-primary">
             <i data-feather="plus" class="mr-25"></i> Create Adjustment
         </a>
+                        @endcan
     </div>
 </div>
 @endsection
@@ -91,10 +93,12 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0"><i data-feather="list" class="mr-50"></i> Adjustment Records</h4>
                     <div class="d-flex" style="gap:6px;">
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.stock-adjustment.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.stock-adjustment.trash'), 'permission' => 'stock_adjustment.deleted-list'])
+                        @can('stock_adjustment.create')
                         <a href="{{ route('admin.stock-adjustment.create') }}" class="btn btn-primary btn-sm">
                             <i data-feather="plus" class="mr-25"></i> Add Adjustment
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>

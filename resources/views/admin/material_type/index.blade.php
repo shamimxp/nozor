@@ -15,7 +15,8 @@
                         <label for="name">Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
+                    @canany(['material_type.create', 'material_type.edit'])
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                     <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
                 </form>
             </div>
@@ -25,7 +26,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Material Type List</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.material-type.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.material-type.trash'), 'permission' => 'material_type.deleted-list'])
             </div>
             <div class="card-body">
                 <div class="table-responsive">

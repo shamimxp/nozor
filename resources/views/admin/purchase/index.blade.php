@@ -81,9 +81,11 @@
                         <button class="btn btn-danger btn-sm" id="exportPdfBtn" title="Export to PDF">
                             <i data-feather="file"></i> PDF
                         </button>
+                        @can('purchase.create')
                         <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary btn-sm">
                             <i data-feather="plus"></i> Create Purchase
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>

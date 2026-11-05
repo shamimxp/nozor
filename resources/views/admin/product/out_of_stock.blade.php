@@ -7,7 +7,9 @@
             <div class="card-header border-bottom p-1">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Out of Stock Products</h4>
-                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
+                    @can('product.create')
+                        <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
+                        @endcan
                 </div>
             </div>
             <div class="card-body table-responsive pt-2">

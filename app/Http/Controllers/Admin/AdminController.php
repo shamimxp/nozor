@@ -16,12 +16,14 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        $this->middleware('can:user.show')->only('allUser');
-        $this->middleware('can:user.add')->only(['userCreate', 'storeAdminUser']);
+        $this->middleware('can:dashboard.list')->only(['dashboard']);
+        $this->middleware('can:user.list')->only('allUser');
+        $this->middleware('can:user.create')->only(['userCreate', 'storeAdminUser']);
         $this->middleware('can:user.edit')->only(['editAdminUser', 'updateAdminUser']);
         $this->middleware('can:user.restore')->only(['adminUserRestore']);
-        $this->middleware('can:user.delete-permanently')->only(['adminUserDelete']);
-        $this->middleware('can:user.delete')->only(['trashAdminUser', 'adminUserDeleted']);
+        $this->middleware('can:user.force-delete')->only(['adminUserDelete']);
+        $this->middleware('can:user.delete')->only(['trashAdminUser']);
+        $this->middleware('can:user.deleted-list')->only(['adminUserDeleted']);
     }
 
     public function allUser()

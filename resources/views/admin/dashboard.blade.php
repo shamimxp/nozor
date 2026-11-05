@@ -40,9 +40,11 @@
                     </div>
                 </div>
                 <div class="fieldora-banner-actions mt-1 mt-md-0 d-flex align-items-center flex-wrap" style="gap: 8px;">
-                    <a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary btn-sm">
+                    @can('dealer_order.create')
+                        <a href="{{ route('admin.dealer-order.create') }}" class="btn btn-primary btn-sm">
                         <i data-feather="plus" class="mr-25"></i> Dealer Order
                     </a>
+                        @endcan
                     <a href="{{ route('admin.pos') }}" class="btn btn-outline-secondary btn-sm" target="_blank">
                         <i data-feather="shopping-cart" class="mr-25"></i> POS Terminal
                     </a>

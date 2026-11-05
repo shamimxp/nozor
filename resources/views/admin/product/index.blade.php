@@ -8,8 +8,10 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Product List</h4>
                     <div class="d-flex" style="gap:6px;">
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.product.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.product.trash'), 'permission' => 'product.deleted-list'])
+                        @can('product.create')
                         <a href="{{ route('admin.product.create') }}" class="btn btn-primary">Add New Product</a>
+                        @endcan
                     </div>
                 </div>
             </div>

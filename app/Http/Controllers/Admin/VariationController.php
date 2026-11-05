@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Variation;
@@ -12,12 +13,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class VariationController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'variation';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('variation', [
+            'variation.edit' => ['getStatus'],
+        ]);
+    }
+
 
     public function index(Request $request)
     {
@@ -28,8 +37,8 @@ class VariationController extends Controller
                     return $row->variationValues->pluck('value')->implode(', ');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editVariation"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteVariation"><i data-feather="trash"></i></a>';
+                    $btn = perm_html('variation.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editVariation"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('variation.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteVariation"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['values', 'action'])

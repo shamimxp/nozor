@@ -64,16 +64,18 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Custom Order List</h4>
                     <div class="d-flex gap-1">
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.custom-order.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.custom-order.trash'), 'permission' => 'custom_order.deleted-list'])
                         <button class="btn btn-success btn-sm" id="exportExcelBtn" title="Export to Excel (CSV)">
                             <i data-feather="file-text"></i> Excel
                         </button>
                         <button class="btn btn-danger btn-sm" id="exportPdfBtn" title="Export to PDF">
                             <i data-feather="file"></i> PDF
                         </button>
+                        @can('custom_order.create')
                         <a href="{{ route('admin.custom-order.create') }}" class="btn btn-primary btn-sm">
                             <i data-feather="plus"></i> Add New
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>

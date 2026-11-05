@@ -35,8 +35,10 @@
                         </div>
                     </div>
                     <div class="mt-2">
+                        @canany(['sub_category.create', 'sub_category.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                         <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -46,7 +48,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Sub Category List</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.sub-category.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.sub-category.trash'), 'permission' => 'sub_category.deleted-list'])
             </div>
             <div class="card-body table-responsive pt-2">
                 <table id="subCategoryTable" class="table table-bordered table-striped">

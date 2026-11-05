@@ -6,9 +6,14 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h4 class="card-title"><i class="fas fa-plus"></i> {{__('Add New User')}}</h4>
-{{--                        <h4 class="card-title"><i class="fas fa-plus"></i> {{__('Add New User')}}</h4>--}}
-                        <a href="{{route('admin.user')}}" class="btn btn-primary waves-effect waves-float waves-light">{{__('Back')}}</a>
+                        <h4 class="card-title d-inline-flex align-items-center mb-0">
+                            <i data-feather="user-plus" class="mr-50" style="width:18px;height:18px;"></i>
+                            {{ __('Add New User') }}
+                        </h4>
+                        <a href="{{ route('admin.user') }}" class="btn btn-primary d-inline-flex align-items-center">
+                            <i data-feather="arrow-left" class="mr-50" style="width:14px;height:14px;"></i>
+                            {{ __('Back') }}
+                        </a>
 
                     </div>
                     <div class="card-body">

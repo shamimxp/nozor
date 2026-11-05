@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use App\Models\Dealer;
 use App\Models\DealerOrder;
@@ -12,10 +14,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DealerWalletController extends Controller
 {
+    use AuthorizesAdminModule;
+
     protected DealerWalletService $walletService;
 
     public function __construct(DealerWalletService $walletService)
     {
+        $this->authorizeAdminModule('dealer_wallet');
         $this->walletService = $walletService;
     }
 
@@ -60,7 +65,7 @@ class DealerWalletController extends Controller
                     $balance = (float) ($d->wallet_balance ?? 0.00);
                     $deliveredDue = (float) $d->orders->where('status', 'delivered')->sum('due');
 
-                    return '<div class="btn-group btn-group-sm" role="group">
+                    return perm_html('dealer_wallet.create', '<div class="btn-group btn-group-sm" role="group">
                         <button type="button" class="btn btn-primary addDepositBtn"
                             data-id="' . $d->id . '"
                             data-name="' . e($d->name) . '"
@@ -73,7 +78,7 @@ class DealerWalletController extends Controller
                         <a href="' . route('admin.dealer-wallets.show', $d->id) . '" class="btn btn-outline-info" title="View Statement / Ledger">
                             <i data-feather="file-text" class="mr-25"></i> Statement
                         </a>
-                    </div>';
+                    </div>');
                 })
                 ->rawColumns(['dealer_info', 'wallet_balance', 'total_orders', 'total_paid', 'total_due', 'action'])
                 ->make(true);

@@ -7,8 +7,10 @@
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Product Recipe List</h4>
                 <div>
-                    @include('admin.partials.show_deleted_button', ['route' => route('admin.product-recipe.trash')])
-                    <a href="{{ route('admin.product-recipe.create') }}" class="btn btn-primary"><i data-feather="plus"></i> Add Recipe</a>
+                    @include('admin.partials.show_deleted_button', ['route' => route('admin.product-recipe.trash'), 'permission' => 'product_recipe.deleted-list'])
+                    @can('product_recipe.create')
+                        <a href="{{ route('admin.product-recipe.create') }}" class="btn btn-primary"><i data-feather="plus"></i> Add Recipe</a>
+                        @endcan
                 </div>
             </div>
             <div class="card-body pt-2">

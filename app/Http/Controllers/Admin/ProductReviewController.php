@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\ProductReview;
@@ -10,11 +12,18 @@ use Illuminate\Http\Request;
 
 class ProductReviewController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'product_review';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('product_review', [
+            'product_review.edit' => ['updateStatus', 'reply'],
+        ]);
     }
 
     public function index()

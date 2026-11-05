@@ -22,8 +22,10 @@
                         </div>
                         <div class="dt-action-buttons text-right">
                             <div class="dt-buttons d-inline-flex">
-                                    <a href="{{route('admin.user')}}" class="btn btn-primary"><i
-                                            class="fas fa-plus"></i>{{__('Back to List')}}</a>
+                                    <a href="{{ route('admin.user') }}" class="btn btn-primary d-inline-flex align-items-center">
+                                        <i data-feather="arrow-left" class="mr-50" style="width:14px;height:14px;"></i>
+                                        {{ __('Back to List') }}
+                                    </a>
                             </div>
                         </div>
                     </div>

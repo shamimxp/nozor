@@ -54,8 +54,10 @@
                     </div>
 
                     <div class="mt-2 text-right">
+                        @canany(['vendor.create', 'vendor.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save Vendor</button>
                         <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -69,10 +71,12 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Vendor List</h4>
                     <div class="d-flex" style="gap:6px;">
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.vendor.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.vendor.trash'), 'permission' => 'vendor.deleted-list'])
+                        @can('vendor.create')
                         <button type="button" class="btn btn-primary" id="showAddVendorBtn">
                             <i data-feather="plus"></i> Add Vendor
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>

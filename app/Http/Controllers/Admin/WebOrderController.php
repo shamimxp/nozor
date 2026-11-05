@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -15,6 +17,13 @@ use Illuminate\Support\Facades\DB;
 
 class WebOrderController extends Controller
 {
+    use AuthorizesAdminModule;
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('web_order');
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -70,12 +79,12 @@ class WebOrderController extends Controller
                 })
                 ->addColumn('action', function ($r) {
                     $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
-                    $btn .= '<a href="' . route('admin.web-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="web_order" data-order-number="' . $r->invoice_no . '" title="View History"><i data-feather="clock"></i></button>';
+                    $btn .= perm_html('web_order.show', '<a href="' . route('admin.web-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('web_order.show', '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="web_order" data-order-number="' . $r->invoice_no . '" title="View History"><i data-feather="clock"></i></button>');
                     if ($r->status === 'pending') {
-                        $btn .= '<a href="' . route('admin.web-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>';
+                        $btn .= perm_html('web_order.edit', '<a href="' . route('admin.web-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>');
                     }
-                    $btn .= '<a href="' . route('admin.web-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn .= perm_html('web_order.show', '<a href="' . route('admin.web-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>');
                     $btn .= '</div>';
                     return $btn;
                 })

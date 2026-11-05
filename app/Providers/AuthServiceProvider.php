@@ -24,8 +24,24 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        // Super Admin bypasses every ability check for their guard.
         Gate::before(function ($user, $ability) {
-            return $user->hasRole('Super Admin') ? true : null;
+            if (!method_exists($user, 'hasRole')) {
+                return null;
+            }
+
+            $role = config('admin_permissions.super_admin_role', 'Super Admin');
+
+            try {
+                if ($user->hasRole($role)) {
+                    return true;
+                }
+            } catch (\Throwable $e) {
+                return null;
+            }
+
+            return null;
         });
     }
 }

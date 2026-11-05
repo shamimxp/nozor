@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">{{ isset($page_title) ? $page_title : 'Worker Invoice List' }}</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.worker-invoices.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.worker-invoices.trash'), 'permission' => 'worker_payment.deleted-list'])
             </div>
             <div class="card-body mt-2">
                 <div class="row mb-2">

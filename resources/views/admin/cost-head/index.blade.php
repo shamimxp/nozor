@@ -27,8 +27,10 @@
                         </div>
                     </div>
                     <div class="d-flex" style="gap: 10px;">
+                        @canany(['cost_head.create', 'cost_head.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
                         <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -38,7 +40,7 @@
         <div class="card">
             <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Cost Head List</h4>
-                @include('admin.partials.show_deleted_button', ['route' => route('admin.cost-head.trash')])
+                @include('admin.partials.show_deleted_button', ['route' => route('admin.cost-head.trash'), 'permission' => 'cost_head.deleted-list'])
             </div>
             <div class="card-body">
                 <div class="table-responsive">

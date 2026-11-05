@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
@@ -15,12 +16,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'customer';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('customer', [
+            'customer.edit' => ['getStatus'],
+        ]);
+    }
+
 
     public function index(Request $request)
     {
@@ -33,8 +42,8 @@ class CustomerController extends Controller
                     return implode(', ', $addresses);
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editCustomer"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteCustomer"><i data-feather="trash"></i></a>';
+                    $btn = perm_html('customer.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editCustomer"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('customer.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteCustomer"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['action'])

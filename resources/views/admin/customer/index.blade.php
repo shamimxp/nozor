@@ -45,8 +45,10 @@
                     <div id="addressWrapper"></div>
 
                     <div class="mt-2 text-right">
+                        @canany(['customer.create', 'customer.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save Customer</button>
                         <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -58,10 +60,12 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Customer List</h4>
                     <div class="d-flex" style="gap:6px;">
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.customer.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.customer.trash'), 'permission' => 'customer.deleted-list'])
+                        @can('customer.create')
                         <button type="button" class="btn btn-primary" id="showAddCustomerBtn">
                             <i data-feather="plus"></i> Add Customer
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>

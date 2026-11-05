@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CostHead;
@@ -14,12 +15,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CostSettingController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'cost_setting';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('cost_setting');
+    }
+
 
     /**
      * Display a listing of the resource.
@@ -43,18 +50,18 @@ class CostSettingController extends Controller
                 })
                 ->addColumn('status', function ($row) {
                     $checked = $row->status == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-success">
+                    return perm_html('cost_setting.edit', '<div class="custom-control custom-switch custom-switch-success">
                                 <input type="checkbox" class="custom-control-input changeStatus" ' . $checked . ' data-id="' . $row->id . '" id="status' . $row->id . '">
                                 <label class="custom-control-label" for="status' . $row->id . '">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
                                 </label>
-                            </div>';
+                            </div>');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('admin.cost-setting.show', $row->id) . '" class="btn btn-info btn-sm p-0 px-25 mr-50" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<a href="' . route('admin.cost-setting.edit', $row->id) . '" class="btn btn-primary btn-sm p-0 px-25 mr-50" title="Edit"><i data-feather="edit"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm p-0 px-25 deleteBtn" title="Delete"><i data-feather="trash-2"></i></a>';
+                    $btn = perm_html('cost_setting.show', '<a href="' . route('admin.cost-setting.show', $row->id) . '" class="btn btn-info btn-sm p-0 px-25 mr-50" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('cost_setting.edit', '<a href="' . route('admin.cost-setting.edit', $row->id) . '" class="btn btn-primary btn-sm p-0 px-25 mr-50" title="Edit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('cost_setting.delete', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm p-0 px-25 deleteBtn" title="Delete"><i data-feather="trash-2"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['cost_title', 'total_cost', 'heads_count', 'status', 'action'])

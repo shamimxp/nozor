@@ -126,8 +126,10 @@
                     </div>
 
                     <div class="mt-2 text-right">
+                        @canany(['dealer.create', 'dealer.edit'])
                         <button type="submit" class="btn btn-primary" id="saveBtn">Save Dealer</button>
                         <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+                        @endcanany
                     </div>
                 </form>
             </div>
@@ -139,10 +141,12 @@
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <h4 class="card-title mb-0">Dealer List</h4>
                     <div class="d-flex" style="gap:6px;">
-                        @include('admin.partials.show_deleted_button', ['route' => route('admin.dealer.trash')])
+                        @include('admin.partials.show_deleted_button', ['route' => route('admin.dealer.trash'), 'permission' => 'dealer.deleted-list'])
+                        @can('dealer.create')
                         <button type="button" class="btn btn-primary" id="showAddDealerBtn">
                             <i data-feather="plus"></i> Add Dealer
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>

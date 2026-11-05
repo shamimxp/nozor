@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
@@ -23,11 +25,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomOrderController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'custom_order';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('custom_order');
     }
 
     /**
@@ -144,14 +151,14 @@ class CustomOrderController extends Controller
                     return '<span class="badge badge-light-' . $class . ' text-uppercase">' . str_replace('_', ' ', $r->status) . '</span>';
                 })
                 ->addColumn('action', function($r) {
-                    $btn = '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn"
+                    $btn = perm_html('custom_order.show', '<a href="' . route('admin.custom-order.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>');
+                    $btn .= perm_html('custom_order.create', '<button type="button" class="btn btn-sm btn-success payBtn"
                                 data-id="'.$r->id.'"
                                 data-customer-id="'.$r->customer_id.'"
                                 data-customer-name="'.($r->customer->name ?? '').'"
                                 data-order-number="'.$r->order_number.'"
                                 data-due="'.$r->due.'"
-                                data-type="customOrder">Pay</button>';
+                                data-type="customOrder">Pay</button>');
                     return $btn;
                 })
                 ->rawColumns(['order_info', 'customer_name', 'financials', 'status_badge', 'action'])

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -22,11 +24,26 @@ use App\Traits\UploadAble;
 class ProductController extends Controller
 {
     use UploadAble;
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'product';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('product', [
+            'product.list' => ['outOfStock', 'getSubCategory'],
+            'product.create' => ['duplicate', 'duplicateStore'],
+            'product.edit' => [
+                'getStatus',
+                'getFeaturedStatus',
+                'updateVisibility',
+                'getManufacturerStatus',
+                'updatePriceStock',
+            ],
+        ]);
     }
 
     public function index(Request $request)
@@ -156,37 +173,29 @@ class ProductController extends Controller
             })
             ->addColumn('status', function ($row) {
                 $status = $row->status == 1 ? 'checked' : '';
-                return '<div class="custom-control custom-switch custom-switch-success">
+                return perm_html('product.edit', '<div class="custom-control custom-switch custom-switch-success">
                             <input type="checkbox" class="custom-control-input changeStatus" data-id="' . $row->id . '" id="status_' . $row->id . '" ' . $status . '>
                             <label class="custom-control-label" for="status_' . $row->id . '">
                                 <span class="switch-icon-left"><i data-feather="check"></i></span>
                                 <span class="switch-icon-right"><i data-feather="x"></i></span>
                             </label>
-                        </div>';
+                        </div>');
             })
             ->addColumn('action', function ($row) {
+                $items = admin_module_actions('product', [
+                    'show' => '<a class="dropdown-item" href="' . route('admin.product.show', $row->id) . '"><i data-feather="eye" class="mr-50"></i><span>View</span></a>',
+                    'edit' => '<a class="dropdown-item" href="' . route('admin.product.edit', $row->id) . '"><i data-feather="edit-2" class="mr-50"></i><span>Edit</span></a>',
+                    'create' => '<a class="dropdown-item" href="' . route('admin.product.duplicate', $row->id) . '"><i data-feather="copy" class="mr-50"></i><span>Duplicate</span></a>',
+                    'delete' => '<a class="dropdown-item deleteProduct" href="javascript:void(0)" data-id="' . $row->id . '"><i data-feather="trash" class="mr-50"></i><span>Delete</span></a>',
+                ]);
+                if ($items === '') {
+                    return '';
+                }
                 return '<div class="dropdown">
                     <button type="button" class="btn btn-sm dropdown-toggle hide-arrow py-0" data-toggle="dropdown">
                         <i data-feather="more-vertical"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="' . route('admin.product.show', $row->id) . '">
-                            <i data-feather="eye" class="mr-50"></i>
-                            <span>View</span>
-                        </a>
-                        <a class="dropdown-item" href="' . route('admin.product.edit', $row->id) . '">
-                            <i data-feather="edit-2" class="mr-50"></i>
-                            <span>Edit</span>
-                        </a>
-                        <a class="dropdown-item" href="' . route('admin.product.duplicate', $row->id) . '">
-                            <i data-feather="copy" class="mr-50"></i>
-                            <span>Duplicate</span>
-                        </a>
-                        <a class="dropdown-item deleteProduct" href="javascript:void(0)" data-id="' . $row->id . '">
-                            <i data-feather="trash" class="mr-50"></i>
-                            <span>Delete</span>
-                        </a>
-                    </div>
+                    <div class="dropdown-menu dropdown-menu-right">' . $items . '</div>
                 </div>';
             })
             ->rawColumns(['product', 'manufacture_image', 'price', 'stock', 'featured', 'manufacturer', 'dealer_show', 'customer_show', 'status', 'action'])

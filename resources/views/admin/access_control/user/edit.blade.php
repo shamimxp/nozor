@@ -20,7 +20,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title"><i data-feather='arrow-right'></i> {{__('Edit User')}}</h4>
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <h4 class="card-title d-inline-flex align-items-center mb-0">
+                                <i data-feather="edit-2" class="mr-50" style="width:18px;height:18px;"></i>
+                                {{ __('Edit User') }}
+                            </h4>
+                            <a href="{{ route('admin.user') }}" class="btn btn-primary d-inline-flex align-items-center">
+                                <i data-feather="arrow-left" class="mr-50" style="width:14px;height:14px;"></i>
+                                {{ __('Back') }}
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('admin.user.update', encrypt($admin->id)) }}" method="POST">

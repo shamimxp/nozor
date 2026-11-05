@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Fabric;
@@ -11,12 +12,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FabricController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'fabric';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('fabric', [
+            'fabric.edit' => ['getStatus'],
+        ]);
+    }
+
 
     /**
      * Display a listing of the fabrics.
@@ -37,8 +46,8 @@ class FabricController extends Controller
                     return '<span class="badge badge-light-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn  = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editFabric"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteFabric"><i data-feather="trash"></i></a>';
+                    $btn  = perm_html('fabric.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editFabric"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('fabric.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteFabric"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['status_badge', 'action'])

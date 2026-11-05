@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
@@ -11,12 +12,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UnitController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'unit';
     }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('unit', [
+            'unit.edit' => ['getStatus'],
+        ]);
+    }
+
 
     public function index(Request $request)
     {
@@ -26,17 +35,17 @@ class UnitController extends Controller
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
                     $status = $row->status == 1 ? 'checked' : '';
-                    return '<div class="custom-control custom-switch custom-switch-primary">
+                    return perm_html('unit.edit', '<div class="custom-control custom-switch custom-switch-primary">
                                 <input type="checkbox" class="custom-control-input changeStatus" data-id="' . $row->id . '" id="status_' . $row->id . '" ' . $status . '>
                                 <label class="custom-control-label" for="status_' . $row->id . '">
                                     <span class="switch-icon-left"><i data-feather="check"></i></span>
                                     <span class="switch-icon-right"><i data-feather="x"></i></span>
                                 </label>
-                            </div>';
+                            </div>');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editUnit"><i data-feather="edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteUnit"><i data-feather="trash"></i></a>';
+                    $btn = perm_html('unit.edit', '<a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-primary btn-sm editUnit"><i data-feather="edit"></i></a>');
+                    $btn .= perm_html('unit.delete', ' <a href="javascript:void(0)" data-id="' . $row->id . '" class="btn btn-danger btn-sm deleteUnit"><i data-feather="trash"></i></a>');
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])

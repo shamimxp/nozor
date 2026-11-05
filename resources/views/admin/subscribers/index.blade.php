@@ -5,7 +5,7 @@
     <div class="card mb-4">
         <div class="card-header border-bottom p-1 d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">Subscribers</h4>
-            @include('admin.partials.show_deleted_button', ['route' => route('admin.subscribers.trash')])
+            @include('admin.partials.show_deleted_button', ['route' => route('admin.subscribers.trash'), 'permission' => 'subscriber.deleted-list'])
         </div>
         <div class="card-body">
             <div class="table-responsive">

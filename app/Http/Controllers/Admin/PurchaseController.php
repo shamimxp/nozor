@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\CustomOrder;
@@ -17,11 +19,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'purchase';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('purchase');
     }
 
     public function index(Request $request)
@@ -76,11 +83,11 @@ class PurchaseController extends Controller
                 })
                 ->addColumn('action', function($r) {
                     $btn = '<div class="d-flex">';
-                    $btn .= '<a href="' . route('admin.purchase.show', $r->id) . '" class="btn btn-sm btn-info mr-50"><i data-feather="eye"></i></a>';
+                    $btn .= perm_html('purchase.show', '<a href="' . route('admin.purchase.show', $r->id) . '" class="btn btn-sm btn-info mr-50"><i data-feather="eye"></i></a>');
                     if ($r->status != 'received') {
-                        $btn .= '<a href="' . route('admin.purchase.edit', $r->id) . '" class="btn btn-sm btn-primary mr-50"><i data-feather="edit"></i></a>';
+                        $btn .= perm_html('purchase.edit', '<a href="' . route('admin.purchase.edit', $r->id) . '" class="btn btn-sm btn-primary mr-50"><i data-feather="edit"></i></a>');
                     }
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-danger deletePurchase"><i data-feather="trash"></i></a>';
+                    $btn .= perm_html('purchase.delete', '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-sm btn-danger deletePurchase"><i data-feather="trash"></i></a>');
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -220,12 +227,12 @@ class PurchaseController extends Controller
                     return '<span class="badge badge-light-' . $class . ' text-uppercase">' . $r->status . '</span>';
                 })
                 ->addColumn('action', function($r) {
-                    $btn = '<a href="' . route('admin.purchase.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-success payBtn ml-25" 
+                    $btn = perm_html('purchase.show', '<a href="' . route('admin.purchase.show', $r->id) . '" class="btn btn-sm btn-info mr-25">View</a>');
+                    $btn .= perm_html('purchase.create', '<button type="button" class="btn btn-sm btn-success payBtn ml-25" 
                                 data-id="'.$r->id.'" 
                                 data-vendor-name="'.$r->vendor->name.'" 
                                 data-purchase-number="'.$r->purchase_number.'" 
-                                data-due="'.$r->due_amount.'">Pay</button>';
+                                data-due="'.$r->due_amount.'">Pay</button>');
                     return $btn;
                 })
                 ->rawColumns(['purchase_info', 'vendor_name', 'financials', 'status', 'action'])

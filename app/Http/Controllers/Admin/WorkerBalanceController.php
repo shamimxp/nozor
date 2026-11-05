@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Helpers\NumberToWords;
@@ -17,11 +19,25 @@ use Yajra\DataTables\Facades\DataTables;
 
 class WorkerBalanceController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'worker_payout';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('worker_balance', [
+            'worker_balance.list' => ['balanceSheet'],
+            'worker_balance.create' => ['storePayout'],
+            'worker_payout.list' => ['paymentList'],
+            'worker_payout.show' => ['showPayout', 'downloadTokenPdf'],
+            'worker_payout.delete' => ['destroyPayout'],
+            'worker_payout.deleted-list' => ['trash'],
+            'worker_payout.restore' => ['restoreTrash', 'bulkRestoreTrash'],
+            'worker_payout.force-delete' => ['forceDeleteTrash', 'bulkForceDeleteTrash'],
+        ]);
     }
 
     /**
@@ -65,14 +81,14 @@ class WorkerBalanceController extends Controller
                 ->addColumn('action', function ($worker) {
                     $balance = (float) $worker->invoices->where('due_amount', '>', 0)->sum('due_amount');
                     if ($balance > 0) {
-                        return '<button type="button" class="btn btn-sm make-payment-btn btn-pay-active"
+                        return perm_html('worker_balance.create', '<button type="button" class="btn btn-sm make-payment-btn btn-pay-active"
                                     data-id="' . $worker->id . '"
                                     data-name="' . e($worker->name) . '"
                                     data-phone="' . e($worker->phone) . '"
                                     data-balance="' . $balance . '"
                                     title="Make Payment to ' . e($worker->name) . '">
                                     <i data-feather="dollar-sign"></i> Make Payment
-                                </button>';
+                                </button>');
                     }
 
                     return '<button type="button" class="btn btn-sm make-payment-btn btn-pay-clear" disabled
@@ -259,8 +275,8 @@ class WorkerBalanceController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '<div class="btn-group">';
-                    $btn .= '<a href="' . route('admin.worker-payouts.show', $row->id) . '" class="btn btn-sm btn-info" title="View Cheque Token"><i data-feather="file-text"></i> Token</a>';
-                    $btn .= '<button type="button" class="btn btn-sm btn-danger delete-payout" data-id="' . $row->id . '" title="Delete & Revert to Balance"><i data-feather="trash-2"></i></button>';
+                    $btn .= perm_html('worker_payout.show', '<a href="' . route('admin.worker-payouts.show', $row->id) . '" class="btn btn-sm btn-info" title="View Cheque Token"><i data-feather="file-text"></i> Token</a>');
+                    $btn .= perm_html('worker_payout.delete', '<button type="button" class="btn btn-sm btn-danger delete-payout" data-id="' . $row->id . '" title="Delete & Revert to Balance"><i data-feather="trash-2"></i></button>');
                     $btn .= '</div>';
                     return $btn;
                 })

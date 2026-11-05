@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Controller;
 use App\Models\InventoryPurchase;
 use App\Models\InventoryPurchaseItem;
@@ -16,6 +18,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventoryPurchaseController extends Controller
 {
+    use AuthorizesAdminModule;
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('inventory_purchase');
+    }
+
     private function calculatePurchaseTotals(array $products): array
     {
         $totalAmount = 0;
@@ -110,22 +119,22 @@ class InventoryPurchaseController extends Controller
                 })
                 ->addColumn('action', function($r) {
                     $btn = '<div class="d-flex flex-wrap">';
-                    $btn .= '<a href="'.route('admin.inventory-purchase.show', $r->id).'" class="btn btn-info btn-sm mr-1 mb-25"><i data-feather="eye"></i> Details</a>';
+                    $btn .= perm_html('inventory_purchase.show', '<a href="'.route('admin.inventory-purchase.show', $r->id).'" class="btn btn-info btn-sm mr-1 mb-25"><i data-feather="eye"></i> Details</a>');
                     if ($r->due_amount > 0) {
-                        $btn .= '<button type="button" class="btn btn-success btn-sm mr-1 mb-25 payPurchaseBtn"
+                        $btn .= perm_html('inventory_purchase.create', '<button type="button" class="btn btn-success btn-sm mr-1 mb-25 payPurchaseBtn"
                             data-id="'.$r->id.'"
                             data-purchase-number="'.$r->purchase_number.'"
                             data-vendor-name="'.e($r->vendor->name ?? '-').'"
-                            data-due="'.$r->due_amount.'"><i data-feather="dollar-sign"></i> Pay</button>';
+                            data-due="'.$r->due_amount.'"><i data-feather="dollar-sign"></i> Pay</button>');
                     }
-                    $btn .= '<button type="button" class="btn btn-outline-info btn-sm mr-1 mb-25 paymentHistoryBtn"
+                    $btn .= perm_html('inventory_purchase.create', '<button type="button" class="btn btn-outline-info btn-sm mr-1 mb-25 paymentHistoryBtn"
                         data-id="'.$r->id.'"
-                        data-purchase-number="'.$r->purchase_number.'"><i data-feather="clock"></i> History</button>';
+                        data-purchase-number="'.$r->purchase_number.'"><i data-feather="clock"></i> History</button>');
                     if ($r->status == 'pending') {
-                        $btn .= '<a href="'.route('admin.inventory-purchase.edit', $r->id).'" class="btn btn-primary btn-sm mr-1 mb-25"><i data-feather="edit"></i></a>';
+                        $btn .= perm_html('inventory_purchase.edit', '<a href="'.route('admin.inventory-purchase.edit', $r->id).'" class="btn btn-primary btn-sm mr-1 mb-25"><i data-feather="edit"></i></a>');
                     }
                     if(in_array($r->status, ['confirm'])) {
-                        $btn .= '<a href="'.route('admin.inventory-purchase.receive', $r->id).'" class="btn btn-success btn-sm mr-1 mb-25"><i data-feather="download"></i> Receive</a>';
+                        $btn .= perm_html('inventory_purchase.show', '<a href="'.route('admin.inventory-purchase.receive', $r->id).'" class="btn btn-success btn-sm mr-1 mb-25"><i data-feather="download"></i> Receive</a>');
                     }
                     $btn .= '</div>';
                     return $btn;

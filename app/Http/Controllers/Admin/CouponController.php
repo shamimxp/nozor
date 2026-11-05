@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Services\Deletion\SoftDeleteService;
@@ -9,11 +11,16 @@ use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'coupon';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('coupon');
     }
 
     public function index()

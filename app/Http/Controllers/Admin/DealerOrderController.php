@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
 use App\Models\Dealer;
@@ -17,11 +19,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class DealerOrderController extends Controller
 {
-    use HandlesTrash;
+    use HandlesTrash, AuthorizesAdminModule;
 
     protected function trashModuleKey(): string
     {
         return 'dealer_order';
+    }
+
+    public function __construct()
+    {
+        $this->authorizeAdminModule('dealer_order');
     }
 
     public function index(Request $request)
@@ -77,13 +84,13 @@ class DealerOrderController extends Controller
                 })
                 ->addColumn('action', function ($r) {
                     $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
-                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
+                    $btn .= perm_html('dealer_order.show', '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('dealer_order.show', '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>');
                     if ($r->status === 'pending') {
-                        $btn .= '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>';
+                        $btn .= perm_html('dealer_order.edit', '<a href="' . route('admin.dealer-order.edit', $r->id) . '" class="btn btn-primary btn-sm" title="Edit"><i data-feather="edit"></i></a>');
                     }
-                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
-                    $btn .= '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder" title="Delete"><i data-feather="trash"></i></a>';
+                    $btn .= perm_html('dealer_order.show', '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>');
+                    $btn .= perm_html('dealer_order.delete', '<a href="javascript:void(0)" data-id="' . $r->id . '" class="btn btn-danger btn-sm deleteOrder" title="Delete"><i data-feather="trash"></i></a>');
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -140,9 +147,9 @@ class DealerOrderController extends Controller
                 })
                 ->addColumn('action', function ($r) {
                     $btn = '<div class="d-inline-flex align-items-center" style="gap: 4px;">';
-                    $btn .= '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>';
-                    $btn .= '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>';
-                    $btn .= '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>';
+                    $btn .= perm_html('dealer_order.show', '<a href="' . route('admin.dealer-order.show', $r->id) . '" class="btn btn-info btn-sm" title="View"><i data-feather="eye"></i></a>');
+                    $btn .= perm_html('dealer_order.show', '<button type="button" class="btn btn-outline-primary btn-sm view-order-history" data-order-id="' . $r->id . '" data-order-type="dealer_order" data-order-number="' . $r->order_number . '" title="View History"><i data-feather="clock"></i></button>');
+                    $btn .= perm_html('dealer_order.show', '<a href="' . route('admin.dealer-order.export-pdf', $r->id) . '" class="btn btn-secondary btn-sm" title="Download PDF"><i data-feather="download"></i></a>');
                     $btn .= '</div>';
                     return $btn;
                 })

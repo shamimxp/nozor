@@ -67,9 +67,11 @@
                 </div>
             </div>
             <div class="mt-1 mt-md-0 d-flex align-items-center" style="gap: 8px;">
-                <a href="{{ route('admin.returns.create') }}" class="btn btn-sm d-inline-flex align-items-center" style="background-color: #111C38; color: #ffffff; height: 36px; border-radius: 6px; font-weight: 600; padding: 0 16px;">
+                @can('return_order.create')
+                        <a href="{{ route('admin.returns.create') }}" class="btn btn-sm d-inline-flex align-items-center" style="background-color: #111C38; color: #ffffff; height: 36px; border-radius: 6px; font-weight: 600; padding: 0 16px;">
                     <i data-feather="plus-circle" style="width: 15px; height: 15px; margin-right: 6px;"></i> Create Return
                 </a>
+                        @endcan
             </div>
         </div>
     </div>
