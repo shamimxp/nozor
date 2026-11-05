@@ -1646,3 +1646,590 @@ footer.main .newsletter {
         transform: none;
     }
 }
+
+/*================================================================================
+  My Account — WOOD Machinery customer dashboard
+================================================================================*/
+.breadcrumb a,
+.breadcrumb a i {
+    color: var(--wm-brand) !important;
+}
+
+.wm-account-page {
+    padding: 36px 0 88px;
+    background:
+        radial-gradient(ellipse 70% 45% at 8% 0%, rgba(203, 33, 39, 0.07), transparent 55%),
+        linear-gradient(180deg, #f3f5f9 0%, #eef1f6 100%);
+}
+
+.wm-account-shell {
+    display: grid;
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.wm-account-nav {
+    position: sticky;
+    top: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(17, 28, 56, 0.08);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 18px 40px rgba(17, 28, 56, 0.06);
+}
+
+.wm-account-nav__brand {
+    padding: 28px 24px 22px;
+    background:
+        linear-gradient(145deg, rgba(17, 28, 56, 0.96) 0%, rgba(11, 18, 32, 0.98) 55%, rgba(203, 33, 39, 0.55) 140%);
+    color: #fff;
+}
+
+.wm-account-nav__logo {
+    display: block;
+    height: 34px;
+    width: auto;
+    margin-bottom: 18px;
+    filter: brightness(0) invert(1);
+}
+
+.wm-account-nav__chip {
+    display: inline-flex;
+    margin: 0 0 10px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.wm-account-nav__name {
+    margin: 0 0 4px;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.wm-account-nav__meta {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+}
+
+.wm-account-menu {
+    padding: 14px;
+    margin: 0;
+    gap: 8px;
+}
+
+.wm-account-menu .nav-item {
+    margin: 0 !important;
+    border: 0 !important;
+}
+
+.wm-account-menu .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 12px 14px !important;
+    border: 1px solid var(--wm-line);
+    border-radius: 12px !important;
+    background: #fff;
+    color: var(--wm-ink) !important;
+    font-size: 14px !important;
+    font-weight: 650 !important;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.wm-account-menu .nav-link i {
+    color: var(--wm-muted) !important;
+    font-size: 16px !important;
+    opacity: 1 !important;
+    width: 18px;
+    text-align: center;
+}
+
+.wm-account-menu .nav-link span {
+    flex: 1;
+}
+
+.wm-account-menu__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--wm-brand-soft-2);
+    color: var(--wm-brand);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.wm-account-menu .nav-link:hover {
+    border-color: rgba(203, 33, 39, 0.28);
+    background: var(--wm-brand-soft-2);
+    color: var(--wm-brand) !important;
+    transform: translateY(-1px);
+}
+
+.wm-account-menu .nav-link:hover i {
+    color: var(--wm-brand) !important;
+}
+
+.wm-account-menu .nav-link.active,
+.dashboard-menu ul li a.active {
+    border-color: var(--wm-brand) !important;
+    background: var(--wm-brand) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 24px rgba(203, 33, 39, 0.22);
+}
+
+.wm-account-menu .nav-link.active i,
+.dashboard-menu ul li a.active i {
+    color: #fff !important;
+}
+
+.wm-account-menu .nav-link.active .wm-account-menu__count {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.wm-account-menu__logout {
+    margin-top: 4px;
+}
+
+.wm-account-main {
+    min-width: 0;
+}
+
+.wm-account-panel {
+    border: 1px solid rgba(17, 28, 56, 0.08);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 18px 40px rgba(17, 28, 56, 0.06);
+    padding: 28px 30px 32px;
+}
+
+.wm-account-panel__header {
+    margin-bottom: 24px;
+}
+
+.wm-account-kicker {
+    margin: 0 0 8px;
+    color: var(--wm-brand);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.wm-account-panel h3 {
+    margin: 0 0 10px;
+    color: var(--wm-navy);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.wm-account-lead {
+    margin: 0;
+    max-width: 58ch;
+    color: var(--wm-muted);
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.wm-account-inline-link {
+    color: var(--wm-brand) !important;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.wm-account-inline-link:hover {
+    color: var(--wm-brand-hover) !important;
+    text-decoration: underline;
+}
+
+.wm-account-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.wm-account-stat {
+    padding: 18px 18px 16px;
+    border: 1px solid var(--wm-line);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, #fff 0%, var(--wm-soft) 100%);
+}
+
+.wm-account-stat--wide {
+    grid-column: span 2;
+}
+
+.wm-account-stat__label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--wm-muted);
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.wm-account-stat__value {
+    display: block;
+    color: var(--wm-navy);
+    font-size: 1.85rem;
+    font-weight: 750;
+    line-height: 1;
+}
+
+.wm-account-stat__value--sm {
+    font-size: 1.15rem;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.wm-account-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.wm-account-action {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 18px;
+    border: 1px solid var(--wm-line);
+    border-radius: 14px;
+    background: #fff;
+    color: inherit;
+    text-align: left;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+.wm-account-action strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--wm-navy);
+    font-size: 15px;
+}
+
+.wm-account-action small {
+    display: block;
+    color: var(--wm-muted);
+    font-size: 13px;
+}
+
+.wm-account-action__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--wm-brand-soft-2);
+    color: var(--wm-brand);
+    font-size: 18px;
+}
+
+.wm-account-action:hover {
+    border-color: rgba(203, 33, 39, 0.28);
+    background: #fffaf9;
+    box-shadow: 0 14px 28px rgba(17, 28, 56, 0.07);
+    transform: translateY(-2px);
+}
+
+.wm-account-action--shop {
+    background:
+        linear-gradient(135deg, rgba(203, 33, 39, 0.08), rgba(17, 28, 56, 0.04));
+}
+
+.wm-account-table-wrap {
+    border: 1px solid var(--wm-line);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.wm-account-table {
+    margin: 0;
+}
+
+.wm-account-table thead th {
+    background: var(--wm-soft);
+    border-bottom: 1px solid var(--wm-line);
+    color: var(--wm-navy);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 14px 16px;
+}
+
+.wm-account-table tbody td,
+.wm-account-table tfoot th,
+.wm-account-table tfoot td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border-color: var(--wm-line);
+    color: var(--wm-ink);
+    font-size: 14px;
+}
+
+.wm-account-empty {
+    text-align: center;
+    color: var(--wm-muted);
+    padding: 36px 16px !important;
+}
+
+.wm-account-empty a {
+    color: var(--wm-brand);
+    font-weight: 700;
+}
+
+.wm-account-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--wm-soft);
+    color: var(--wm-navy);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.wm-account-status--pending,
+.wm-account-status--processing,
+.wm-account-status--confirmed {
+    background: rgba(203, 33, 39, 0.1);
+    color: var(--wm-brand);
+}
+
+.wm-account-status--delivered,
+.wm-account-status--completed {
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+}
+
+.wm-account-status--cancelled {
+    background: rgba(100, 116, 139, 0.14);
+    color: #475569;
+}
+
+.wm-account-btn-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border-radius: 10px;
+    background: var(--wm-brand) !important;
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.wm-account-btn-sm:hover {
+    background: var(--wm-brand-hover) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+.wm-account-track-form,
+.wm-account-profile-form {
+    display: grid;
+    gap: 16px;
+    max-width: 520px;
+}
+
+.wm-account-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--wm-ink);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.wm-account-field .required {
+    color: var(--wm-brand);
+}
+
+.wm-account-field input,
+.wm-account-field .form-control {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid #d9e0ec;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--wm-ink);
+    font-size: 15px;
+    outline: none;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wm-account-field input:focus,
+.wm-account-field .form-control:focus {
+    border-color: var(--wm-brand);
+    box-shadow: 0 0 0 4px var(--wm-brand-soft) !important;
+}
+
+.wm-account-field input[readonly] {
+    background: var(--wm-soft);
+    color: var(--wm-muted);
+}
+
+.wm-account-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 50px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--wm-brand) !important;
+    color: #fff !important;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 14px 28px rgba(203, 33, 39, 0.22);
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wm-account-submit:hover {
+    background: var(--wm-brand-hover) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(203, 33, 39, 0.28);
+}
+
+.wm-account-alert {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 12px;
+    background: rgba(16, 185, 129, 0.08);
+    color: #047857;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.wm-account-modal .btn-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 10;
+}
+
+.wm-account-modal .modal-body {
+    padding: 30px;
+}
+
+.wm-account-modal__title {
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--wm-line);
+    color: var(--wm-navy);
+    font-weight: 700;
+}
+
+@media (max-width: 991.98px) {
+    .wm-account-page {
+        padding: 24px 0 64px;
+    }
+
+    .wm-account-shell {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .wm-account-nav {
+        position: static;
+    }
+
+    .wm-account-nav__brand {
+        padding: 22px 20px 18px;
+    }
+
+    .wm-account-menu {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .wm-account-menu .nav-item:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .wm-account-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .wm-account-stat--wide {
+        grid-column: span 2;
+    }
+
+    .wm-account-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .wm-account-panel {
+        padding: 22px 18px 24px;
+    }
+
+    .wm-account-panel h3 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .wm-account-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .wm-account-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .wm-account-stat--wide {
+        grid-column: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wm-account-menu .nav-link,
+    .wm-account-action,
+    .wm-account-submit,
+    .wm-account-btn-sm {
+        transition: none;
+    }
+
+    .wm-account-menu .nav-link:hover,
+    .wm-account-action:hover,
+    .wm-account-submit:hover,
+    .wm-account-btn-sm:hover {
+        transform: none;
+    }
+}
