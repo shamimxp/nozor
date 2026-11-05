@@ -102,42 +102,42 @@
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-sm-4 mb-md-4 mb-lg-0">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay="0">
-                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_1.png')}}" alt="" />
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{ asset('web/assets/imgs/banner/wm-promo-router-bits.jpg') }}" alt="Router Bits" />
                         <div class="banner-text">
                             <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">
-                                Trendy Streetwear <br />For Cool Kids<br />
+                                Precision Router<br />Bits for Workshops
                             </h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <a href="{{ route('category.products', 'router-bits') }}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-sm-4 mb-md-4 mb-lg-0">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
-                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_2.png')}}" alt="" />
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{ asset('web/assets/imgs/banner/wm-promo-cnc-bits.jpg') }}" alt="CNC Bits" />
                         <div class="banner-text">
                             <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">
-                                Smart Casuals<br />
-                                To Stand Out
+                                CNC Bits<br />
+                                Built for Production
                             </h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <a href="{{ route('category.products', 'cnc-bits') }}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-sm-4 mb-md-0">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_3.png')}}" alt="" />
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{ asset('web/assets/imgs/banner/wm-promo-circular-blades.jpg') }}" alt="Circular Blades" />
                         <div class="banner-text">
-                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">The Best Footwear <br />& Accessories</h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">Circular &amp; Planer<br />Blades</h4>
+                            <a href="{{ route('category.products', 'circular-planer-blades') }}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-sm-0">
                     <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".6s">
-                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{asset('web/assets/imgs/banner/boy_fashion_4.png')}}" alt="" />
+                        <img style="width: 100%; height: 270px; object-fit: cover; border-radius: 15px;" src="{{ asset('web/assets/imgs/banner/wm-promo-power-tools.jpg') }}" alt="Power Tools" />
                         <div class="banner-text">
-                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">Winter Jackets<br />& Warm Knits</h4>
-                            <a href="{{route('shop')}}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+                            <h4 style="color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,0.8);">Workshop Power<br />Tools &amp; Machines</h4>
+                            <a href="{{ route('category.products', 'power-tools') }}" class="btn btn-xs mt-10">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
                         </div>
                     </div>
                 </div>
