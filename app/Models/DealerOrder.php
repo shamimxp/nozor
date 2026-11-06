@@ -13,18 +13,19 @@ class DealerOrder extends Model
 
     protected $fillable = [
         'order_number', 'order_date', 'dealer_id',
-        'sub_total', 'discount', 'carrying_charge', 'grand_total',
+        'sub_total', 'discount', 'promotional_discount', 'carrying_charge', 'grand_total',
         'paid', 'due', 'note', 'admin_notes', 'status', 'request_date', 'creator_id',
     ];
 
     protected $casts = [
-        'order_date'      => 'date',
-        'sub_total'       => 'decimal:2',
-        'discount'        => 'decimal:2',
-        'carrying_charge' => 'decimal:2',
-        'grand_total'     => 'decimal:2',
-        'paid'            => 'decimal:2',
-        'due'             => 'decimal:2',
+        'order_date'             => 'date',
+        'sub_total'              => 'decimal:2',
+        'discount'               => 'decimal:2',
+        'promotional_discount'   => 'decimal:2',
+        'carrying_charge'        => 'decimal:2',
+        'grand_total'            => 'decimal:2',
+        'paid'                   => 'decimal:2',
+        'due'                    => 'decimal:2',
     ];
 
     /**

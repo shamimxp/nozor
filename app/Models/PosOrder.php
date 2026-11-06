@@ -12,7 +12,7 @@ class PosOrder extends Model
     use HasFactory, TracksSoftDeletion, HasOrderActivities;
 
     protected $fillable = [
-        'order_number', 'customer_id', 'total_amount', 'discount_amount',
+        'order_number', 'customer_id', 'total_amount', 'discount_amount', 'promotional_discount',
         'payable_amount', 'paid_amount', 'due_amount', 'payment_method',
         'payment_status', 'order_status', 'note', 'staff_note', 'created_by', 'order_date'
     ];

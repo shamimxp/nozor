@@ -224,7 +224,9 @@ class DealerOrderController extends Controller
             ];
         }
 
-        return view('admin.dealer-order.create', compact('orderNumber', 'dealers', 'categories', 'products'));
+        $promotionalOffers = app(\App\Services\PromotionalDiscountService::class)->activeOffersForFrontend();
+
+        return view('admin.dealer-order.create', compact('orderNumber', 'dealers', 'categories', 'products', 'promotionalOffers'));
     }
 
     public function store(Request $request)
@@ -271,7 +273,12 @@ class DealerOrderController extends Controller
 
             $carryingCharge = (float) ($request->carrying_charge ?? 0);
             $discount       = (float) ($request->discount ?? 0);
-            $grandTotal     = ($subTotal - $discount) + $carryingCharge;
+            $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                $cartItems,
+                \Carbon\Carbon::parse($request->order_date)
+            );
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $grandTotal     = max(0, ($subTotal - $discount - $promotionalDiscount) + $carryingCharge);
             $paid           = (float) ($request->paid ?? 0);
             $due            = $grandTotal - $paid;
 
@@ -283,6 +290,7 @@ class DealerOrderController extends Controller
                 'admin_notes'     => $request->admin_notes,
                 'sub_total'       => $subTotal,
                 'discount'        => $discount,
+                'promotional_discount' => $promotionalDiscount,
                 'carrying_charge' => $carryingCharge,
                 'grand_total'     => $grandTotal,
                 'paid'            => $paid,
@@ -433,7 +441,10 @@ class DealerOrderController extends Controller
             ];
         }
 
-        return view('admin.dealer-order.edit', compact('order', 'dealers', 'categories', 'products'));
+        $promotionalOffers = app(\App\Services\PromotionalDiscountService::class)
+            ->activeOffersForFrontend($order->order_date ? \Carbon\Carbon::parse($order->order_date) : null);
+
+        return view('admin.dealer-order.edit', compact('order', 'dealers', 'categories', 'products', 'promotionalOffers'));
     }
 
     public function update(Request $request, $id)
@@ -496,7 +507,12 @@ class DealerOrderController extends Controller
 
             $carryingCharge = (float) ($request->carrying_charge ?? 0);
             $discount       = (float) ($request->discount ?? 0);
-            $grandTotal     = ($subTotal - $discount) + $carryingCharge;
+            $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                $cartItems,
+                \Carbon\Carbon::parse($request->order_date)
+            );
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $grandTotal     = max(0, ($subTotal - $discount - $promotionalDiscount) + $carryingCharge);
             $paid           = (float) ($request->paid ?? 0);
             $due            = $grandTotal - $paid;
 
@@ -507,6 +523,7 @@ class DealerOrderController extends Controller
                 'admin_notes'     => $request->admin_notes,
                 'sub_total'       => $subTotal,
                 'discount'        => $discount,
+                'promotional_discount' => $promotionalDiscount,
                 'carrying_charge' => $carryingCharge,
                 'grand_total'     => $grandTotal,
                 'paid'            => $paid,
@@ -578,14 +595,24 @@ class DealerOrderController extends Controller
                 'note' => $request->note
             ]);
 
-            // Recalculate Order Totals
-            $order = DealerOrder::findOrFail($item->dealer_order_id);
+            // Recalculate Order Totals (including promotional discount)
+            $order = DealerOrder::with('items')->findOrFail($item->dealer_order_id);
             $subTotal = DealerOrderItem::where('dealer_order_id', $order->id)->sum('total');
-            $grandTotal = ($subTotal - $order->discount) + $order->carrying_charge;
+            $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                $order->items->map(fn ($row) => [
+                    'product_id' => $row->product_id,
+                    'qty' => $row->qty,
+                    'price' => $row->price,
+                ])->all(),
+                $order->order_date ? \Carbon\Carbon::parse($order->order_date) : null
+            );
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $grandTotal = max(0, ($subTotal - (float) $order->discount - $promotionalDiscount) + (float) $order->carrying_charge);
             $due = $grandTotal - $order->paid;
 
             $order->update([
                 'sub_total' => $subTotal,
+                'promotional_discount' => $promotionalDiscount,
                 'grand_total' => $grandTotal,
                 'due' => $due
             ]);

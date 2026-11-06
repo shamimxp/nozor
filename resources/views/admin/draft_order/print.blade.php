@@ -4,175 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Draft Order - {{ $draftOrder->draft_number }}</title>
-    <link rel="stylesheet" href="{{ asset('admin/app-assets/vendors/css/vendors.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/app-assets/css/bootstrap.css') }}">
     <style>
         body {
-            background-color: #fff;
-            color: #222;
+            font-family: serif;
+            margin: 0;
+            padding: 30px;
+            color: #333;
             font-size: 13px;
-            padding: 20px;
+            background: #fff;
         }
         .print-actions {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
             border-bottom: 1px dashed #ccc;
+            text-align: right;
         }
-        @media print {
-            .print-actions {
-                display: none !important;
-            }
-            body {
-                padding: 0;
-            }
+        .print-actions button {
+            font-family: sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+        .btn-print {
+            background: #111c38;
+            color: #fff;
+            border: 1px solid #111c38;
+        }
+        .btn-close {
+            background: #fff;
+            color: #333;
+            border: 1px solid #bbb;
+        }
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.08;
+            z-index: -1;
+            width: 400px;
+            pointer-events: none;
+        }
+        .header-table {
+            width: 100%;
+            margin-bottom: 5px;
+            border-collapse: collapse;
+        }
+        .header-table td {
+            vertical-align: middle;
+        }
+        .header-logo {
+            width: 25%;
+            text-align: left;
+        }
+        .header-logo img {
+            width: 140px;
+        }
+        .header-content {
+            width: 50%;
+            text-align: center;
+        }
+        .header-empty {
+            width: 25%;
         }
         .header-title {
             font-size: 20px;
-            font-weight: 700;
+            font-weight: bold;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+        .header-address {
+            font-size: 13px;
+            line-height: 1.3;
         }
         .divider {
-            border-bottom: 2px solid #333;
-            margin: 12px 0;
+            border-bottom: 2px solid #555;
+            margin: 10px 0;
         }
-        .items-table th, .items-table td {
-            border: 1px solid #333 !important;
-            padding: 6px 10px;
+        .invoice-title {
+            text-align: center;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 15px;
+            border-collapse: collapse;
+        }
+        .info-table td {
+            vertical-align: top;
+            padding: 2px 0;
+            line-height: 1.5;
+        }
+        .info-left { width: 60%; }
+        .info-right { width: 40%; text-align: right; }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .items-table th,
+        .items-table td {
+            border: 1px solid #000;
+            padding: 5px 8px;
+            font-size: 12px;
         }
         .items-table th {
-            background-color: #f2f2f2 !important;
+            text-align: center;
+            font-weight: bold;
+            background-color: #f5f5f5;
             -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .bottom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .bottom-table > tbody > tr > td {
+            vertical-align: top;
+        }
+        .in-words-col {
+            width: 55%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .in-words-col span {
+            font-weight: normal;
+        }
+        .totals-col {
+            width: 45%;
+        }
+        .totals-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+        .totals-table td {
+            padding: 3px 0;
+            text-align: right;
+        }
+        .totals-table td:first-child {
+            width: 60%;
+            padding-right: 10px;
+        }
+        .totals-table td:last-child {
+            width: 40%;
+        }
+        .totals-table .border-top td {
+            border-top: 1px solid #000;
+            font-weight: bold;
+        }
+        .description-box {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .description-box span {
+            font-weight: normal;
+        }
+        .signature-section {
+            width: 100%;
+            margin-top: 60px;
+        }
+        .signature-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .signature-section td {
+            width: 50%;
+        }
+        .sign-line {
+            border-top: 1px solid #000;
+            width: 150px;
+            text-align: center;
+            font-weight: bold;
+            padding-top: 5px;
+            font-size: 12px;
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+        }
+        @media print {
+            .print-actions { display: none !important; }
+            body { padding: 12mm; }
+            @page { size: A4; margin: 10mm; }
         }
     </style>
 </head>
 <body>
+    @php
+        if (!function_exists('getDraftPrintAmountInWords')) {
+            function getDraftPrintAmountInWords($amount) {
+                if (!class_exists('\NumberFormatter')) {
+                    return number_format($amount, 2) . ' Taka only';
+                }
+                $f = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+                $amt = explode('.', number_format($amount, 2, '.', ''));
+                $taka = (int) $amt[0];
+                $poysa = (int) ($amt[1] ?? 0);
+                $str = $f->format($taka) . ' taka';
+                if ($poysa > 0) {
+                    $str .= ' and ' . $f->format($poysa) . ' poysa';
+                }
+                return ucwords($str);
+            }
+        }
+    @endphp
 
-    <div class="print-actions text-right">
-        <button class="btn btn-primary btn-sm font-weight-bold" onclick="window.print()">
-            Print Now
-        </button>
-        <button class="btn btn-outline-secondary btn-sm" onclick="window.close()">
-            Close
-        </button>
+    <div class="print-actions">
+        <button type="button" class="btn-print" onclick="window.print()">Print Now</button>
+        <button type="button" class="btn-close" onclick="window.close()">Close</button>
     </div>
 
-    <div class="row align-items-center mb-2">
-        <div class="col-4">
-            <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" style="max-width: 150px;" alt="Logo">
-        </div>
-        <div class="col-8 text-right">
-            <div class="header-title">Wood Machinery and Hardware</div>
-            <div class="small text-muted">
-                Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212<br>
-                Phone: 01674-088383 | Email: info@woodmachinery.com.bd
-            </div>
-        </div>
-    </div>
+    <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" class="watermark" alt="">
+
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <img src="{{ asset('admin/app-assets/images/logo/edited_red_letters.svg') }}" alt="Logo">
+            </td>
+            <td class="header-content">
+                <div class="header-title">Wood Machinery and Hardware</div>
+                <div class="header-address">
+                    Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212<br>
+                    Phone Number 01674-088383<br>
+                    Email: info@woodmachinery.com.bd
+                </div>
+            </td>
+            <td class="header-empty"></td>
+        </tr>
+    </table>
 
     <div class="divider"></div>
 
-    <div class="text-center my-2">
-        <h4 class="font-weight-bolder text-uppercase mb-0">DRAFT ORDER / PROFORMA INVOICE</h4>
-    </div>
+    <div class="invoice-title">DRAFT ORDER / PROFORMA INVOICE</div>
 
-    <div class="row mb-3">
-        <div class="col-6">
-            <h6 class="font-weight-bold text-uppercase mb-1" style="font-size: 11px;">Dealer Information:</h6>
-            <div class="font-weight-bold" style="font-size: 15px;">{{ $draftOrder->dealer->shop_name ?? 'N/A' }}</div>
-            <div><strong>Contact:</strong> {{ $draftOrder->dealer->name ?? 'N/A' }}</div>
-            <div><strong>Phone:</strong> {{ $draftOrder->dealer->phone ?? 'N/A' }}</div>
-            <div><strong>Address:</strong> {{ $draftOrder->dealer->address ?? 'N/A' }}</div>
-        </div>
-        <div class="col-6 text-right">
-            <div><strong>Draft No:</strong> <span class="font-weight-bold">{{ $draftOrder->draft_number }}</span></div>
-            @if($draftOrder->orderRequest)
-                <div><strong>Order Request Ref:</strong> {{ $draftOrder->orderRequest->request_number ?? ('#' . $draftOrder->orderRequest->id) }}</div>
-            @endif
-            <div><strong>Date:</strong> {{ $draftOrder->created_at->format('d M, Y') }}</div>
-            <div><strong>Status:</strong> <span class="text-uppercase">{{ $draftOrder->status }}</span></div>
-        </div>
-    </div>
+    <table class="info-table">
+        <tr>
+            <td class="info-left">
+                <strong>Draft No :</strong> {{ $draftOrder->draft_number }}<br>
+                @if($draftOrder->orderRequest)
+                    <strong>Order Request Ref :</strong> {{ $draftOrder->orderRequest->request_number ?? ('#' . $draftOrder->orderRequest->id) }}<br>
+                @endif
+                <strong>Dealer Name :</strong> {{ $draftOrder->dealer->name ?? 'N/A' }} ({{ $draftOrder->dealer->shop_name ?? 'N/A' }})<br>
+                <strong>Dealer Address :</strong> {{ $draftOrder->dealer->address ?? 'N/A' }}<br>
+                <strong>Dealer Phone :</strong> {{ $draftOrder->dealer->phone ?? 'N/A' }}
+            </td>
+            <td class="info-right">
+                <strong>Date :</strong> {{ optional($draftOrder->created_at)->format('d M Y') }}<br>
+                <strong>Status :</strong> {{ strtoupper($draftOrder->status) }}<br>
+                @if($draftOrder->creator)
+                    <strong>Prepared By :</strong> {{ $draftOrder->creator->name }}<br>
+                @endif
+            </td>
+        </tr>
+    </table>
 
-    <table class="table items-table w-100 mb-3">
+    <table class="items-table">
         <thead>
             <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 50%;">Product Name</th>
-                <th style="width: 15%; text-align: right;">Unit Price</th>
-                <th style="width: 15%; text-align: center;">Qty</th>
-                <th style="width: 15%; text-align: right;">Total</th>
+                <th style="width: 5%;">SL</th>
+                <th style="width: 50%;" class="text-left">Product Name</th>
+                <th style="width: 15%;">Unit Price</th>
+                <th style="width: 15%;">Quantity</th>
+                <th style="width: 15%;">Total (BDT)</th>
             </tr>
         </thead>
         <tbody>
             @foreach($draftOrder->items as $index => $item)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $item->product->name ?? 'N/A' }}</td>
-                <td class="text-right">৳{{ number_format($item->unit_price, 2) }}</td>
-                <td class="text-center">{{ $item->qty }}</td>
-                <td class="text-right">৳{{ number_format($item->total, 2) }}</td>
-            </tr>
+                <tr>
+                    <td class="text-center"><b>{{ $index + 1 }}</b></td>
+                    <td class="text-left">{{ $item->product->name ?? 'N/A' }}</td>
+                    <td class="text-right">{{ number_format($item->unit_price, 2) }}</td>
+                    <td class="text-center">{{ $item->qty }}</td>
+                    <td class="text-right">{{ number_format($item->total, 2) }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
 
-    <div class="row">
-        <div class="col-7">
+    <table class="bottom-table">
+        <tr>
+            <td class="in-words-col">
+                Total In Words : <span>{{ getDraftPrintAmountInWords($draftOrder->grand_total) }}</span>
+            </td>
+            <td class="totals-col">
+                <table class="totals-table">
+                    <tr>
+                        <td>Sub Total :</td>
+                        <td>{{ number_format($draftOrder->sub_total, 2) }}</td>
+                    </tr>
+                    @if(($draftOrder->discount ?? 0) > 0)
+                        <tr>
+                            <td>Discount :</td>
+                            <td>- {{ number_format($draftOrder->discount, 2) }}</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td>Promotional Discount :</td>
+                        <td>- {{ number_format($draftOrder->promotional_discount ?? 0, 2) }}</td>
+                    </tr>
+                    @if(($draftOrder->carrying_charge ?? 0) > 0)
+                        <tr>
+                            <td>Carrying Charge :</td>
+                            <td>+ {{ number_format($draftOrder->carrying_charge, 2) }}</td>
+                        </tr>
+                    @endif
+                    <tr class="border-top">
+                        <td>Grand Total :</td>
+                        <td>{{ number_format($draftOrder->grand_total, 2) }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    @if($draftOrder->note || $draftOrder->admin_notes)
+        <div class="description-box">
             @if($draftOrder->note)
-                <div class="mb-2">
-                    <strong>Customer Note:</strong>
-                    <div>{{ $draftOrder->note }}</div>
-                </div>
+                <div><strong>Note:</strong> <span>{{ $draftOrder->note }}</span></div>
             @endif
             @if($draftOrder->admin_notes)
-                <div>
-                    <strong>Admin Note:</strong>
-                    <div>{{ $draftOrder->admin_notes }}</div>
-                </div>
+                <div><strong>Admin Note:</strong> <span>{{ $draftOrder->admin_notes }}</span></div>
             @endif
         </div>
-        <div class="col-5">
-            <table class="table table-sm border-0">
-                <tr>
-                    <td class="text-right border-0 font-weight-bold">Sub Total:</td>
-                    <td class="text-right border-0 font-weight-bold" style="width: 120px;">৳{{ number_format($draftOrder->sub_total, 2) }}</td>
-                </tr>
-                @if($draftOrder->discount > 0)
-                <tr>
-                    <td class="text-right border-0 text-danger font-weight-bold">Discount:</td>
-                    <td class="text-right border-0 text-danger font-weight-bold">- ৳{{ number_format($draftOrder->discount, 2) }}</td>
-                </tr>
-                @endif
-                @if($draftOrder->carrying_charge > 0)
-                <tr>
-                    <td class="text-right border-0 font-weight-bold">Carrying Charge:</td>
-                    <td class="text-right border-0 font-weight-bold">+ ৳{{ number_format($draftOrder->carrying_charge, 2) }}</td>
-                </tr>
-                @endif
-                <tr style="border-top: 2px solid #333;">
-                    <td class="text-right font-weight-bolder" style="font-size: 15px;">Grand Total:</td>
-                    <td class="text-right font-weight-bolder" style="font-size: 15px;">৳{{ number_format($draftOrder->grand_total, 2) }}</td>
-                </tr>
-            </table>
-        </div>
+    @endif
+
+    <div class="signature-section">
+        <table>
+            <tr>
+                <td class="text-left">
+                    <div class="sign-line" style="float: left;">Prepared By</div>
+                </td>
+                <td class="text-right">
+                    <div class="sign-line" style="float: right;">Authorized Signature</div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <div class="row mt-5 pt-4">
-        <div class="col-6">
-            <div style="border-top: 1px solid #333; width: 160px; text-align: center; font-weight: bold; padding-top: 4px;">
-                Prepared By
-            </div>
-        </div>
-        <div class="col-6 text-right">
-            <div style="border-top: 1px solid #333; width: 160px; text-align: center; font-weight: bold; padding-top: 4px; margin-left: auto;">
-                Authorized Signature
-            </div>
-        </div>
+    <div class="footer-text">
+        * This is a computer-generated Draft Order / Proforma Invoice.
     </div>
 
     <script>
-        window.onload = function() {
-            window.print();
-        }
+        window.onload = function () {
+            setTimeout(function () { window.print(); }, 250);
+        };
     </script>
 </body>
 </html>

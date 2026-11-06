@@ -324,7 +324,7 @@
                             <input type="number" class="form-control confirm-qty-input"
                                 name="items[{{ $index }}][confirm_qty]"
                                 min="0" max="{{ $pendingQty }}" step="1" value="{{ $pendingQty }}"
-                                data-unit-price="{{ $unitPrice }}" data-requested="{{ $item->requested_qty }}" data-index="{{ $index }}"
+                                data-unit-price="{{ $unitPrice }}" data-product-id="{{ $item->product_id }}" data-requested="{{ $item->requested_qty }}" data-index="{{ $index }}"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value !== '' && parseInt(this.value) > parseInt(this.max)) this.value = this.max;"
                                 @if($pendingQty == 0) readonly @endif
                                 style="height:34px;">
@@ -373,6 +373,10 @@
                         <span class="s-value" id="summaryAfterUpdateAmount">{{ number_format($grandTotal, 0) }} <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small></span>
                     </div>
                     <div class="summary-row">
+                        <span class="s-label">Promotional Discount</span>
+                        <span class="s-value text-danger" id="summaryPromotionalDiscount">0 <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small></span>
+                    </div>
+                    <div class="summary-row">
                         <span class="s-label">Selected Total Amount</span>
                         <span class="s-value primary" id="summarySelectedTotalAmount">0 <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small></span>
                     </div>
@@ -400,33 +404,63 @@
 <script>
 $(document).ready(function () {
     const initialGrandTotal = {{ $grandTotal }};
+    const promotionalOffers = @json($promotionalOffers ?? []);
     $('#display_total_amount').html(Math.round(initialGrandTotal).toLocaleString() + ' <span style="font-size:0.75rem;font-weight:600;">TK</span>');
+
+    function calcLinePromo(unitPrice, quantity, productId) {
+        const qty = parseInt(quantity, 10) || 0;
+        const price = parseFloat(unitPrice) || 0;
+        const pid = parseInt(productId, 10);
+        let best = 0;
+        promotionalOffers.forEach(function (offer) {
+            if (parseInt(offer.product_id, 10) !== pid) return;
+            if (qty < parseInt(offer.from_qty, 10) || qty > parseInt(offer.to_qty, 10)) return;
+            const lineTotal = price * qty;
+            const value = parseFloat(offer.discount_value) || 0;
+            let discount = offer.offer_type === 'percent'
+                ? (lineTotal * value) / 100
+                : value * qty;
+            discount = Math.max(0, Math.min(discount, lineTotal));
+            if (discount > best) best = discount;
+        });
+        return Math.round(best * 100) / 100;
+    }
 
     function calculateTotals() {
         let afterUpdateAmount   = 0;
         let selectedTotalAmount = 0;
+        let promoTotal = 0;
+        let selectedPromo = 0;
 
         $('.confirm-qty-input').each(function () {
             const index      = $(this).data('index');
             const unitPrice  = parseFloat($(this).data('unit-price')) || 0;
+            const productId  = $(this).data('product-id');
             const confirmQty = parseInt($(this).val()) || 0;
             const pendingQty = parseInt($(this).attr('max')) || 0;
 
             const itemTotal = unitPrice * confirmQty;
+            const linePromo = calcLinePromo(unitPrice, confirmQty, productId);
             $('#itemTotal' + index).text(Math.round(itemTotal).toLocaleString());
 
             const dueQty = pendingQty - confirmQty;
             $('#dueQty' + index).text(dueQty);
 
             afterUpdateAmount += itemTotal;
+            promoTotal += linePromo;
             if ($('#itemCheck' + index).is(':checked')) {
                 selectedTotalAmount += itemTotal;
+                selectedPromo += linePromo;
             }
         });
 
-        $('#summaryAfterUpdateAmount').html(Math.round(afterUpdateAmount).toLocaleString() + ' <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small>');
-        $('#summarySelectedTotalAmount').html(Math.round(selectedTotalAmount).toLocaleString() + ' <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small>');
-        $('#display_total_amount').html(Math.round(afterUpdateAmount).toLocaleString() + ' <span style="font-size:0.75rem;font-weight:600;">TK</span>');
+        const afterNet = Math.max(0, afterUpdateAmount - promoTotal);
+        const selectedNet = Math.max(0, selectedTotalAmount - selectedPromo);
+
+        $('#summaryAfterUpdateAmount').html(Math.round(afterNet).toLocaleString() + ' <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small>');
+        $('#summaryPromotionalDiscount').html(Math.round(promoTotal).toLocaleString() + ' <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small>');
+        $('#summarySelectedTotalAmount').html(Math.round(selectedNet).toLocaleString() + ' <small class="text-muted" style="font-size:0.72rem;font-weight:600;">TK</small>');
+        $('#display_total_amount').html(Math.round(afterNet).toLocaleString() + ' <span style="font-size:0.75rem;font-weight:600;">TK</span>');
     }
 
     calculateTotals();

@@ -254,6 +254,22 @@
             <td class="totals-col">
                 <table class="totals-table">
                     <tr>
+                        <td>Subtotal :</td>
+                        <td>{{ number_format($order->sub_total, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount :</td>
+                        <td>{{ number_format($order->discount, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Promotional Discount :</td>
+                        <td>{{ number_format($order->promotional_discount ?? 0, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Carrying Charge :</td>
+                        <td>{{ number_format($order->carrying_charge, 2) }}</td>
+                    </tr>
+                    <tr>
                         <td>Total Amount :</td>
                         <td>{{ number_format($order->grand_total, 2) }}</td>
                     </tr>

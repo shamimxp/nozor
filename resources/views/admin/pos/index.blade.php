@@ -1450,8 +1450,8 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-secondary">Tax :</span>
-                                <span class="text-secondary fw-bold">৳ <span id="summary_tax">0.00</span></span>
+                                <span class="text-secondary">Promotional Discount :</span>
+                                <span class="text-secondary fw-bold">- ৳ <span id="summary_promotional_discount">0.00</span></span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-secondary">Delivery Charge :</span>
@@ -2117,6 +2117,66 @@ $(document).ready(function() {
         type: 'amount'
     };
     let selectedPaymentMethod = 'Cash';
+    const promotionalOffers = @json($promotionalOffers ?? []);
+
+    function findPromotionalOffer(productId, quantity) {
+        const qty = parseInt(quantity, 10) || 0;
+        const pid = parseInt(productId, 10);
+        const matches = promotionalOffers.filter(function (offer) {
+            return parseInt(offer.product_id, 10) === pid
+                && qty >= parseInt(offer.from_qty, 10)
+                && qty <= parseInt(offer.to_qty, 10);
+        });
+        if (!matches.length) return null;
+
+        matches.sort(function (a, b) {
+            return calcLinePromoDiscount(0, qty, b) - calcLinePromoDiscount(0, qty, a)
+                || (b.id - a.id);
+        });
+        return matches[0];
+    }
+
+    function calcLinePromoDiscount(unitPrice, quantity, offer) {
+        if (!offer) return 0;
+        const qty = parseInt(quantity, 10) || 0;
+        const price = parseFloat(unitPrice) || 0;
+        const lineTotal = price * qty;
+        const value = parseFloat(offer.discount_value) || 0;
+        let discount = 0;
+        if (offer.offer_type === 'percent') {
+            discount = (lineTotal * value) / 100;
+        } else {
+            discount = value * qty;
+        }
+        if (discount < 0) discount = 0;
+        if (discount > lineTotal) discount = lineTotal;
+        return Math.round(discount * 100) / 100;
+    }
+
+    function calcCartPromotionalDiscount() {
+        let total = 0;
+        for (let id in cart) {
+            const item = cart[id];
+            const offer = findPromotionalOffer(item.id, item.quantity);
+            // Re-rank by actual money saved when price is known
+            const candidates = promotionalOffers.filter(function (o) {
+                return parseInt(o.product_id, 10) === parseInt(item.id, 10)
+                    && item.quantity >= parseInt(o.from_qty, 10)
+                    && item.quantity <= parseInt(o.to_qty, 10);
+            });
+            let best = null;
+            let bestAmount = -1;
+            candidates.forEach(function (o) {
+                const amount = calcLinePromoDiscount(item.price, item.quantity, o);
+                if (amount > bestAmount) {
+                    bestAmount = amount;
+                    best = o;
+                }
+            });
+            total += best ? bestAmount : calcLinePromoDiscount(item.price, item.quantity, offer);
+        }
+        return Math.round(total * 100) / 100;
+    }
 
     // Add to cart
     $(document).on('click', '.product__box:not(.stock__out)', function() {
@@ -2221,8 +2281,8 @@ $(document).ready(function() {
     }
 
     function calculateSummary(subtotal, productDiscount) {
-        let tax = 0;
         let deliveryCharge = 0;
+        let promotionalDiscount = calcCartPromotionalDiscount();
 
         let totalExtraDiscount = 0;
         const discountableAmount = subtotal - productDiscount;
@@ -2233,14 +2293,13 @@ $(document).ready(function() {
             totalExtraDiscount = extraDiscount.amount;
         }
 
-        let total = discountableAmount - totalExtraDiscount + tax + deliveryCharge;
+        let total = discountableAmount - totalExtraDiscount - promotionalDiscount + deliveryCharge;
         if (total < 0) total = 0;
-
 
         $('#summary_subtotal').text(subtotal.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_product_discount').text(productDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_extra_discount').text(totalExtraDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
-        $('#summary_tax').text(tax.toFixed(2));
+        $('#summary_promotional_discount').text(promotionalDiscount.toLocaleString(undefined, {minimumFractionDigits: 2}));
         $('#summary_delivery_charge').text(deliveryCharge.toFixed(2));
         $('#summary_total').text(total.toFixed(2));
         $('#summary_total_input').val(total);
@@ -2422,6 +2481,7 @@ function updateDynamicChange() {
         const discountValue = extraDiscount.amount;
         const subtotal = parseFloat($('#summary_subtotal').text().replace(/,/g, '')) || 0;
         const totalDiscount = (parseFloat($('#summary_product_discount').text().replace(/,/g, '')) || 0) + (parseFloat($('#summary_extra_discount').text().replace(/,/g, '')) || 0);
+        const promotionalDiscount = parseFloat($('#summary_promotional_discount').text().replace(/,/g, '')) || 0;
         const payableAmount = parseFloat($('#summary_total').text().replace(/,/g, '')) || 0;
         const paidAmount = parseFloat($('#summary_paid_amount').val()) || 0;
         const dueAmount = parseFloat($('#summary_due_amount').text().replace(/,/g, '')) || 0;
@@ -2450,6 +2510,7 @@ function updateDynamicChange() {
                         items: items,
                         total_amount: subtotal,
                         discount_amount: totalDiscount,
+                        promotional_discount: promotionalDiscount,
                         payable_amount: payableAmount,
                         paid_amount: paidAmount,
                         due_amount: dueAmount,

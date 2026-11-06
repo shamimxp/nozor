@@ -255,6 +255,10 @@
                                         <p class="invoice-total-amount">৳{{ number_format($order->discount, 2) }}</p>
                                     </div>
                                     <div class="invoice-total-item d-flex justify-content-between">
+                                        <p class="invoice-total-title">Promotional Discount:</p>
+                                        <p class="invoice-total-amount">-৳{{ number_format($order->promotional_discount ?? 0, 2) }}</p>
+                                    </div>
+                                    <div class="invoice-total-item d-flex justify-content-between">
                                         <p class="invoice-total-title">Carrying:</p>
                                         <p class="invoice-total-amount">৳{{ number_format($order->carrying_charge, 2) }}</p>
                                     </div>

@@ -116,6 +116,16 @@ class OrderRequestService
                 throw new \Exception(implode(' ', $stockErrors));
             }
             
+            $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                collect($orderItemsData)->map(fn ($d) => [
+                    'product_id' => $d['request_item']->product_id,
+                    'qty' => $d['confirm_qty'],
+                    'price' => $d['unit_price'],
+                ])->all()
+            );
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $grandTotal = max(0, $subTotal - $promotionalDiscount);
+
             // Create a new Order
             $order = DealerOrder::create([
                 'order_number'    => DealerOrder::generateOrderNumber(),
@@ -123,10 +133,11 @@ class OrderRequestService
                 'dealer_id'       => $orderRequest->dealer_id,
                 'sub_total'       => $subTotal,
                 'discount'        => 0,
+                'promotional_discount' => $promotionalDiscount,
                 'carrying_charge' => 0,
-                'grand_total'     => $subTotal,
+                'grand_total'     => $grandTotal,
                 'paid'            => 0,
-                'due'             => $subTotal,
+                'due'             => $grandTotal,
                 'note'            => $orderNote,
                 'admin_notes'     => $admin_note,
                 'request_date'    => $orderRequest->created_at,
@@ -260,6 +271,16 @@ class OrderRequestService
                 throw new \Exception("Please select at least one item with valid quantity to create a draft order.");
             }
 
+            $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                collect($draftItemsData)->map(fn ($d) => [
+                    'product_id' => $d['request_item']->product_id,
+                    'qty' => $d['draft_qty'],
+                    'price' => $d['unit_price'],
+                ])->all()
+            );
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $grandTotal = max(0, $subTotal - $promotionalDiscount);
+
             // 1. Create Draft Order
             $draftOrder = DraftOrder::create([
                 'draft_number'     => DraftOrder::generateDraftNumber(),
@@ -267,8 +288,9 @@ class OrderRequestService
                 'dealer_id'        => $orderRequest->dealer_id,
                 'sub_total'        => $subTotal,
                 'discount'         => 0,
+                'promotional_discount' => $promotionalDiscount,
                 'carrying_charge'  => 0,
-                'grand_total'      => $subTotal,
+                'grand_total'      => $grandTotal,
                 'note'             => $orderNote,
                 'admin_notes'      => $adminNote,
                 'status'           => 'draft',
@@ -387,17 +409,31 @@ class OrderRequestService
                 throw new \Exception(implode(' ', $stockErrors));
             }
 
+            // Recalculate promotional discount at conversion time (fresh offers)
+            $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                $draftOrder->items->map(fn ($it) => [
+                    'product_id' => $it->product_id,
+                    'qty' => $it->qty,
+                    'price' => $it->unit_price,
+                ])->all()
+            );
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $discount = (float) ($draftOrder->discount ?? 0);
+            $carrying = (float) ($draftOrder->carrying_charge ?? 0);
+            $grandTotal = max(0, ((float) $draftOrder->sub_total - $discount - $promotionalDiscount) + $carrying);
+
             // Create DealerOrder
             $order = DealerOrder::create([
                 'order_number'    => DealerOrder::generateOrderNumber(),
                 'order_date'      => now(),
                 'dealer_id'       => $draftOrder->dealer_id,
                 'sub_total'       => $draftOrder->sub_total,
-                'discount'        => $draftOrder->discount ?? 0,
-                'carrying_charge' => $draftOrder->carrying_charge ?? 0,
-                'grand_total'     => $draftOrder->grand_total,
+                'discount'        => $discount,
+                'promotional_discount' => $promotionalDiscount,
+                'carrying_charge' => $carrying,
+                'grand_total'     => $grandTotal,
                 'paid'            => 0,
-                'due'             => $draftOrder->grand_total,
+                'due'             => $grandTotal,
                 'note'            => $draftOrder->note,
                 'admin_notes'     => $draftOrder->admin_notes,
                 'request_date'    => $draftOrder->created_at,

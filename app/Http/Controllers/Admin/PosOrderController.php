@@ -158,16 +158,33 @@ class PosOrderController extends Controller
                 ], 422);
             }
 
+            $promoService = app(\App\Services\PromotionalDiscountService::class);
+            $promoCalc = $promoService->calculateForItems(collect($request->items)->map(function ($item) {
+                return [
+                    'product_id' => $item['id'] ?? $item['product_id'] ?? 0,
+                    'quantity' => $item['quantity'] ?? 0,
+                    'unit_price' => $item['price'] ?? 0,
+                ];
+            })->all());
+
+            $promotionalDiscount = (float) $promoCalc['total'];
+            $productAndExtraDiscount = (float) ($request->discount_amount ?? 0);
+            $subtotal = (float) $request->total_amount;
+            $payableAmount = max(0, round($subtotal - $productAndExtraDiscount - $promotionalDiscount, 2));
+            $paidAmount = (float) ($request->paid_amount ?? 0);
+            $dueAmount = max(0, round($payableAmount - $paidAmount, 2));
+
             $order = PosOrder::create([
                 'order_number' => PosOrder::generateOrderNumber(),
                 'customer_id' => $request->customer_id,
-                'total_amount' => $request->total_amount,
-                'discount_amount' => $request->discount_amount ?? 0,
-                'payable_amount' => $request->payable_amount,
-                'paid_amount' => $request->paid_amount ?? 0,
-                'due_amount' => $request->due_amount ?? 0,
+                'total_amount' => $subtotal,
+                'discount_amount' => $productAndExtraDiscount,
+                'promotional_discount' => $promotionalDiscount,
+                'payable_amount' => $payableAmount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
                 'payment_method' => $request->payment_method ?? 'Cash',
-                'payment_status' => ($request->due_amount <= 0) ? 'paid' : ($request->paid_amount > 0 ? 'partial' : 'due'),
+                'payment_status' => ($dueAmount <= 0) ? 'paid' : ($paidAmount > 0 ? 'partial' : 'due'),
                 'order_status' => 'completed',
                 'note' => $request->note,
                 'staff_note' => $request->staff_note,
@@ -176,14 +193,25 @@ class PosOrderController extends Controller
             ]);
 
             foreach ($request->items as $item) {
+                $catalogDiscount = 0;
+                $qty = (float) ($item['quantity'] ?? 0);
+                $price = (float) ($item['price'] ?? 0);
+                $dtype = $item['discountType'] ?? null;
+                $damount = (float) ($item['discountAmount'] ?? 0);
+                if ($dtype === 'percentage' || $dtype === 'percent') {
+                    $catalogDiscount = round(($price * $qty) * ($damount / 100), 2);
+                } else {
+                    $catalogDiscount = round($damount * $qty, 2);
+                }
+
                 PosOrderItem::create([
                     'pos_order_id' => $order->id,
                     'product_id' => $item['id'],
                     'product_name' => $item['name'],
-                    'unit_price' => $item['price'],
-                    'quantity' => $item['quantity'],
-                    'subtotal' => $item['price'] * $item['quantity'],
-                    'discount' => ($item['discountAmount'] ?? 0) * $item['quantity'],
+                    'unit_price' => $price,
+                    'quantity' => $qty,
+                    'subtotal' => $price * $qty,
+                    'discount' => $catalogDiscount,
                 ]);
 
                 // Update product stock via StockService

@@ -225,7 +225,8 @@ class AdminController extends Controller
     {
         $categories = \App\Models\Category::where('status', 1)->get();
         $customers = \App\Models\Customer::orderBy('name', 'asc')->get(['id', 'name', 'phone']);
-        return view('admin.pos.index', compact('categories', 'customers'));
+        $promotionalOffers = app(\App\Services\PromotionalDiscountService::class)->activeOffersForFrontend();
+        return view('admin.pos.index', compact('categories', 'customers', 'promotionalOffers'));
     }
 
     public function getPosProducts(Request $request, \App\Services\ProductPriceCalculator $calculator)

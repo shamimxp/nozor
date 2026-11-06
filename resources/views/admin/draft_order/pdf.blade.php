@@ -291,6 +291,10 @@
                         <td>- {{ number_format($draftOrder->discount, 2) }}</td>
                     </tr>
                     @endif
+                    <tr>
+                        <td>Promotional Discount :</td>
+                        <td>- {{ number_format($draftOrder->promotional_discount ?? 0, 2) }}</td>
+                    </tr>
                     @if($draftOrder->carrying_charge > 0)
                     <tr>
                         <td>Carrying Charge :</td>

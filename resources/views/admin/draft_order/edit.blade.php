@@ -121,7 +121,7 @@
                                     </td>
                                     <td>
                                         <input type="number" name="items[{{ $index }}][qty]" class="form-control form-control-sm text-center qty-input font-weight-bold"
-                                            value="{{ $item->qty }}" min="1" step="1" data-index="{{ $index }}" required>
+                                            value="{{ $item->qty }}" min="1" step="1" data-index="{{ $index }}" data-product-id="{{ $item->product_id }}" required>
                                     </td>
                                     <td class="text-right font-weight-bolder text-primary">
                                         ৳<span class="row-total" id="rowTotal{{ $index }}">{{ number_format($item->total, 2) }}</span>
@@ -160,6 +160,10 @@
                                     <input type="number" name="discount" id="inputDiscount" class="form-control form-control-sm text-right"
                                         value="{{ old('discount', $draftOrder->discount ?? 0) }}" min="0" step="0.01">
                                 </div>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-muted font-weight-bold">Promotional Discount:</span>
+                                    <span class="font-weight-bold text-danger" id="summaryPromotionalDiscount">৳{{ number_format($draftOrder->promotional_discount ?? 0, 2) }}</span>
+                                </div>
                                 <div class="form-group mb-1">
                                     <label class="small font-weight-bold text-muted mb-25">Carrying Charge (৳)</label>
                                     <input type="number" name="carrying_charge" id="inputCarrying" class="form-control form-control-sm text-right"
@@ -191,22 +195,47 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    const promotionalOffers = @json($promotionalOffers ?? []);
+
+    function calcLinePromo(unitPrice, quantity, productId) {
+        const qty = parseInt(quantity, 10) || 0;
+        const price = parseFloat(unitPrice) || 0;
+        const pid = parseInt(productId, 10);
+        let best = 0;
+        promotionalOffers.forEach(function (offer) {
+            if (parseInt(offer.product_id, 10) !== pid) return;
+            if (qty < parseInt(offer.from_qty, 10) || qty > parseInt(offer.to_qty, 10)) return;
+            const lineTotal = price * qty;
+            const value = parseFloat(offer.discount_value) || 0;
+            let discount = offer.offer_type === 'percent'
+                ? (lineTotal * value) / 100
+                : value * qty;
+            discount = Math.max(0, Math.min(discount, lineTotal));
+            if (discount > best) best = discount;
+        });
+        return Math.round(best * 100) / 100;
+    }
+
     function recalculate() {
         let subTotal = 0;
+        let promoTotal = 0;
         $('.qty-input').each(function() {
             let index = $(this).data('index');
             let qty = parseInt($(this).val()) || 0;
             let unitPrice = parseFloat($('.unit-price-input[data-index="' + index + '"]').val()) || 0;
+            let productId = $(this).data('product-id');
             let total = qty * unitPrice;
             $('#rowTotal' + index).text(total.toFixed(2));
             subTotal += total;
+            promoTotal += calcLinePromo(unitPrice, qty, productId);
         });
 
         $('#summarySubTotal').text('৳' + subTotal.toFixed(2));
+        $('#summaryPromotionalDiscount').text('৳' + promoTotal.toFixed(2));
 
         let discount = parseFloat($('#inputDiscount').val()) || 0;
         let carrying = parseFloat($('#inputCarrying').val()) || 0;
-        let grandTotal = Math.max(0, (subTotal - discount) + carrying);
+        let grandTotal = Math.max(0, (subTotal - discount - promoTotal) + carrying);
 
         $('#summaryGrandTotal').text('৳' + grandTotal.toFixed(2));
     }

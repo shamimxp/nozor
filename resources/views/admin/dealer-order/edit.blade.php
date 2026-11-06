@@ -230,6 +230,11 @@
                                         <input type="number" step="0.01" name="discount" id="discount" class="form-control form-control-sm text-right font-weight-bold text-danger" style="width: 130px;" value="{{ $order->discount ?? 0 }}">
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted font-weight-bold">Promotional Discount:</span>
+                                        <span class="font-weight-bold text-danger" id="summaryPromotionalDiscount">৳{{ number_format($order->promotional_discount ?? 0, 2) }}</span>
+                                        <input type="hidden" name="promotional_discount" id="promotionalDiscount" value="{{ $order->promotional_discount ?? 0 }}">
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
                                         <span class="text-muted font-weight-bold">Carrying Charge (৳):</span>
                                         <input type="number" step="0.01" name="carrying_charge" id="carryingCharge" class="form-control form-control-sm text-right font-weight-bold text-success" style="width: 130px;" value="{{ $order->carrying_charge ?? 0 }}">
                                     </div>
@@ -278,6 +283,34 @@
 <script>
     let cart = [];
     let isSpecialDealer = {{ optional($order->dealer)->is_special ? 'true' : 'false' }};
+    const promotionalOffers = @json($promotionalOffers ?? []);
+
+    function calcDealerLinePromo(unitPrice, quantity, productId) {
+        const qty = parseInt(quantity, 10) || 0;
+        const price = parseFloat(unitPrice) || 0;
+        const pid = parseInt(productId, 10);
+        let best = 0;
+        promotionalOffers.forEach(function (offer) {
+            if (parseInt(offer.product_id, 10) !== pid) return;
+            if (qty < parseInt(offer.from_qty, 10) || qty > parseInt(offer.to_qty, 10)) return;
+            const lineTotal = price * qty;
+            const value = parseFloat(offer.discount_value) || 0;
+            let discount = offer.offer_type === 'percent'
+                ? (lineTotal * value) / 100
+                : value * qty;
+            discount = Math.max(0, Math.min(discount, lineTotal));
+            if (discount > best) best = discount;
+        });
+        return Math.round(best * 100) / 100;
+    }
+
+    function calcDealerPromotionalDiscount() {
+        let total = 0;
+        cart.forEach(function (item) {
+            total += calcDealerLinePromo(item.price, item.qty, item.id);
+        });
+        return Math.round(total * 100) / 100;
+    }
 
     // Pre-populate existing order items
     @foreach($order->items as $item)
@@ -664,15 +697,18 @@
         });
 
         let discount = parseFloat($('#discount').val()) || 0;
+        let promotionalDiscount = calcDealerPromotionalDiscount();
         let carryingCharge = parseFloat($('#carryingCharge').val()) || 0;
         let paid = parseFloat($('#paidAmount').val()) || 0;
 
-        let grandTotal = (subTotal - discount) + carryingCharge;
+        let grandTotal = (subTotal - discount - promotionalDiscount) + carryingCharge;
         if (grandTotal < 0) grandTotal = 0;
         let due = grandTotal - paid;
 
         $('#summaryTotalQty').text(`${totalQty} Pcs`);
         $('#summarySubTotal').text(`৳${subTotal.toFixed(2)}`);
+        $('#summaryPromotionalDiscount').text(`৳${promotionalDiscount.toFixed(2)}`);
+        $('#promotionalDiscount').val(promotionalDiscount.toFixed(2));
         $('#summaryGrandTotal').text(`৳${grandTotal.toFixed(2)}`);
         $('#summaryDue').text(`৳${due.toFixed(2)}`);
 

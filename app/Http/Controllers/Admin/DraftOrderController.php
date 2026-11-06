@@ -133,6 +133,7 @@ class DraftOrderController extends Controller
     public function show($id)
     {
         $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product.recipe', 'dealerOrder'])->findOrFail($id);
+        $this->syncPromotionalDiscount($draftOrder);
         return view('admin.draft_order.show', compact('draftOrder'));
     }
 
@@ -148,7 +149,9 @@ class DraftOrderController extends Controller
                 ->with('error', 'Converted draft orders cannot be edited.');
         }
 
-        return view('admin.draft_order.edit', compact('draftOrder'));
+        $promotionalOffers = app(\App\Services\PromotionalDiscountService::class)->activeOffersForFrontend();
+
+        return view('admin.draft_order.edit', compact('draftOrder', 'promotionalOffers'));
     }
 
     /**
@@ -223,11 +226,20 @@ class DraftOrderController extends Controller
 
                 $discount = (float) ($request->discount ?? 0);
                 $carrying = (float) ($request->carrying_charge ?? 0);
-                $grandTotal = max(0, ($subTotal - $discount) + $carrying);
+                $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                    $draftOrder->items()->get()->map(fn ($it) => [
+                        'product_id' => $it->product_id,
+                        'qty' => $it->qty,
+                        'price' => $it->unit_price,
+                    ])->all()
+                );
+                $promotionalDiscount = (float) $promoCalc['total'];
+                $grandTotal = max(0, ($subTotal - $discount - $promotionalDiscount) + $carrying);
 
                 $draftOrder->update([
                     'sub_total'       => $subTotal,
                     'discount'        => $discount,
+                    'promotional_discount' => $promotionalDiscount,
                     'carrying_charge' => $carrying,
                     'grand_total'     => $grandTotal,
                     'note'            => $request->note,
@@ -278,9 +290,18 @@ class DraftOrderController extends Controller
                     $draftOrder->delete();
                 } else {
                     $newSubTotal = $remainingItems->sum('total');
-                    $grandTotal = max(0, ($newSubTotal - $draftOrder->discount) + $draftOrder->carrying_charge);
+                    $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+                        $remainingItems->map(fn ($it) => [
+                            'product_id' => $it->product_id,
+                            'qty' => $it->qty,
+                            'price' => $it->unit_price,
+                        ])->all()
+                    );
+                    $promotionalDiscount = (float) $promoCalc['total'];
+                    $grandTotal = max(0, ($newSubTotal - (float) $draftOrder->discount - $promotionalDiscount) + (float) $draftOrder->carrying_charge);
                     $draftOrder->update([
-                        'sub_total'   => $newSubTotal,
+                        'sub_total' => $newSubTotal,
+                        'promotional_discount' => $promotionalDiscount,
                         'grand_total' => $grandTotal,
                     ]);
                 }
@@ -347,6 +368,7 @@ class DraftOrderController extends Controller
     public function exportPdf($id)
     {
         $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product', 'creator'])->findOrFail($id);
+        $this->syncPromotionalDiscount($draftOrder);
         $pdf = Pdf::loadView('admin.draft_order.pdf', compact('draftOrder'))
             ->setPaper('a4', 'portrait');
 
@@ -359,7 +381,42 @@ class DraftOrderController extends Controller
     public function print($id)
     {
         $draftOrder = DraftOrder::with(['dealer', 'orderRequest', 'items.product', 'creator'])->findOrFail($id);
+        $this->syncPromotionalDiscount($draftOrder);
         return view('admin.draft_order.print', compact('draftOrder'));
+    }
+
+    /**
+     * Recalculate and persist promotional discount + grand total for open drafts.
+     */
+    protected function syncPromotionalDiscount(DraftOrder $draftOrder): void
+    {
+        if ($draftOrder->status === 'converted' || $draftOrder->items->isEmpty()) {
+            return;
+        }
+
+        $promoCalc = app(\App\Services\PromotionalDiscountService::class)->calculateForItems(
+            $draftOrder->items->map(fn ($it) => [
+                'product_id' => $it->product_id,
+                'qty' => $it->qty,
+                'price' => $it->unit_price,
+            ])->all()
+        );
+
+        $promotionalDiscount = (float) $promoCalc['total'];
+        $discount = (float) ($draftOrder->discount ?? 0);
+        $carrying = (float) ($draftOrder->carrying_charge ?? 0);
+        $subTotal = (float) $draftOrder->sub_total;
+        $grandTotal = max(0, ($subTotal - $discount - $promotionalDiscount) + $carrying);
+
+        if (
+            (float) ($draftOrder->promotional_discount ?? 0) !== $promotionalDiscount
+            || (float) $draftOrder->grand_total !== $grandTotal
+        ) {
+            $draftOrder->forceFill([
+                'promotional_discount' => $promotionalDiscount,
+                'grand_total' => $grandTotal,
+            ])->save();
+        }
     }
 
     /**

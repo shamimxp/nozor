@@ -17,6 +17,7 @@ class DraftOrder extends Model
         'dealer_id',
         'sub_total',
         'discount',
+        'promotional_discount',
         'carrying_charge',
         'grand_total',
         'note',
@@ -27,10 +28,11 @@ class DraftOrder extends Model
     ];
 
     protected $casts = [
-        'sub_total'       => 'decimal:2',
-        'discount'        => 'decimal:2',
-        'carrying_charge' => 'decimal:2',
-        'grand_total'     => 'decimal:2',
+        'sub_total'              => 'decimal:2',
+        'discount'               => 'decimal:2',
+        'promotional_discount'   => 'decimal:2',
+        'carrying_charge'        => 'decimal:2',
+        'grand_total'            => 'decimal:2',
     ];
 
     /**

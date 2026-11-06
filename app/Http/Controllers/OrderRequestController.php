@@ -121,7 +121,9 @@ class OrderRequestController extends Controller
             }
             return redirect()->route('admin.order-requests.index')->with('warning', 'Order request has no items and was removed.');
         }
-        return view('admin.order-requests.show', compact('orderRequest'));
+        $promotionalOffers = app(\App\Services\PromotionalDiscountService::class)->activeOffersForFrontend();
+
+        return view('admin.order-requests.show', compact('orderRequest', 'promotionalOffers'));
     }
 
     /**

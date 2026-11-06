@@ -211,6 +211,10 @@
                                             <span class="font-weight-bold text-danger">- ৳{{ number_format($draftOrder->discount, 2) }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted">Promotional Discount:</span>
+                                            <span class="font-weight-bold text-danger">- ৳{{ number_format($draftOrder->promotional_discount ?? 0, 2) }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1">
                                             <span class="text-muted">Carrying Charge:</span>
                                             <span class="font-weight-bold">+ ৳{{ number_format($draftOrder->carrying_charge, 2) }}</span>
                                         </div>

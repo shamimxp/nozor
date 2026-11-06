@@ -262,11 +262,15 @@
                 <table class="totals-table">
                     <tr>
                         <td>Subtotal :</td>
-                        <td>{{ number_format($order->payable_amount + $order->discount_amount, 2) }}</td>
+                        <td>{{ number_format($order->payable_amount + $order->discount_amount + ($order->promotional_discount ?? 0), 2) }}</td>
                     </tr>
                     <tr>
                         <td>Discount :</td>
                         <td>{{ number_format($order->discount_amount, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Promotional Discount :</td>
+                        <td>{{ number_format($order->promotional_discount ?? 0, 2) }}</td>
                     </tr>
                     <tr>
                         <td>Total Amount :</td>
