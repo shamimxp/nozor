@@ -367,6 +367,14 @@
                 </a>
             </li>
             @endcan
+            @can('price_quotation.list')
+            <li class="nav-item {{ Route::is('admin.price-quotation*') ? 'active' : '' }}">
+                <a class="d-flex align-items-center" href="{{ route('admin.price-quotation.index') }}">
+                    <i data-feather="file-plus"></i>
+                    <span class="menu-title text-truncate">Price Quotation</span>
+                </a>
+            </li>
+            @endcan
             @can('report.list')
             <li class="nav-item @if(Route::is('admin.report*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="file-text"></i><span class="menu-title text-truncate">Reports</span></a>

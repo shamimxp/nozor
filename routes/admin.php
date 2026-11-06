@@ -270,6 +270,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::post('/stock-adjustment/{id}/receive', [\App\Http\Controllers\Admin\StockAdjustmentController::class, 'receive'])->name('admin.stock-adjustment.receive');
     Route::resource('stock-adjustment', \App\Http\Controllers\Admin\StockAdjustmentController::class, ['as' => 'admin']);
 
+    // Price Quotation (ephemeral — no DB save)
+    Route::get('/price-quotation', [\App\Http\Controllers\Admin\PriceQuotationController::class, 'index'])->name('admin.price-quotation.index');
+    Route::get('/price-quotation/products', [\App\Http\Controllers\Admin\PriceQuotationController::class, 'products'])->name('admin.price-quotation.products');
+    Route::post('/price-quotation/pdf', [\App\Http\Controllers\Admin\PriceQuotationController::class, 'pdf'])->name('admin.price-quotation.pdf');
+
     // Report module
     Route::get('/report/custom-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'customOrderReport'])->name('admin.report.custom-order-report');
     Route::get('/report/pos-order-sales', [\App\Http\Controllers\Admin\ReportController::class, 'posOrderReport'])->name('admin.report.pos-order-report');

@@ -100,7 +100,8 @@ class FrontendController extends Controller
         return view('frontend.page.checkout', compact('cartItems', 'cartTotal', 'settings'));
     }
     public function contact(){
-        return view('frontend.page.contact');
+        $settings = \App\Models\WebSetting::first();
+        return view('frontend.page.contact', compact('settings'));
     }
 
     public function storeContact(Request $request){
@@ -131,7 +132,8 @@ class FrontendController extends Controller
         return redirect()->back()->with('success', 'Subscribed successfully!');
     }
     public function about(){
-        return view('frontend.page.about');
+        $settings = \App\Models\WebSetting::first();
+        return view('frontend.page.about', compact('settings'));
     }
 
     public function ajaxSearch(Request $request)

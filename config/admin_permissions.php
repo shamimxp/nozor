@@ -167,6 +167,10 @@ return [
             'label' => 'Reports',
             'actions' => ['list', 'show'],
         ],
+        'price_quotation' => [
+            'label' => 'Price Quotation',
+            'actions' => ['list', 'create'],
+        ],
 
         // Web / CMS
         'web_setting' => [
