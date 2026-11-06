@@ -183,6 +183,9 @@ return [
         'coupon' => [
             'label' => 'Coupons',
         ],
+        'product_offer' => [
+            'label' => 'Product Offers',
+        ],
         'product_review' => [
             'label' => 'Product Reviews',
         ],

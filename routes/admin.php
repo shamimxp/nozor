@@ -302,6 +302,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
     \App\Support\TrashRoutes::register('coupon', \App\Http\Controllers\Admin\CouponController::class, 'coupon');
     Route::resource('coupon', \App\Http\Controllers\Admin\CouponController::class, ['as' => 'admin']);
 
+    // Product Offer / Promotional Products
+    \App\Support\TrashRoutes::register('product-offer', \App\Http\Controllers\Admin\ProductOfferController::class, 'product-offer');
+    Route::post('/product-offer/status', [\App\Http\Controllers\Admin\ProductOfferController::class, 'getStatus'])->name('admin.product-offer.status');
+    Route::resource('product-offer', \App\Http\Controllers\Admin\ProductOfferController::class, ['as' => 'admin']);
+
     // Web Settings module
     Route::get('/web-setting', [\App\Http\Controllers\Admin\WebSettingController::class, 'index'])->name('admin.web-setting.index');
     Route::post('/web-setting/update', [\App\Http\Controllers\Admin\WebSettingController::class, 'update'])->name('admin.web-setting.update');

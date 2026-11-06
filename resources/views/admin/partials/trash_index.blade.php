@@ -120,9 +120,19 @@
                     type: 'DELETE'
                 }).done(function (data) {
                     table.draw(false);
-                    toastr.success(data.message);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: data.message || 'Record permanently deleted.',
+                        customClass: { confirmButton: 'btn btn-success' }
+                    });
                 }).fail(function (xhr) {
-                    toastr.error(xhr.responseJSON?.message || 'Delete failed');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot delete',
+                        text: xhr.responseJSON?.message || 'Delete failed',
+                        customClass: { confirmButton: 'btn btn-danger' }
+                    });
                 });
             });
         });
@@ -167,9 +177,19 @@
                     data: { ids: ids, _method: 'DELETE' }
                 }).done(function (data) {
                     table.draw(false);
-                    toastr.success(data.message);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: data.message || 'Selected records permanently deleted.',
+                        customClass: { confirmButton: 'btn btn-success' }
+                    });
                 }).fail(function (xhr) {
-                    toastr.error(xhr.responseJSON?.message || 'Bulk delete failed');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot delete',
+                        text: xhr.responseJSON?.message || 'Bulk delete failed',
+                        customClass: { confirmButton: 'btn btn-danger' }
+                    });
                 });
             });
         });

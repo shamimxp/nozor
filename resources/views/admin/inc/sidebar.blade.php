@@ -190,8 +190,8 @@
                 </ul>
             </li>
             @endif
-@if(Gate::check('product.list') || Gate::check('product_attribute.list') || Gate::check('variation.list') || Gate::check('unit.list'))
-            <li class=" nav-item @if(Route::is('admin.product-attribute*') || Route::is('admin.variations*') || Route::is('admin.product*') || Route::is('admin.unit*')) open @endif">
+@if(Gate::check('product.list') || Gate::check('product_attribute.list') || Gate::check('variation.list') || Gate::check('unit.list') || Gate::check('product_offer.list'))
+            <li class=" nav-item @if(Route::is('admin.product-attribute*') || Route::is('admin.variations*') || Route::is('admin.product*') || Route::is('admin.unit*') || Route::is('admin.product-offer*')) open @endif">
                 <a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate">Product Setup</span></a>
                 <ul class="menu-content">
                     @can('product.create')
@@ -205,6 +205,11 @@
                     </li>
                     <li class="{{ Route::is('admin.product.out-of-stock') ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="{{route('admin.product.out-of-stock')}}"><i data-feather="circle"></i><span class="menu-item">Out of Stock</span></a>
+                    </li>
+                    @endcan
+                    @can('product_offer.list')
+                    <li class="{{ Route::is('admin.product-offer*') ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('admin.product-offer.index') }}"><i data-feather="circle"></i><span class="menu-item">Offer Products</span></a>
                     </li>
                     @endcan
                     @can('product_attribute.list')

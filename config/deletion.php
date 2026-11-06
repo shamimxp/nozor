@@ -103,6 +103,15 @@ return [
             'owned' => [],
         ],
 
+        'product_offer' => [
+            'model' => \App\Models\ProductOffer::class,
+            'label' => 'Product Offer',
+            'display' => 'product.name',
+            'route' => 'product-offer',
+            'blockers' => [],
+            'owned' => [],
+        ],
+
         'contact_message' => [
             'model' => \App\Models\ContactMessage::class,
             'label' => 'Contact Message',
