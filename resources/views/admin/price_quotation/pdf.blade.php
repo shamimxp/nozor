@@ -1,211 +1,196 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{{ $title }}</title>
     <style>
         @page {
             size: A4;
-            margin: 11mm 12mm;
+            margin: 12mm;
         }
-        * { box-sizing: border-box; }
         body {
+            font-family: serif;
             margin: 0;
-            padding: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #111;
-            background: #fff;
-            font-size: 12px;
-        }
-        .brand-header {
-            border: 2px solid #1f3d1a;
-            background: #c5cfa0;
-            text-align: center;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-        }
-        .brand-header .name {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: .3px;
-            line-height: 1.15;
-            margin: 0;
-        }
-        .brand-header .meta {
-            margin-top: 4px;
-            font-size: 10.5px;
+            padding: 30px;
             color: #333;
+            font-size: 13px;
         }
-        .brand-header .date {
-            margin-top: 3px;
-            font-size: 11px;
-            font-weight: 700;
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            z-index: -1;
+            width: 400px;
         }
-        .quote-label {
+        .header-table {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .header-table td {
+            vertical-align: middle;
+        }
+        .header-logo {
+            width: 25%;
+            text-align: left;
+        }
+        .header-logo img {
+            width: 140px;
+        }
+        .header-content {
+            width: 50%;
             text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-            margin: 0 0 10px;
-            color: #222;
         }
-        .cat-block {
-            width: 78%;
-            margin: 0 0 14px;
-            page-break-inside: avoid;
+        .header-empty {
+            width: 25%;
         }
-        .cat-title {
-            border: 1.5px solid #111;
-            border-bottom: 0;
-            background: #aeb890;
-            padding: 6px 10px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #1f3d1a;
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.1;
+            margin-bottom: 5px;
         }
-        .items {
+        .header-address {
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        .divider {
+            border-bottom: 2px solid #555;
+            margin: 10px 0;
+        }
+        .invoice-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .info-table td {
+            vertical-align: top;
+            padding: 2px 0;
+        }
+        .info-left {
+            width: 60%;
+        }
+        .info-right {
+            width: 40%;
+            text-align: right;
+        }
+        .items-table {
             width: 100%;
             border-collapse: collapse;
-            border: 1.5px solid #111;
-            background: #c5cfa0;
+            margin-bottom: 5px;
         }
-        .items td {
-            border: 1px solid #111;
-            vertical-align: middle;
-            background: #c5cfa0;
+        .items-table th,
+        .items-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 12px;
         }
-        .items .img-cell {
-            width: 78px;
-            padding: 5px;
+        .items-table th {
             text-align: center;
-            background: #d7ddb8;
+            font-weight: bold;
         }
-        .items .img-cell img {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-            background: #fff;
-            border: 1px solid #9aa67a;
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .description-box {
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 12px;
         }
-        .items .img-fallback {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #e4e8cf;
-            border: 1px solid #9aa67a;
-            font-size: 9px;
-            color: #555;
-            font-weight: 700;
+        .description-box span {
+            font-weight: normal;
         }
-        .items .name-cell {
-            padding: 6px 10px;
-            font-size: 12.5px;
-            font-weight: 600;
-        }
-        .items .name-cell .model {
-            display: block;
-            margin-top: 2px;
-            font-size: 10px;
-            font-weight: 400;
-            color: #444;
-        }
-        .items .name-cell .disc {
-            display: block;
-            margin-top: 2px;
-            font-size: 10px;
-            color: #7a1f1f;
-            font-weight: 700;
-        }
-        .items .price-cell {
-            width: 90px;
-            padding: 6px 8px;
-            text-align: right;
-            font-weight: 800;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-        .items .price-cell .old {
-            display: block;
-            text-decoration: line-through;
-            color: #555;
-            font-weight: 400;
-            font-size: 10px;
-        }
-        .footer {
-            margin-top: 12px;
-            font-size: 10px;
-            color: #444;
-            width: 78%;
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="brand-header">
-        <div class="name">{{ $company['name'] }}</div>
-        <div class="meta">
-            @if(!empty($company['address'])){{ trim(preg_replace('/\s+/', ' ', $company['address'])) }}@endif
-            @if(!empty($company['phone'])) · {{ $company['phone'] }}@endif
-            @if(!empty($company['email'])) · {{ $company['email'] }}@endif
-        </div>
-        <div class="date">{{ $priceTypeLabel }} · {{ $generatedAt->format('d M Y, h:i A') }}</div>
+    @php
+        $logoFile = public_path('admin/app-assets/images/logo/edited_red_letters.svg');
+        $logoSrc = is_file($logoFile) ? ('file://' . $logoFile) : null;
+    @endphp
+
+    @if($logoSrc)
+        <img src="{{ $logoSrc }}" class="watermark" alt="Watermark">
+    @endif
+
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                @if($logoSrc)
+                    <img src="{{ $logoSrc }}" alt="Logo">
+                @endif
+            </td>
+            <td class="header-content">
+                <div class="header-title">Wood Machinery and Hardware</div>
+                <div class="header-address">
+                    Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212<br>
+                    Phone Number 01674-088383<br>
+                    Email: info@woodmachinery.com.bd
+                </div>
+            </td>
+            <td class="header-empty"></td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="invoice-title">{{ $title }}</div>
+
+    <table class="info-table">
+        <tr>
+            <td class="info-left">
+                Price Type : {{ $priceTypeLabel }}
+            </td>
+            <td class="info-right">
+                Date : {{ $quotationDate->format('d M Y') }}
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 8%;">SL</th>
+                <th style="width: 52%; text-align: left;">Product Name</th>
+                <th style="width: 15%;">Quantity</th>
+                <th style="width: 25%;">Unit Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($rows as $index => $item)
+                <tr>
+                    <td class="text-center"><b>{{ $index + 1 }}</b></td>
+                    <td class="text-left">{{ $item['name'] }}</td>
+                    <td class="text-center">{{ rtrim(rtrim(number_format($item['quantity'], 2, '.', ''), '0'), '.') }}</td>
+                    <td class="text-center">
+                        @if($item['final_price'] === null)
+                            —
+                        @else
+                            {{ number_format($item['final_price'], 2) }}
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="description-box">
+        Note : <span>{{ $note !== null && $note !== '' ? $note : '—' }}</span>
     </div>
 
-    <div class="quote-label">{{ $title }}</div>
-
-    @foreach($grouped as $categoryName => $items)
-        <div class="cat-block">
-            <div class="cat-title">{{ $categoryName }}</div>
-            <table class="items">
-                <tbody>
-                    @foreach($items as $item)
-                        @php
-                            $imagePath = (!empty($item['image_path']) && is_file($item['image_path']))
-                                ? $item['image_path']
-                                : null;
-                        @endphp
-                        <tr>
-                            <td class="img-cell">
-                                @if($imagePath)
-                                    <img src="file://{{ $imagePath }}" alt="">
-                                @else
-                                    <div class="img-fallback">No Image</div>
-                                @endif
-                            </td>
-                            <td class="name-cell">
-                                {{ $item['name'] }}
-                                @if(!empty($item['model_no']))
-                                    <span class="model">{{ $item['model_no'] }}</span>
-                                @endif
-                                @if($item['has_discount'] && $item['discount_label'])
-                                    <span class="disc">{{ $item['discount_label'] }}</span>
-                                @endif
-                            </td>
-                            <td class="price-cell">
-                                @if($item['final_price'] === null)
-                                    —
-                                @else
-                                    @if($item['has_discount'] && $item['base_price'] !== null)
-                                        <span class="old">{{ number_format($item['base_price'], 0) }}</span>
-                                    @endif
-                                    {{ number_format($item['final_price'], 0) }}
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endforeach
-
-    @if($note)
-        <div class="footer"><strong>Note:</strong> {{ $note }}</div>
-    @endif
-    <div class="footer">
-        Generated electronically · not stored in system · {{ $generatedAt->format('d M Y, h:i A') }}
+    <div class="footer-text">
+        Generated electronically · not stored in system
     </div>
 </body>
 </html>

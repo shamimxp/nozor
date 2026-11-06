@@ -155,12 +155,16 @@
             </div>
             <div class="pq-side-foot">
                 <div class="form-group mb-1">
+                    <label for="pqDate" class="font-weight-bold font-small-3">Date <span class="text-danger">*</span></label>
+                    <input type="date" id="pqDate" class="form-control form-control-sm" value="{{ now()->format('Y-m-d') }}" required>
+                </div>
+                <div class="form-group mb-1">
                     <label for="pqTitle" class="font-weight-bold font-small-3">PDF Title</label>
                     <input type="text" id="pqTitle" class="form-control form-control-sm" placeholder="Optional custom title">
                 </div>
                 <div class="form-group mb-1">
                     <label for="pqNote" class="font-weight-bold font-small-3">Note</label>
-                    <textarea id="pqNote" class="form-control form-control-sm" rows="2" placeholder="Optional note for the PDF"></textarea>
+                    <textarea id="pqNote" class="form-control form-control-sm" rows="2" placeholder="Add note for the quotation…"></textarea>
                 </div>
                 <div class="d-flex" style="gap:.5rem;">
                     <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" id="pqSelectAllVisible">Select visible</button>
@@ -177,6 +181,7 @@
 <form id="pqPdfForm" action="{{ route('admin.price-quotation.pdf') }}" method="POST" class="d-none">
     @csrf
     <input type="hidden" name="price_type" id="pqFormPriceType" value="dealer">
+    <input type="hidden" name="quotation_date" id="pqFormDate" value="">
     <input type="hidden" name="title" id="pqFormTitle" value="">
     <input type="hidden" name="note" id="pqFormNote" value="">
     <div id="pqFormIds"></div>
@@ -434,6 +439,13 @@
             return;
         }
 
+        var quotationDate = qs('#pqDate').value;
+        if (!quotationDate) {
+            toastr.warning('Date is required');
+            qs('#pqDate').focus();
+            return;
+        }
+
         var btn = qs('#pqDownloadPdf');
         btn.disabled = true;
         var original = btn.innerHTML;
@@ -442,9 +454,13 @@
         var formData = new FormData();
         formData.append('_token', csrfToken);
         formData.append('price_type', state.priceType);
+        formData.append('quotation_date', quotationDate);
         formData.append('title', qs('#pqTitle').value.trim());
         formData.append('note', qs('#pqNote').value.trim());
-        ids.forEach(function (id) { formData.append('product_ids[]', id); });
+        ids.forEach(function (id) {
+            formData.append('product_ids[]', id);
+            formData.append('quantities[' + id + ']', 1);
+        });
 
         fetch(pdfUrl, {
             method: 'POST',
@@ -471,10 +487,12 @@
         }).catch(function () {
             // Fallback to classic form submit
             qs('#pqFormPriceType').value = state.priceType;
+            qs('#pqFormDate').value = quotationDate;
             qs('#pqFormTitle').value = qs('#pqTitle').value.trim();
             qs('#pqFormNote').value = qs('#pqNote').value.trim();
             qs('#pqFormIds').innerHTML = ids.map(function (id) {
-                return '<input type="hidden" name="product_ids[]" value="' + id + '">';
+                return '<input type="hidden" name="product_ids[]" value="' + id + '">' +
+                    '<input type="hidden" name="quantities[' + id + ']" value="1">';
             }).join('');
             qs('#pqPdfForm').submit();
         }).finally(function () {

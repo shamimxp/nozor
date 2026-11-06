@@ -113,48 +113,70 @@ class PriceQuotationController extends Controller
             'price_type' => 'required|in:dealer,special_dealer,customer',
             'product_ids' => 'required|array|min:1',
             'product_ids.*' => 'integer|exists:products,id',
+            'quantities' => 'required|array',
+            'quantities.*' => 'required|numeric|min:0.01|max:999999',
+            'quotation_date' => 'required|date',
             'title' => 'nullable|string|max:120',
-            'note' => 'nullable|string|max:500',
+            'note' => 'nullable|string|max:1000',
         ]);
 
+        $productIds = array_values(array_unique(array_map('intval', $validated['product_ids'])));
+        $quantities = $validated['quantities'];
+
         $products = Product::with(['category:id,name', 'recipe:id,product_id,manufacture_images'])
-            ->whereIn('id', $validated['product_ids'])
+            ->whereIn('id', $productIds)
             ->where('status', 1)
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->keyBy('id');
 
         if ($products->isEmpty()) {
             return back()->with('error', 'No valid products selected.');
         }
 
-        $rows = $products->map(fn (Product $product) => $this->presentProduct(
-            $product,
-            $validated['price_type'],
-            $calculator
-        ))->filter(function (array $item) {
-            return $item['final_price'] !== null && (float) $item['final_price'] > 0;
-        })->values();
+        $rows = collect($productIds)->map(function ($productId) use ($products, $quantities, $validated, $calculator) {
+            $product = $products->get($productId);
+            if (!$product) {
+                return null;
+            }
+
+            $qty = isset($quantities[$productId])
+                ? (float) $quantities[$productId]
+                : (isset($quantities[(string) $productId]) ? (float) $quantities[(string) $productId] : 1);
+
+            if ($qty <= 0) {
+                return null;
+            }
+
+            $item = $this->presentProduct($product, $validated['price_type'], $calculator);
+            if ($item['final_price'] === null || (float) $item['final_price'] <= 0) {
+                return null;
+            }
+
+            $item['quantity'] = $qty;
+
+            return $item;
+        })->filter()->values();
 
         if ($rows->isEmpty()) {
             return back()->with('error', 'Selected products have no valid price for this type.');
         }
 
-        $grouped = $rows->groupBy(fn ($row) => $row['category_name'] ?: 'Uncategorized');
         $company = $this->companyMeta();
         $priceType = $validated['price_type'];
         $priceTypeLabel = self::PRICE_TYPES[$priceType];
+        $quotationDate = \Carbon\Carbon::parse($validated['quotation_date']);
         $generatedAt = now();
         $title = $validated['title'] ?: ($priceTypeLabel . ' Quotation');
-        $note = $validated['note'] ?? null;
+        $note = trim((string) ($validated['note'] ?? ''));
 
-        $filename = 'price-quotation-' . $priceType . '-' . $generatedAt->format('Ymd-His') . '.pdf';
+        $filename = 'price-quotation-' . $priceType . '-' . $quotationDate->format('Ymd') . '-' . $generatedAt->format('His') . '.pdf';
 
         $html = view('admin.price_quotation.pdf', compact(
-            'grouped',
             'rows',
             'company',
             'priceType',
             'priceTypeLabel',
+            'quotationDate',
             'generatedAt',
             'title',
             'note'
@@ -431,11 +453,11 @@ class PriceQuotationController extends Controller
         }
 
         return [
-            'name' => config('app.name', 'WOOD Machinery'),
-            'phone' => $setting->contact_number_1 ?? null,
+            'name' => 'Wood Machinery and Hardware',
+            'phone' => $setting->contact_number_1 ?? '01674-088383',
             'phone2' => $setting->contact_number_2 ?? null,
-            'email' => $setting->email ?? null,
-            'address' => $setting->address ?? null,
+            'email' => $setting->email ?? 'info@woodmachinery.com.bd',
+            'address' => $setting->address ?? 'Purbo Padardiya (Shahabuddin Road Shonglogno) Shatarkul Road, Badda, Dhaka-1212',
             'logo_path' => $logoPath,
             'logo_url' => $logoPath ? asset(str_replace(public_path() . DIRECTORY_SEPARATOR, '', $logoPath)) : asset('images/no-image.png'),
             'currency' => $setting->currency_symbol ?? '৳',
