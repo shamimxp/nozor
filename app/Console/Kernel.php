@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Keep shared-hosting disk quota clear (logs/sessions/cache/views).
+        $schedule->command('storage:purge --all')->everyFiveMinutes();
     }
 
     /**

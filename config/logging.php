@@ -17,7 +17,8 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    // Prefer errorlog on shared hosting so storage/logs cannot fill the disk quota.
+    'default' => env('LOG_CHANNEL', 'errorlog'),
 
     /*
     |--------------------------------------------------------------------------
@@ -53,8 +54,8 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['daily'],
-            'ignore_exceptions' => false,
+            'channels' => [env('LOG_STACK_CHANNEL', 'errorlog')],
+            'ignore_exceptions' => true,
         ],
 
         'single' => [
@@ -106,7 +107,7 @@ return [
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => env('LOG_LEVEL', 'error'),
         ],
 
         'null' => [
