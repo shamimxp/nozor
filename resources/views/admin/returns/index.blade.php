@@ -67,6 +67,9 @@
                 </div>
             </div>
             <div class="mt-1 mt-md-0 d-flex align-items-center" style="gap: 8px;">
+                <a href="{{ route('admin.returns.export-list-pdf') }}" id="exportReturnsPdf" class="btn btn-sm d-inline-flex align-items-center" style="background-color: #b91c1c; color: #ffffff; height: 36px; border-radius: 6px; font-weight: 600; padding: 0 14px;">
+                    <i data-feather="download" style="width: 15px; height: 15px; margin-right: 6px;"></i> Download PDF
+                </a>
                 @can('return_order.create')
                         <a href="{{ route('admin.returns.create') }}" class="btn btn-sm d-inline-flex align-items-center" style="background-color: #111C38; color: #ffffff; height: 36px; border-radius: 6px; font-weight: 600; padding: 0 16px;">
                     <i data-feather="plus-circle" style="width: 15px; height: 15px; margin-right: 6px;"></i> Create Return
@@ -217,7 +220,7 @@
                             <th style="width: 120px;">TYPE</th>
                             <th style="width: 120px;">STATUS</th>
                             <th>RETURN NOTE</th>
-                            <th style="width: 110px;" class="text-center">ACTION</th>
+                            <th style="width: 175px;" class="text-center">ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -328,9 +331,23 @@ $(document).ready(function() {
         }
     });
 
+    function syncReturnsPdfLink() {
+        const params = $.param({
+            channel: $('#filterChannel').val(),
+            status: $('#filterStatus').val(),
+            refund_type: $('#filterRefundType').val(),
+            from_date: $('#filterFromDate').val(),
+            to_date: $('#filterToDate').val()
+        });
+        $('#exportReturnsPdf').attr('href', "{{ route('admin.returns.export-list-pdf') }}?" + params);
+    }
+
+    syncReturnsPdfLink();
+
     // Filter Form Submit
     $('#returnsFilterForm').on('submit', function(e) {
         e.preventDefault();
+        syncReturnsPdfLink();
         table.ajax.reload();
     });
 
@@ -341,6 +358,7 @@ $(document).ready(function() {
         $('#filterRefundType').val('all');
         $('#filterFromDate').val('');
         $('#filterToDate').val('');
+        syncReturnsPdfLink();
         table.ajax.reload();
     });
 

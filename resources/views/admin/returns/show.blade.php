@@ -23,23 +23,6 @@
         padding: 10px !important;
         border-bottom: 1px solid #f1f5f9;
     }
-    @media print {
-        body * {
-            visibility: hidden;
-        }
-        #printableReturnArea, #printableReturnArea * {
-            visibility: visible;
-        }
-        #printableReturnArea {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-        }
-        .no-print {
-            display: none !important;
-        }
-    }
 </style>
 @endpush
 
@@ -84,9 +67,9 @@
                     </button>
                 @endif
 
-                <button type="button" onclick="window.print()" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center" style="height: 36px; border-radius: 6px; font-weight: 600; padding: 0 12px;">
-                    <i data-feather="printer" style="width: 14px; height: 14px; margin-right: 4px;"></i> Print Slip
-                </button>
+                <a href="{{ route('admin.returns.export-pdf', $return->id) }}" class="btn btn-sm d-inline-flex align-items-center" style="height: 36px; border-radius: 6px; font-weight: 600; padding: 0 14px; background-color: #b91c1c; color: #ffffff;">
+                    <i data-feather="download" style="width: 14px; height: 14px; margin-right: 4px;"></i> Download PDF
+                </a>
 
                 <a href="{{ route('admin.returns.index') }}" class="btn btn-sm btn-secondary d-inline-flex align-items-center" style="height: 36px; border-radius: 6px; font-weight: 600; padding: 0 14px; background-color: #64748b; border-color: #64748b;">
                     <i data-feather="arrow-left" style="width: 13px; height: 13px; margin-right: 4px;"></i> Back to List

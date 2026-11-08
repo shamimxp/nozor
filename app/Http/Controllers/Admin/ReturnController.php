@@ -10,9 +10,11 @@ use App\Models\Dealer;
 use App\Models\ReturnOrder;
 use App\Models\User;
 use App\Services\ReturnService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use NumberFormatter;
 use Yajra\DataTables\Facades\DataTables;
 
 class ReturnController extends Controller
@@ -23,7 +25,10 @@ class ReturnController extends Controller
 
     public function __construct(ReturnService $returnService)
     {
-        $this->authorizeAdminModule('return_order');
+        $this->authorizeAdminModule('return_order', [
+            'return_order.list' => ['exportListPdf'],
+            'return_order.show' => ['exportPdf'],
+        ]);
         $this->returnService = $returnService;
     }
 
@@ -113,9 +118,13 @@ class ReturnController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     $showUrl = route('admin.returns.show', $row->id);
+                    $pdfUrl = route('admin.returns.export-pdf', $row->id);
                     $btn = '<div class="d-inline-flex" style="gap: 5px;">';
                     $btn .= '<a href="' . $showUrl . '" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center" style="height: 30px; padding: 4px 10px; font-weight: 600; font-size: 12px; border-radius: 6px;" title="View Details">
                                 <i data-feather="eye" style="width: 12px; height: 12px; margin-right: 4px;"></i> View
+                             </a>';
+                    $btn .= '<a href="' . $pdfUrl . '" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center" style="height: 30px; padding: 4px 10px; font-weight: 600; font-size: 12px; border-radius: 6px;" title="Download PDF">
+                                <i data-feather="download" style="width: 12px; height: 12px; margin-right: 4px;"></i> PDF
                              </a>';
                     if ($row->status === 'pending') {
                         $btn .= '<button type="button" class="btn btn-sm btn-success btn-quick-approve d-inline-flex align-items-center" data-id="' . $row->id . '" data-no="' . e($row->return_no) . '" data-amount="' . number_format($row->refund_amount, 2) . '" data-type="' . $row->refund_type . '" style="height: 30px; padding: 4px 8px; font-weight: 600; font-size: 12px; border-radius: 6px; background-color: #28c76f; border-color: #28c76f;" title="Approve Return">
@@ -258,6 +267,80 @@ class ReturnController extends Controller
         } catch (\Throwable $e) {
             return back()->with('error', 'Rejection failed: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Download one return slip as a company PDF.
+     */
+    public function exportPdf($id)
+    {
+        $return = ReturnOrder::with([
+            'items.product',
+            'approver',
+            'rejector',
+            'creator',
+        ])->findOrFail($id);
+
+        $amountInWords = $this->amountInWords((float) $return->refund_amount);
+
+        $pdf = Pdf::loadView('admin.returns.pdf', compact('return', 'amountInWords'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('Return-' . $return->return_no . '.pdf');
+    }
+
+    /**
+     * Download the filtered return list as a company PDF.
+     */
+    public function exportListPdf(Request $request)
+    {
+        $filters = [
+            'channel' => $request->input('channel', 'all') ?: 'all',
+            'status' => $request->input('status', 'all') ?: 'all',
+            'refund_type' => $request->input('refund_type', 'all') ?: 'all',
+            'from_date' => $request->input('from_date'),
+            'to_date' => $request->input('to_date'),
+        ];
+
+        $query = ReturnOrder::with(['items'])->orderByDesc('return_date')->orderByDesc('id');
+
+        if ($filters['channel'] !== 'all') {
+            $query->where('channel', $filters['channel']);
+        }
+        if ($filters['status'] !== 'all') {
+            $query->where('status', $filters['status']);
+        }
+        if ($filters['refund_type'] !== 'all') {
+            $query->where('refund_type', $filters['refund_type']);
+        }
+        if ($request->filled('from_date')) {
+            $query->whereDate('return_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->whereDate('return_date', '<=', $request->to_date);
+        }
+
+        $returns = $query->get();
+
+        $pdf = Pdf::loadView('admin.returns.list_pdf', compact('returns', 'filters'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('returns_' . date('Y-m-d') . '.pdf');
+    }
+
+    private function amountInWords(float $amount): string
+    {
+        $formatter = new NumberFormatter('en', NumberFormatter::SPELLOUT);
+        $parts = explode('.', number_format($amount, 2, '.', ''));
+        $taka = (int) $parts[0];
+        $poysa = (int) ($parts[1] ?? 0);
+
+        $words = ucwords($formatter->format($taka)) . ' Taka';
+        if ($poysa > 0) {
+            $words .= ' and ' . ucwords($formatter->format($poysa)) . ' Poysa';
+        }
+
+        return $words . ' Only';
     }
 
     /**
