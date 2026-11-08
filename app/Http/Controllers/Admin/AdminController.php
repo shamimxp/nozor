@@ -226,7 +226,56 @@ class AdminController extends Controller
         $categories = \App\Models\Category::where('status', 1)->get();
         $customers = \App\Models\Customer::orderBy('name', 'asc')->get(['id', 'name', 'phone']);
         $promotionalOffers = app(\App\Services\PromotionalDiscountService::class)->activeOffersForFrontend();
-        return view('admin.pos.index', compact('categories', 'customers', 'promotionalOffers'));
+        $posCart = session('pos_cart', []);
+        return view('admin.pos.index', compact('categories', 'customers', 'promotionalOffers', 'posCart'));
+    }
+
+    /**
+     * Keep the open POS cart on the admin session so a reload restores it
+     * and logout or session expiry drops it.
+     */
+    public function savePosCart(Request $request)
+    {
+        $version = (int) $request->input('version', 0);
+        if ($version < (int) session('pos_cart_version', 0)) {
+            return response()->json(['success' => true, 'ignored' => true]);
+        }
+
+        $items = $request->input('cart', []);
+        $clean = [];
+
+        if (is_array($items)) {
+            foreach ($items as $key => $item) {
+                if (! is_array($item)) {
+                    continue;
+                }
+
+                $productId = (int) ($item['id'] ?? $key);
+                $quantity = (int) ($item['quantity'] ?? 0);
+                $price = (float) ($item['price'] ?? 0);
+                if ($productId < 1 || $quantity < 1 || $price <= 0) {
+                    continue;
+                }
+
+                $clean[$productId] = [
+                    'id' => $productId,
+                    'name' => mb_substr((string) ($item['name'] ?? ''), 0, 255),
+                    'image' => mb_substr((string) ($item['image'] ?? ''), 0, 500),
+                    'price' => $price,
+                    'quantity' => $quantity,
+                    'stock' => max(0, (int) ($item['stock'] ?? 0)),
+                    'discountType' => is_scalar($item['discountType'] ?? null) ? mb_substr((string) $item['discountType'], 0, 30) : null,
+                    'discountAmount' => max(0, (float) ($item['discountAmount'] ?? 0)),
+                ];
+            }
+        }
+
+        session([
+            'pos_cart' => $clean,
+            'pos_cart_version' => $version,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     public function getPosProducts(Request $request, \App\Services\ProductPriceCalculator $calculator)

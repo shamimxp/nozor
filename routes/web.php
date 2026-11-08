@@ -58,6 +58,7 @@ Route::post('wishlist/toggle',[\App\Http\Controllers\FrontendController::class,'
 Route::post('wishlist/remove',[\App\Http\Controllers\FrontendController::class,'removeWishlist'])->name('wishlist.remove');
 
 Route::get('/pos/sale', [\App\Http\Controllers\Admin\AdminController::class, 'pos'])->middleware('auth:admin')->name('admin.pos');
+Route::post('/pos/cart', [\App\Http\Controllers\Admin\AdminController::class, 'savePosCart'])->middleware('auth:admin')->name('admin.pos.cart');
 Route::get('/pos/get-products', [\App\Http\Controllers\Admin\AdminController::class, 'getPosProducts'])->middleware('auth:admin')->name('admin.pos.getProducts');
 Route::get('/pos/get-subcategories/{id}', [\App\Http\Controllers\Admin\AdminController::class, 'getPosSubcategories'])->middleware('auth:admin')->name('admin.pos.getSubcategories');
 Route::get('clear-cache', function () {

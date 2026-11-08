@@ -1412,6 +1412,7 @@
                                 <!-- table header -->
                                 <thead>
                                 <tr>
+                                    <th class="text-center" style="width: 46px;">#</th>
                                     <th class="text-start">Product</th>
                                     <th class="text-center">Quantity</th>
                                     <th class="text-center">Subtotal</th>
@@ -1420,16 +1421,22 @@
                                 </thead>
                                 <tbody id="cart_table_body">
                                     <tr>
-                                        <td colspan="4" class="text-center p-4 text-muted">No items in cart</td>
+                                        <td colspan="5" class="text-center p-4 text-muted">No items in cart</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <!-- Final Summary Section -->
                         <div class="pos-final-summary p-3 border-top">
-                            <div class="mb-2">
-                                <span class="fw-bold">Items:</span>
-                                <span id="total_quantity" class="fw-bold">0</span>
+                            <div class="mb-2 d-flex flex-wrap align-items-center" style="gap: 18px;">
+                                <div>
+                                    <span class="fw-bold">Items:</span>
+                                    <span id="total_items" class="fw-bold">0</span>
+                                </div>
+                                <div>
+                                    <span class="fw-bold">Total Product:</span>
+                                    <span id="total_quantity" class="fw-bold">0</span>
+                                </div>
                             </div>
                             <hr class="my-2">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -2110,14 +2117,26 @@ $(document).ready(function() {
     });
 
     // Infinite Scrolling removed in favor of Load More button
-    // Cart Logic
+    // Cart lives on the admin session: a reload keeps it, logout or expiry drops it.
+    let savedCart = @json((object) ($posCart ?? []));
     let cart = {};
+    if (savedCart && typeof savedCart === 'object') {
+        Object.keys(savedCart).forEach(function (key) {
+            const item = savedCart[key];
+            if (item && item.id) {
+                cart[item.id] = item;
+            }
+        });
+    }
+    let cartVersion = 0;
+    let cartSaveTimer = null;
     let extraDiscount = {
         amount: 0,
         type: 'amount'
     };
     let selectedPaymentMethod = 'Cash';
     const promotionalOffers = @json($promotionalOffers ?? []);
+    updateCart();
 
     function findPromotionalOffer(productId, quantity) {
         const qty = parseInt(quantity, 10) || 0;
@@ -2214,11 +2233,41 @@ $(document).ready(function() {
         updateCart();
     });
 
+    function persistCart() {
+        const version = ++cartVersion;
+        clearTimeout(cartSaveTimer);
+        cartSaveTimer = setTimeout(function () {
+            $.ajax({
+                url: "{{ route('admin.pos.cart') }}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    version: version,
+                    cart: cart
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401 || xhr.status === 419) {
+                        cart = {};
+                        renderCart();
+                        window.location.href = "{{ route('admin.login') }}";
+                    }
+                }
+            });
+        }, 200);
+    }
+
     function updateCart() {
+        renderCart();
+        persistCart();
+    }
+
+    function renderCart() {
         let html = '';
-        let totalItems = 0;
+        let lineCount = 0;
+        let totalQty = 0;
         let subtotal = 0;
         let totalProductDiscount = 0;
+        let serial = 1;
 
         for (let id in cart) {
             const item = cart[id];
@@ -2234,11 +2283,13 @@ $(document).ready(function() {
 
             subtotal += itemOriginalTotal;
             totalProductDiscount += itemDiscount;
-            totalItems += item.quantity;
+            lineCount++;
+            totalQty += item.quantity;
 
             html += `
                 <tr class="cart__product" data-id="${item.id}">
-                    <td style="width: 40%;">
+                    <td class="text-center align-middle fw-bold text-muted" style="width: 46px;">${serial++}</td>
+                    <td style="width: 36%;">
                         <div class="d-flex align-items-center">
                             <img src="${item.image || "{{ asset('images/no-image.png') }}"}" alt="${item.name}" style="width: 42px; height: 42px; object-fit: cover; border-radius: 6px; margin-right: 10px; border: 1px solid #e2e8f0; flex-shrink: 0;">
                             <div class="overflow-hidden">
@@ -2267,7 +2318,7 @@ $(document).ready(function() {
                         </p>
                     </td>
                     <td style="width: 10%;" class="text-center">
-                        <button class="cart_actionBtn btn_main misty-color remove_item" data-id="${item.id}">
+                        <button type="button" class="cart_actionBtn btn_main misty-color remove_item" data-id="${item.id}">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
@@ -2275,8 +2326,9 @@ $(document).ready(function() {
             `;
         }
 
-        $('#cart_table_body').html(html || '<tr><td colspan="4" class="text-center p-4 text-muted">No items in cart</td></tr>');
-        $('#total_quantity').text(totalItems);
+        $('#cart_table_body').html(html || '<tr><td colspan="5" class="text-center p-4 text-muted">No items in cart</td></tr>');
+        $('#total_items').text(lineCount);
+        $('#total_quantity').text(totalQty);
         calculateSummary(subtotal, totalProductDiscount);
     }
 
@@ -2417,8 +2469,25 @@ function updateDynamicChange() {
 
     $(document).on('click', '.remove_item', function() {
         const id = $(this).data('id');
-        delete cart[id];
-        updateCart();
+        if (!cart[id]) {
+            return;
+        }
+        const name = cart[id].name || 'this item';
+        Swal.fire({
+            title: 'Remove this item?',
+            text: name + ' will be removed from the cart.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                delete cart[id];
+                updateCart();
+            }
+        });
     });
 
     // Discount Modal
