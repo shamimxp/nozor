@@ -15,8 +15,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Keep shared-hosting disk quota clear (logs/sessions/cache/views).
-        $schedule->command('storage:purge --all')->everyFiveMinutes();
+        // Keep the last 7 days of database sessions; drop older rows and expired cache.
+        $schedule->command('sessions:prune')->daily();
+
+        // Clear leftover file sessions, logs, compiled views, and file cache
+        // left behind by the old file drivers. New sessions/cache are in the database.
+        $schedule->command('storage:purge --all')->daily();
     }
 
     /**
