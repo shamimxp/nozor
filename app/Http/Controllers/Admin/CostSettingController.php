@@ -138,7 +138,7 @@ class CostSettingController extends Controller
             'cost_title' => 'required|string|max:255|unique:cost_settings,cost_title',
             'status' => 'nullable|in:0,1',
             'heads' => 'required|array',
-            'heads.*.cost_head_id' => 'required|exists:cost_heads,id',
+            'heads.*.cost_head_id' => 'required|exists:cost_heads,id|distinct',
             'heads.*.cost_price' => 'nullable|numeric|min:0',
         ]);
 
@@ -149,12 +149,7 @@ class CostSettingController extends Controller
                 'status' => $request->has('status') ? (int) $request->status : 1,
             ]);
 
-            foreach ($request->heads as $headData) {
-                $costSetting->items()->create([
-                    'cost_head_id' => $headData['cost_head_id'],
-                    'cost_price' => isset($headData['cost_price']) && $headData['cost_price'] !== '' ? $headData['cost_price'] : 0,
-                ]);
-            }
+            $this->replaceItems($costSetting, $request->heads);
 
             DB::commit();
 
@@ -217,7 +212,7 @@ class CostSettingController extends Controller
             'cost_title' => 'required|string|max:255|unique:cost_settings,cost_title,' . $id,
             'status' => 'nullable|in:0,1',
             'heads' => 'required|array',
-            'heads.*.cost_head_id' => 'required|exists:cost_heads,id',
+            'heads.*.cost_head_id' => 'required|exists:cost_heads,id|distinct',
             'heads.*.cost_price' => 'nullable|numeric|min:0',
         ]);
 
@@ -228,15 +223,9 @@ class CostSettingController extends Controller
                 'status' => $request->has('status') ? (int) $request->status : 1,
             ]);
 
-            // Sync items: delete old items and re-create
-            $costSetting->items()->delete();
-
-            foreach ($request->heads as $headData) {
-                $costSetting->items()->create([
-                    'cost_head_id' => $headData['cost_head_id'],
-                    'cost_price' => isset($headData['cost_price']) && $headData['cost_price'] !== '' ? $headData['cost_price'] : 0,
-                ]);
-            }
+            // Line items are replaced, not trashed. A soft delete would keep the
+            // (cost_setting_id, cost_head_id) unique key and the new insert would fail.
+            $this->replaceItems($costSetting, $request->heads);
 
             DB::commit();
 
@@ -269,6 +258,31 @@ class CostSettingController extends Controller
     public function destroy($id, SoftDeleteService $softDeleteService)
     {
         return $this->softDeleteRecord($id, $softDeleteService);
+    }
+
+    /**
+     * Replace declared prices. Existing rows, including soft-deleted ones, are
+     * removed so the unique cost-head key can be reused.
+     */
+    private function replaceItems(CostSetting $costSetting, array $heads): void
+    {
+        CostSettingItem::withTrashed()
+            ->where('cost_setting_id', $costSetting->id)
+            ->forceDelete();
+
+        $seen = [];
+        foreach ($heads as $headData) {
+            $headId = (int) ($headData['cost_head_id'] ?? 0);
+            if ($headId < 1 || isset($seen[$headId])) {
+                continue;
+            }
+            $seen[$headId] = true;
+
+            $costSetting->items()->create([
+                'cost_head_id' => $headId,
+                'cost_price' => isset($headData['cost_price']) && $headData['cost_price'] !== '' ? $headData['cost_price'] : 0,
+            ]);
+        }
     }
 
     /**
