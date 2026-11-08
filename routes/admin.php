@@ -96,6 +96,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     //Product module
     Route::get('/product/out-of-stock', [\App\Http\Controllers\Admin\ProductController::class, 'outOfStock'])->name('admin.product.out-of-stock');
     \App\Support\TrashRoutes::register('product', \App\Http\Controllers\Admin\ProductController::class, 'product');
+    Route::get('/product/{id}/barcode', [\App\Http\Controllers\Admin\ProductController::class, 'barcode'])->name('admin.product.barcode');
+    Route::get('/product/{id}/barcode/pdf', [\App\Http\Controllers\Admin\ProductController::class, 'barcodePdf'])->name('admin.product.barcode.pdf');
     Route::get('/product/{id}/duplicate', [\App\Http\Controllers\Admin\ProductController::class, 'duplicate'])->name('admin.product.duplicate');
     Route::post('/product/{id}/duplicate', [\App\Http\Controllers\Admin\ProductController::class, 'duplicateStore'])->name('admin.product.duplicate.store');
     Route::resource('product', \App\Http\Controllers\Admin\ProductController::class, ['as' => 'admin']);

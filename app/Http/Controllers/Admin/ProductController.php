@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\Concerns\AuthorizesAdminModule;
 use App\Http\Controllers\Admin\Concerns\HandlesTrash;
 use App\Http\Controllers\Controller;
+use App\Support\Code128;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAttribute;
@@ -36,6 +38,7 @@ class ProductController extends Controller
         $this->authorizeAdminModule('product', [
             'product.list' => ['outOfStock', 'getSubCategory'],
             'product.create' => ['duplicate', 'duplicateStore'],
+            'product.show' => ['barcode', 'barcodePdf'],
             'product.edit' => [
                 'getStatus',
                 'getFeaturedStatus',
@@ -183,7 +186,8 @@ class ProductController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $items = admin_module_actions('product', [
-                    'show' => '<a class="dropdown-item" href="' . route('admin.product.show', $row->id) . '"><i data-feather="eye" class="mr-50"></i><span>View</span></a>',
+                    'show' => '<a class="dropdown-item" href="' . route('admin.product.show', $row->id) . '"><i data-feather="eye" class="mr-50"></i><span>View</span></a>'
+                        . '<a class="dropdown-item" href="' . route('admin.product.barcode', $row->id) . '"><i data-feather="grid" class="mr-50"></i><span>Barcode</span></a>',
                     'edit' => '<a class="dropdown-item" href="' . route('admin.product.edit', $row->id) . '"><i data-feather="edit-2" class="mr-50"></i><span>Edit</span></a>',
                     'create' => '<a class="dropdown-item" href="' . route('admin.product.duplicate', $row->id) . '"><i data-feather="copy" class="mr-50"></i><span>Duplicate</span></a>',
                     'delete' => '<a class="dropdown-item deleteProduct" href="javascript:void(0)" data-id="' . $row->id . '"><i data-feather="trash" class="mr-50"></i><span>Delete</span></a>',
@@ -467,6 +471,31 @@ class ProductController extends Controller
         copy($source, $destination);
 
         return $filename;
+    }
+
+    public function barcode($id)
+    {
+        $product = Product::findOrFail($id);
+        $code = trim((string) $product->model_no) !== '' ? trim((string) $product->model_no) : (string) $product->id;
+
+        return view('admin.product.barcode', compact('product', 'code'));
+    }
+
+    public function barcodePdf(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+        $code = trim((string) $product->model_no) !== '' ? trim((string) $product->model_no) : (string) $product->id;
+        $row = max(1, min(12, (int) $request->query('row', 1)));
+        $column = max(1, min(40, (int) $request->query('column', 1)));
+        $barcode = Code128::file($code);
+
+        $pdf = Pdf::loadView('admin.product.barcode_pdf', compact('product', 'code', 'row', 'column', 'barcode'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('isRemoteEnabled', true);
+
+        $safe = trim(preg_replace('/[^A-Za-z0-9_-]+/', '-', $code), '-') ?: $product->id;
+
+        return $pdf->download('barcode-' . $safe . '.pdf');
     }
 
     public function show($id, ProductPriceCalculator $calculator)
