@@ -15,8 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Keep the last 7 days of database sessions; drop older rows and expired cache.
-        $schedule->command('sessions:prune')->daily();
+        // Drop crawler sessions immediately and expire ordinary sessions after 7 days.
+        $schedule->command('sessions:prune')->hourly();
 
         // Clear leftover file sessions, logs, compiled views, and file cache
         // left behind by the old file drivers. New sessions/cache are in the database.
