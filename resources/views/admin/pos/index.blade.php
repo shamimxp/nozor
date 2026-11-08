@@ -2128,7 +2128,6 @@ $(document).ready(function() {
             }
         });
     }
-    let cartVersion = 0;
     let cartSaveTimer = null;
     let extraDiscount = {
         amount: 0,
@@ -2136,7 +2135,7 @@ $(document).ready(function() {
     };
     let selectedPaymentMethod = 'Cash';
     const promotionalOffers = @json($promotionalOffers ?? []);
-    updateCart();
+    renderCart();
 
     function findPromotionalOffer(productId, quantity) {
         const qty = parseInt(quantity, 10) || 0;
@@ -2233,17 +2232,20 @@ $(document).ready(function() {
         updateCart();
     });
 
-    function persistCart() {
-        const version = ++cartVersion;
+    function persistCart(immediate) {
         clearTimeout(cartSaveTimer);
-        cartSaveTimer = setTimeout(function () {
+        const send = function () {
             $.ajax({
                 url: "{{ route('admin.pos.cart') }}",
                 type: "POST",
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    version: version,
+                contentType: "application/json; charset=UTF-8",
+                data: JSON.stringify({
+                    version: Date.now(),
                     cart: cart
+                }),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'Accept': 'application/json'
                 },
                 error: function (xhr) {
                     if (xhr.status === 401 || xhr.status === 419) {
@@ -2253,7 +2255,12 @@ $(document).ready(function() {
                     }
                 }
             });
-        }, 200);
+        };
+        if (immediate) {
+            send();
+            return;
+        }
+        cartSaveTimer = setTimeout(send, 200);
     }
 
     function updateCart() {
@@ -2485,7 +2492,8 @@ function updateDynamicChange() {
         }).then((result) => {
             if (result.isConfirmed) {
                 delete cart[id];
-                updateCart();
+                renderCart();
+                persistCart(true);
             }
         });
     });
@@ -2531,7 +2539,8 @@ function updateDynamicChange() {
                 cart = {};
                 extraDiscount = { amount: 0, type: 'amount' };
                 $('#summary_paid_amount').val(0);
-                updateCart();
+                renderCart();
+                persistCart(true);
                 toastr.info('Cart cleared');
             }
         });
@@ -2600,7 +2609,8 @@ function updateDynamicChange() {
                             extraDiscount = { amount: 0, type: 'amount' };
                             $('#summary_paid_amount').val(0);
                             $('#customer_id').val('').trigger('change');
-                            updateCart();
+                            renderCart();
+                            persistCart(true);
                             loadProducts(); // Reload products to update stock visuals
                         } else {
                             toastr.error(response.message);
