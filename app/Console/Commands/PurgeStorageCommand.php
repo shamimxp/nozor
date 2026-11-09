@@ -23,17 +23,18 @@ class PurgeStorageCommand extends Command
         $freed = 0;
 
         if ($onlyLogs || $all) {
-            $freed += $this->purgeDirectory(storage_path('logs'), ['*.log']);
+            $freed += $this->purgeDirectory(storage_path('logs'));
         }
 
         if ($onlySessions || $all) {
-            $freed += $this->purgeDirectory(storage_path('framework/sessions'), ['*'], ['.gitignore']);
+            $freed += $this->purgeDirectory(storage_path('framework/sessions'));
         }
 
         if ($all) {
-            $freed += $this->purgeDirectory(storage_path('framework/views'), ['*'], ['.gitignore']);
-            $freed += $this->purgeDirectory(storage_path('framework/cache/data'), ['*'], ['.gitignore']);
-            $freed += $this->purgeDirectory(storage_path('debugbar'), ['*'], ['.gitignore']);
+            $freed += $this->purgeDirectory(storage_path('framework/views'));
+            $freed += $this->purgeDirectory(storage_path('framework/cache'));
+            $freed += $this->purgeDirectory(storage_path('debugbar'));
+            $freed += $this->purgeDirectory(storage_path('app/tmp'));
         }
 
         $this->info('Storage purge complete. Approx freed: ' . $this->formatBytes($freed));
@@ -42,10 +43,9 @@ class PurgeStorageCommand extends Command
     }
 
     /**
-     * @param  array<int, string>  $patterns
      * @param  array<int, string>  $keep
      */
-    protected function purgeDirectory(string $directory, array $patterns = ['*'], array $keep = ['.gitignore']): int
+    protected function purgeDirectory(string $directory, array $keep = ['.gitignore']): int
     {
         if (! is_dir($directory)) {
             return 0;
@@ -53,26 +53,24 @@ class PurgeStorageCommand extends Command
 
         $bytes = 0;
 
-        foreach ($patterns as $pattern) {
-            foreach (File::glob(rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $pattern) ?: [] as $path) {
-                if (! is_file($path)) {
+        try {
+            $files = File::allFiles($directory);
+            foreach ($files as $file) {
+                if (in_array($file->getFilename(), $keep, true)) {
                     continue;
                 }
 
-                if (in_array(basename($path), $keep, true)) {
-                    continue;
-                }
+                $size = (int) $file->getSize();
+                $path = $file->getRealPath();
 
-                $size = (int) @filesize($path);
                 if (@unlink($path)) {
                     $bytes += $size;
-                } else {
-                    // Truncate if unlink fails (file locked / open handle)
-                    if (@file_put_contents($path, '') !== false) {
-                        $bytes += $size;
-                    }
+                } elseif (@file_put_contents($path, '') !== false) {
+                    $bytes += $size;
                 }
             }
+        } catch (\Throwable $e) {
+            // Ignore directory iteration errors
         }
 
         return $bytes;
